@@ -1,0 +1,61 @@
+import React, { Component } from "react";
+
+
+import { Button, Radio, Row, Col, Space } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+
+class ButtonSize extends Component {
+  state = {
+    size: 'large',
+  };
+
+  handleSizeChange = e => {
+    this.setState({ size: e.target.value });
+  };
+
+  render() {
+    const { size } = this.state;
+    return (
+      <Row>
+        <Col span={12}>
+          <Radio.Group value={size} onChange={this.handleSizeChange}>
+            <Space>
+              <Radio.Button value="large">Large</Radio.Button>
+              <Radio.Button value="default">Default</Radio.Button>
+              <Radio.Button value="small">Small</Radio.Button>
+            </Space>
+          </Radio.Group>
+          <br />
+          <br />
+          <Space>
+            <Button type="primary" size={size}>
+              Primary
+            </Button>
+            <Button size={size}>Default</Button>
+            <Button type="dashed" size={size}>
+              Dashed
+            </Button>
+            </Space>
+          <br />
+            <Button type="link" size={size}>
+              Link
+            </Button>
+          <br />
+          <Space>
+            <Button type="primary" icon={<DownloadOutlined />} size={size} />
+            <Button type="primary" shape="circle" icon={<DownloadOutlined />} size={size} />
+            <Button type="primary" shape="round" icon={<DownloadOutlined />} size={size} />
+            <Button type="primary" shape="round" icon={<DownloadOutlined />} size={size}>
+              Download
+            </Button>
+            <Button type="primary" icon={<DownloadOutlined />} size={size}>
+              Download
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+    );
+  }
+}
+
+export default ButtonSize
