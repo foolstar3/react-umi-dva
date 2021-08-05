@@ -4,15 +4,15 @@ const routes = [
       {
         routes: [
           {path: '/', component: '@/pages'},
-          {path: '/projectList', component: '@/pages/examples'},
-          {path: '/moduleList', component: '@/pages/examples/alert'},
-          {path: '/caseList', component: '@/pages/examples/button'},
-          {path: '/taskList', component: '@/pages/examples/button'},
-          {path: '/envList', component: '@/pages/examples/button'},
-          {path: '/paramsFile', component: '@/pages/examples/button'},
-          {path: '/globalVar', component: '@/pages/examples/button'},
-          {path: '/mockList', component: '@/pages/examples/button'},
-          {path: '/viewReport', component: '@/pages/examples/button'},
+          {path: '/testManage/projectList', component: '@/pages/examples', },
+          {path: '/testManage/moduleList', component: '@/pages/examples/alert', },
+          {path: '/testManage/caseList', component: '@/pages/examples/button', },
+          {path: '/testManage/taskList', component: '@/pages/examples/message', },
+          {path: '/dataManage/envList', component: '@/pages/examples/radio', },
+          {path: '/dataManage/paramsFile', component: '@/pages/examples/button', },
+          {path: '/dataManage/globalVar', component: '@/pages/examples/button', },
+          {path: '/dataManage/mockList', component: '@/pages/examples/button', },
+          {path: '/reportManage/viewReport', component: '@/pages/examples/button', },
         ]
       }
     ],
