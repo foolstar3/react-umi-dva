@@ -1,4 +1,4 @@
-import { requestUap, requestUmi } from '../utils/request';
+import { requestUmi } from '../utils/request';
 
 export async function getEditorCode() {
   return requestUmi('/api/geteditorcode', {

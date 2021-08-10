@@ -1,8 +1,28 @@
 import React, { Component } from 'react';
-import * as CodeMirror from 'codemirror/lib/codemirror';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+import 'codemirror/lib/codemirror.js';
+// 引入样式文件
 import 'codemirror/lib/codemirror.css';
+// 引入主题文件
 import 'codemirror/theme/monokai.css';
+// 代码模式
 import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/python/python';
+//ctrl+空格代码提示补全
+import 'codemirror/addon/hint/show-hint.css';
+import 'codemirror/addon/hint/show-hint';
+import 'codemirror/addon/hint/anyword-hint.js';
+//代码高亮
+import 'codemirror/addon/selection/active-line';
+//折叠代码
+import 'codemirror/addon/fold/foldgutter.css';
+import 'codemirror/addon/fold/foldcode.js';
+import 'codemirror/addon/fold/foldgutter.js';
+import 'codemirror/addon/fold/brace-fold.js';
+import 'codemirror/addon/fold/comment-fold.js';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/edit/matchBrackets';
+// 获取编辑器内部代码
 import { getEditorCode } from '@/services/getEditorCode';
 import { connect } from 'umi';
 
@@ -15,48 +35,36 @@ export default class Editor extends Component {
     super(props);
     this.state = {
       code: '',
-      // codeEditor: false
     };
-    // const {dispatch} = this.props
-    // dispatch({
-    //   type: 'editor/getCodeEditorFlag',
-    // })
     // 通过api获取编辑器内部代码
     getEditorCode().then((res) => {
+      console.log(res);
       this.setState(() => ({
         code: res.code,
       }));
     });
   }
   componentDidMount() {}
-  componentDidUpdate() {
-    // const {dispatch} = this.props
-    // dispatch({
-    //   type: 'editor/getCodeEditorFlag',
-    // })
-    // console.log(this.props.codeEditorFlag);
-    // if(!this.props.codeEditorFlag) {
-    // 获取需要editor化的元素
-    // 元素必须为textarea标签
-    let myTextarea = document.getElementById('editor');
-
-    // 初始化editor相关配置
-    this.CodeMirrorEditor = CodeMirror.fromTextArea(myTextarea, {
-      mode: 'javascript', //编辑器语言
-      theme: 'monokai', //编辑器主题
-      extraKeys: { Ctrl: 'autocomplete' }, //ctrl可以弹出选择项
-      lineNumbers: true, //显示行号
-    });
-    // dispatch({
-    //   type: 'editor/changeCodeEditorFlag'
-    // })
-    // }
-    // 设置editor中代码的默认值
-    this.CodeMirrorEditor.setValue(this.state.code);
-  }
+  componentDidUpdate() {}
   render() {
     return (
-      <textarea className="form-control" id="editor" name="code"></textarea>
+      <CodeMirror
+        value={this.state.code}
+        options={{
+          mode: {
+            // json编辑器模式
+            name: 'text/javascript',
+            json: true,
+            // python编辑器模式
+            // name: 'python'
+          },
+          theme: 'monokai',
+          lineNumbers: true,
+        }}
+        onChange={(editor, data, value) => {
+          console.log(data, value);
+        }}
+      />
     );
   }
 }

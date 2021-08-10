@@ -7,6 +7,7 @@ export default {
   // GET 可忽略
   '/api/users/1': { id: 1 },
 
+  // echarts图表数据
   '/api/getformdata': {
     option: {
       xAxis: {
@@ -149,9 +150,30 @@ export default {
     },
   },
 
+  // 编辑器代码
   '/api/geteditorcode': Mock.mock({
     code: Mock.Random.sentence(),
   }),
+
+  // 参数文件表格数据
+  '/api/getparamsfile': {
+    data: [
+      Mock.mock({
+        'paramsFileList|1-10': [
+          {
+            // 属性 index 是一个自增数，起始值为 1，每次增 1
+            'index|+1': 1,
+            project_name: Mock.Random.word(),
+            file_name: Mock.Random.word(),
+            upload_staff: Mock.Random.cname(),
+            project_name: Mock.Random.word(),
+            create_time: Mock.Random.datetime('yyyy.MM.dd A HH:mm:ss'),
+            update_time: Mock.Random.datetime('yyyy.MM.dd A HH:mm:ss'),
+          },
+        ],
+      }),
+    ],
+  },
 
   // 支持自定义函数，API 参考 express@4
   'POST /api/users/create': (req, res) => {
