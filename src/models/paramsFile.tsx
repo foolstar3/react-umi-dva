@@ -14,12 +14,13 @@ export default {
     },
   },
   effects: {
-    *getParamsFileListData({ payload }, { call, put }) {
+    *getParamsFileListData({ payload, callback }, { call, put }) {
       const data = yield call(getParamsFile);
+      callback(data);
       // console.log(data.data[0].list);
       yield put({
         type: 'getParmsFileList',
-        payload: data.data[0].paramsFileList,
+        payload: data.data[0],
       });
     },
   },
