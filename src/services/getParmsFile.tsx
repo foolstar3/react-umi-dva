@@ -5,3 +5,10 @@ export async function getParamsFile() {
     method: 'GET',
   });
 }
+
+export async function addFile(data) {
+  return requestUmi('/api/addfile', {
+    method: 'post',
+    data,
+  });
+}

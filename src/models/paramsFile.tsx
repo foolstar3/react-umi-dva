@@ -1,4 +1,4 @@
-import { getParamsFile } from '@/services/getParmsFile';
+import { getParamsFile, addFile } from '@/services/getParmsFile';
 export default {
   namespace: 'paramsFile',
   state: {
@@ -22,6 +22,10 @@ export default {
         type: 'getParmsFileList',
         payload: data.data[0],
       });
+    },
+    *addFile({ payload, callback }, { call, put }) {
+      const data = yield call(addFile, payload);
+      console.log(data);
     },
   },
 };

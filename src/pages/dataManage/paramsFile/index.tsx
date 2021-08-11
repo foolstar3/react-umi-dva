@@ -1,8 +1,27 @@
 import React, { Component } from 'react';
-import { Card, Table, Space, Button, Modal, Form, Input, Checkbox } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  Card,
+  Table,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Checkbox,
+  Select,
+  Upload,
+} from 'antd';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusCircleOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
 import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
+import { addFile } from '@/services/getParmsFile';
+
+const { Option } = Select;
 
 @connect(({ paramsFile }) => ({
   paramsFileData: paramsFile.paramsFileList,
@@ -15,6 +34,8 @@ export default class ParamsFile extends Component {
       paramsFileData: [],
       // 编辑对话框显隐
       editModalVisiable: false,
+      // 添加对话框显隐
+      addModalVisiable: false,
       // 参数文件表格列配置
       columns: [
         {
@@ -73,6 +94,11 @@ export default class ParamsFile extends Component {
           ),
         },
       ],
+      // 新增文件数据
+      addFileData: {
+        project_name: '',
+        uploadFile: [],
+      },
       currentEditParamsFile: {},
     };
     // 将函数的this绑定到class组件上
@@ -86,7 +112,27 @@ export default class ParamsFile extends Component {
         // console.log(res);
       },
     });
+    // 新增项目对话框form布局配置
+    const layout = {
+      labelCol: { span: 8 },
+      wrapperCol: { span: 16 },
+    };
+    const uploadConfig = {
+      action: '//jsonplaceholder.typicode.com/posts/',
+      listType: 'picture',
+      previewFile(file) {
+        console.log('Your upload file:', file);
+        // Your process logic. Here we just mock to the same file
+        return fetch('https://next.json-generator.com/api/json/get/4ytyBoLK8', {
+          method: 'POST',
+          body: file,
+        })
+          .then((res) => res.json())
+          .then(({ thumbnail }) => thumbnail);
+      },
+    };
   }
+
   // 处理编辑函数
   handleEdit = (text, record) => {
     // console.log(text);
@@ -110,6 +156,42 @@ export default class ParamsFile extends Component {
       editModalVisiable: false,
     });
   };
+
+  handleAddOk = () => {
+    console.log(this.state.addFileData);
+    // 将新增的文件数据发送给后端
+    const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'paramsFile/addFile',
+    //   payload: this.state.addFileData
+    // })
+    addFile(this.state.addFileData).then((res) => {
+      alert(res);
+    });
+    this.setState({
+      addModalVisiable: false,
+    });
+    // 更新后重新获取table中的数据
+    dispatch({
+      type: 'paramsFile/getParamsFileListData',
+      callback: (res) => {
+        // console.log(res);
+      },
+    });
+  };
+
+  handleAddCancel = () => {
+    this.setState({
+      addModalVisiable: false,
+    });
+  };
+
+  handleAddFile = () => {
+    this.setState({
+      addModalVisiable: true,
+    });
+  };
+
   onFinish = (values: any) => {
     console.log('Success:', values);
   };
@@ -117,25 +199,58 @@ export default class ParamsFile extends Component {
   onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  onGenderChange = (value: string) => {
+    switch (value) {
+      case 'male':
+        this.formRef.current!.setFieldsValue({ note: 'Hi, man!' });
+        return;
+      case 'female':
+        this.formRef.current!.setFieldsValue({ note: 'Hi, lady!' });
+        return;
+      case 'other':
+        this.formRef.current!.setFieldsValue({ note: 'Hi there!' });
+    }
+  };
+  // 文件上传
+  normFile = (e: any) => {
+    console.log('Upload event:', e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e && e.fileList;
+  };
 
+  handleAddFormValueChange = (av) => {
+    console.log(av);
+    // 获取新增文件的数据
+    this.setState(() => ({
+      addFileData: av,
+    }));
+  };
+
+  onReset = () => {
+    this.formRef.current!.resetFields();
+  };
+
+  onFill = () => {
+    this.formRef.current!.setFieldsValue({
+      note: 'Hello world!',
+      gender: 'male',
+    });
+  };
+  // 渲染编辑文件表单
   renderEditForm = (data) => {
-    // const form = React.createRef()
-    console.log(this.form);
-    console.log(data);
-    // if(this.form.current) {
-    //   this.form.setFieldsValue({
-    //     project_name: data.project_name,
-    //   })
-    // }
-
+    // console.log(data);
     return (
       <Form
-        ref="form"
         name="basic"
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 14 }}
         onFinish={this.onFinish}
         onFinishFailed={this.onFinishFailed}
+        onValuesChange={() => {
+          console.log('change');
+        }}
         initialValues={data}
       >
         <Form.Item
@@ -164,16 +279,72 @@ export default class ParamsFile extends Component {
       </Form>
     );
   };
-  componentDidMount() {
-    // const {paramsFileData} = this.props
-    // console.log(this.refs);
-    // this.form = this.refs.form
-    // this.renderEditForm(this.state.currentEditParamsFile)
-    // console.log(this.form);
-    // this.form?.current.setFieldsValue({
-    //   project_name: data.project_name,
-    // })
-  }
+  formRef = React.createRef<FormInstance>();
+  // 渲染新增项目表单
+  renderAddForm = () => {
+    return (
+      <Form
+        {...this.layout}
+        ref={this.formRef}
+        name="control-ref"
+        onValuesChange={(cv, av) => {
+          this.handleAddFormValueChange(av);
+        }}
+        onFinish={this.onFinish}
+      >
+        <Form.Item
+          name="project_name"
+          label="项目名称"
+          rules={[{ required: true }]}
+        >
+          <Select
+            placeholder="请选择"
+            onChange={this.onGenderChange}
+            allowClear
+          >
+            {this.props.paramsFileData.map((item) => {
+              // console.log(item);
+              return (
+                <Option value={item.project_name} key={item.index}>
+                  {item.project_name}
+                </Option>
+              );
+            })}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.gender !== currentValues.gender
+          }
+        >
+          {({ getFieldValue }) =>
+            getFieldValue('gender') === 'other' ? (
+              <Form.Item
+                name="customizeGender"
+                label="Customize Gender"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+        <Form.Item
+          name="uploadFile"
+          label="上传文件"
+          valuePropName="fileList"
+          getValueFromEvent={this.normFile}
+          rules={[{ required: true }]}
+        >
+          <Upload {...this.uploadConfig}>
+            <Button icon={<UploadOutlined />}>选择文件</Button>
+          </Upload>
+        </Form.Item>
+      </Form>
+    );
+  };
+  componentDidMount() {}
   render() {
     return (
       <>
@@ -182,6 +353,13 @@ export default class ParamsFile extends Component {
             columns={this.state.columns}
             dataSource={this.props.paramsFileData}
           />
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
+            onClick={this.handleAddFile}
+          >
+            新增
+          </Button>
         </Card>
         <Modal
           title="编辑"
@@ -190,6 +368,14 @@ export default class ParamsFile extends Component {
           onCancel={this.handleCancel}
         >
           {this.renderEditForm(this.state.currentEditParamsFile)}
+        </Modal>
+        <Modal
+          title="新增项目"
+          visible={this.state.addModalVisiable}
+          onOk={this.handleAddOk}
+          onCancel={this.handleAddCancel}
+        >
+          {this.renderAddForm()}
         </Modal>
       </>
     );

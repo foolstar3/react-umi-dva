@@ -13,14 +13,16 @@ export default function IndexPage(props) {
       <Header></Header>
       <Layout className="layout">
         <Sider></Sider>
-        <Layout style={{ padding: '15px 24px 24px' }}>
+        <Layout className="LayoutPadding">
           <PageHeader
-            title={<NewBreadcrumb></NewBreadcrumb>}
-            extra={
-              <Link to="/">
-                <HomeOutlined style={{ fontSize: '20px' }} />
-              </Link>
+            title={
+              <div className="flex">
+                <Link to="/">
+                  <HomeOutlined className="iconFontSize" />
+                </Link>
+              </div>
             }
+            subTitle={<NewBreadcrumb></NewBreadcrumb>}
           ></PageHeader>
           <div className="padding">{props.children}</div>
         </Layout>
