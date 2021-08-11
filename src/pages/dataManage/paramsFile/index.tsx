@@ -20,7 +20,7 @@ import {
 import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
 import { addFile } from '@/services/getParmsFile';
-
+import Editor from '@/pages/examples/editor';
 const { Option } = Select;
 
 @connect(({ paramsFile }) => ({
@@ -303,7 +303,6 @@ export default class ParamsFile extends Component {
             allowClear
           >
             {this.props.paramsFileData.map((item) => {
-              // console.log(item);
               return (
                 <Option value={item.project_name} key={item.index}>
                   {item.project_name}
@@ -311,24 +310,6 @@ export default class ParamsFile extends Component {
               );
             })}
           </Select>
-        </Form.Item>
-        <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, currentValues) =>
-            prevValues.gender !== currentValues.gender
-          }
-        >
-          {({ getFieldValue }) =>
-            getFieldValue('gender') === 'other' ? (
-              <Form.Item
-                name="customizeGender"
-                label="Customize Gender"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-            ) : null
-          }
         </Form.Item>
         <Form.Item
           name="uploadFile"
@@ -366,8 +347,12 @@ export default class ParamsFile extends Component {
           visible={this.state.editModalVisiable}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          width={1200}
+          okText="确认"
+          cancelText="取消"
         >
-          {this.renderEditForm(this.state.currentEditParamsFile)}
+          <Editor />
+          {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
         </Modal>
         <Modal
           title="新增项目"
