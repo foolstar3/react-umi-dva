@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
-import { getFormData } from '@/services/getFormData';
+
 @connect(({ chart }) => ({
   option: chart.option,
   option2: chart.option2,

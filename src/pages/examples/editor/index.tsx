@@ -36,6 +36,7 @@ export default class Editor extends Component {
     this.state = {
       code: '',
     };
+
     // 通过api获取编辑器内部代码
     getEditorCode().then((res) => {
       // console.log(res);
@@ -47,10 +48,15 @@ export default class Editor extends Component {
   componentDidMount() {}
   componentDidUpdate() {}
   render() {
+    const { content } = this.props;
+
+    // const {payload} = content
+    // const {res} = payload
+    console.log(content.context);
     return (
       <CodeMirror
         height={500}
-        value={this.state.code}
+        value={content.context}
         options={{
           mode: {
             // json编辑器模式

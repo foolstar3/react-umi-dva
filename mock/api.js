@@ -159,7 +159,7 @@ export default {
   '/api/getparamsfile': {
     data: [
       Mock.mock({
-        'paramsFileList|1-10': [
+        'paramsFileList|10': [
           {
             // 属性 index 是一个自增数，起始值为 1，每次增 1
             'index|+1': 1,
@@ -181,10 +181,15 @@ export default {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.end('ok');
   },
-  // 支持自定义函数，API 参考 express@4
-  'POST /api/users/create': (req, res) => {
+  // 删除参数文件
+  'delete /api/deletefile': (req, res) => {
     // 添加跨域请求头
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.end('ok');
+    res.end('delete file ok');
   },
+  'POST /api/getparamsfilecode': [
+    Mock.mock({
+      context: '@paragraph()',
+    }),
+  ],
 };

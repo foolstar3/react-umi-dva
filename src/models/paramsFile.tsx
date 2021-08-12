@@ -1,8 +1,14 @@
-import { getParamsFile, addFile } from '@/services/getParmsFile';
+import {
+  getParamsFile,
+  addFile,
+  deleteFile,
+  getParamsFileCode,
+} from '@/services/getParmsFile';
 export default {
   namespace: 'paramsFile',
   state: {
     paramsFileList: [],
+    paramsFileCode: {},
   },
   reducers: {
     getParmsFileList(state, { payload }) {
@@ -10,6 +16,16 @@ export default {
       return {
         ...state,
         ...payload,
+      };
+    },
+    setParamsFileCode(state, payload) {
+      const newState = JSON.parse(JSON.stringify(state));
+      console.log(payload);
+      newState.paramsFileCode = payload.data[0];
+      console.log(newState);
+      return {
+        ...state,
+        ...newState,
       };
     },
   },
@@ -26,6 +42,24 @@ export default {
     *addFile({ payload, callback }, { call, put }) {
       const data = yield call(addFile, payload);
       console.log(data);
+      /*todo
+      调用reducers中的更新函数
+      更新state中的paramsFileList */
+    },
+    *deleteFile({ payload, callback }, { call, put }) {
+      const data = yield call(deleteFile, payload);
+      console.log(data);
+      /*todo
+      调用reducers中的更新函数
+      更新state中的paramsFileList */
+    },
+    *getParamsFileCode({ payload, callback }, { call, put }) {
+      const data = yield call(getParamsFileCode, payload);
+      console.log(data);
+      yield put({
+        type: 'setParamsFileCode',
+        data,
+      });
     },
   },
 };

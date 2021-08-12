@@ -21,10 +21,12 @@ import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
 import { addFile } from '@/services/getParmsFile';
 import Editor from '@/pages/examples/editor';
+import './index.less';
 const { Option } = Select;
 
 @connect(({ paramsFile }) => ({
   paramsFileData: paramsFile.paramsFileList,
+  paramsFileCode: paramsFile.paramsFileCode,
 }))
 export default class ParamsFile extends Component {
   constructor(props) {
@@ -69,7 +71,7 @@ export default class ParamsFile extends Component {
           key: 'update_time',
         },
         {
-          title: 'Action',
+          title: '操作',
           key: 'action',
           render: (text, record) => (
             <Space size="middle">
@@ -86,7 +88,9 @@ export default class ParamsFile extends Component {
                 type="primary"
                 icon={<DeleteOutlined />}
                 danger
-                onClick={this.handleDelete}
+                onClick={() => {
+                  this.handleDelete(text, record);
+                }}
               >
                 删除
               </Button>
@@ -140,10 +144,20 @@ export default class ParamsFile extends Component {
       currentEditParamsFile: text,
       editModalVisiable: true,
     }));
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'paramsFile/getParamsFileCode',
+      payload: text,
+    });
     // console.log(this.state.currentEditParamsFile);
   };
-  handleDelete = () => {
-    console.log('handleDelete');
+  handleDelete = (text) => {
+    console.log(text, 'text');
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'paramsFile/deleteFile',
+      payload: text.key,
+    });
   };
   handleOk = () => {
     this.setState({
@@ -327,6 +341,7 @@ export default class ParamsFile extends Component {
   };
   componentDidMount() {}
   render() {
+    console.log(this.props.paramsFileCode);
     return (
       <>
         <Card bordered={false}>
@@ -334,13 +349,15 @@ export default class ParamsFile extends Component {
             columns={this.state.columns}
             dataSource={this.props.paramsFileData}
           />
-          <Button
-            type="primary"
-            icon={<PlusCircleOutlined />}
-            onClick={this.handleAddFile}
-          >
-            新增
-          </Button>
+          <div className="btn-postion">
+            <Button
+              type="primary"
+              icon={<PlusCircleOutlined />}
+              onClick={this.handleAddFile}
+            >
+              新增
+            </Button>
+          </div>
         </Card>
         <Modal
           title="编辑"
@@ -348,10 +365,8 @@ export default class ParamsFile extends Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
           width={1200}
-          okText="确认"
-          cancelText="取消"
         >
-          <Editor />
+          <Editor content={this.props.paramsFileCode} />
           {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
         </Modal>
         <Modal

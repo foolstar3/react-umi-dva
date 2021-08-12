@@ -1,4 +1,4 @@
-import { requestUmi } from '../utils/request';
+import { requestUmi } from '@/utils/request';
 
 export async function getParamsFile() {
   return requestUmi('/api/getparamsfile', {
@@ -8,6 +8,20 @@ export async function getParamsFile() {
 
 export async function addFile(data) {
   return requestUmi('/api/addfile', {
+    method: 'post',
+    data,
+  });
+}
+
+export async function deleteFile(data) {
+  return requestUmi('/api/deletefile', {
+    method: 'delete',
+    data,
+  });
+}
+
+export async function getParamsFileCode(data) {
+  return requestUmi('/api/getparamsfilecode', {
     method: 'post',
     data,
   });

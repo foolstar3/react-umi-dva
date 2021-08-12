@@ -1,3 +1,4 @@
+// antd组件实例路由
 const example_routes = [
   {
     path: '/',
@@ -35,6 +36,8 @@ const example_routes = [
     ],
   },
 ];
+
+// 项目实际路由
 const routes = [
   {
     path: '/',
@@ -56,7 +59,10 @@ const routes = [
             path: '/testManage/taskList',
             component: '@/pages/examples/message',
           },
-          { path: '/dataManage/envList', component: '@/pages/examples/radio' },
+          {
+            path: '/dataManage/envList',
+            component: '@/pages/dataManage/envList',
+          },
           {
             path: '/dataManage/paramsFile',
             component: '@/pages/dataManage/paramsFile',
@@ -68,7 +74,7 @@ const routes = [
           // {path: '/dataManage/mockList', component: '@/pages/examples/button', },
           {
             path: '/reportManage/viewReport',
-            component: '@/pages/examples/editor',
+            component: '@/pages/reportManage',
           },
         ],
       },
