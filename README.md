@@ -16,6 +16,14 @@
 
 此目录下执行GUI Bash
 
+安装项目依赖
+
+```shell
+yarn
+//或者
+yarn install
+```
+
 命令为 yarn build-dev，打包开发环境包，
 
 命令为 yarn build-test，打包测试环境包，
@@ -30,6 +38,8 @@
 define: {
     // dev 环境变量
     'process.env.var': 'dev'
+    'process.env.PORT': 9000,
+    'process.env.HOST': 127.0.0.1
 },
 ```
 
@@ -45,6 +55,14 @@ proxy: {
 },
 ```
 
+配置开发服务器`devServe`
+
+```javascript
+devSever: {
+    port: process.env.PORT,
+    host: process.env.HOST,
+},
+```
 
 
 # 修改测试环境变量
@@ -58,7 +76,7 @@ define: {
 },
 ```
 
-修改开发环境接口`target`
+修改测试环境接口`target`
 
 ```javascript
 proxy: {
@@ -68,5 +86,11 @@ proxy: {
         'pathRewrite': { '^/qc' : '' },
     },
 },
+```
+
+如果部署在非根目录下，需要修改`base`，将其修改为项目所在目录
+
+```javascript
+base: './',
 ```
 

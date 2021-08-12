@@ -10,6 +10,12 @@ export default defineConfig({
   define: {
     // dev 环境变量
     'process.env.var': 'dev',
+    'process.env.PORT': 9000,
+    'process.env.HOST': 127.0.0.1
+  },
+  devSever: {
+    port: process.env.PORT,
+    host: process.env.HOST,
   },
   proxy: {
     '/qc': {
