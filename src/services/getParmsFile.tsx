@@ -26,3 +26,10 @@ export async function getParamsFileCode(data) {
     data,
   });
 }
+
+export async function updateParamsFileCode(data) {
+  return requestUmi('/api/updateparamsfilecode', {
+    method: 'post',
+    data,
+  });
+}

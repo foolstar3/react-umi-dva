@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'umi';
-import {
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
-} from '@ant-design/icons';
+// import {
+//   UserOutlined,
+//   LaptopOutlined,
+//   NotificationOutlined,
+//   Icon
+// } from '@ant-design/icons';
+import * as Icon from '@ant-design/icons';
 const { SubMenu } = Menu;
 
 // const MenuList = () => {
@@ -80,12 +82,16 @@ class Sider extends Component {
           style={{ height: '100%', borderRight: 0 }}
         >
           {navMenu.children.map((item) => {
-            const icon = item.icon;
+            // 动态创建icon标签
+            const icon = React.createElement(Icon[item.icon], {
+              style: { fontSize: '16px' },
+            });
+            // console.log(icon);
             return (
               /* todo
                       icon无法显示
                   */
-              <SubMenu key={item.key} title={item.title}>
+              <SubMenu key={item.key} title={item.title} icon={icon}>
                 {item.children.map((i) => {
                   return (
                     <Menu.Item key={i.key}>

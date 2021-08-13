@@ -106,8 +106,8 @@ export default class ParamsFile extends Component {
       currentEditParamsFile: {},
     };
     // 将函数的this绑定到class组件上
-    this.handleOk = this.handleOk.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
+    this.handleEditOk = this.handleEditOk.bind(this);
+    this.handleEditCancel = this.handleEditCancel.bind(this);
 
     const { dispatch } = this.props;
     dispatch({
@@ -159,13 +159,23 @@ export default class ParamsFile extends Component {
       payload: text.key,
     });
   };
-  handleOk = () => {
+  handleEditOk = () => {
+    const { paramsFileCode, dispatch } = this.props;
+    console.log(paramsFileCode, dispatch);
+    // 请求后端更新编辑器code
+    dispatch({
+      type: 'paramsFile/updateParamsFileCode',
+      payload: paramsFileCode,
+      callback: (res) => {
+        console.log(res);
+      },
+    });
     this.setState({
       editModalVisiable: false,
     });
   };
 
-  handleCancel = () => {
+  handleEditCancel = () => {
     this.setState({
       editModalVisiable: false,
     });
@@ -341,7 +351,6 @@ export default class ParamsFile extends Component {
   };
   componentDidMount() {}
   render() {
-    console.log(this.props.paramsFileCode);
     return (
       <>
         <Card bordered={false}>
@@ -362,8 +371,8 @@ export default class ParamsFile extends Component {
         <Modal
           title="编辑"
           visible={this.state.editModalVisiable}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          onOk={this.handleEditOk}
+          onCancel={this.handleEditCancel}
           width={1200}
         >
           <Editor content={this.props.paramsFileCode} />
