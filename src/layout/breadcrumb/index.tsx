@@ -1,6 +1,8 @@
 import withBreadcrumbs from 'react-router-breadcrumbs-hoc';
 import { Breadcrumb } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
 import './index.less';
+import { Link } from 'react-router-dom';
 const routes = [
   { path: '/', component: '@/pages', breadcrumb: '首页' },
   {
@@ -71,7 +73,13 @@ const Breadcrumbs = ({ breadcrumbs }) => (
       {breadcrumbs.map((breadcrumb) => {
         // console.log(breadcrumb);
         if (breadcrumb.key === '/') {
-          return;
+          return (
+            <Breadcrumb.Item key="home">
+              {/* <Link to='/'>
+                <HomeOutlined className="iconFontSize" style={{ fontSize: '20px' }} />
+              </Link> */}
+            </Breadcrumb.Item>
+          );
         }
         return (
           <Breadcrumb.Item key={breadcrumb.key}>

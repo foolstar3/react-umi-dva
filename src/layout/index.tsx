@@ -17,6 +17,7 @@ export default function IndexPage(props) {
           <Layout className="LayoutPadding">
             <PageHeader
               className="pageHeaderPadding"
+              width={75}
               title={
                 <div className="flex">
                   <Link to="/">
