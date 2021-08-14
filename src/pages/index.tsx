@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import * as echarts from 'echarts';
 import { connect } from 'umi';

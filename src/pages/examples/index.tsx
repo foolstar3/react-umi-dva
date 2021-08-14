@@ -1,94 +1,197 @@
 
+import React from 'react';
+import {  Select,Form,Input,Modal,Table, Button, Space } from 'antd';
+import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
 
-
-
-import { Table, Badge, Menu, Dropdown, Space } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-
-const menu = (
-  <Menu>
-    <Menu.Item>Action 1</Menu.Item>
-    <Menu.Item>Action 2</Menu.Item>
-  </Menu>
-);
-
-function NestedTable() {
-  const expandedRowRender = () => {
-    const columns = [
-      { title: 'Date', dataIndex: 'date', key: 'date' },
-      { title: 'Name', dataIndex: 'name', key: 'name' },
-      {
-        title: 'Status',
-        key: 'state',
-        render: () => (
-          <span>
-            <Badge status="success" />
-            Finished
-          </span>
-        ),
-      },
-      { title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-      {
-        title: 'Action',
-        dataIndex: 'operation',
-        key: 'operation',
-        render: () => (
-          <Space size="middle">
-            <a>Pause</a>
-            <a>Stop</a>
-            <Dropdown overlay={menu}>
-              <a>
-                More <DownOutlined />
-              </a>
-            </Dropdown>
-          </Space>
-        ),
-      },
-    ];
-
-    const data = [];
-    for (let i = 0; i < 3; ++i) {
-      data.push({
-        key: i,
-        date: '2014-12-24 23:12:00',
-        name: 'This is production name',
-        upgradeNum: 'Upgraded: 56',
-      });
+const { TextArea } = Input;
+class ItemList extends React.Component{
+  constructor(props: {} | Readonly<{}>){
+    super(props)
+    this.state = {
+      itemList:[
+        {
+          itemName: '2',
+          createKey:0,
+          modelNum: '2',
+          userName: '2',
+          testUsername: '2',
+          developUsername: '2',
+          contents: '2',
+          createTime:'111111'
+        }
+      ],
+      loading:false,
+      visible:false,
     }
-    return <Table columns={columns} dataSource={data} pagination={false} />;
-  };
-
-  const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Platform', dataIndex: 'platform', key: 'platform' },
-    { title: 'Version', dataIndex: 'version', key: 'version' },
-    { title: 'Upgraded', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-    { title: 'Creator', dataIndex: 'creator', key: 'creator' },
-    { title: 'Date', dataIndex: 'createdAt', key: 'createdAt' },
-    { title: 'Action', key: 'operation', render: () => <a>Publish</a> },
-  ];
-
-  const data = [];
-  for (let i = 0; i < 3; ++i) {
-    data.push({
-      key: i,
-      name: 'Screem',
-      platform: 'iOS',
-      version: '10.3.4.5654',
-      upgradeNum: 500,
-      creator: 'Jack',
-      createdAt: '2014-12-24 23:12:00',
-    });
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+  
+  showModal = () => {
+    this.setState({
+      visible: true,
+    })
+  }
+  //获取表单内的数据
+  
+  handleCancel = () => {
+    this.setState({ visible: false });
   }
 
-  return (
-    <Table
-      className="components-table-demo-nested"
-      columns={columns}
-      expandable={{ expandedRowRender }}
-      dataSource={data}
-    />
-  );
+  
+  handleSubmit (value: any) {
+    const date = new Date();
+    const dateNow = date.getFullYear()+'-'
+                    +(date.getMonth()+1)+'-'
+                    +date.getDate()+' '
+                    +date.getHours()+':'
+                    +((date.getMinutes()<10)?('0'+date.getMinutes()):date.getMinutes()); 
+    value.createTime = dateNow 
+    const itemList = [...this.state.itemList]
+    value.creatKey = Date.parse(date)
+    itemList.push(value)
+    this.setState({
+      itemList:itemList,
+      visible:false,
+    })
+    console.log(itemList)
+  }
+
+  handleDelete(value:any){
+    const itemList = [...this.state.itemList]
+    console.log(itemList)
+    this.setState({
+      itemList:itemList.filter((item)=>item.creatKey!==value.creatKey)
+    })
+  }
+  
+  render () {
+    const visible = this.state.visible
+    const loading = this.state.loading
+    const columns = [
+      { 
+        title: '项目名称',
+        dataIndex: 'itemName',
+        key:'itemName'
+      },
+      { 
+        title: '模块/用例数',
+        dataIndex: 'modelNum',
+        key:'modelNum' 
+      },
+      { 
+        title: '负责人',
+        dataIndex: 'userName',
+        key:'userName'
+      },
+      { 
+        title: '测试人员', 
+        dataIndex: 'testUsername',
+        key:'testUsername'
+      },
+      { 
+        title: '开发人员',
+        dataIndex: 'developUsername',
+        key:'developUsername'
+      },
+      { 
+        title: '简要描述',
+        dataIndex: 'contents',
+        key:'contents'
+      },
+      { 
+        title: '创建时间',
+        dataIndex: 'createTime',
+        key:'createTime'
+      },
+      { title: '相关操作', 
+        dataIndex:'relateAction',
+        key:'relateAction',
+        render: (_: any, projectItem: any)=> {
+          return (
+            <div>
+              <Space size='middle'>
+                <Button type='primary' icon={<EditOutlined/>}>编辑</Button>
+                <Button type='primary' danger onClick={() => this.handleDelete(projectItem)} icon={<DeleteOutlined/>}>删除</Button>
+              </Space>
+            </div>
+          )
+        }
+      }
+    ]
+    return (
+      <div>
+        <Button type='primary' onClick={this.showModal} icon= {<PlusCircleOutlined/>} >添加项目</Button>
+        <Table
+          className="components-table-demo-nested"
+          columns={columns}
+          dataSource={this.state.itemList}
+        />
+        <Modal
+          visible={visible}
+          title="项目信息"
+          closable={false}
+          footer={null}
+        >
+          <Form
+            name="basic"
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 16 }}
+            initialValues={{ remember: true }}
+            onFinish={this.handleSubmit}
+          >
+            <Form.Item
+              label="项目名称"
+              name="itemName"
+              rules={[{ required: true, message: '请输入项目名称' }]}
+            >
+              <Input/>
+            </Form.Item>
+            <Form.Item
+              label="模块/用例数"
+              name="modelNum"
+              rules={[{ required: true, message: '请输入用例数' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="负责人"
+              name="userName"
+              rules={[{ required: true, message: '请输入负责人名称' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="测试人员"
+              name="testUsername"
+              rules={[{ required: true, message: '请输入测试人员名称' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="开发人员"
+              name="developUsername"
+              rules={[{ required: true, message: '请输入开发人员名称' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="简要描述"
+              name="contents"
+              rules={[{ required: false }]}
+            >
+              <TextArea rows={3} />
+            </Form.Item>
+            <Form.Item>
+              <Space size='middle'>
+                <Button type="primary" htmlType="submit">提交</Button>
+                <Button onClick={this.handleCancel}>返回</Button>
+              </Space>
+            </Form.Item> 
+          </Form>
+        </Modal>     
+      </div>
+    )
+  }
 }
 
-export default NestedTable
+export default ItemList

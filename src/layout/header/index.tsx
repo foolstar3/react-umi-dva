@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import './index.less';
 import ImagesUrl from '@/constant/imagesUrl';
@@ -23,6 +24,7 @@ class Header extends Component {
   }
   handleCancel() {
     this.setState({ isModalVisible: false });
+
   }
   render() {
     return (
