@@ -6,3 +6,10 @@ export async function getEnvList(data) {
     data,
   });
 }
+
+export async function toggleSwitch(data) {
+  return requestUmi(`/qc/24/env/${data.id}/`, {
+    method: 'PUT',
+    data,
+  });
+}
