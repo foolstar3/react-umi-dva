@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { getEnvList } from '@/services/dataManage/envList';
 import { Space, Button, Card, Table, Modal, Switch, Form, Input } from 'antd';
 import {
   EditOutlined,
@@ -8,6 +7,7 @@ import {
   PlusCircleOutlined,
 } from '@ant-design/icons';
 import { connect } from 'umi';
+import Editor from '@/pages/examples/editor';
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -24,8 +24,18 @@ export default class EnvList extends Component {
       selectedRowKeys: [],
       // 新增对话框显隐
       addModalVisiable: false,
+      // 删除对话框显隐
+      deleteModalVisiable: false,
+      // 编辑对话框显隐
+      editModalVisiable: false,
+      // 环境信息对话框显隐
+      envInfoModalVisiable: false,
+      // 当前选中的环境
+      currentEnvInfo: {},
       // 新增环境列表数据
       addEnvListData: {},
+      // 编辑环境列表数据
+      editEnvListData: {},
       // table列配置
       columns: [
         {
@@ -89,7 +99,7 @@ export default class EnvList extends Component {
                 type="primary"
                 icon={<FileSearchOutlined />}
                 onClick={() => {
-                  this.handleEdit(text, record);
+                  this.showEnvInfoModal(text, record);
                 }}
               >
                 环境信息
@@ -98,7 +108,7 @@ export default class EnvList extends Component {
                 type="primary"
                 icon={<EditOutlined />}
                 onClick={() => {
-                  this.handleEdit(text, record);
+                  this.showEditModal(text, record);
                 }}
               >
                 编辑
@@ -108,7 +118,7 @@ export default class EnvList extends Component {
                 icon={<DeleteOutlined />}
                 danger
                 onClick={() => {
-                  this.handleDelete(text, record);
+                  this.showDeleteModal(text, record);
                 }}
               >
                 删除
@@ -182,7 +192,15 @@ export default class EnvList extends Component {
   handleAddOk = () => {
     /*todo
     获取form表单内容 */
-
+    const { addEnvListData } = this.state;
+    // 包装参数
+    const payload = {
+      ...addEnvListData,
+      is_valid: addEnvListData.is_valid == false ? false : true,
+    };
+    console.log(payload);
+    // 发送请求
+    this.addEnvListData(payload);
     this.setState({
       addModalVisiable: false,
     });
@@ -195,10 +213,145 @@ export default class EnvList extends Component {
       addEnvListData: av,
     }));
   };
-  render() {
-    const { selectedRowKeys, columns, addModalVisiable } = this.state;
-    const { envList } = this.props;
 
+  // 添加新环境的函数
+  addEnvListData = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'envList/addEnvList',
+      payload,
+      callback: (res) => {
+        // if (res) {
+        //   // 添加成功
+        // }
+        // console.log(res);
+      },
+    });
+  };
+
+  /* ==============删除对话框功能===================*/
+
+  // 删除环境的函数
+  deleteEnvListData = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'envList/deleteEnvList',
+      payload,
+      callback: (res) => {
+        console.log(res);
+      },
+    });
+  };
+
+  // 弹出删除对话框
+  showDeleteModal = (text, record) => {
+    this.setState({
+      deleteModalVisiable: true,
+      currentEnvInfo: record,
+    });
+  };
+
+  // 取消删除操作
+  handleDeleteCancel = () => {
+    this.setState({
+      deleteModalVisiable: false,
+    });
+  };
+
+  // 确定删除
+  handleDeleteOk = (record) => {
+    this.deleteEnvListData({ id: record.id });
+    this.setState({
+      deleteModalVisiable: false,
+    });
+  };
+
+  /* ==============编辑对话框功能===================*/
+  // 编辑环境的函数
+  updateEnv = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'envList/updateEnv',
+      payload,
+      callback: (res) => {
+        console.log(res);
+      },
+    });
+  };
+
+  // 弹出编辑对话框
+  showEditModal = (text, record) => {
+    console.log(record);
+    this.setState({
+      editModalVisiable: true,
+      currentEnvInfo: record,
+    });
+  };
+
+  // 编辑对话框内容变化
+  handleEditFormValueChange = (av) => {
+    console.log(av);
+    // 获取新增文件的数据
+    this.setState(() => ({
+      editEnvListData: av,
+    }));
+  };
+
+  // 确认编辑
+  handleEditOk = () => {
+    console.log('handleEditOk');
+    console.log(this.state.editEnvListData);
+    const { editEnvListData, currentEnvInfo } = this.state;
+    // 包装请求数据
+    const payload = {
+      ...editEnvListData,
+      id: currentEnvInfo.id,
+    };
+    console.log(payload);
+    this.updateEnv(payload);
+    this.setState({
+      editModalVisiable: false,
+    });
+  };
+
+  // 取消编辑
+  handleEditCancel = () => {
+    console.log('handleEditCancel');
+    this.setState({
+      editModalVisiable: false,
+    });
+  };
+
+  /** ============环境信息对话框=========== */
+  // 弹出环境信息对话框
+  showEnvInfoModal = () => {
+    this.setState({
+      envInfoModalVisiable: true,
+    });
+  };
+
+  handleEnvInfoOk = () => {
+    this.setState({
+      envInfoModalVisiable: false,
+    });
+  };
+
+  handleEnvInfoCancel = () => {
+    this.setState({
+      envInfoModalVisiable: false,
+    });
+  };
+  render() {
+    const {
+      selectedRowKeys,
+      columns,
+      addModalVisiable,
+      deleteModalVisiable,
+      currentEnvInfo,
+      editModalVisiable,
+      envInfoModalVisiable,
+    } = this.state;
+    const { envList } = this.props;
     // 为envList数组中的每个元素添加一个key属性
     envList.map((item) => {
       // console.log(item);
@@ -226,19 +379,13 @@ export default class EnvList extends Component {
             </Button>
           </div>
         </Card>
-        {/* <Modal
-          title="编辑"
-          visible={this.state.editModalVisiable}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          width={1200}
-        >
-        </Modal> */}
+        {/* 新增对话框 */}
         <Modal
           title="新增"
           visible={addModalVisiable}
           onOk={this.handleAddOk}
           onCancel={this.handleAddCancel}
+          okText="修改"
         >
           <Form
             {...formItemLayout}
@@ -275,6 +422,76 @@ export default class EnvList extends Component {
             </Form.Item>
           </Form>
           {/* {this.renderAddForm()} */}
+        </Modal>
+        {/* 删除对话框 */}
+        <Modal
+          title="删除"
+          visible={deleteModalVisiable}
+          onOk={() => {
+            this.handleDeleteOk(currentEnvInfo);
+          }}
+          onCancel={this.handleDeleteCancel}
+        >
+          <div>确定删除{currentEnvInfo.env_name}?</div>
+        </Modal>
+        {/* 编辑对话框 */}
+        {editModalVisiable && (
+          <Modal
+            title="编辑"
+            visible={editModalVisiable}
+            onOk={() => {
+              this.handleEditOk();
+            }}
+            onCancel={this.handleEditCancel}
+            // width={1200}
+          >
+            <Form
+              {...formItemLayout}
+              onValuesChange={(cv, av) => {
+                this.handleEditFormValueChange(av);
+              }}
+              initialValues={currentEnvInfo}
+            >
+              <Form.Item
+                name="env_name"
+                label="环境名称"
+                rules={[{ required: true, message: '请输入环境名称!' }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                name="base_url"
+                label="环境地址"
+                rules={[{ required: true, message: '请输入环境地址!' }]}
+              >
+                <Input placeholder="http://127.0.0.1:8000/" />
+              </Form.Item>
+
+              <Form.Item name="description" label="简要描述">
+                <Input />
+              </Form.Item>
+
+              <Form.Item name="is_valid" label="状态">
+                <Switch
+                  checkedChildren="启用"
+                  unCheckedChildren="禁用"
+                  checked={currentEnvInfo.is_valid}
+                />
+              </Form.Item>
+            </Form>
+          </Modal>
+        )}
+        {/* 环境信息编辑框 */}
+        <Modal
+          title="环境信息"
+          visible={envInfoModalVisiable}
+          onOk={this.handleEnvInfoOk}
+          onCancel={this.handleEnvInfoCancel}
+          width={1200}
+        >
+          {/* <Editor /> */}
+          {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
         </Modal>
       </>
     );

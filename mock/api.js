@@ -192,4 +192,10 @@ export default {
       context: '@paragraph()',
     }),
   ],
+  //
+  'POST /api/updateparamsfilecode': (req, res) => {
+    // 添加跨域请求头
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end('update paramsFIle ok');
+  },
 };
