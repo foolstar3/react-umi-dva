@@ -1,14 +1,9 @@
-
 import React, { Component } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'umi';
-import {
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
-} from '@ant-design/icons';
+import * as Icon from '@ant-design/icons';
+import './index.less';
 const { SubMenu } = Menu;
-
 
 // const MenuList = () => {
 
@@ -28,10 +23,26 @@ const navMenu = {
           key: '项目列表',
           route: '/testManage/projectList',
           value: '项目列表',
+          icon: 'ProjectOutlined',
         },
-        { key: '模块列表', route: '/testManage/moduleList', value: '模块列表' },
-        { key: '用例列表', route: '/testManage/caseList', value: '用例列表' },
-        { key: '任务列表', route: '/testManage/taskList', value: '任务列表' },
+        {
+          key: '模块列表',
+          route: '/testManage/moduleList',
+          value: '模块列表',
+          icon: 'PartitionOutlined',
+        },
+        {
+          key: '用例列表',
+          route: '/testManage/caseList',
+          value: '用例列表',
+          icon: 'CalendarOutlined',
+        },
+        {
+          key: '任务列表',
+          route: '/testManage/taskList',
+          value: '任务列表',
+          icon: 'ContainerOutlined',
+        },
       ],
     },
     {
@@ -39,9 +50,24 @@ const navMenu = {
       title: '数据管理',
       icon: 'LaptopOutlined',
       children: [
-        { key: '环境列表', route: '/dataManage/envList', value: '环境列表' },
-        { key: '参数文件', route: '/dataManage/paramsFile', value: '参数文件' },
-        { key: '全局变量', route: '/dataManage/globalVar', value: '全局变量' },
+        {
+          key: '环境列表',
+          route: '/dataManage/envList',
+          value: '环境列表',
+          icon: 'EnvironmentOutlined',
+        },
+        {
+          key: '参数文件',
+          route: '/dataManage/paramsFile',
+          value: '参数文件',
+          icon: 'FileTextOutlined',
+        },
+        {
+          key: '全局变量',
+          route: '/dataManage/globalVar',
+          value: '全局变量',
+          icon: 'GlobalOutlined',
+        },
       ],
     },
     {
@@ -53,6 +79,7 @@ const navMenu = {
           key: '查看报告',
           route: '/reportManage/viewReport',
           value: '查看报告',
+          icon: 'FundViewOutlined',
         },
       ],
     },
@@ -62,7 +89,7 @@ class Sider extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      navMenu,
+      menuKey: '',
     };
   }
   render() {
@@ -79,18 +106,21 @@ class Sider extends Component {
           theme="dark"
           // defaultSelectedKeys={this.state.navMenu.defaultSelectedKeys}
           // defaultOpenKeys={this.state.navMenu.defaultOpenKeys}
-          style={{ height: '100%', borderRight: 0 }}
+          style={{ height: '100vh', borderRight: 0 }}
         >
           {navMenu.children.map((item) => {
-            const icon = item.icon;
+            const icon = React.createElement(Icon[item.icon], {
+              style: { fontSize: '16px' },
+            });
+            // console.log(icon);
             return (
-              /* todo
-                      icon无法显示
-                  */
-              <SubMenu key={item.key} title={item.title}>
+              <SubMenu key={item.key} title={item.title} icon={icon}>
                 {item.children.map((i) => {
+                  const itemIcon = React.createElement(Icon[i.icon], {
+                    style: { fontSize: '16px' },
+                  });
                   return (
-                    <Menu.Item key={i.key}>
+                    <Menu.Item key={i.key} icon={itemIcon}>
                       <Link to={i.route}>{i.value}</Link>
                     </Menu.Item>
                   );

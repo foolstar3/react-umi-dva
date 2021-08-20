@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
@@ -46,10 +45,10 @@ export default class Chart extends Component {
     return (
       <>
         <div style={{ display: 'flex' }}>
-          <div id="main" style={{ width: 800, height: 400 }}></div>
-          <div id="pie" style={{ width: 800, height: 400 }}></div>
+          <div id="main" style={{ width: 700, height: 400 }}></div>
+          <div id="pie" style={{ width: 700, height: 400 }}></div>
         </div>
-        <div id="gauge" style={{ width: 800, height: 350 }}></div>
+        <div id="gauge" style={{ width: 700, height: 350 }}></div>
       </>
     );
   }

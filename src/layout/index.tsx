@@ -1,4 +1,3 @@
-
 import { Layout, PageHeader, ConfigProvider } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 import Header from '@/layout/header';
@@ -18,6 +17,7 @@ export default function IndexPage(props) {
           <Layout className="LayoutPadding">
             <PageHeader
               className="pageHeaderPadding"
+              width={75}
               title={
                 <div className="flex">
                   <Link to="/">

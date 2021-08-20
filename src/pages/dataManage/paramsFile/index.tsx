@@ -105,9 +105,6 @@ export default class ParamsFile extends Component {
       },
       currentEditParamsFile: {},
     };
-    // 将函数的this绑定到class组件上
-    this.handleOk = this.handleOk.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
 
     const { dispatch } = this.props;
     dispatch({
@@ -151,6 +148,8 @@ export default class ParamsFile extends Component {
     });
     // console.log(this.state.currentEditParamsFile);
   };
+
+  // 处理删除函数
   handleDelete = (text) => {
     console.log(text, 'text');
     const { dispatch } = this.props;
@@ -159,13 +158,15 @@ export default class ParamsFile extends Component {
       payload: text.key,
     });
   };
-  handleOk = () => {
+
+  // 处理编辑对话框显隐函数
+  handleEditOk = () => {
     this.setState({
       editModalVisiable: false,
     });
   };
 
-  handleCancel = () => {
+  handleEditCancel = () => {
     this.setState({
       editModalVisiable: false,
     });
@@ -212,18 +213,6 @@ export default class ParamsFile extends Component {
 
   onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
-  };
-  onGenderChange = (value: string) => {
-    switch (value) {
-      case 'male':
-        this.formRef.current!.setFieldsValue({ note: 'Hi, man!' });
-        return;
-      case 'female':
-        this.formRef.current!.setFieldsValue({ note: 'Hi, lady!' });
-        return;
-      case 'other':
-        this.formRef.current!.setFieldsValue({ note: 'Hi there!' });
-    }
   };
   // 文件上传
   normFile = (e: any) => {
@@ -309,11 +298,11 @@ export default class ParamsFile extends Component {
         <Form.Item
           name="project_name"
           label="项目名称"
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: '请输入项目名称!' }]}
         >
           <Select
             placeholder="请选择"
-            onChange={this.onGenderChange}
+            // onChange={this.handle}
             allowClear
           >
             {this.props.paramsFileData.map((item) => {
@@ -341,14 +330,13 @@ export default class ParamsFile extends Component {
   };
   componentDidMount() {}
   render() {
-    console.log(this.props.paramsFileCode);
+    const { columns, editModalVisiable, addModalVisiable } = this.state;
+    const { paramsFileData, paramsFileCode } = this.props;
+    // console.log(this.props.paramsFileCode);
     return (
       <>
         <Card bordered={false}>
-          <Table
-            columns={this.state.columns}
-            dataSource={this.props.paramsFileData}
-          />
+          <Table columns={columns} dataSource={paramsFileData} />
           <div className="btn-postion">
             <Button
               type="primary"
@@ -361,17 +349,17 @@ export default class ParamsFile extends Component {
         </Card>
         <Modal
           title="编辑"
-          visible={this.state.editModalVisiable}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          visible={editModalVisiable}
+          onOk={this.handleEditOk}
+          onCancel={this.handleEditCancel}
           width={1200}
         >
-          <Editor content={this.props.paramsFileCode} />
+          <Editor content={paramsFileCode} />
           {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
         </Modal>
         <Modal
           title="新增项目"
-          visible={this.state.addModalVisiable}
+          visible={addModalVisiable}
           onOk={this.handleAddOk}
           onCancel={this.handleAddCancel}
         >
