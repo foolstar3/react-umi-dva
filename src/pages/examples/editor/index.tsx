@@ -22,31 +22,41 @@ import 'codemirror/addon/fold/brace-fold.js';
 import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchBrackets';
-// 获取编辑器内部代码
-import { getEditorCode } from '@/services/getEditorCode';
 import { connect } from 'umi';
 
 // @connect(({editor})=>({
 //   codeEditorFlag: editor.codeEditorFlag,
 // }))
 // 参考https://blog.csdn.net/JLU_Lei/article/details/80259697
+
+@connect(({ paramsFile }) => ({
+  code: paramsFile.paramsFileCode,
+}))
 export default class Editor extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      code: '',
-    };
+    // this.state = {
+    //   code: '',
+    // };
+    this.getEditorCode = this.getEditorCode.bind(this);
+  }
 
-    // 通过api获取编辑器内部代码
-    getEditorCode().then((res) => {
-      // console.log(res);
-      this.setState(() => ({
-        code: res.code,
-      }));
+  // 更新编辑器中的code
+  getEditorCode(value) {
+    // console.log(value);
+    const { dispatch } = this.props;
+    // 同步到models中
+    dispatch({
+      type: 'paramsFile/setEditorCode',
+      payload: value,
     });
   }
+
   componentDidMount() {}
   componentDidUpdate() {}
+  componentWillReceiveProps(prevProps) {
+    console.log(prevProps);
+  }
   render() {
     const { content } = this.props;
 
@@ -55,6 +65,7 @@ export default class Editor extends Component {
     console.log(content.context);
     return (
       <CodeMirror
+        ref="editor"
         height={500}
         value={content.context}
         options={{
@@ -69,7 +80,8 @@ export default class Editor extends Component {
           lineNumbers: true,
         }}
         onChange={(editor, data, value) => {
-          console.log(data, value);
+          // console.log(data, value);
+          this.getEditorCode(value);
         }}
       />
     );
