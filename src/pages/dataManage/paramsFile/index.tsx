@@ -160,13 +160,13 @@ export default class ParamsFile extends Component {
   };
 
   // 处理编辑对话框显隐函数
-  handleOk = () => {
+  handleEditOk = () => {
     this.setState({
       editModalVisiable: false,
     });
   };
 
-  handleCancel = () => {
+  handleEditCancel = () => {
     this.setState({
       editModalVisiable: false,
     });
@@ -350,8 +350,8 @@ export default class ParamsFile extends Component {
         <Modal
           title="编辑"
           visible={editModalVisiable}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          onOk={this.handleEditOk}
+          onCancel={this.handleEditCancel}
           width={1200}
         >
           {/* <Editor content={paramsFileCode} /> */}

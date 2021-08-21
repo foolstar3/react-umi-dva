@@ -187,25 +187,15 @@ export default {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.end('delete file ok');
   },
-  // 'POST /api/getparamsfilecode': [
-  //   Mock.mock({
-  //     context: '@paragraph()',
-  //   }),
-  // ],
-  '/api/getenvlist': {
-    code: 0,
-    data: [
-      Mock.mock({
-        data: [
-          {
-            env_name: '@word()',
-            env_address: '@ip()',
-            desc: '@paragraph',
-            status: '@booleans',
-            create_time: '@datetime(yyyy-mm-dd hh:mm:ss)',
-          },
-        ],
-      }),
-    ],
+  'POST /api/getparamsfilecode': [
+    Mock.mock({
+      context: '@paragraph()',
+    }),
+  ],
+  //
+  'POST /api/updateparamsfilecode': (req, res) => {
+    // 添加跨域请求头
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end('update paramsFIle ok');
   },
 };

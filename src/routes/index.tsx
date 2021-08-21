@@ -7,6 +7,7 @@ const example_routes = [
       {
         routes: [
           { path: '/', component: '@/pages' },
+          { path: '/user/:id', component: '@/pages/examples/alert' },
           { path: '/testManage/projectList', component: '@/pages/examples' },
           {
             path: '/testManage/moduleList',

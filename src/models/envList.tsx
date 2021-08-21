@@ -1,4 +1,10 @@
-import { getEnvList, toggleSwitch } from '@/services/envList';
+import {
+  getEnvList,
+  toggleSwitch,
+  addEnvList,
+  deleteEnvList,
+  updateEnv,
+} from '@/services/envList';
 
 export default {
   namespace: 'envList',
@@ -28,6 +34,11 @@ export default {
         ...newState,
       };
     },
+    addEnvListData(state, { payload }) {
+      return {
+        ...state,
+      };
+    },
   },
   effects: {
     *getEnvList({ payload, callback }, { call, put }) {
@@ -50,6 +61,23 @@ export default {
       if (callback) {
         callback(res);
       }
+    },
+    *addEnvList({ payload, callback }, { call, put }) {
+      const res = yield call(addEnvList, payload);
+      yield put({
+        type: 'addEnvListData',
+      });
+      if (callback) {
+        callback(res);
+      }
+    },
+    *deleteEnvList({ payload, callback }, { call, put }) {
+      const res = yield call(deleteEnvList, payload);
+      // console.log(res);
+    },
+    *updateEnv({ payload, callback }, { call, put }) {
+      const res = yield call(updateEnv, payload);
+      console.log(res);
     },
   },
 };
