@@ -354,7 +354,7 @@ export default class ParamsFile extends Component {
           onCancel={this.handleCancel}
           width={1200}
         >
-          <Editor content={paramsFileCode} />
+          {/* <Editor content={paramsFileCode} /> */}
           {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
         </Modal>
         <Modal

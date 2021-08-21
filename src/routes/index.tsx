@@ -1,4 +1,3 @@
-
 // antd组件实例路由
 const example_routes = [
   {
@@ -30,7 +29,7 @@ const example_routes = [
           // {path: '/dataManage/mockList', component: '@/pages/examples/button', },
           {
             path: '/reportManage/viewReport',
-            component: '@/pages/examples/editor',
+            component: '@/pages/examples/tab',
           },
         ],
       },

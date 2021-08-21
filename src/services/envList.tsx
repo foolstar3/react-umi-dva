@@ -1,15 +1,15 @@
 import { requestUmi } from '@/utils/request';
 
 export async function getEnvList(data) {
-  return requestUmi('/qc/24/env/', {
+  return requestUmi('/api/getenvlist', {
     method: 'GET',
-    data,
+    params: data,
   });
 }
 
 export async function toggleSwitch(data) {
   return requestUmi(`/qc/24/env/${data.id}/`, {
     method: 'PUT',
-    data,
+    params: data,
   });
 }

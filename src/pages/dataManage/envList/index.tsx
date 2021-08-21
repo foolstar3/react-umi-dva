@@ -118,7 +118,7 @@ export default class EnvList extends Component {
         },
       ],
     };
-    this.getEnvList({ page: 1 });
+    this.getEnvList();
   }
 
   /* ============table功能============== */
@@ -198,7 +198,7 @@ export default class EnvList extends Component {
   render() {
     const { selectedRowKeys, columns, addModalVisiable } = this.state;
     const { envList } = this.props;
-
+    console.log(envList);
     // 为envList数组中的每个元素添加一个key属性
     envList.map((item) => {
       // console.log(item);

@@ -1,4 +1,4 @@
-import { getEnvList, toggleSwitch } from '@/services/dataManage/envList';
+import { getEnvList, toggleSwitch } from '@/services/envList';
 
 export default {
   namespace: 'envList',
@@ -8,6 +8,7 @@ export default {
   reducers: {
     update(state, { payload }) {
       const newState = JSON.parse(JSON.stringify(state));
+      console.log(payload);
       newState.envList = payload.results;
       return {
         ...state,
@@ -39,6 +40,7 @@ export default {
         callback();
       }
     },
+
     *toggleSwitch({ payload, callback }, { call, put }) {
       const res = yield call(toggleSwitch, payload);
       yield put({

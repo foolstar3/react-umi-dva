@@ -1,20 +1,18 @@
 @import '../../themes/index.less';
 
 .header {
-  width: 120rem;
-  height: 4.17rem;
   background-color: @primary-color;
   display: grid;
   grid-template-columns: 15% 75% 10%;
+  position: fixed;
+  width: 100vw;
+  z-index: 1;
 }
 .header_title {
   margin-left: 10px;
 }
 .header_left_content {
   display: flex;
-  margin: 0.92rem 0 0.92rem 25px;
-  // height: 38px;
-  // border-right: 1px solid rgba(240, 240, 240, .8);
 }
 .header_title {
   cursor: pointer;
@@ -24,12 +22,12 @@
 }
 .header_right_content {
   display: flex;
-  margin: 11px 20px;
-  height: 38px;
   align-items: center;
   justify-content: space-around;
 }
-.user_icon, .user_info, .user_home {
+.user_icon,
+.user_info,
+.user_home {
   height: 100%;
   border-radius: 19px;
   overflow: hidden;
