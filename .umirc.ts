@@ -5,8 +5,12 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
+  base: './',
   routes,
   fastRefresh: {},
+  define: {
+    'process.env.var': 'local',
+  },
   proxy: {
     '/qc': {
       target: 'http://10.6.209.209:40001/mock',
@@ -14,5 +18,5 @@ export default defineConfig({
       pathRewrite: { '^/qc': '' },
     },
   },
-  title: `千策-API测试平台(${process.env.var})`,
+  title: `千策-API测试平台`,
 });

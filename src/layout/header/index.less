@@ -1,8 +1,10 @@
 @import '../../themes/index.less';
 
 .header {
+  position: fixed;
   width: 120rem;
-  height: 4.17rem;
+  z-index: 1;
+  height: 64px;
   background-color: @primary-color;
   display: grid;
   grid-template-columns: 15% 75% 10%;
@@ -12,7 +14,6 @@
 }
 .header_left_content {
   display: flex;
-  margin: 0.92rem 0 0.92rem 25px;
 }
 .header_title {
   cursor: pointer;
@@ -22,8 +23,6 @@
 }
 .header_right_content {
   display: flex;
-  margin: 11px 20px;
-  height: 38px;
   align-items: center;
   justify-content: space-around;
 }

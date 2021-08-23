@@ -1,6 +1,7 @@
 import { requestUmi } from '@/utils/request';
 
 export async function getEnvList(data) {
+  console.log(process.env.var);
   return requestUmi('/qc/24/env/', {
     method: 'GET',
     params: data,
@@ -33,7 +34,6 @@ export async function deleteEnvList(data) {
   });
 }
 
-updateEnv;
 export async function updateEnv(data) {
   // console.log(data);
   return requestUmi(`/qc/24/env/${data.id}/`, {

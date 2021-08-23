@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Menu } from 'antd';
+import { Menu, Layout } from 'antd';
 import { Link } from 'umi';
 import * as Icon from '@ant-design/icons';
 import './index.less';
 const { SubMenu } = Menu;
-
+const { Sider } = Layout;
 // const MenuList = () => {
 
 // }
@@ -85,7 +85,7 @@ const navMenu = {
     },
   ],
 };
-class Sider extends Component {
+class MySider extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -97,16 +97,13 @@ class Sider extends Component {
       console.log('1');
     };
     return (
-      <div
-        style={{ width: 280, height: 870 }}
-        className="site-layout-background"
-      >
+      <Sider className="site-layout-background">
         <Menu
           mode="inline"
           theme="dark"
           // defaultSelectedKeys={this.state.navMenu.defaultSelectedKeys}
           // defaultOpenKeys={this.state.navMenu.defaultOpenKeys}
-          style={{ height: '100vh', borderRight: 0 }}
+          style={{ borderRight: 0 }}
         >
           {navMenu.children.map((item) => {
             const icon = React.createElement(Icon[item.icon], {
@@ -129,8 +126,8 @@ class Sider extends Component {
             );
           })}
         </Menu>
-      </div>
+      </Sider>
     );
   }
 }
-export default Sider;
+export default MySider;
