@@ -1,6 +1,5 @@
 import { defineConfig } from 'umi';
-import routes from './src/routes'
-
+import routes from './src/routes';
 
 export default defineConfig({
   nodeModulesTransform: {
@@ -8,7 +7,6 @@ export default defineConfig({
   },
   routes,
   fastRefresh: {},
-
   proxy: {
     '/qc': {
       target: 'http://10.6.209.209:40001/mock',
@@ -16,5 +14,5 @@ export default defineConfig({
       pathRewrite: { '^/qc': '' },
     },
   },
-  title: `千策-自动化测试平台`,
+  title: `千策-API测试平台(${process.env.var})`,
 });
