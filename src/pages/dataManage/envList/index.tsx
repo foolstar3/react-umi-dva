@@ -364,11 +364,6 @@ export default class EnvList extends Component {
     return (
       <>
         <Card bordered={false}>
-          <Table
-            columns={columns}
-            rowSelection={rowSelection}
-            dataSource={envList}
-          />
           <div className="btn-postion">
             <Button
               type="primary"
@@ -378,6 +373,11 @@ export default class EnvList extends Component {
               新增
             </Button>
           </div>
+          <Table
+            columns={columns}
+            rowSelection={rowSelection}
+            dataSource={envList}
+          />
         </Card>
         {/* 新增对话框 */}
         <Modal

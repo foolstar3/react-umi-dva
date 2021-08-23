@@ -336,7 +336,6 @@ export default class ParamsFile extends Component {
     return (
       <>
         <Card bordered={false}>
-          <Table columns={columns} dataSource={paramsFileData} />
           <div className="btn-postion">
             <Button
               type="primary"
@@ -346,6 +345,7 @@ export default class ParamsFile extends Component {
               新增
             </Button>
           </div>
+          <Table columns={columns} dataSource={paramsFileData} />
         </Card>
         <Modal
           title="编辑"

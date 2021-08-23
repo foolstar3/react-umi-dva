@@ -1,11 +1,12 @@
-
 import React, { Component } from 'react';
 import './index.less';
 import ImagesUrl from '@/constant/imagesUrl';
-import { Modal } from 'antd';
+import { Modal, Layout } from 'antd';
+const { Header } = Layout;
+
 // 通过
 import logo from '../../assets/logo.png';
-class Header extends Component {
+class MyHeader extends Component {
   constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);
@@ -24,11 +25,10 @@ class Header extends Component {
   }
   handleCancel() {
     this.setState({ isModalVisible: false });
-
   }
   render() {
     return (
-      <div className="header">
+      <Header className="header">
         <div className="header_left">
           <div className="header_left_content">
             <div className="header_logo">
@@ -56,9 +56,9 @@ class Header extends Component {
         >
           <p>您确定退出登陆？</p>
         </Modal>
-      </div>
+      </Header>
     );
   }
 }
 
-export default Header;
+export default MyHeader;
