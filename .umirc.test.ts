@@ -9,6 +9,7 @@ export default defineConfig({
   define: {
     // test 环境变量
     'process.env.var': 'test',
+    'process.env.apiURL': 'http://10.6.209.209:9999/env/8',
   },
   hash: true,
   history: {
@@ -18,7 +19,7 @@ export default defineConfig({
   fastRefresh: {},
   proxy: {
     '/qc/24/env': {
-      target: 'http://10.6.209.209:9999/env/8/',
+      target: process.env.apiURL,
       changeOrigin: true,
       pathRewrite: { '^/qc/24/env': '' },
     },
