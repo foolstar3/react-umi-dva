@@ -95,7 +95,7 @@ export function requestUap(url, options) {
   return request(`${process.env.apiURL}${url}`, options);
 }
 export function requestUmi(url, options) {
-  return request(`${url}`, options);
+  return request(`${process.env.apiURL}${url}`, options);
 }
 
 export default request;
