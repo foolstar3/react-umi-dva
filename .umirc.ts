@@ -5,15 +5,20 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  base: './',
   routes,
   fastRefresh: {},
   define: {
     'process.env.var': 'local',
+    'process.env.apiURL': '',
   },
+  devServer: {
+    port: 9000,
+    host: '127.0.1.1',
+  },
+  publicPath: './',
   proxy: {
     '/qc': {
-      target: 'http://10.6.209.209:40001/mock',
+      target: 'http://10.6.209.209:40001/mock/24',
       changeOrigin: true,
       pathRewrite: { '^/qc': '' },
     },

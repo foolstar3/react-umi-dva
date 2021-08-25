@@ -9,7 +9,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 
 const { Content } = Layout;
 
-export default function IndexPage(props) {
+export default function IndexPage(props: any) {
   return (
     <ConfigProvider locale={zhCN}>
       <Layout>
@@ -33,6 +33,7 @@ export default function IndexPage(props) {
             </Content>
           </Layout>
         </Layout>
+        {process.env.var}
       </Layout>
     </ConfigProvider>
   );
