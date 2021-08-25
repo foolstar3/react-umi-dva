@@ -11,7 +11,7 @@ export default defineConfig({
 
   proxy: {
     '/qc': {
-      target: 'http://10.6.209.209:40001/mock',
+      target: 'http://10.6.209.209:40001/mock/24',
       changeOrigin: true,
       pathRewrite: { '^/qc': '' },
     },

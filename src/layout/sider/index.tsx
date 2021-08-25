@@ -104,7 +104,7 @@ class Sider extends Component {
     };
     return (
       <div
-        style={{ width: 280, height: 870 }}
+        style={{ width: 250, height: 870 }}
         className="site-layout-background"
       >
         <Menu

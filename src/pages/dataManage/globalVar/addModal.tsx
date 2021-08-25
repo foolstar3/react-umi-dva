@@ -21,17 +21,17 @@ class AddModal extends React.Component{
   handleSubmit (value: any) {
     const date = new Date();
     const dateNow = date.getFullYear() + '-'
-                    + (date.getMonth()+1) + '-'
-                    + date.getDate() + ' '
-                    + date.getHours() + ':'
+                    + (date.getMonth()+1)+'-'
+                    + date.getDate()+' '
+                    + date.getHours()+':'
                     + ((date.getMinutes() < 10) ? ('0' + date.getMinutes()) : date.getMinutes()); 
     value.create_time = dateNow 
-    const module_list = [...this.props.moduleList.list]
-    module_list.push(value)
+    const globalVar_list = [...this.props.globalVarList.list]
+    globalVar_list.push(value)
     this.props.dispatch({
-      type: 'moduleList/updateModuleList',
+      type: 'globalVarList/updateGlobalVarList',
       payload: {
-        list: module_list
+        list: globalVar_list
       }
     })
     this.props.showAddModal(false)
