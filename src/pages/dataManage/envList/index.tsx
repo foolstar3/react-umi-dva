@@ -352,11 +352,13 @@ export default class EnvList extends Component {
       envInfoModalVisiable,
     } = this.state;
     const { envList } = this.props;
-    // 为envList数组中的每个元素添加一个key属性
-    envList.map((item) => {
-      // console.log(item);
-      item.key = item.id;
-    });
+    if (envList !== undefined) {
+      // 为envList数组中的每个元素添加一个key属性
+      envList.map((item) => {
+        // console.log(item);
+        item.key = item.id;
+      });
+    }
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,

@@ -4,7 +4,7 @@ import {
   addEnvList,
   deleteEnvList,
   updateEnv,
-} from '@/services/dataManage/envList';
+} from '@/services/envList';
 
 export default {
   namespace: 'envList',

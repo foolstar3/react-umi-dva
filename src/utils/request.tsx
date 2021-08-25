@@ -94,8 +94,9 @@ request.interceptors.response.use(async (response) => {
 export function requestUap(url, options) {
   return request(`${process.env.apiURL}${url}`, options);
 }
-export function requestUmi(url, options) {
-  return request(`${process.env.apiURL}${url}`, options);
+export function requestUmi(url: any, options: any) {
+  console.log(url);
+  return request(`${url}`, options);
 }
 
 export default request;

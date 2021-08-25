@@ -9,6 +9,10 @@ export default defineConfig({
     'process.env.ENV': 'prod',
     'process.env.apiURL': 'http://10.6.209.209:9999/env/8',
   },
+  devServer: {
+    port: 9002,
+    host: 'localhost',
+  },
   history: {
     type: 'hash',
   },

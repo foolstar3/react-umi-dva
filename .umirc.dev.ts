@@ -8,7 +8,11 @@ export default defineConfig({
   define: {
     // dev 环境变量
     'process.env.var': 'dev',
-    'process.env.apiURL': 'http://10.6.209.209:9999/env/8',
+    'process.env.apiURL': 'http://10.6.209.209:40001/mock/24',
+  },
+  devServer: {
+    port: 9001,
+    host: 'localhost',
   },
   history: {
     type: 'hash',
@@ -17,10 +21,10 @@ export default defineConfig({
   routes,
   fastRefresh: {},
   proxy: {
-    '/qc/24/env': {
+    '/qc': {
       target: process.env.apiURL,
       changeOrigin: true,
-      pathRewrite: { '^/qc/24/env': '' },
+      pathRewrite: { '^/qc': '' },
     },
   },
   title: `千策-API测试平台`,
