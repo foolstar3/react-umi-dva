@@ -4,14 +4,12 @@ export default {
     namespace: 'moduleList',
     state: {
         list: [],
-        addVisible:false,
-        editVisible:false,
-        value:''
     },
     effects: {
         * getModuleList ({ payload }, { call, put }) {
             try {
                 const res = yield call(getModuleList, { ...payload } )
+                console.log('res',res.results)
                 yield put({
                     type: 'updateModuleList',
                     payload: {
@@ -28,25 +26,11 @@ export default {
                     type:'updateModuleList',
                     payload:{
                         list:payload.list,
-                        addVisible:payload.addVisible
                     }
                })
            } catch (error) {
                 console.error('...getProjectList result error', error)
            }
-        },
-        * editModal({payload},{call,put}){
-            try {
-                yield put({
-                    type:'updateModuleList',
-                    payload:{
-                        editVisible:payload.editVisible,
-                        value:payload.value
-                    }
-                })
-            } catch (error) {
-                
-            }
         },
         * editSubmit({payload},{call,put}){
             try {
@@ -54,7 +38,6 @@ export default {
                 yield put({
                     type:'updateModuleList',
                     payload:{
-                        editVisible:payload.editVisible,
                         list:payload.list
                     }
                 })
@@ -73,19 +56,7 @@ export default {
             } catch (error) {
                 
             }
-        },
-        * showAddModal({payload},{call,put}){
-            try {
-                yield put({
-                    type:'updateModuleList',
-                    payload:{
-                        addVisible:payload.addVisible
-                    }
-                })
-            } catch (error) {
-                console.error('...getProjectList result error', error)
-            }
-        },
+        }
     },
     reducers: {
         updateModuleList (state, { payload }) {

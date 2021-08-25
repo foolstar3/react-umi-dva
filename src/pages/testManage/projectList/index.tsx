@@ -1,5 +1,5 @@
 import React from 'react';
-import {  Select,Form,Input,Modal,Table, Button, Space } from 'antd';
+import {  Card,Select,Form,Input,Modal,Table, Button, Space } from 'antd';
 import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
@@ -17,10 +17,6 @@ class ProjectList extends React.Component{
     this.editModal = this.editModal.bind(this)
     this.editSubmit = this.editSubmit.bind(this)
     this.editCancel = this.editCancel.bind(this)
-
-    this.state = {
-      list: []
-    }
   }
 
   componentDidMount () {
@@ -64,7 +60,7 @@ class ProjectList extends React.Component{
   //修改项目模态框的返回键
   editCancel = () => {
     this.props.dispatch({
-      type: 'projectList/editModal',
+      type: 'projectList/updateProjectList',
       payload: {
         editVisible:false
       }
@@ -190,14 +186,17 @@ class ProjectList extends React.Component{
     ]
     return (
       <div>
-        <div className='button_addProject'>
-          <Button type='primary' onClick={this.showAddModal} icon= {<PlusCircleOutlined/>} >添加项目</Button>
-        </div>
-        <Table
-          className="components-table-demo-nested"
-          columns={columns}
-          dataSource={list}
-        />
+        <Card>
+          <div className='button_addProject'>
+            <Button type='primary' onClick={this.showAddModal} icon= {<PlusCircleOutlined/>} >添加项目</Button>
+          </div>
+          <Table
+            className="components-table-demo-nested"
+            columns={columns}
+            dataSource={[...list]}
+          />
+        </Card>
+        
         <Modal
           visible={addVisible}
           title="项目信息"
@@ -205,7 +204,7 @@ class ProjectList extends React.Component{
           footer={null}
         >
           <Form
-            name="basic"
+            name="basic_projectList"
             labelCol={{ span: 5 }}
             wrapperCol={{ span: 16 }}
             initialValues={{ remember: true }}
@@ -280,6 +279,7 @@ class ProjectList extends React.Component{
               label="项目名称"
               name="project_name"
               rules={[{ required: true, message: '请输入项目名称' }]}
+              initialValue={this.props.projectList.value.project_name}
             >
               <Input/>
             </Form.Item>
@@ -287,6 +287,7 @@ class ProjectList extends React.Component{
               label="模块数"
               name="module_count"
               rules={[{ required: true, message: '请输入用例数' }]}
+              initialValue={this.props.projectList.value.module_count}
             >
               <Input />
             </Form.Item>
@@ -294,6 +295,7 @@ class ProjectList extends React.Component{
               label="负责人"
               name="leader"
               rules={[{ required: true, message: '请输入负责人名称' }]}
+              initialValue={this.props.projectList.value.leader}
             >
               <Input />
             </Form.Item>
@@ -301,6 +303,7 @@ class ProjectList extends React.Component{
               label="测试人员"
               name="test_user"
               rules={[{ required: true, message: '请输入测试人员名称' }]}
+              initialValue={this.props.projectList.value.test_user}
             >
               <Input />
             </Form.Item>
@@ -308,6 +311,7 @@ class ProjectList extends React.Component{
               label="开发人员"
               name="dev_user"
               rules={[{ required: true, message: '请输入开发人员名称' }]}
+              initialValue={this.props.projectList.value.dev_user}
             >
               <Input />
             </Form.Item>
@@ -315,6 +319,7 @@ class ProjectList extends React.Component{
               label="简要描述"
               name="description"
               rules={[{ required: false }]}
+              initialValue={this.props.projectList.value.description}
             >
               <TextArea rows={3} />
             </Form.Item>

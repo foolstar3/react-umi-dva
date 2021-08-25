@@ -1,7 +1,71 @@
-import {  Select,Form,Input,Modal,Table, Button, Space } from 'antd';
-import './index.tsx'
-export default function editProjectModal(){
-    <Modal
+import React from 'react';
+import {  Card,Select,Form,Input,Modal,Table, Button, Space } from 'antd';
+import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import { connect } from 'umi';
+const { TextArea } = Input;
+import './index.less';
+
+class DebugTalkList extends React.Component{
+  constructor(props: {} | Readonly<{}>){
+      super(props)
+  }
+
+  componentDidMount(){
+
+  }
+
+  render(){
+    const columns = [
+      { 
+        title: '#',
+        dataIndex: 'id',
+        key:'id'
+      },
+      {
+        title:'项目名称',
+        dataIndex:'project_name',
+        key:'project_name'
+      },
+      {
+        title:'Debugtalk',
+        dataIndex:'Debugtalk',
+        key:'Debugtalk'
+      },
+      { 
+        title: '创建时间',
+        dataIndex: 'create_time',
+        key:'create_time'
+      },
+      { 
+        title: '更新时间',
+        dataIndex: 'create_time',
+        key:'create_time'
+      },
+      { title: '相关操作', 
+        dataIndex:'relateAction',
+        key:'relateAction',
+        render: (text:any, record:any)=> {
+          return (
+            <div>
+              <Space size='middle'>
+                <Button type='primary'  onClick={()=>this.editModal(record)} icon={<EditOutlined/>}>编辑</Button>
+              </Space>
+            </div>
+          )
+        }
+      }
+    ]
+
+    return(
+      <div>
+        <Card>
+          <Table
+            className="components-table-demo-nested"
+            columns={columns}
+            dataSource={[]}
+          />
+        </Card>
+        <Modal
           visible={addVisible}
           title="项目信息"
           closable={false}
@@ -63,5 +127,22 @@ export default function editProjectModal(){
               </Space>
             </Form.Item> 
           </Form>
-        </Modal>     
+        </Modal>
+
+
+        <Modal
+          visible={editVisible}
+          title="修改项目信息"
+          closable={false}
+          footer={null}
+        >
+        </Modal>          
+      </div>
+    )
+  }
 }
+
+export default connect(({ debugTalkList }) => ({
+    debugTalkList
+  }))(DebugTalkList)
+  

@@ -47,9 +47,13 @@ const routes = [
       {
         routes: [
           { path: '/', component: '@/pages' },
-          {
-            path: '/testManage/projectList',
-            component: '@/pages/testManage/projectList',
+          { 
+            path: '/testManage/projectList', 
+            component: '@/pages/testManage/projectList' 
+          },
+          { 
+            path: '/testManage/debugtalk', 
+            component: '@/pages/testManage/debugTalk' 
           },
           {
             path: '/testManage/moduleList',
