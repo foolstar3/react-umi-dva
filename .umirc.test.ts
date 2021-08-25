@@ -11,6 +11,10 @@ export default defineConfig({
     'process.env.var': 'test',
     'process.env.qcFrontUrl': 'QC_FRONT_URL_TEST',
   },
+  devServer: {
+    port: 9000,
+    host: '127.0.0.1',
+  },
   hash: true,
   history: {
     type: 'hash',
