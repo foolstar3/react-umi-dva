@@ -9,11 +9,7 @@ export default defineConfig({
   define: {
     // test 环境变量
     'process.env.var': 'test',
-    'process.env.apiURL': 'http://10.6.209.209:40001/mock/24',
-  },
-  devServer: {
-    port: 9003,
-    host: 'localhost',
+    'process.env.qcFrontUrl': 'QC_FRONT_URL_TEST',
   },
   hash: true,
   history: {
@@ -21,12 +17,5 @@ export default defineConfig({
   },
   publicPath: './',
   fastRefresh: {},
-  proxy: {
-    '/qc': {
-      target: process.env.apiURL,
-      changeOrigin: true,
-      pathRewrite: { '^/qc': '' },
-    },
-  },
   title: `千策-API测试平台`,
 });

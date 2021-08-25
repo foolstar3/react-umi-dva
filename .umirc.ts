@@ -9,18 +9,19 @@ export default defineConfig({
   fastRefresh: {},
   define: {
     'process.env.var': 'local',
-    'process.env.apiURL': 'http://10.6.209.209:40001/mock/24',
+    'process.env.apiURL': '',
   },
   devServer: {
     port: 9000,
     host: '127.0.1.1',
   },
-  // proxy: {
-  //   '/qc': {
-  //     target: process.env.apiURL,
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/qc': '' },
-  //   },
-  // },
+  publicPath: './',
+  proxy: {
+    '/qc': {
+      target: 'http://10.6.209.209:40001/mock/24',
+      changeOrigin: true,
+      pathRewrite: { '^/qc': '' },
+    },
+  },
   title: `千策-API测试平台`,
 });

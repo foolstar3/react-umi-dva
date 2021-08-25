@@ -2,7 +2,7 @@ import { requestUmi } from '@/utils/request';
 
 export async function getEnvList(data: any) {
   console.log(process.env.var);
-  return requestUmi('/qc/env', {
+  return requestUmi('/qc/env/', {
     method: 'GET',
     params: data,
   });
