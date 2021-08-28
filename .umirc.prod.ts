@@ -6,12 +6,12 @@ export default defineConfig({
     type: 'none',
   },
   define: {
-    'process.env.ENV': 'prod',
-    'process.env.qcFrontUrl': 'QC_FRONT_URL_PROD',
+    'process.env.var': 'prod',
+    'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
   },
   devServer: {
-    port: 9001,
-    host: '127.0.0.1',
+    port: 9003,
+    host: '10.6.209.209',
   },
   history: {
     type: 'hash',

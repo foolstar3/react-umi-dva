@@ -1,0 +1,9 @@
+FROM node:lts-alpine
+
+WORKDIR /mnt
+
+COPY package*.json /mnt/
+
+RUN yarn config set registry https://nexus.uihcloud.cn/repository/npm-group/ \
+  && yarn install
+
