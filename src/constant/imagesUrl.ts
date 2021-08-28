@@ -1,5 +1,6 @@
-import Logo from '@/assets/logo.png';
-import Logout from '@/assets/logout.png';
+import Logo from '../../public/images/logo.png';
+import Logout from '../../public/images/logout.png';
+
 export default {
   Logo,
   Logout,

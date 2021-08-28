@@ -6,8 +6,9 @@ import {
   FileSearchOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
+import Editor from '@/components/Editor';
+
 import { connect } from 'umi';
-import Editor from '@/pages/examples/editor';
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -36,6 +37,8 @@ export default class EnvList extends Component {
       addEnvListData: {},
       // 编辑环境列表数据
       editEnvListData: {},
+      // table加载中
+      tableLoading: true,
       // table列配置
       columns: [
         {
@@ -141,10 +144,16 @@ export default class EnvList extends Component {
 
   // 获取table数据的函数
   getEnvList = (payload) => {
+    this.setState({ tableLoading: true });
     const { dispatch } = this.props;
     dispatch({
       type: 'envList/getEnvList',
       payload,
+      callback: () => {
+        this.setState({
+          tableLoading: false,
+        });
+      },
     });
   };
 
@@ -324,9 +333,11 @@ export default class EnvList extends Component {
 
   /** ============环境信息对话框=========== */
   // 弹出环境信息对话框
-  showEnvInfoModal = () => {
+  showEnvInfoModal = (record) => {
+    console.log(record);
     this.setState({
       envInfoModalVisiable: true,
+      currentEnvInfo: record,
     });
   };
 
@@ -341,6 +352,14 @@ export default class EnvList extends Component {
       envInfoModalVisiable: false,
     });
   };
+
+  // 获取编辑器内容
+  editorCodeChange = (value) => {
+    console.log(value);
+    this.setState({
+      currentEnvInfo: value,
+    });
+  };
   render() {
     const {
       selectedRowKeys,
@@ -350,6 +369,7 @@ export default class EnvList extends Component {
       currentEnvInfo,
       editModalVisiable,
       envInfoModalVisiable,
+      tableLoading,
     } = this.state;
     const { envList } = this.props;
     if (envList !== undefined) {
@@ -379,6 +399,7 @@ export default class EnvList extends Component {
             columns={columns}
             rowSelection={rowSelection}
             dataSource={envList}
+            loading={tableLoading}
           />
         </Card>
         {/* 新增对话框 */}
@@ -485,16 +506,20 @@ export default class EnvList extends Component {
           </Modal>
         )}
         {/* 环境信息编辑框 */}
-        <Modal
-          title="环境信息"
-          visible={envInfoModalVisiable}
-          onOk={this.handleEnvInfoOk}
-          onCancel={this.handleEnvInfoCancel}
-          width={1200}
-        >
-          {/* <Editor /> */}
-          {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
-        </Modal>
+        {envInfoModalVisiable && (
+          <Modal
+            title="环境信息"
+            visible={envInfoModalVisiable}
+            onOk={this.handleEnvInfoOk}
+            onCancel={this.handleEnvInfoCancel}
+            width={1200}
+          >
+            <Editor
+              content={currentEnvInfo.env_vars}
+              onChange={(value) => this.editorCodeChange(value)}
+            />
+          </Modal>
+        )}
       </>
     );
   }

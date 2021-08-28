@@ -1,15 +1,15 @@
-import { requestUmi } from '@/utils/request';
+import { requestUap } from '@/utils/request';
 
 export async function getEnvList(data: any) {
-  console.log(process.env.var);
-  return requestUmi('/qc/env/', {
+  // console.log(data);
+  return requestUap(`/env/`, {
     method: 'GET',
     params: data,
   });
 }
 
 export async function toggleSwitch(data: any) {
-  return requestUmi(`/qc/env/${data.id}/`, {
+  return requestUap(`env/${data.id}/`, {
     method: 'PUT',
     data,
     requestType: 'form',
@@ -17,7 +17,7 @@ export async function toggleSwitch(data: any) {
 }
 
 export async function addEnvList(data: any) {
-  return requestUmi(`/qc/env`, {
+  return requestUap(`/env/`, {
     method: 'POST',
     data,
     // 对于Headers里Content-Type=application/x-www-form-urlencoded
@@ -28,7 +28,7 @@ export async function addEnvList(data: any) {
 
 export async function deleteEnvList(data: any) {
   // console.log(data);
-  return requestUmi(`/qc/env/${data.id}/`, {
+  return requestUap(`/env/${data.id}/`, {
     method: 'DELETE',
     requestType: 'form',
   });
@@ -36,7 +36,7 @@ export async function deleteEnvList(data: any) {
 
 export async function updateEnv(data: any) {
   // console.log(data);
-  return requestUmi(`/qc/${data.id}/`, {
+  return requestUap(`/env/${data.id}/`, {
     method: 'PUT',
     data,
     // 对于Headers里Content-Type=application/x-www-form-urlencoded

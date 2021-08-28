@@ -6,8 +6,8 @@ const { Header } = Layout;
 
 // 通过
 import logo from '../../assets/logo.png';
-class MyHeader extends Component {
-  constructor(props) {
+class MyHeader extends Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.showModal = this.showModal.bind(this);
     this.handleOk = this.handleOk.bind(this);

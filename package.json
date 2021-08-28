@@ -32,6 +32,8 @@
     "react": "17.x",
     "react-dom": "17.x",
     "react-router-breadcrumbs-hoc": "^4.0.1",
+    "codemirror": "^5.62.2",
+    "react-codemirror2": "^7.2.1",
     "umi": "^3.5.15"
   },
   "devDependencies": {
@@ -39,12 +41,10 @@
     "@types/react-dom": "^17.0.0",
     "@umijs/preset-react": "^1.8.22",
     "@umijs/test": "^3.5.15",
-    "codemirror": "^5.62.2",
     "cross-env": "^7.0.3",
     "lint-staged": "^10.0.7",
     "mockjs": "^1.1.0",
     "prettier": "^2.2.0",
-    "react-codemirror2": "^7.2.1",
     "typescript": "^4.1.2",
     "yorkie": "^2.0.0"
   }

@@ -8,7 +8,7 @@ export default defineConfig({
   define: {
     // dev 环境变量
     'process.env.var': 'dev',
-    'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
+    'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
   },
   devServer: {
     port: 9002,

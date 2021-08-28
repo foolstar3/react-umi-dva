@@ -20,7 +20,7 @@ import {
 import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
 import { addFile } from '@/services/getParmsFile';
-import Editor from '@/pages/examples/editor';
+// import Editor from '@/pages/examples/editor';
 import './index.less';
 const { Option } = Select;
 
@@ -28,7 +28,7 @@ const { Option } = Select;
   paramsFileData: paramsFile.paramsFileList,
   paramsFileCode: paramsFile.paramsFileCode,
 }))
-export default class ParamsFile extends Component {
+export default class ParamsFile extends Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,6 +38,8 @@ export default class ParamsFile extends Component {
       editModalVisiable: false,
       // 添加对话框显隐
       addModalVisiable: false,
+      // table加载中
+      tableLoading: true,
       // 参数文件表格列配置
       columns: [
         {
@@ -79,7 +81,7 @@ export default class ParamsFile extends Component {
                 type="primary"
                 icon={<EditOutlined />}
                 onClick={() => {
-                  this.handleEdit(text, record);
+                  this.showEditModal(text, record);
                 }}
               >
                 编辑
@@ -111,6 +113,9 @@ export default class ParamsFile extends Component {
       type: 'paramsFile/getParamsFileListData',
       callback: (res) => {
         // console.log(res);
+        this.setState({
+          tableLoading: false,
+        });
       },
     });
     // 新增项目对话框form布局配置
@@ -135,8 +140,8 @@ export default class ParamsFile extends Component {
   }
 
   // 处理编辑函数
-  handleEdit = (text, record) => {
-    // console.log(text);
+  showEditModal = (text, record) => {
+    console.log(text);
     this.setState(() => ({
       currentEditParamsFile: text,
       editModalVisiable: true,
@@ -330,7 +335,8 @@ export default class ParamsFile extends Component {
   };
   componentDidMount() {}
   render() {
-    const { columns, editModalVisiable, addModalVisiable } = this.state;
+    const { columns, editModalVisiable, addModalVisiable, tableLoading } =
+      this.state;
     const { paramsFileData, paramsFileCode } = this.props;
     // console.log(this.props.paramsFileCode);
     return (
@@ -345,7 +351,11 @@ export default class ParamsFile extends Component {
               新增
             </Button>
           </div>
-          <Table columns={columns} dataSource={paramsFileData} />
+          <Table
+            columns={columns}
+            dataSource={paramsFileData}
+            loading={tableLoading}
+          />
         </Card>
         <Modal
           title="编辑"
@@ -354,7 +364,7 @@ export default class ParamsFile extends Component {
           onCancel={this.handleEditCancel}
           width={1200}
         >
-          <Editor content={paramsFileCode} />
+          {/* <Editor content={paramsFileCode} /> */}
           {/* {this.renderEditForm(this.state.currentEditParamsFile)} */}
         </Modal>
         <Modal
