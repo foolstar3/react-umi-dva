@@ -11,10 +11,6 @@ export default defineConfig({
     'process.env.var': 'test',
     'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
   },
-  // devServer: {
-  //   port: 9003,
-  //   host: '10.6.209.209',
-  // },
   hash: true,
   history: {
     type: 'hash',
