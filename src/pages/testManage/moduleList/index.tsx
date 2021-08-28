@@ -4,6 +4,7 @@ import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icon
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
+import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
 //获取接口参数
@@ -13,7 +14,8 @@ class ModuleList extends React.Component{
     this.handleDelete = this.handleDelete.bind(this)
     this.showAddModal = this.showAddModal.bind(this)
     this.handleCreateModule = this.handleCreateModule.bind(this)
-    this.editModal = this.editModal.bind(this)
+    this.handleEditModal = this.handleEditModal.bind(this)
+    this.showEditModal = this.showEditModal.bind(this)
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -30,7 +32,7 @@ class ModuleList extends React.Component{
     })
   }
 
-  //添加按钮模态框
+  //添加模态框，提交时传过来的子组件——模态框的返回值
   showAddModal (childModalState: any) {
     console.log('childModalState', childModalState)
     this.setState({
@@ -46,12 +48,18 @@ class ModuleList extends React.Component{
 
 
   //编辑的地方弹出模态框
-  editModal (record:any, childModalState: any) {
+  handleEditModal (record:any) {
+    console.log('record',record)
     this.setState({
-      editVisible: childModalState,
+      editVisible: true,
       tempValue: record
     })
-
+  }
+  //子模块--模态框传值
+  showEditModal(childModalState: any){
+    this.setState({
+      editVisible : childModalState
+    })
   }
 
   //模块列表删除按钮
@@ -113,12 +121,12 @@ class ModuleList extends React.Component{
       { title: '相关操作', 
         dataIndex:'relateAction',
         key:'relateAction',
-        render: (_: any,record: any)=> {
+        render: (_: any,record: any) => {
           return (
             <div>
-              <Space size='middle'>
-                <Button type='primary'  onClick={()=>this.editModal(record)} icon={<EditOutlined/>}>编辑</Button>
-                <Button type='primary' danger onClick={() => this.handleDelete(record)} icon={<DeleteOutlined/>}>删除</Button>
+              <Space size = 'middle'>
+                <Button type = 'primary'  onClick = { () => this.handleEditModal(record) } icon = { <EditOutlined/> }>编辑</Button>
+                <Button type = 'primary' danger onClick = { () => this.handleDelete(record) } icon = {<DeleteOutlined/>}>删除</Button>
               </Space>
             </div>
           )
@@ -127,28 +135,28 @@ class ModuleList extends React.Component{
     ]   
     return (
       <div>
+        <SearchModal/>
         <Card>
-        <div className='button_addModule'>
-            <Button type='primary' onClick={this.handleCreateModule} icon= {<PlusCircleOutlined/>} >添加模块</Button>
+          <div className = 'button_addModule'>
+            <Button type = 'primary' onClick = { this.handleCreateModule } icon = { <PlusCircleOutlined/> } >添加模块</Button>
           </div>
           <Table
-            className="components-table-demo-nested"
-            columns={columns}
-            dataSource={[...list]}
+            className = "components-table-demo-nested"
+            columns = { columns }
+            dataSource = { [...list] }
           />
         </Card>  
       
-      <AddModal 
-        showAddModal = {this.showAddModal}
-        addVisible = {this.state.addVisible}
-      />
-      <EditModal 
-        editModal = {this.editModal}
-        editVisible = {this.state.editVisible}
-        temValue = {this.state.tempValue}
-      />
-
-    </div>
+        <AddModal 
+          showAddModal = { this.showAddModal }
+          addVisible = { this.state.addVisible }
+        />
+        <EditModal 
+          editModal = { this.showEditModal }
+          editVisible = { this.state.editVisible }
+          tempValue = { this.state.tempValue }
+        />
+      </div>
       
     )
   }

@@ -8,9 +8,6 @@ class AddModal extends React.Component{
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
-    this.state = {
-      addVisible: true
-    }
   }
 
   componentDidMount(){

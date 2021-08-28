@@ -5,7 +5,7 @@ import { connect } from 'umi';
 
 class AddModal extends React.Component{
   constructor(props: {} | Readonly<{}>){
-    super(props);
+    super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
     this.state = {
@@ -60,9 +60,9 @@ class AddModal extends React.Component{
           
         >
           <Form.Item
-            label = "模块名称"
-            name = "module_name"
-            rules = {[{ required: true, message: '请输入模块名称' }]}
+            label = "参数名称"
+            name = "var_name"
+            rules = {[{ required: true, message: '请输入参数名称' }]}
           >
             <Input/>
           </Form.Item>
@@ -74,16 +74,9 @@ class AddModal extends React.Component{
             <Input/>
           </Form.Item>
           <Form.Item
-            label = "测试数"
-            name = "testcase_count"
+            label = "参数值"
+            name = "var_value"
             rules = {[{ required: true, message: '请输入测试数' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label = "测试人员"
-            name = "test_user"
-            rules = {[{ required: true, message: '请输入测试人员名称' }]}
           >
             <Input />
           </Form.Item>
@@ -107,6 +100,6 @@ class AddModal extends React.Component{
 }
 
 
-export default connect(({ moduleList }) => ({
-  moduleList
+export default connect(({ globalVarList }) => ({
+  globalVarList
   }))(AddModal)

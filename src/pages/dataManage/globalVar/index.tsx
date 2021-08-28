@@ -2,10 +2,9 @@ import React from "react";
 import { Card, Select,Form,Input,Modal,Table, Button, Space } from 'antd';
 import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
 import { connect } from 'umi';
-const { TextArea } = Input;
-import './index.less';
-// import AddModal from "./addModal";
-// import EditModal from "./editModal";
+import AddModal from "./addModal";
+import EditModal from "./editModal";
+import SearchModal from "./Search";
 //获取接口参数
 class GlobalVarList extends React.Component{
   constructor(props: {} | Readonly<{}>){
@@ -14,6 +13,7 @@ class GlobalVarList extends React.Component{
     this.showAddGlobalVar = this.showAddGlobalVar.bind(this)
     this.handleCreateGlobalVar = this.handleCreateGlobalVar.bind(this)
     this.editModal = this.editModal.bind(this)
+    this.handleEditGlobalVar = this.handleEditGlobalVar.bind(this)
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -46,12 +46,18 @@ class GlobalVarList extends React.Component{
 
 
   //编辑的地方弹出模态框
-  editModal (record:any, childModalState: any) {
+  editModal ( record:any ) {
     this.setState({
-      editVisible: childModalState,
+      editVisible: true,
       tempValue: record
     })
 
+  }
+
+  handleEditGlobalVar ( childModalState:any ){
+    this.setState({
+      editVisible: childModalState
+    })
   }
 
   //全局变量列表删除按钮
@@ -111,9 +117,23 @@ class GlobalVarList extends React.Component{
         render: (_: any,record: any)=> {
           return (
             <div>
-              <Space size='middle'>
-                <Button type='primary'  onClick={()=>this.editModal(record)} icon={<EditOutlined/>}>编辑</Button>
-                <Button type='primary' danger onClick={() => this.handleDelete(record)} icon={<DeleteOutlined/>}>删除</Button>
+              <Space size = 'middle'>
+                <Button
+                 type = 'primary'  
+                 onClick = { () => this.editModal(record) } 
+                 icon = { <EditOutlined/> }
+                 shape = 'round'
+                 >
+                  编辑
+                 </Button>
+                <Button
+                 type = 'primary' 
+                 danger onClick = { () => this.handleDelete( record ) } 
+                 icon = { <DeleteOutlined/> }
+                 shape = 'round'
+                 >
+                  删除
+                </Button>
               </Space>
             </div>
           )
@@ -122,28 +142,28 @@ class GlobalVarList extends React.Component{
     ]   
     return (
       <div>
+        <SearchModal/>
         <Card>
-        <div className='button_addModule'>
-            <Button type='primary' onClick={this.handleCreateGlobalVar} icon= {<PlusCircleOutlined/>} >添加模块</Button>
+          <div className = 'button_addModule'>
+            <Button type = 'primary' onClick = {this.handleCreateGlobalVar} icon = { <PlusCircleOutlined/> } >添加全局变量</Button>
           </div>
           <Table
-            className="components-table-demo-nested"
-            columns={columns}
-            dataSource={[...list]}
+            className = "components-table-demo-nested"
+            columns = { columns }
+            dataSource = { [...list] }
           />
         </Card>  
       
-      {/* <AddModal 
-        showAddModal = {this.showAddModal}
-        addVisible = {this.state.addVisible}
-      />
-      <EditModal 
-        editModal = {this.editModal}
-        editVisible = {this.state.editVisible}
-        temValue = {this.state.tempValue}
-      /> */}
-
-    </div>
+        <AddModal 
+        showAddModal = { this.showAddGlobalVar }
+        addVisible = { this.state.addVisible }
+        />
+        <EditModal 
+        editModal = { this.handleEditGlobalVar } 
+        editVisible = { this.state.editVisible }
+        tempValue = { this.state.tempValue }
+        /> 
+      </div>
       
     )
   }

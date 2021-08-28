@@ -1,20 +1,48 @@
 import React from 'react';
 import {  Card,Select,Form,Input,Modal,Table, Button, Space } from 'antd';
-import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
+import EditTextModal from './editTextModal'
 
 class DebugTalkList extends React.Component{
   constructor(props: {} | Readonly<{}>){
       super(props)
+      this.state = {
+        editVisible: false,
+        debugTalkContent: ''
+      }
+    this.showPythonModal = this.showPythonModal.bind(this)
+    this.showEditModal = this.showEditModal.bind(this)
   }
 
   componentDidMount(){
-
+    this.props.dispatch({
+      type: 'debugTalkList/getDebugTalkList',
+      payload: {
+        page: 1
+      }
+    })
   }
 
+  showPythonModal(record :any){
+    this.setState({
+      editVisible: true, 
+      debugTalkContent: record.debugtalk
+    })
+  }
+
+
+  showEditModal(childPythonState: any){
+    this.setState({
+      editVisible: childPythonState
+    })
+  }
+
+
   render(){
+    const { list } = this.props.debugTalkList
     const columns = [
       { 
         title: '#',
@@ -28,7 +56,7 @@ class DebugTalkList extends React.Component{
       },
       {
         title:'Debugtalk',
-        dataIndex:'Debugtalk',
+        dataIndex:'DebugTalk',
         key:'Debugtalk'
       },
       { 
@@ -47,96 +75,31 @@ class DebugTalkList extends React.Component{
         render: (text:any, record:any)=> {
           return (
             <div>
-              <Space size='middle'>
-                <Button type='primary'  onClick={()=>this.editModal(record)} icon={<EditOutlined/>}>编辑</Button>
+              <Space size = 'middle'>
+                <Button
+                  type = 'primary'  
+                  onClick = { ()=>this.showPythonModal(record) } 
+                  icon = { <EditOutlined/> }>编辑</Button>
               </Space>
             </div>
           )
         }
       }
     ]
-
     return(
       <div>
         <Card>
           <Table
-            className="components-table-demo-nested"
-            columns={columns}
-            dataSource={[]}
+            className = "components-table-demo-nested"
+            columns = { columns }
+            dataSource = { [...list] }
           />
         </Card>
-        <Modal
-          visible={addVisible}
-          title="项目信息"
-          closable={false}
-          footer={null}
-        >
-          <Form
-            name="basic"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
-            onFinish={this.handleSubmit}
-          >
-            <Form.Item
-              label="项目名称"
-              name="project_name"
-              rules={[{ required: true, message: '请输入项目名称' }]}
-            >
-              <Input/>
-            </Form.Item>
-            <Form.Item
-              label="模块数"
-              name="module_count"
-              rules={[{ required: true, message: '请输入用例数' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="负责人"
-              name="leader"
-              rules={[{ required: true, message: '请输入负责人名称' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="测试人员"
-              name="test_user"
-              rules={[{ required: true, message: '请输入测试人员名称' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="开发人员"
-              name="dev_user"
-              rules={[{ required: true, message: '请输入开发人员名称' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="简要描述"
-              name="description"
-              rules={[{ required: false }]}
-            >
-              <TextArea rows={3} />
-            </Form.Item>
-            <Form.Item>
-              <Space size='middle'>
-                <Button type="primary" htmlType="submit">提交</Button>
-                <Button onClick={this.handleCancel}>返回</Button>
-              </Space>
-            </Form.Item> 
-          </Form>
-        </Modal>
-
-
-        <Modal
-          visible={editVisible}
-          title="修改项目信息"
-          closable={false}
-          footer={null}
-        >
-        </Modal>          
+        <EditTextModal
+          showEditModal = { this.showEditModal}
+          editVisible = {this.state.editVisible}
+          debugTalkContent = {this.state.debugTalkContent}
+        />         
       </div>
     )
   }
