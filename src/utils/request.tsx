@@ -3,9 +3,9 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { formatToken } from '@/utils/utils';
+// import { formatToken } from '@/utils/utils';
 import { notification } from 'antd';
-//  import router from 'umi/router';
+import { history } from 'umi';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -36,7 +36,7 @@ const errorHandler = (error) => {
     if (status === 401) {
       delete localStorage.userId;
       localStorage.setItem('fieldsChange', false);
-      router.push('/login');
+      history.push('/login');
     } else {
       notification.error({
         message: '请求错误',
@@ -95,9 +95,6 @@ export function requestUap(url, options) {
   return request(`${process.env.qcFrontUrl}${url}`, options);
 }
 export function requestUmi(url: any, options: any) {
-  // console.log(url, options);
-  // if (${process.env.apiURL})
-  // console.log(${process.env.apiURL});
   return request(url, options);
 }
 

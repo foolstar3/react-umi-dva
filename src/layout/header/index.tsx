@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import './index.less';
+import { history } from 'umi';
 import ImagesUrl from '@/constant/imagesUrl';
+import './index.less';
 import { Modal, Layout } from 'antd';
 const { Header } = Layout;
 
@@ -17,10 +18,11 @@ class MyHeader extends Component<any, any> {
     };
   }
   showModal() {
-    console.log('show');
+    // console.log('show');
     this.setState({ isModalVisible: true });
   }
   handleOk() {
+    history.push('/login');
     this.setState({ isModalVisible: false });
   }
   handleCancel() {
