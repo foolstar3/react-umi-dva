@@ -41,13 +41,16 @@ class ViewReport extends Component<any, any> {
 
   deleteReport = (payload: any) => {
     const { dispatch } = this.props;
-    console.log(payload);
-    // !!!!!dispatch失败
     dispatch({
       type: 'report/deleteReport',
       payload,
       callback: () => {
         console.log('deleteReport');
+        /**
+         * todo
+         * 删除成功
+         * 删除失败
+         */
       },
     });
   };
