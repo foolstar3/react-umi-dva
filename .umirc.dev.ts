@@ -5,24 +5,20 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  routes,
-  fastRefresh: {},
   define: {
     // dev 环境变量
     'process.env.var': 'dev',
-    'process.env.PORT': 9000,
-    'process.env.HOST': 127.0.0.1
+    'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
   },
-  devSever: {
-    port: process.env.PORT,
-    host: process.env.HOST,
+  devServer: {
+    port: 9001,
+    host: '10.6.209.209',
   },
-  proxy: {
-    '/qc': {
-      target: 'http://10.6.209.209:40001/mock',
-      changeOrigin: true,
-      pathRewrite: { '^/qc': '' },
-    },
+  history: {
+    type: 'hash',
   },
-  title: `千策-API测试平台(${process.env.var})`,
+  publicPath: './',
+  routes,
+  fastRefresh: {},
+  title: `千策-API测试平台-dev`,
 });

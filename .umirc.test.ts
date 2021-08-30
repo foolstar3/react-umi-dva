@@ -16,12 +16,12 @@ export default defineConfig({
     // test 环境变量
     'process.env.var': 'test',
   },
-  proxy: {
-    '/qc': {
-      target: 'http://10.6.209.209:40001/mock',
-      changeOrigin: true,
-      pathRewrite: { '^/qc': '' },
-    },
+
+  devServer: {
+    port: 9002,
+    host: '10.6.209.209',
   },
-  title: `千策-API测试平台(${process.env.var})`,
+  hash: true,
+
+  title: `千策-API测试平台-test`,
 });

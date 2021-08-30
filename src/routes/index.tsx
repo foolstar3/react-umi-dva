@@ -79,7 +79,6 @@ const routes = [
             path: '/dataManage/globalVar',
             component: '@/pages/dataManage/globalVar',
           },
-          // {path: '/dataManage/mockList', component: '@/pages/examples/button', },
           {
             path: '/reportManage/viewReport',
             component: '@/pages/reportManage',

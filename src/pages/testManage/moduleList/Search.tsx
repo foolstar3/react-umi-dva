@@ -15,7 +15,6 @@ const SearchModel = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
-    console.log('value', value.rangeDateTime[1]._d)
     props.dispatch({
       type: 'moduleList/getModuleList',
       payload: {

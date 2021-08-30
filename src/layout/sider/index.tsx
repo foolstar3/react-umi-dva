@@ -3,6 +3,10 @@ import { Menu } from 'antd';
 import { Link } from 'umi';
 import * as Icon from '@ant-design/icons';
 import './index.less';
+interface Icon {
+  text: 'text';
+}
+
 const { SubMenu } = Menu;
 
 // const MenuList = () => {
@@ -91,8 +95,9 @@ const navMenu = {
     },
   ],
 };
-class Sider extends Component {
-  constructor(props) {
+
+class MySider extends Component {
+  constructor(props: any) {
     super(props);
     this.state = {
       menuKey: '',
@@ -139,4 +144,4 @@ class Sider extends Component {
     );
   }
 }
-export default Sider;
+export default MySider;

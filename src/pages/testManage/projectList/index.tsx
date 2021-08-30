@@ -175,8 +175,22 @@ class ProjectList extends React.Component{
           return (
             <div>
               <Space size='middle'>
-                <Button type = 'primary'  onClick = { () => this.editModal(record) } icon = { <EditOutlined/> }>编辑</Button>
-                <Button type = 'primary' danger onClick = { () => this.handleDelete(record)} icon = {<DeleteOutlined/> }>删除</Button>
+                <Button
+                  type = 'primary'  
+                  onClick = { () => this.editModal(record) } 
+                  icon = { <EditOutlined/> }
+                  shape = 'round'
+                >
+                  编辑
+                </Button>
+                <Button 
+                  type = 'primary' danger 
+                  onClick = { () => this.handleDelete(record)} 
+                  icon = {<DeleteOutlined/> }
+                  shape = 'round'
+                >
+                  删除
+                </Button>
               </Space>
             </div>
           )

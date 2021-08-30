@@ -1,34 +1,34 @@
-import { requestUmi } from '@/utils/request';
+import { requestUap } from '@/utils/request';
 
 export async function getParamsFile() {
-  return requestUmi('/api/getparamsfile', {
+  return requestUap('/api/getparamsfile', {
     method: 'GET',
   });
 }
 
 export async function addFile(data) {
-  return requestUmi('/api/addfile', {
+  return requestUap('/api/addfile', {
     method: 'post',
     data,
   });
 }
 
 export async function deleteFile(data) {
-  return requestUmi('/api/deletefile', {
+  return requestUap('/api/deletefile', {
     method: 'delete',
     data,
   });
 }
 
 export async function getParamsFileCode(data) {
-  return requestUmi('/api/getparamsfilecode', {
+  return requestUap('/api/getparamsfilecode', {
     method: 'post',
     data,
   });
 }
 
 export async function updateParamsFileCode(data) {
-  return requestUmi('/api/updateparamsfilecode', {
+  return requestUap('/api/updateparamsfilecode', {
     method: 'post',
     data,
   });

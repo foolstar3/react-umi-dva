@@ -23,50 +23,30 @@ import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets';
 import { connect } from 'umi';
 
-// @connect(({editor})=>({
-//   codeEditorFlag: editor.codeEditorFlag,
-// }))
 // 参考https://blog.csdn.net/JLU_Lei/article/details/80259697
 
-@connect(({ paramsFile }) => ({
-  code: paramsFile.paramsFileCode,
-}))
 export default class Editor extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   code: '',
-    // };
-    this.getEditorCode = this.getEditorCode.bind(this);
   }
 
-  // 更新编辑器中的code
+  // 输入变化时获取编辑器中的code
   getEditorCode(value) {
+    const { dispatch, onChange } = this.props;
     // console.log(value);
-    const { dispatch } = this.props;
-    // 同步到models中
-    dispatch({
-      type: 'paramsFile/setEditorCode',
-      payload: value,
-    });
+    onChange(value);
   }
 
-  componentDidMount() {}
-  componentDidUpdate() {}
-  componentWillReceiveProps(prevProps) {
-    console.log(prevProps);
-  }
   render() {
     const { content } = this.props;
 
     // const {payload} = content
     // const {res} = payload
-    console.log(content.context);
+    // console.log(content.context);
     return (
       <CodeMirror
         ref="editor"
-        height={500}
-        value={content.context}
+        value={content}
         options={{
           mode: {
             // json编辑器模式

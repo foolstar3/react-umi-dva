@@ -1,14 +1,14 @@
-import { requestUmi } from "@/utils/request";
+import { requestUap } from "@/utils/request";
 
 export async function getDebugTalkList(data) {
-    return requestUmi(`/qc/debugtalk/`,{
+    return requestUap(`/debugtalk/`,{
         method: 'GET',
         params: data
     })
 }
 
 export async function updateDebugTalkList(data) {
-    return requestUmi(`/qc/debugtalk/${data.id}/`,{
+    return requestUap(`/debugtalk/${data.id}/`,{
         method: 'PUT',
         data,
         requestType: 'form'

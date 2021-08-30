@@ -79,7 +79,11 @@ class DebugTalkList extends React.Component{
                 <Button
                   type = 'primary'  
                   onClick = { ()=>this.showPythonModal(record) } 
-                  icon = { <EditOutlined/> }>编辑</Button>
+                  icon = { <EditOutlined/> }
+                  shape = 'round'
+                >
+                  编辑
+                </Button>
               </Space>
             </div>
           )

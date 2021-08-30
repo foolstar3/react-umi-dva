@@ -1,15 +1,15 @@
-import { requestUmi } from "@/utils/request";
+import { requestUap } from "@/utils/request";
 
 
 export async function getGlobalVarList(data){
-    return requestUmi(`/qc/globalvar/`,{
+    return requestUap(`/globalvar/`,{
         method:'GET',
         params:data,
     }); 
 }
 
 export async function addGlobalVar(data){
-    return requestUmi('/qc/globalvar/',{
+    return requestUap('/globalvar/',{
         method:'POST',
         data,
         requestType:'form',
@@ -17,7 +17,7 @@ export async function addGlobalVar(data){
 }
 
 export async function deleteGlobalVar(data){
-    return requestUmi(`/qc/globalvar/${data.id}/`,{
+    return requestUap(`/globalvar/${data.id}/`,{
         method:'DELETE',
         data,
         requestType:'form',
@@ -26,7 +26,7 @@ export async function deleteGlobalVar(data){
 
 
 export async function updateGlobalVarList(data){
-    return requestUmi(`/qc/globalvar/${data.id}`,{
+    return requestUap(`/globalvar/${data.id}`,{
         method:'PUT',
         data,
         requestType:'form',
