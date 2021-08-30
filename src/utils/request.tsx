@@ -57,7 +57,7 @@ const errorHandler = (error) => {
  */
 const request = extend({
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  //credentials: 'include', // 默认请求是否带上cookie
 });
 
 // request.interceptors.request.use(async (url, options) => {
@@ -92,7 +92,7 @@ request.interceptors.response.use(async (response) => {
 });
 
 export function requestUap(url, options) {
-  return request(`${process.env.apiURL}${url}`, options);
+  return request(`${process.env.qcFrontUrl}${url}`, options);
 }
 export function requestUmi(url: any, options: any) {
   // console.log(url, options);

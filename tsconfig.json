@@ -4,11 +4,12 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "importHelpers": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "sourceMap": true,
     "baseUrl": "./",
+    "noImplicitAny": false,
+    "experimentalDecorators": true,
     "strict": true,
     "paths": {
       "@/*": ["src/*"],

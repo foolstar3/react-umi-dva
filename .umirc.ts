@@ -13,7 +13,7 @@ export default defineConfig({
   },
   devServer: {
     port: 9000,
-    host: '127.0.1.1',
+    host: '127.0.0.1',
   },
   publicPath: './',
   proxy: {
