@@ -18,7 +18,7 @@ class MyHeader extends Component<any, any> {
     };
   }
   showModal() {
-    console.log('show');
+    // console.log('show');
     this.setState({ isModalVisible: true });
   }
   handleOk() {

@@ -12,14 +12,14 @@ export default defineConfig({
     'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
   },
   devServer: {
-    host: 'localhost',
     port: 9002,
+    host: '10.6.209.209',
   },
-  // hash: true,
-  // history: {
-  //   type: 'hash',
-  // },
+  hash: true,
+  history: {
+    type: 'hash',
+  },
   publicPath: './',
   fastRefresh: {},
-  title: `千策-API测试平台`,
+  title: `千策-API测试平台-test`,
 });
