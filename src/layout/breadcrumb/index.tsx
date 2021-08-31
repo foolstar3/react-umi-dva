@@ -73,9 +73,7 @@ const Breadcrumbs = ({ breadcrumbs }) => (
         if (breadcrumb.key === '/') {
           return (
             <Breadcrumb.Item key="home">
-              {/* <Link to='/'>
-                <HomeOutlined className="iconFontSize" style={{ fontSize: '20px' }} />
-              </Link> */}
+              {/* <span>{breadcrumb.breadcrumb.props.children}</span> */}
             </Breadcrumb.Item>
           );
         }

@@ -17,10 +17,6 @@ const example_routes = [
             path: '/testManage/caseList',
             component: '@/pages/examples/button',
           },
-          {
-            path: '/testManage/taskList',
-            component: '@/pages/examples/message',
-          },
           { path: '/dataManage/envList', component: '@/pages/examples/radio' },
           { path: '/dataManage/paramsFile', component: '@/pages/examples/tab' },
           {
@@ -65,7 +61,7 @@ const routes = [
           },
           {
             path: '/testManage/taskList',
-            component: '@/pages/examples/message',
+            component: '@/pages/testManage/taskList',
           },
           {
             path: '/dataManage/envList',

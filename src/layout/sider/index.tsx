@@ -130,6 +130,7 @@ class MySider extends Component {
                   const itemIcon = React.createElement(Icon[i.icon], {
                     style: { fontSize: '16px' },
                   });
+                  console.log(i);
                   return (
                     <Menu.Item key={i.key} icon={itemIcon}>
                       <Link to={i.route}>{i.value}</Link>

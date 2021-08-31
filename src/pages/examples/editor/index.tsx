@@ -61,7 +61,7 @@ export default class Editor extends Component {
 
     // const {payload} = content
     // const {res} = payload
-    console.log(content.context);
+    //console.log(content.context);
     return (
       <CodeMirror
         ref="editor"

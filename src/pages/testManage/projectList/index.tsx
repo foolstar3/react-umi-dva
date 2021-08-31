@@ -1,6 +1,6 @@
 import React from 'react';
-import {  Card,Select,Form,Input,Modal,Table, Button, Space } from 'antd';
-import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import {  Card,Select,Form,Input,Modal,Table, Button, Space, Popconfirm } from 'antd';
+import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
@@ -183,14 +183,20 @@ class ProjectList extends React.Component{
                 >
                   编辑
                 </Button>
-                <Button 
-                  type = 'primary' danger 
-                  onClick = { () => this.handleDelete(record)} 
-                  icon = {<DeleteOutlined/> }
-                  shape = 'round'
+                <Popconfirm 
+                  title = "Are you 确定？" 
+                  icon = { <QuestionCircleOutlined style = {{ color: 'red' }} />}
+                  onConfirm = { () => this.handleDelete( record ) } 
                 >
-                  删除
-                </Button>
+                  <Button
+                  type = 'primary' 
+                  danger 
+                  icon = { <DeleteOutlined/> }
+                  shape = 'round'
+                  >
+                    删除
+                  </Button>
+                </Popconfirm>
               </Space>
             </div>
           )

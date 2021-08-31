@@ -1,6 +1,6 @@
 import React from "react";
-import { Card, Select,Form,Input,Modal,Table, Button, Space, Popconfirm } from 'antd';
-import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined} from '@ant-design/icons';
+import { Switch, Card, Select,Form,Input,Modal,Table, Button, Space, Popconfirm } from 'antd';
+import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined, PlayCircleOutlined} from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
@@ -8,12 +8,12 @@ import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
 //获取接口参数
-class ModuleList extends React.Component{
+class TaskList extends React.Component{
   constructor(props: {} | Readonly<{}>){
     super(props)
     this.handleDelete = this.handleDelete.bind(this)
     this.showAddModal = this.showAddModal.bind(this)
-    this.handleCreateModule = this.handleCreateModule.bind(this)
+    this.handleCreateTask= this.handleCreateTask.bind(this)
     this.handleEditModal = this.handleEditModal.bind(this)
     this.showEditModal = this.showEditModal.bind(this)
     this.state = {
@@ -25,7 +25,7 @@ class ModuleList extends React.Component{
 
   componentDidMount(){
     this.props.dispatch({
-      type: 'moduleList/getModuleList',
+      type: 'taskList/getTaskList',
       payload: {
         page: 1
       }
@@ -40,7 +40,7 @@ class ModuleList extends React.Component{
     })
   }
 
-  handleCreateModule () {
+  handleCreateTask () {
     this.setState({
       addVisible : true
     })
@@ -62,70 +62,110 @@ class ModuleList extends React.Component{
     })
   }
 
-  //模块列表删除按钮
+  //任务列表删除按钮
   handleDelete(value:any){
-    const module_list = [...this.props.moduleList.list]
-    const moduleList = module_list.filter((item)=>item.module_name!==value.module_name)
-    this.props.dispatch({
-      type: 'moduleList/deleteModuleList',
-      payload: {
-        list:moduleList
-      }
-    })
+    // const module_list = [...this.props.moduleList.list]
+    // const moduleList = module_list.filter((item)=>item.module_name!==value.module_name)
+    // this.props.dispatch({
+    //   type: 'moduleList/deleteModuleList',
+    //   payload: {
+    //     list:moduleList
+    //   }
+    // })
   }
 
-  
   render(){
-    const { editVisible, list } =  this.props.moduleList
+    const { editVisible, list } =  this.props.taskList
     const columns = [
       {
-        title:'模块编号',
+        title:'#',
         dataIndex:'id',
-        key:'id'
+        key:'id',
+        align: 'center'
       },
       { 
-        title: '模块名称',
-        dataIndex: 'module_name',
-        key:'module_name'
+        title: '任务名称',
+        dataIndex: 'name',
+        key:'name',
+        align: 'center'
       },
       { 
-        title: '项目名称',
-        dataIndex: 'project_name',
-        key:'project_name' 
+        title: '创建人',
+        dataIndex: 'author',
+        key:'author' ,
+        align: 'center'
       },
       {
-        title:'测试数',
-        dataIndex:'testcase_count',
-        key:'testcase_count'
+        title:'定时状态',
+        dataIndex:'enabled',
+        key:'enabled',
+        width: 150,
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            <Switch
+              checkedChildren="启用"
+              unCheckedChildren="禁用"
+              defaultChecked={text}
+              // onChange={(checked) => {
+              //   this.onSwitchChange(checked, text, record);
+              // }}
+              key={index}
+            />
+          );
+        },
       },
       { 
-        title: '测试人员', 
-        dataIndex: 'test_user',
-        key:'test_user'
+        title: 'crontab',
+        dataIndex: 'crontab_time',
+        key:'crontab_time',
+        align: 'center'
       },
       { 
         title: '简要描述',
         dataIndex: 'description',
-        key:'description'
+        key:'description',
+        width: 250,
+        align: 'center'
       },
       { 
         title: '创建时间',
         dataIndex: 'create_time',
-        key:'create_time'
+        key:'create_time',
+        align: 'center'
       },
       { 
         title: '更新时间',
         dataIndex: 'update_time',
-        key:'update_time'
+        key:'update_time',
+        align: 'center'
         },
       { title: '相关操作', 
         dataIndex:'relateAction',
         key:'relateAction',
+        align: 'center',
         render: (_: any,record: any) => {
           return (
             <div>
-              <Space size = 'middle'>
-                <Button 
+              <Space size = 'small'>
+                <Popconfirm
+                  title = '确认运行？'
+                  okText="Yes" 
+                  cancelText="No"
+                  onConfirm = {console.log('1')}
+                >
+                  <Button
+                    className = 'button_run' 
+                    type = 'primary'  
+                    icon = { <PlayCircleOutlined/> }
+                    shape = 'round'
+                    
+                  >
+                    运行
+                  </Button>
+                </Popconfirm>
+
+                <Button
                   type = 'primary'  
                   onClick = { () => this.handleEditModal(record) } 
                   icon = { <EditOutlined/> }
@@ -158,12 +198,13 @@ class ModuleList extends React.Component{
         <SearchModal/>
         <Card>
           <div className = 'button_addModule'>
-            <Button type = 'primary' onClick = { this.handleCreateModule } icon = { <PlusCircleOutlined/> } >添加模块</Button>
+            <Button type = 'primary' onClick = { this.handleCreateTask } icon = { <PlusCircleOutlined/> } >添加任务</Button>
           </div>
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
             dataSource = { [...list] }
+            bordered
           />
         </Card>  
       
@@ -184,6 +225,6 @@ class ModuleList extends React.Component{
 }
 
 
-export default connect(({ moduleList }) => ({
-  moduleList
-  }))(ModuleList)
+export default connect(({ taskList }) => ({
+  taskList
+  }))(TaskList)
