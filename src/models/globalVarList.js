@@ -1,17 +1,17 @@
-import { getModuleList } from '@/services/getModuleList';
+import { getGlobalVarList } from '@/services/getGlobalVar';
 
 export default {
-    namespace: 'moduleList',
+    namespace: 'globalVarList',
     state: {
         list: [],
     },
     effects: {
-        * getModuleList ({ payload }, { call, put }) {
+        * getGlobalVarList ({ payload }, { call, put }) {
             try {
-                const res = yield call(getModuleList, { ...payload } )
+                const res = yield call(getGlobalVarList, { ...payload } )
                 console.log('res',res.results)
                 yield put({
-                    type: 'updateModuleList',
+                    type: 'updateGlobalVarList',
                     payload: {
                         list: res.results
                     }
@@ -20,10 +20,10 @@ export default {
                 console.error('...getProjectList result error', error)
             }
         },
-        * addModuleList({payload},{call,put}){
+        * addGlobalVar({payload},{call,put}){
            try {
                 yield put({
-                    type:'updateModuleList',
+                    type:'updateGlobalVarList',
                     payload:{
                         list:payload.list,
                     }
@@ -36,7 +36,7 @@ export default {
             try {
                 console.log('payload_edit',payload.list)
                 yield put({
-                    type:'updateModuleList',
+                    type:'updateGlobalVarList',
                     payload:{
                         list:payload.list
                     }
@@ -45,10 +45,10 @@ export default {
 
             }
         },
-        * deleteModuleList({payload},{call,put}){
+        * deleteGlobalVar({payload},{call,put}){
             try {
                 yield put({
-                    type:'updateModuleList',
+                    type:'updateGlobalVarList',
                     payload:{
                         list:payload.list
                     }
@@ -59,7 +59,7 @@ export default {
         }
     },
     reducers: {
-        updateModuleList (state, { payload }) {
+        updateGlobalVarList (state, { payload }) {
             return {
                 ...state,
                 ...payload

@@ -2,20 +2,18 @@ import React from "react";
 import { Card, Select,Form,Input,Modal,Table, Button, Space, Popconfirm } from 'antd';
 import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import { connect } from 'umi';
-const { TextArea } = Input;
-import './index.less';
-import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
+import SearchModal from "./Search";
 //获取接口参数
-class ModuleList extends React.Component{
+class GlobalVarList extends React.Component{
   constructor(props: {} | Readonly<{}>){
     super(props)
     this.handleDelete = this.handleDelete.bind(this)
-    this.showAddModal = this.showAddModal.bind(this)
-    this.handleCreateModule = this.handleCreateModule.bind(this)
-    this.handleEditModal = this.handleEditModal.bind(this)
-    this.showEditModal = this.showEditModal.bind(this)
+    this.showAddGlobalVar = this.showAddGlobalVar.bind(this)
+    this.handleCreateGlobalVar = this.handleCreateGlobalVar.bind(this)
+    this.editModal = this.editModal.bind(this)
+    this.handleEditGlobalVar = this.handleEditGlobalVar.bind(this)
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -25,22 +23,22 @@ class ModuleList extends React.Component{
 
   componentDidMount(){
     this.props.dispatch({
-      type: 'moduleList/getModuleList',
+      type: 'globalVarList/getGlobalVarList',
       payload: {
         page: 1
       }
     })
   }
 
-  //添加模态框，提交时传过来的子组件——模态框的返回值
-  showAddModal (childModalState: any) {
+  //添加按钮模态框
+  showAddGlobalVar (childModalState: any) {
     console.log('childModalState', childModalState)
     this.setState({
       addVisible : childModalState
     })
   }
 
-  handleCreateModule () {
+  handleCreateGlobalVar () {
     this.setState({
       addVisible : true
     })
@@ -48,59 +46,54 @@ class ModuleList extends React.Component{
 
 
   //编辑的地方弹出模态框
-  handleEditModal (record:any) {
-    console.log('record',record)
+  editModal ( record:any ) {
     this.setState({
       editVisible: true,
       tempValue: record
     })
+
   }
-  //子模块--模态框传值
-  showEditModal(childModalState: any){
+
+  handleEditGlobalVar ( childModalState:any ){
     this.setState({
-      editVisible : childModalState
+      editVisible: childModalState
     })
   }
 
-  //模块列表删除按钮
+  //全局变量列表删除按钮
   handleDelete(value:any){
-    const module_list = [...this.props.moduleList.list]
-    const moduleList = module_list.filter((item)=>item.module_name!==value.module_name)
+    const globalVar_list = [...this.props.globalVarList.list]
+    const globalVarList = globalVar_list.filter((item)=>item.var_name!==value.var_name)
     this.props.dispatch({
-      type: 'moduleList/deleteModuleList',
+      type: 'globalVarList/deleteGlobalVar',
       payload: {
-        list:moduleList
+        list:globalVarList
       }
     })
   }
 
   
   render(){
-    const { editVisible, list } =  this.props.moduleList
+    const { editVisible, list } =  this.props.globalVarList
     const columns = [
       {
-        title:'模块编号',
+        title:'#',
         dataIndex:'id',
         key:'id'
       },
       { 
-        title: '模块名称',
-        dataIndex: 'module_name',
-        key:'module_name'
+        title: '参数名称',
+        dataIndex: 'var_name',
+        key:'var_name'
       },
       { 
         title: '项目名称',
         dataIndex: 'project_name',
         key:'project_name' 
       },
-      {
-        title:'测试数',
-        dataIndex:'testcase_count',
-        key:'testcase_count'
-      },
       { 
-        title: '测试人员', 
-        dataIndex: 'test_user',
+        title: '参数值', 
+        dataIndex: 'var_value',
         key:'test_user'
       },
       { 
@@ -121,18 +114,18 @@ class ModuleList extends React.Component{
       { title: '相关操作', 
         dataIndex:'relateAction',
         key:'relateAction',
-        render: (_: any,record: any) => {
+        render: (_: any,record: any)=> {
           return (
             <div>
               <Space size = 'middle'>
-                <Button 
-                  type = 'primary'  
-                  onClick = { () => this.handleEditModal(record) } 
-                  icon = { <EditOutlined/> }
-                  shape = 'round'
-                >
+                <Button
+                 type = 'primary'  
+                 onClick = { () => this.editModal(record) } 
+                 icon = { <EditOutlined/> }
+                 shape = 'round'
+                 >
                   编辑
-                </Button>
+                 </Button>
                 <Popconfirm 
                   title = "Are you 确定？" 
                   icon = { <QuestionCircleOutlined style = {{ color: 'red' }} />}
@@ -158,7 +151,7 @@ class ModuleList extends React.Component{
         <SearchModal/>
         <Card>
           <div className = 'button_addModule'>
-            <Button type = 'primary' onClick = { this.handleCreateModule } icon = { <PlusCircleOutlined/> } >添加模块</Button>
+            <Button type = 'primary' onClick = {this.handleCreateGlobalVar} icon = { <PlusCircleOutlined/> } >添加全局变量</Button>
           </div>
           <Table
             className = "components-table-demo-nested"
@@ -168,14 +161,14 @@ class ModuleList extends React.Component{
         </Card>  
       
         <AddModal 
-          showAddModal = { this.showAddModal }
-          addVisible = { this.state.addVisible }
+        showAddModal = { this.showAddGlobalVar }
+        addVisible = { this.state.addVisible }
         />
         <EditModal 
-          editModal = { this.showEditModal }
-          editVisible = { this.state.editVisible }
-          tempValue = { this.state.tempValue }
-        />
+        editModal = { this.handleEditGlobalVar } 
+        editVisible = { this.state.editVisible }
+        tempValue = { this.state.tempValue }
+        /> 
       </div>
       
     )
@@ -184,6 +177,6 @@ class ModuleList extends React.Component{
 }
 
 
-export default connect(({ moduleList }) => ({
-  moduleList
-  }))(ModuleList)
+export default connect(({ globalVarList }) => ({
+    globalVarList
+  }))(GlobalVarList)

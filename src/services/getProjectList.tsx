@@ -1,10 +1,33 @@
-import { requestUmi } from '@/utils/request';
+import { requestUap } from "@/utils/request";
 
-export async function getProjectList(data) {
-  return requestUmi(
-    `http://10.6.209.209:40001/mock/24/project/?page='${data.page}'`,
-    {
-      method: 'GET',
-    },
-  );
+export async function getProjectList(data){
+    return requestUap(`/project/`,{
+        method:'GET',
+        params:data,
+    }); 
+}
+
+export async function addProjectList(data){
+    return requestUap('/project/',{
+        method:'POST',
+        data,
+        requestType:'form',
+    });
+}
+
+export async function deleteProjectList(data){
+    return requestUap(`/project/${data.id}/`,{
+        method:'DELETE',
+        data,
+        requestType:'form',
+    });
+}
+
+
+export async function updateProjectList(data){
+    return requestUap(`/project/${data.id}`,{
+        method:'PUT',
+        data,
+        requestType:'form',
+    });
 }

@@ -1,16 +1,34 @@
-import { requestUmi } from "@/utils/request";
-
-// export async function getModuleList(data){
-//     return requestUmi(`http://10.6.209.209:40001/mock/24/module/?page='${data.page}'`,{
-//         method:'GET'
-//     }) 
-// }
+import { requestUap } from "@/utils/request";
 
 
 export async function getModuleList(data){
-    return requestUmi(`http://10.6.209.209:40001/mock/24/module/?page='${data.page}'`,{
+    return requestUap(`/module/`,{
         method:'GET',
-        requestType: 'form',
-        // data
-    }) 
+        params:data,
+    }); 
+}
+
+export async function addModuleList(data){
+    return requestUap('/module/',{
+        method:'POST',
+        data,
+        requestType:'form',
+    });
+}
+
+export async function deleteModuleList(data){
+    return requestUap(`/project/${data.id}/`,{
+        method:'DELETE',
+        data,
+        requestType:'form',
+    });
+}
+
+
+export async function updateModuleList(data){
+    return requestUap(`/project/${data.id}`,{
+        method:'PUT',
+        data,
+        requestType:'form',
+    });
 }

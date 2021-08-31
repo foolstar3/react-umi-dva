@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Layout } from 'antd';
+import { Menu } from 'antd';
 import { Link } from 'umi';
 import * as Icon from '@ant-design/icons';
 import './index.less';
@@ -8,7 +8,7 @@ interface Icon {
 }
 
 const { SubMenu } = Menu;
-const { Sider } = Layout;
+
 // const MenuList = () => {
 
 // }
@@ -28,6 +28,12 @@ const navMenu = {
           route: '/testManage/projectList',
           value: '项目列表',
           icon: 'ProjectOutlined',
+        },
+        {
+          key: 'debugtalk',
+          route: '/testManage/debugtalk',
+          value: 'Debugtalk',
+          icon: 'BugOutlined',
         },
         {
           key: '模块列表',
@@ -89,6 +95,7 @@ const navMenu = {
     },
   ],
 };
+
 class MySider extends Component {
   constructor(props: any) {
     super(props);
@@ -101,13 +108,16 @@ class MySider extends Component {
       console.log('1');
     };
     return (
-      <Sider className="site-layout-background">
+      <div
+        style={{ width: 250, height: 870 }}
+        className="site-layout-background"
+      >
         <Menu
           mode="inline"
           theme="dark"
           // defaultSelectedKeys={this.state.navMenu.defaultSelectedKeys}
           // defaultOpenKeys={this.state.navMenu.defaultOpenKeys}
-          style={{ borderRight: 0 }}
+          style={{ height: '100vh', borderRight: 0 }}
         >
           {navMenu.children.map((item) => {
             const icon = React.createElement(Icon[item.icon], {
@@ -131,7 +141,7 @@ class MySider extends Component {
             );
           })}
         </Menu>
-      </Sider>
+      </div>
     );
   }
 }

@@ -30,8 +30,8 @@ export default {
                         list:payload.list,
                         addVisible:payload.addVisible
                     }
-               })
-           } catch (error) {
+                })      
+            } catch (error) {
                 console.error('...getProjectList result error', error)
            }
         },
@@ -89,7 +89,6 @@ export default {
     },
     reducers: {
         updateProjectList (state, { payload }) {
-            console.log('payload222', payload)
             return {
                 ...state,
                 ...payload

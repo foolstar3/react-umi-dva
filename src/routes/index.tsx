@@ -17,10 +17,6 @@ const example_routes = [
             path: '/testManage/caseList',
             component: '@/pages/examples/button',
           },
-          {
-            path: '/testManage/taskList',
-            component: '@/pages/examples/message',
-          },
           { path: '/dataManage/envList', component: '@/pages/examples/radio' },
           { path: '/dataManage/paramsFile', component: '@/pages/examples/tab' },
           {
@@ -41,45 +37,49 @@ const example_routes = [
 // 项目实际路由
 const routes = [
   {
-    path: '/login',
-    component: '@/pages/login',
-  },
-  {
     path: '/',
     component: '@/layout',
     routes: [
-      { path: '/', component: '@/pages' },
       {
-        path: '/testManage/projectList',
-        component: '@/pages/testManage/projectList',
-      },
-      {
-        path: '/testManage/moduleList',
-        component: '@/pages/testManage/moduleList',
-      },
-      {
-        path: '/testManage/caseList',
-        component: '@/pages/examples/button',
-      },
-      {
-        path: '/testManage/taskList',
-        component: '@/pages/examples/message',
-      },
-      {
-        path: '/dataManage/envList',
-        component: '@/pages/dataManage/envList',
-      },
-      {
-        path: '/dataManage/paramsFile',
-        component: '@/pages/dataManage/paramsFile',
-      },
-      {
-        path: '/dataManage/globalVar',
-        component: '@/pages/examples/button',
-      },
-      {
-        path: '/reportManage/viewReport',
-        component: '@/pages/reportManage',
+        routes: [
+          { path: '/', component: '@/pages' },
+          { 
+            path: '/testManage/projectList', 
+            component: '@/pages/testManage/projectList' 
+          },
+          { 
+            path: '/testManage/debugtalk', 
+            component: '@/pages/testManage/debugTalk' 
+          },
+          {
+            path: '/testManage/moduleList',
+            component: '@/pages/testManage/moduleList',
+          },
+          {
+            path: '/testManage/caseList',
+            component: '@/pages/examples/button',
+          },
+          {
+            path: '/testManage/taskList',
+            component: '@/pages/testManage/taskList',
+          },
+          {
+            path: '/dataManage/envList',
+            component: '@/pages/dataManage/envList',
+          },
+          {
+            path: '/dataManage/paramsFile',
+            component: '@/pages/dataManage/paramsFile',
+          },
+          {
+            path: '/dataManage/globalVar',
+            component: '@/pages/dataManage/globalVar',
+          },
+          {
+            path: '/reportManage/viewReport',
+            component: '@/pages/reportManage',
+          },
+        ],
       },
     ],
   },

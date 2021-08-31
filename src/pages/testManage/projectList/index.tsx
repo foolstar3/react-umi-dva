@@ -1,6 +1,6 @@
 import React from 'react';
-import {  Select,Form,Input,Modal,Table, Button, Space } from 'antd';
-import {EditOutlined, DeleteOutlined, PlusCircleOutlined} from '@ant-design/icons';
+import {  Card,Select,Form,Input,Modal,Table, Button, Space, Popconfirm } from 'antd';
+import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
@@ -17,10 +17,6 @@ class ProjectList extends React.Component{
     this.editModal = this.editModal.bind(this)
     this.editSubmit = this.editSubmit.bind(this)
     this.editCancel = this.editCancel.bind(this)
-
-    this.state = {
-      list: []
-    }
   }
 
   componentDidMount () {
@@ -64,7 +60,7 @@ class ProjectList extends React.Component{
   //修改项目模态框的返回键
   editCancel = () => {
     this.props.dispatch({
-      type: 'projectList/editModal',
+      type: 'projectList/updateProjectList',
       payload: {
         editVisible:false
       }
@@ -125,7 +121,6 @@ class ProjectList extends React.Component{
   }
 
   render () {
-    console.log('this.props.projectList', this.props.projectList)
     const { editVisible, addVisible, list } =  this.props.projectList
     const columns = [
       {
@@ -180,8 +175,28 @@ class ProjectList extends React.Component{
           return (
             <div>
               <Space size='middle'>
-                <Button type='primary'  onClick={()=>this.editModal(record)} icon={<EditOutlined/>}>编辑</Button>
-                <Button type='primary' danger onClick={()=>this.handleDelete(record)} icon={<DeleteOutlined/>}>删除</Button>
+                <Button
+                  type = 'primary'  
+                  onClick = { () => this.editModal(record) } 
+                  icon = { <EditOutlined/> }
+                  shape = 'round'
+                >
+                  编辑
+                </Button>
+                <Popconfirm 
+                  title = "Are you 确定？" 
+                  icon = { <QuestionCircleOutlined style = {{ color: 'red' }} />}
+                  onConfirm = { () => this.handleDelete( record ) } 
+                >
+                  <Button
+                  type = 'primary' 
+                  danger 
+                  icon = { <DeleteOutlined/> }
+                  shape = 'round'
+                  >
+                    删除
+                  </Button>
+                </Popconfirm>
               </Space>
             </div>
           )
@@ -190,73 +205,76 @@ class ProjectList extends React.Component{
     ]
     return (
       <div>
-        <div className='button_addProject'>
-          <Button type='primary' onClick={this.showAddModal} icon= {<PlusCircleOutlined/>} >添加项目</Button>
-        </div>
-        <Table
-          className="components-table-demo-nested"
-          columns={columns}
-          dataSource={list}
-        />
+        <Card>
+          <div className = 'button_addProject'>
+            <Button type = 'primary' onClick = { this.showAddModal } icon = { <PlusCircleOutlined/> } >添加项目</Button>
+          </div>
+          <Table
+            className = "components-table-demo-nested"
+            columns = { columns }
+            dataSource = { [...list] }
+          />
+        </Card>
+        
         <Modal
-          visible={addVisible}
-          title="项目信息"
-          closable={false}
-          footer={null}
+          visible = { addVisible }
+          title = "项目信息"
+          closable = { false }
+          footer = { null }
         >
           <Form
-            name="basic"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
-            onFinish={this.handleSubmit}
+            name = "basic_projectList"
+            labelCol = { { span: 5 } }
+            wrapperCol = { { span: 16 } }
+            initialValues = { { remember: true } }
+            onFinish = { this.handleSubmit }
           >
             <Form.Item
-              label="项目名称"
-              name="project_name"
-              rules={[{ required: true, message: '请输入项目名称' }]}
+              label = "项目名称"
+              name = "project_name"
+              rules = { [{ required: true, message: '请输入项目名称' }] }
             >
               <Input/>
             </Form.Item>
             <Form.Item
-              label="模块数"
-              name="module_count"
-              rules={[{ required: true, message: '请输入用例数' }]}
+              label = "模块数"
+              name = "module_count"
+              rules = { [{ required: true, message: '请输入用例数' }] }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="负责人"
-              name="leader"
-              rules={[{ required: true, message: '请输入负责人名称' }]}
+              label = "负责人"
+              name = "leader"
+              rules = { [{ required: true, message: '请输入负责人名称' }] }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="测试人员"
-              name="test_user"
-              rules={[{ required: true, message: '请输入测试人员名称' }]}
+              label = "测试人员"
+              name = "test_user"
+              rules = { [{ required: true, message: '请输入测试人员名称' }] }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="开发人员"
-              name="dev_user"
-              rules={[{ required: true, message: '请输入开发人员名称' }]}
+              label = "开发人员"
+              name = "dev_user"
+              rules = { [{ required: true, message: '请输入开发人员名称' }] }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="简要描述"
-              name="description"
-              rules={[{ required: false }]}
+              label = "简要描述"
+              name = "description"
+              rules = { [{ required: false }] }
             >
-              <TextArea rows={3} />
+              <TextArea rows = { 3 } />
             </Form.Item>
             <Form.Item>
-              <Space size='middle'>
-                <Button type="primary" htmlType="submit">提交</Button>
-                <Button onClick={this.handleCancel}>返回</Button>
+              <Space size = 'middle'>
+                <Button type = "primary" htmlType = "submit">提交</Button>
+                <Button onClick = { this.handleCancel }>返回</Button>
               </Space>
             </Form.Item> 
           </Form>
@@ -264,64 +282,70 @@ class ProjectList extends React.Component{
 
 
         <Modal
-          visible={editVisible}
-          title="修改项目信息"
-          closable={false}
-          footer={null}
+          visible = { editVisible }
+          title = "修改项目信息"
+          closable = { false }
+          footer = { null }
         >
           <Form
-            name="basic"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 16 }}
-            initialValues={{ remember: true }}
-            onFinish={this.editSubmit}
+            name = "basic"
+            labelCol = { { span: 5 } }
+            wrapperCol = { { span: 16 } }
+            initialValues = { { remember: true } }
+            onFinish = { this.editSubmit }
           >
             <Form.Item
-              label="项目名称"
-              name="project_name"
-              rules={[{ required: true, message: '请输入项目名称' }]}
+              label = "项目名称"
+              name = "project_name"
+              rules = { [{ required: true, message: '请输入项目名称' }] }
+              initialValue = { this.props.projectList.value.project_name }
             >
               <Input/>
             </Form.Item>
             <Form.Item
-              label="模块数"
-              name="module_count"
-              rules={[{ required: true, message: '请输入用例数' }]}
+              label = "模块数"
+              name = "module_count"
+              rules = { [{ required: true, message: '请输入用例数' }] }
+              initialValue = { this.props.projectList.value.module_count }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="负责人"
-              name="leader"
-              rules={[{ required: true, message: '请输入负责人名称' }]}
+              label = "负责人"
+              name = "leader"
+              rules = { [{ required: true, message: '请输入负责人名称' }] }
+              initialValue = {  this.props.projectList.value.leader }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="测试人员"
-              name="test_user"
-              rules={[{ required: true, message: '请输入测试人员名称' }]}
+              label = "测试人员"
+              name = "test_user"
+              rules = { [{ required: true, message: '请输入测试人员名称' }] }
+              initialValue = { this.props.projectList.value.test_user }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="开发人员"
-              name="dev_user"
-              rules={[{ required: true, message: '请输入开发人员名称' }]}
+              label = "开发人员"
+              name = "dev_user"
+              rules = { [{ required: true, message: '请输入开发人员名称' }] } 
+              initialValue = { this.props.projectList.value.dev_user }
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label="简要描述"
-              name="description"
-              rules={[{ required: false }]}
+              label = "简要描述"
+              name = "description"
+              rules = { [{ required: false }] }
+              initialValue = { this.props.projectList.value.description }
             >
-              <TextArea rows={3} />
+              <TextArea rows = { 3 } />
             </Form.Item>
             <Form.Item>
-              <Space size='middle'>
-                <Button type="primary" htmlType="submit">确认修改</Button>
-                <Button onClick={this.editCancel}>返回</Button>
+              <Space size = 'middle'>
+                <Button type = "primary" htmlType = "submit">确认修改</Button>
+                <Button onClick = { this.editCancel }>返回</Button>
               </Space>
             </Form.Item> 
           </Form>

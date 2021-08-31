@@ -28,18 +28,16 @@ import { connect } from 'umi';
 export default class Editor extends Component {
   constructor(props) {
     super(props);
+    console.log('props', props)
   }
 
-  // 输入变化时获取编辑器中的code
-  getEditorCode(value) {
-    const { dispatch, onChange } = this.props;
-    // console.log(value);
-    onChange(value);
+  // 输入变化时获取编辑器中的code,向debugtalk这个父组件传值，父组件接收后，点击提交按钮，进行dispatch。LSQ编写
+  getEditorCode(contentValue: any) {
+    this.props.getEditorContent( contentValue )
   }
 
   render() {
     const { content } = this.props;
-
     // const {payload} = content
     // const {res} = payload
     // console.log(content.context);
@@ -58,9 +56,9 @@ export default class Editor extends Component {
           theme: 'monokai',
           lineNumbers: true,
         }}
-        onChange={(editor, data, value) => {
+        onChange={(editor, data, contentValue) => {
           // console.log(data, value);
-          this.getEditorCode(value);
+          this.getEditorCode(contentValue);
         }}
       />
     );
