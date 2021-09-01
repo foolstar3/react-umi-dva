@@ -12,7 +12,7 @@ export default defineConfig({
   },
   devServer: {
     port: 9001,
-    host: 'localhost',
+    host: '10.6.209.209',
   },
   history: {
     type: 'hash',
