@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
-import { Space, Button, Card, Table, Modal, Switch, Form, Input } from 'antd';
+import {
+  Space,
+  Button,
+  Card,
+  Table,
+  Modal,
+  Switch,
+  Form,
+  Input,
+  Popconfirm,
+} from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
   FileSearchOutlined,
   PlusCircleOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
 
@@ -18,15 +29,13 @@ const formItemLayout = {
 @connect(({ envList }) => ({
   envList: envList.envList,
 }))
-export default class EnvList extends Component {
+export default class EnvList extends Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
       selectedRowKeys: [],
       // 新增对话框显隐
       addModalVisiable: false,
-      // 删除对话框显隐
-      deleteModalVisiable: false,
       // 编辑对话框显隐
       editModalVisiable: false,
       // 环境信息对话框显隐
@@ -116,20 +125,21 @@ export default class EnvList extends Component {
               >
                 编辑
               </Button>
-              <Button
-                type="primary"
-                icon={<DeleteOutlined />}
-                danger
-                onClick={() => {
-                  this.showDeleteModal(text, record);
-                }}
+              <Popconfirm
+                title="确定删除？"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={() => this.handleDeleteOk(text)}
               >
-                删除
-              </Button>
+                <Button type="primary" icon={<DeleteOutlined />} danger>
+                  删除
+                </Button>
+              </Popconfirm>
             </Space>
           ),
         },
       ],
+      editorCode: '',
+      total: 0,
     };
     this.getEnvList({ page: 1 });
   }
@@ -150,8 +160,11 @@ export default class EnvList extends Component {
       type: 'envList/getEnvList',
       payload,
       callback: () => {
+        const { envList } = this.props;
+        console.log(envList);
         this.setState({
           tableLoading: false,
+          total: envList.count,
         });
       },
     });
@@ -162,7 +175,7 @@ export default class EnvList extends Component {
   // 监听switch状态变化
   onSwitchChange = (checked, text, record) => {
     this.toggleSwitch(record);
-    console.log(checked);
+    console.log(record);
   };
 
   // 调用接口切换switch状态
@@ -338,6 +351,7 @@ export default class EnvList extends Component {
     this.setState({
       envInfoModalVisiable: true,
       currentEnvInfo: record,
+      editorCode: record.env_vars,
     });
   };
 
@@ -355,11 +369,12 @@ export default class EnvList extends Component {
 
   // 获取编辑器内容
   editorCodeChange = (value) => {
-    console.log(value);
+    // console.log(value);
     this.setState({
-      currentEnvInfo: value,
+      editorCode: value,
     });
   };
+
   render() {
     const {
       selectedRowKeys,
@@ -370,15 +385,23 @@ export default class EnvList extends Component {
       editModalVisiable,
       envInfoModalVisiable,
       tableLoading,
+      editorCode,
+      total,
     } = this.state;
     const { envList } = this.props;
-    if (envList !== undefined) {
+    if (envList.results !== undefined) {
       // 为envList数组中的每个元素添加一个key属性
-      envList.map((item) => {
+      envList.results.map((item) => {
         // console.log(item);
         item.key = item.id;
       });
     }
+    const paginationProps = {
+      showSizeChanger: false,
+      showQuickJumper: true,
+      total: total,
+      showTotal: () => `共 ${total} 条`,
+    };
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -398,8 +421,9 @@ export default class EnvList extends Component {
           <Table
             columns={columns}
             rowSelection={rowSelection}
-            dataSource={envList}
+            dataSource={envList.results}
             loading={tableLoading}
+            pagination={paginationProps}
           />
         </Card>
         {/* 新增对话框 */}
@@ -515,8 +539,8 @@ export default class EnvList extends Component {
             width={1200}
           >
             <Editor
-              content={currentEnvInfo.env_vars}
-              onChange={(value) => this.editorCodeChange(value)}
+              content={editorCode}
+              getEditorContent={(value) => this.editorCodeChange(value)}
             />
           </Modal>
         )}

@@ -14,7 +14,7 @@ export default {
   reducers: {
     update(state, { payload }) {
       const newState = JSON.parse(JSON.stringify(state));
-      newState.envList = payload.results;
+      newState.envList = payload;
       return {
         ...state,
         ...newState,

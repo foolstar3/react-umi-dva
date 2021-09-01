@@ -1,35 +1,38 @@
 import { requestUap } from '@/utils/request';
 
-export async function getParamsFile() {
-  return requestUap('/api/getparamsfile', {
+export async function getParamsFile(data) {
+  return requestUap('/paramsfile/', {
     method: 'GET',
+    params: data,
   });
 }
 
 export async function addFile(data) {
-  return requestUap('/api/addfile', {
+  console.log(data);
+  return requestUap('/paramsfile/', {
     method: 'post',
     data,
+    requestType: 'form',
   });
 }
 
 export async function deleteFile(data) {
-  return requestUap('/api/deletefile', {
+  return requestUap(`/paramsfile/${data.id}/`, {
     method: 'delete',
-    data,
+    requestType: 'form',
   });
 }
 
 export async function getParamsFileCode(data) {
-  return requestUap('/api/getparamsfilecode', {
-    method: 'post',
-    data,
+  return requestUap(`/paramsfile/${data}/`, {
+    method: 'get',
   });
 }
 
 export async function updateParamsFileCode(data) {
-  return requestUap('/api/updateparamsfilecode', {
-    method: 'post',
+  return requestUap(`/paramsfile/${data.id}/`, {
+    method: 'put',
+    requestType: 'form',
     data,
   });
 }

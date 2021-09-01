@@ -9,7 +9,8 @@ export async function getEnvList(data: any) {
 }
 
 export async function toggleSwitch(data: any) {
-  return requestUap(`env/${data.id}/`, {
+  console.log(data);
+  return requestUap(`/env/${data.id}/`, {
     method: 'PUT',
     data,
     requestType: 'form',
