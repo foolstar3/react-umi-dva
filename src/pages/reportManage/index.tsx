@@ -27,6 +27,9 @@ class ViewReport extends Component<any, any> {
    * 请求后端接口函数
    */
   getReportList = (payload: any) => {
+    this.setState({
+      tableLoading: true,
+    });
     const { dispatch } = this.props;
     dispatch({
       type: 'report/getReportList',
@@ -111,6 +114,7 @@ class ViewReport extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
+      onChange: (page) => this.getReportList({ page }),
       total: total,
       showTotal: () => `共 ${total} 条`,
     };

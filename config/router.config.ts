@@ -36,6 +36,7 @@ const example_routes = [
 
 // 项目实际路由
 const routes = [
+  { path: '/login', component: '@/pages/login' },
   {
     path: '/',
     component: '@/layout',
