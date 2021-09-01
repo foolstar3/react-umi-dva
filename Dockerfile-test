@@ -5,7 +5,7 @@ WORKDIR /mnt
 COPY . /mnt/
 
 RUN yarn config set registry https://nexus.uihcloud.cn/repository/npm-group/ \
-  && yarn build-dev
+  && yarn build-test
 
 
 FROM registry-dev.uihcloud.cn/com.uih.uplus.base/nginx:1.20.1-alpine

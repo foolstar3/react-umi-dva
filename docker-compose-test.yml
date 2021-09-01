@@ -2,7 +2,7 @@ version: '3'
 
 services:
   front:
-    image: registry-dev.uihcloud.cn/tc-team/qc-front:test1.0
+    image: registry-dev.uihcloud.cn/tc-team/qc-front-test
     ports:
       - "9002:9002"
     networks:
