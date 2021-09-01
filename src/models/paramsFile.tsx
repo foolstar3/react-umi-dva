@@ -13,16 +13,16 @@ export default {
   },
   reducers: {
     getParmsFileList(state, { payload }) {
-      // console.log(payload);
+      const newState = JSON.parse(JSON.stringify(state));
+      newState.paramsFileList = payload;
       return {
         ...state,
-        ...payload,
+        ...newState,
       };
     },
-    setParamsFileCode(state, payload) {
+    setParamsFileCode(state, { payload }) {
       const newState = JSON.parse(JSON.stringify(state));
-      console.log(payload);
-      newState.paramsFileCode = payload.data[0];
+      newState.paramsFileCode = payload;
       console.log(newState);
       return {
         ...state,
@@ -41,50 +41,38 @@ export default {
   },
   effects: {
     *getParamsFileListData({ payload, callback }, { call, put }) {
-      const data = yield call(getParamsFile);
-      callback(data);
-      // console.log(data.data[0].list);
+      const data = yield call(getParamsFile, payload);
+      // console.log(data);
       yield put({
         type: 'getParmsFileList',
-        payload: data.data[0],
+        payload: data,
       });
+      if (callback) {
+        callback();
+      }
     },
     *addFile({ payload, callback }, { call, put }) {
       const data = yield call(addFile, payload);
-      console.log(data);
       /*todo
       调用reducers中的更新函数
       更新state中的paramsFileList */
     },
     *deleteFile({ payload, callback }, { call, put }) {
       const data = yield call(deleteFile, payload);
-      console.log(data);
       /*todo
       调用reducers中的更新函数
       更新state中的paramsFileList */
     },
     *getParamsFileCode({ payload, callback }, { call, put }) {
       const data = yield call(getParamsFileCode, payload);
-      console.log(data);
       yield put({
         type: 'setParamsFileCode',
-        data,
+        payload: data,
       });
     },
     *updateParamsFileCode({ payload, callback }, { call, put }) {
-      // console.log(payload,callback);
       const res = yield call(updateParamsFileCode, payload);
       console.log(res);
-      // if(callback) {
-      //   callback(res,'res')
-      // }
-      /**todo
-       * 更新models中的state
-       */
-      // yield put({
-      //   type: 'updateParamsFileCode',
-      //   res
-      // })
     },
   },
 };

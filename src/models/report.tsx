@@ -18,7 +18,7 @@ export default {
   effects: {
     *getReportList({ payload, callback }, { call, put }) {
       const res = yield call(getReportList, payload);
-      console.log(res);
+      // console.log(res);
       yield put({
         type: 'reportList',
         payload: res,
@@ -28,7 +28,7 @@ export default {
       }
     },
     *deleteReport({ payload, callback }, { call, put }) {
-      console.log(payload);
+      // console.log(payload);
       const res = yield call(deleteReport, payload);
       // yield put({
       //   type: 'delete',

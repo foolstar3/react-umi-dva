@@ -21,26 +21,25 @@ import 'codemirror/addon/fold/foldgutter.js';
 import 'codemirror/addon/fold/brace-fold.js';
 import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets';
-import { connect } from 'umi';
 
 // 参考https://blog.csdn.net/JLU_Lei/article/details/80259697
 
-export default class Editor extends Component {
+export default class Editor extends Component<any, any> {
   constructor(props) {
     super(props);
-    console.log('props', props)
   }
-
+  /*
+   *
+   * @param getEditorContent 获取当前editor内代码
+   *
+   */
   // 输入变化时获取编辑器中的code,向debugtalk这个父组件传值，父组件接收后，点击提交按钮，进行dispatch。LSQ编写
   getEditorCode(contentValue: any) {
-    this.props.getEditorContent( contentValue )
+    this.props.getEditorContent(contentValue);
   }
 
   render() {
     const { content } = this.props;
-    // const {payload} = content
-    // const {res} = payload
-    // console.log(content.context);
     return (
       <CodeMirror
         ref="editor"
@@ -57,7 +56,6 @@ export default class Editor extends Component {
           lineNumbers: true,
         }}
         onChange={(editor, data, contentValue) => {
-          // console.log(data, value);
           this.getEditorCode(contentValue);
         }}
       />

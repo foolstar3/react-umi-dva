@@ -43,7 +43,7 @@ class MyHeader extends Component<any, any> {
           <div className="header_right_content">
             <div className="user_home">
               <div className="user_home_content" onClick={this.showModal}>
-                <a href="#" className="">
+                <a className="">
                   <img src={ImagesUrl.Logout} width="38"></img>
                 </a>
               </div>

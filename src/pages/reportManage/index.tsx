@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Button, Card, message } from 'antd';
-import { DeleteOutlined, ProfileOutlined } from '@ant-design/icons';
-import DeleteModal from '@/components/DeleteModal';
+import { Table, Button, Card, message, Popconfirm } from 'antd';
+import {
+  DeleteOutlined,
+  ProfileOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import config from './config';
 import { connect } from 'dva';
 
@@ -13,12 +16,13 @@ class ViewReport extends Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      deleteModalVisiable: false,
       currentReport: {},
       tableLoading: true,
+      total: 0,
     };
     this.getReportList({ page: 1 });
   }
+
   /**
    * 请求后端接口函数
    */
@@ -34,6 +38,7 @@ class ViewReport extends Component<any, any> {
         });
         this.setState({
           tableLoading: false,
+          total: reportList.count,
         });
       },
     });
@@ -59,25 +64,9 @@ class ViewReport extends Component<any, any> {
    * 删除功能
    */
 
-  // 展示删除弹窗
-  showDeleteModal = (record: any) => {
-    this.setState({
-      deleteModalVisiable: true,
-      currentReport: record,
-    });
-  };
-
   handleDeleteOk = (record: any) => {
+    // console.log(record);
     this.deleteReport(record.id);
-    this.setState({
-      deleteModalVisiable: false,
-    });
-  };
-
-  handleDeleteCancel = () => {
-    this.setState({
-      deleteModalVisiable: false,
-    });
   };
 
   /**
@@ -88,7 +77,7 @@ class ViewReport extends Component<any, any> {
   };
 
   render() {
-    const { deleteModalVisiable, currentReport, tableLoading } = this.state;
+    const { currentReport, tableLoading, total } = this.state;
     const { reportList } = this.props;
 
     const actionConfig = {
@@ -97,7 +86,7 @@ class ViewReport extends Component<any, any> {
       key: 'action',
       width: '240px',
       render: (text, record) => (
-        <>
+        <div key={record.id}>
           <Button
             type="primary"
             icon={<ProfileOutlined />}
@@ -106,26 +95,26 @@ class ViewReport extends Component<any, any> {
             {' '}
             详情
           </Button>
-          <Button
-            type="primary"
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              this.showDeleteModal(record);
-            }}
-            danger
+          <Popconfirm
+            title="确定删除?"
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            onConfirm={() => this.handleDeleteOk(record)}
           >
-            删除
-          </Button>
-        </>
+            <Button type="primary" icon={<DeleteOutlined />} danger>
+              删除
+            </Button>
+          </Popconfirm>
+        </div>
       ),
     };
     const columnsConfig = [...config, actionConfig];
     const paginationProps = {
+      showSizeChanger: false,
       showQuickJumper: true,
-      total: reportList.count,
+      total: total,
+      showTotal: () => `共 ${total} 条`,
     };
 
-    // console.log(currentReport);
     if (Object.keys(reportList).length !== 0) {
       return (
         <>
@@ -137,11 +126,6 @@ class ViewReport extends Component<any, any> {
               loading={tableLoading}
             ></Table>
           </Card>
-          <DeleteModal
-            isModalVisible={deleteModalVisiable}
-            onOk={() => this.handleDeleteOk(currentReport)}
-            onCancel={this.handleDeleteCancel}
-          />
         </>
       );
     }
