@@ -2,10 +2,12 @@
   "private": true,
   "scripts": {
     "start": "umi dev",
+    "start-local": "cross-env UMI_ENV=local umi dev",
     "start-test": "cross-env UMI_ENV=test umi dev",
     "start-dev": "cross-env UMI_ENV=dev umi dev",
     "start-prod": "cross-env UMI_ENV=prod umi dev",
     "build": "umi build",
+    "build-local": "cross-env UMI_ENV=local umi build",
     "build-test": "cross-env UMI_ENV=test umi build",
     "build-dev": "cross-env UMI_ENV=dev umi build",
     "build-prod": "cross-env UMI_ENV=prod umi build",

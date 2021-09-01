@@ -1,24 +1,21 @@
 import { defineConfig } from 'umi';
-import routes from './src/routes';
+import routes from './router.config';
 
 export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
+  routes,
+  fastRefresh: {},
+
   define: {
-    // dev 环境变量
-    'process.env.var': 'dev',
+    'process.env.var': '',
     'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
   },
   devServer: {
-    port: 9001,
+    port: 9000,
     host: 'localhost',
   },
-  history: {
-    type: 'hash',
-  },
   publicPath: './',
-  routes,
-  fastRefresh: {},
-  title: `千策-API测试平台-dev`,
+  title: `千策-API测试平台`,
 });

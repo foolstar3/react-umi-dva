@@ -133,6 +133,9 @@ class ParamsFile extends Component<any, any> {
   }
 
   getParamsFileList = (payload) => {
+    this.setState({
+      tableLoading: true,
+    });
     const { dispatch } = this.props;
     dispatch({
       type: 'paramsFile/getParamsFileListData',
@@ -386,6 +389,7 @@ class ParamsFile extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
+      onChange: (page) => this.getParamsFileList({ page }),
       total: total,
       showTotal: () => `共 ${total} 条`,
     };

@@ -380,7 +380,6 @@ export default class EnvList extends Component<any, any> {
       selectedRowKeys,
       columns,
       addModalVisiable,
-      deleteModalVisiable,
       currentEnvInfo,
       editModalVisiable,
       envInfoModalVisiable,
@@ -399,6 +398,9 @@ export default class EnvList extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
+      onChange: (page) => {
+        this.getEnvList({ page });
+      },
       total: total,
       showTotal: () => `共 ${total} 条`,
     };
@@ -469,17 +471,6 @@ export default class EnvList extends Component<any, any> {
             </Form.Item>
           </Form>
           {/* {this.renderAddForm()} */}
-        </Modal>
-        {/* 删除对话框 */}
-        <Modal
-          title="删除"
-          visible={deleteModalVisiable}
-          onOk={() => {
-            this.handleDeleteOk(currentEnvInfo);
-          }}
-          onCancel={this.handleDeleteCancel}
-        >
-          <div>确定删除{currentEnvInfo.env_name}?</div>
         </Modal>
         {/* 编辑对话框 */}
         {editModalVisiable && (

@@ -1,5 +1,5 @@
 import { defineConfig } from 'umi';
-import routes from './src/routes';
+import routes from './router.config';
 
 export default defineConfig({
   history: {
