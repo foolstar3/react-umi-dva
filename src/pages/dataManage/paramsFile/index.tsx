@@ -101,6 +101,8 @@ class ParamsFile extends Component<any, any> {
                 onClick={() => {
                   this.showEditModal(text, record);
                 }}
+                size="small"
+                shape="round"
               >
                 编辑
               </Button>
@@ -109,7 +111,13 @@ class ParamsFile extends Component<any, any> {
                 onConfirm={() => this.confirmDelete(text)}
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
               >
-                <Button type="primary" icon={<DeleteOutlined />} danger>
+                <Button
+                  type="primary"
+                  icon={<DeleteOutlined />}
+                  danger
+                  size="small"
+                  shape="round"
+                >
                   删除
                 </Button>
               </Popconfirm>

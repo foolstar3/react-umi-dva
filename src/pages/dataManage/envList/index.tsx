@@ -19,6 +19,7 @@ import {
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
 
+import './index.less';
 import { connect } from 'umi';
 
 const formItemLayout = {
@@ -113,6 +114,8 @@ export default class EnvList extends Component<any, any> {
                 onClick={() => {
                   this.showEnvInfoModal(text, record);
                 }}
+                size="small"
+                shape="round"
               >
                 环境信息
               </Button>
@@ -122,6 +125,8 @@ export default class EnvList extends Component<any, any> {
                 onClick={() => {
                   this.showEditModal(text, record);
                 }}
+                size="small"
+                shape="round"
               >
                 编辑
               </Button>
@@ -130,7 +135,13 @@ export default class EnvList extends Component<any, any> {
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDeleteOk(text)}
               >
-                <Button type="primary" icon={<DeleteOutlined />} danger>
+                <Button
+                  type="primary"
+                  icon={<DeleteOutlined />}
+                  danger
+                  size="small"
+                  shape="round"
+                >
                   删除
                 </Button>
               </Popconfirm>

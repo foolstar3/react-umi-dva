@@ -94,6 +94,8 @@ class ViewReport extends Component<any, any> {
             type="primary"
             icon={<ProfileOutlined />}
             onClick={this.showDetailModal}
+            size="small"
+            shape="round"
           >
             {' '}
             详情
@@ -103,7 +105,13 @@ class ViewReport extends Component<any, any> {
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             onConfirm={() => this.handleDeleteOk(record)}
           >
-            <Button type="primary" icon={<DeleteOutlined />} danger>
+            <Button
+              type="primary"
+              icon={<DeleteOutlined />}
+              danger
+              size="small"
+              shape="round"
+            >
               删除
             </Button>
           </Popconfirm>
