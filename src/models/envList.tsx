@@ -9,7 +9,8 @@ import {
 export default {
   namespace: 'envList',
   state: {
-    envList: [],
+    envList: {
+    }
   },
   reducers: {
     update(state, { payload }) {
@@ -75,7 +76,6 @@ export default {
     },
     *updateEnv({ payload, callback }, { call, put }) {
       const res = yield call(updateEnv, payload);
-      console.log(res);
     },
   },
 };

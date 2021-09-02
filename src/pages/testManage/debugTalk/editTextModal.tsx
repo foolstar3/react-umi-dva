@@ -13,22 +13,19 @@ class EditTextModal extends React.Component{
     this.state = {
       editContent: ''
     }
-
-  }
-
-  componentDidMount(){
-    console.log('this.pros',this.props)
   }
 
   //在模态框中点击提交按钮
   editSubmit () {
-    // this.props.dispatch({
-    //   type: 'debugTalkList/editSubmit'
-    //   payload: {
-
-    //   }
-    // })
-
+    const debugTalkId = this.props.debugTalkId
+    const editContent = this.state.editContent
+    this.props.dispatch({
+      type: 'debugTalkList/editSubmit',
+      payload: {
+        id: debugTalkId,
+        debugtalk: editContent
+      }
+    })
     this.props.showEditModal(false)
   }
 
@@ -51,8 +48,8 @@ class EditTextModal extends React.Component{
       title = "编辑"
       onOk = { this.editSubmit }
       onCancel = { this.editCancel }
-      visible={ editVisible }
-      width={ 1200 }
+      visible = { editVisible }
+      width = { 1200 }
     >
       <Editor 
         content = {debugTalkContent} 

@@ -14,19 +14,6 @@ const SearchModel = (props: any) => {
     form.resetFields()
   }
   //  搜索中的启动框
-  const menu = (
-    <Menu>
-      <Menu.Item key="All" icon={<UserOutlined />}>
-        全部
-      </Menu.Item>
-      <Menu.Item key="Enable" icon={<UserOutlined />}>
-        启用
-      </Menu.Item>
-      <Menu.Item key="Unable" icon={<UserOutlined />}>
-        禁止
-      </Menu.Item>
-    </Menu>
-  );
 
   //进行搜索
   const handleSearch = (value: any) => {
@@ -60,17 +47,15 @@ const SearchModel = (props: any) => {
                 >
                   <Input autoComplete = 'off'/>
                 </Form.Item>
-                <Form.Item
+                <Form.Item className = 'downdrop'
                   label = '启用状态'
                   name = 'Enable_status'
                 >
-                  <Input.Group>
-                    <Select defaultValue = "全部" style = {{ width: 150 }} >
+                    <Select defaultValue = "全部" style = {{ width: 100 }} >
                       <Option value = "全部" > 全部 </Option>
                       <Option value = "启用"> 启用 </Option>
                       <Option value = "禁止"> 禁止 </Option>
                     </Select>
-                  </Input.Group>
                 </Form.Item>
                 <Form.Item
                   label = '创建人'
@@ -87,12 +72,14 @@ const SearchModel = (props: any) => {
                   <Input autoComplete = 'off'/>
                 </Form.Item>
                 <Form.Item
+                className = 'downdrop'
                   label = '创建时间'
                   name = 'createDateTime'
                 >
                   <RangePicker autoComplete = 'false'/>  
                 </Form.Item> 
                 <Form.Item
+                  className = 'downdrop_time'
                   label = '更新时间'
                   name = 'updateDateTime'
                 >

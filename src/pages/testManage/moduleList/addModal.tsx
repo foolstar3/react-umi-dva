@@ -8,30 +8,33 @@ class AddModal extends React.Component{
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
+    this.handleAddValueChange = this.handleAddValueChange.bind(this)
+    this.state = {
+      tempAddValue: ''
+    }
   }
 
-  componentDidMount(){
-    console.log('this.pros',this.props)
-  }
-
+  
   //在模态框中点击提交按钮
-  handleSubmit (value: any) {
-    const date = new Date();
-    const dateNow = date.getFullYear() + '-'
-                    + (date.getMonth()+1) + '-'
-                    + date.getDate() + ' '
-                    + date.getHours() + ':'
-                    + ((date.getMinutes() < 10) ? ('0' + date.getMinutes()) : date.getMinutes()); 
-    value.create_time = dateNow 
-    const module_list = [...this.props.moduleList.list]
-    module_list.push(value)
+  handleSubmit () {
+    const addModule = this.state.tempAddValue
     this.props.dispatch({
-      type: 'moduleList/updateModuleList',
+      type: 'moduleList/addModuleList',
       payload: {
-        list: module_list
+        ...addModule,
+      },
+      callback: (res) =>{
+        //console.log(res)
       }
     })
     this.props.showAddModal(false)
+  }
+
+  //添加模块中监听所有值的变化
+  handleAddValueChange( singleValueChange, ValueChange ){
+    this.setState({
+      tempAddValue: ValueChange
+    })
   }
 
   //添加项目的返回键
@@ -46,15 +49,18 @@ class AddModal extends React.Component{
         visible = {addVisible}
         title = "模块信息"
         closable = {false}
-        footer = {null}
+        onOk = { this.handleSubmit }
+        onCancel = { this.handleCancel }
+        okText = '增加'
+        okButtonProps = {{shape : 'round'}}
+        cancelButtonProps = {{ shape: 'round' , type: 'text'}}
       >
         <Form
           name = "basic_moduleList"
           labelCol = {{ span: 5 }}
           wrapperCol = {{ span: 16 }}
-          initialValues = {{ remember: true }}
-          onFinish = {this.handleSubmit}
-          
+          initialValues = {{ remember: false }}
+          onValuesChange = {this.handleAddValueChange}
         >
           <Form.Item
             label = "模块名称"
@@ -91,12 +97,6 @@ class AddModal extends React.Component{
           >
             <TextArea rows = {3} />
           </Form.Item>
-          <Form.Item>
-            <Space size = 'middle'>
-              <Button type = "primary" htmlType = "submit">提交</Button>
-              <Button onClick = {this.handleCancel}>返回</Button>
-            </Space>
-          </Form.Item> 
         </Form>
       </Modal>
     )

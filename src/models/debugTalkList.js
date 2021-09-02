@@ -1,4 +1,7 @@
-import { getDebugTalkList } from '@/services/getDebugTalk' 
+import { 
+    getDebugTalkList,
+    updateDebugTalkList,
+} from '@/services/getDebugTalk' 
 
 export default {
     namespace: 'debugTalkList',
@@ -7,30 +10,20 @@ export default {
     },
 
     effects: {
-        * getDebugTalkList({ payload }, { call, put }) {
-            try {
-                const res = yield call( getDebugTalkList, { ...payload } )
-                yield put({
-                    type: 'updateDebugTalkList',
-                    payload: {
-                        list: res.results
-                    }
-                })
-            } catch (error) {
-                
+        * getDebugTalkList({ payload, callback }, { call, put }) {
+            const res = yield call( getDebugTalkList, { ...payload } )
+            yield put({
+                type: 'updateDebugTalkList',
+                payload: {
+                    list: res.results
+                }
+            });
+            if(callback){
+                callback(res)
             }
         },
         * editSubmit({ payload } ,{ call, put }) {
-            try {
-                yield put({
-                    type:'updateGlobalVarList',
-                    payload:{
-                        list:payload.list
-                    }
-                })
-            } catch (error) {
-
-            }
+            const res = yield call( updatedDebugTalkList, payload )
         }
     },
     reducers: {
