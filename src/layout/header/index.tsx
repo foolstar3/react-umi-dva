@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
-import { history } from 'umi';
+import { history, Link } from 'umi';
 import ImagesUrl from '@/constant/imagesUrl';
 import './index.less';
-import { Modal, Layout } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Modal, Layout, Dropdown, Menu, message } from 'antd';
 const { Header } = Layout;
 
 // 通过
 import logo from '../../assets/logo.png';
+const dropdownMenu = (
+  <Menu>
+    <Menu.Item key="0">
+      <span onClick={() => message.info('功能开发中')}>修改密码</span>
+    </Menu.Item>
+    <Menu.Item key="1">
+      <Link to="/login">注销</Link>
+    </Menu.Item>
+  </Menu>
+);
 class MyHeader extends Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -41,6 +52,23 @@ class MyHeader extends Component<any, any> {
         <div className="header_center"></div>
         <div className="header_right">
           <div className="header_right_content">
+            <div className="user_icon">
+              <img
+                src={ImagesUrl.UserIcon}
+                style={{ width: 38, height: 38, borderRadius: '19px' }}
+              ></img>
+            </div>
+            <Dropdown overlay={dropdownMenu} trigger={['click']}>
+              <div className="user_profile">
+                <div className="user_profile_content">
+                  <span>
+                    {/* <img src={ImagesUrl.Logout} width="38"></img> */}
+                    {localStorage.getItem('qc_user')}
+                  </span>
+                  <DownOutlined className="icon" />
+                </div>
+              </div>
+            </Dropdown>
             <div className="user_home">
               <div className="user_home_content" onClick={this.showModal}>
                 <a className="">

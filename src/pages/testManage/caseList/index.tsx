@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Card, Table, Button, Popconfirm } from 'antd';
 import {
-  BugOutlined,
+  PlayCircleOutlined,
   EditOutlined,
   CopyOutlined,
   QuestionCircleOutlined,
@@ -45,15 +45,51 @@ class CaseList extends Component<any, any> {
     });
   };
 
+  deleteCase = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'testCase/deleteCase',
+      payload,
+      callback: () => {
+        console.log('deleteOk');
+        this.getCaseList({ page: 1 });
+      },
+    });
+  };
+
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
+  };
+
+  onSearch = (payload) => {
+    payload = {
+      ...payload,
+      page: 1,
+    };
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'testCase/getCaseList',
+      payload,
+      callback: () => {
+        console.log('search');
+      },
+    });
+  };
+
+  handleDeleteOk = (record) => {
+    // console.log(record);
+    this.deleteCase(record.id);
   };
 
   render() {
     const { tableLoading, selectedRowKeys, total } = this.state;
     const { caseList } = this.props;
+    const projectOptions = [];
+    const moduleOptions = [];
     caseList.results?.map((item) => {
       item.key = item.id;
+      projectOptions.push(item.project_name);
+      moduleOptions.push(item.module_name);
     });
     const actionColumn = {
       title: '操作',
@@ -62,9 +98,15 @@ class CaseList extends Component<any, any> {
       width: 280,
       render: (text, record) => (
         <div key={record.id}>
-          <Button type="primary" title="运行">
-            <BugOutlined />
-          </Button>
+          <Popconfirm
+            title="确定运行?"
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            // onConfirm={() => this.handleDeleteOk(record)}
+          >
+            <Button type="primary" title="运行">
+              <PlayCircleOutlined />
+            </Button>
+          </Popconfirm>
           <Button type="primary" title="编辑">
             <EditOutlined />
           </Button>
@@ -74,7 +116,7 @@ class CaseList extends Component<any, any> {
           <Popconfirm
             title="确定删除?"
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-            // onConfirm={() => this.handleDeleteOk(record)}
+            onConfirm={() => this.handleDeleteOk(record)}
           >
             <Button type="primary" title="删除" danger>
               <DeleteOutlined />
@@ -100,7 +142,11 @@ class CaseList extends Component<any, any> {
     return (
       <>
         <Card>
-          <SearchBox />
+          <SearchBox
+            projectOptions={projectOptions}
+            moduleOptions={moduleOptions}
+            onSearch={this.onSearch}
+          />
           <div className={styles.tableWrapper}>
             <Table
               rowSelection={rowSelection}

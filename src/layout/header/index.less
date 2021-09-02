@@ -5,34 +5,38 @@
   width: 120rem;
   z-index: 1;
   height: 64px;
+  padding: 0 10px 0 50px;
   background-color: @primary-color;
   display: grid;
-  grid-template-columns: 15% 75% 10%;
-}
-.header_title {
-  margin-left: 10px;
-}
-.header_left_content {
-  display: flex;
-}
-.header_title {
-  cursor: pointer;
-}
-.title_text {
-  color: #fff;
-}
-.header_right_content {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-.user_icon,
-.user_info,
-.user_home {
-  height: 100%;
-  border-radius: 19px;
-  overflow: hidden;
-}
-.user_icon_content {
-  margin: 0 auto;
+  grid-template-columns: 15% 72% 13%;
+  .header_left_content {
+    display: flex;
+  }
+  .header_right_content {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .user_icon {
+      cursor: pointer;
+    }
+    .user_profile_content {
+      span {
+        color: #fff;
+        cursor: pointer;
+        max-width: 120px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      .icon {
+        color: #fff;
+        position: relative;
+        top: 2px;
+        left: 5px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
 }
