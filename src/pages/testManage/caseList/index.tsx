@@ -7,6 +7,7 @@ import {
   CopyOutlined,
   QuestionCircleOutlined,
   DeleteOutlined,
+  PlusCircleOutlined,
 } from '@ant-design/icons';
 import SearchBox from './searchBox';
 import styles from './index.less';
@@ -103,14 +104,14 @@ class CaseList extends Component<any, any> {
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             // onConfirm={() => this.handleDeleteOk(record)}
           >
-            <Button type="primary" title="运行">
+            <Button type="primary" title="运行" size="small" shape="round">
               <PlayCircleOutlined />
             </Button>
           </Popconfirm>
-          <Button type="primary" title="编辑">
+          <Button type="primary" title="编辑" size="small" shape="round">
             <EditOutlined />
           </Button>
-          <Button type="primary" title="复制">
+          <Button type="primary" title="复制" size="small" shape="round">
             <CopyOutlined />
           </Button>
           <Popconfirm
@@ -118,7 +119,13 @@ class CaseList extends Component<any, any> {
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             onConfirm={() => this.handleDeleteOk(record)}
           >
-            <Button type="primary" title="删除" danger>
+            <Button
+              type="primary"
+              title="删除"
+              danger
+              size="small"
+              shape="round"
+            >
               <DeleteOutlined />
             </Button>
           </Popconfirm>
@@ -147,6 +154,14 @@ class CaseList extends Component<any, any> {
             moduleOptions={moduleOptions}
             onSearch={this.onSearch}
           />
+          <div className={styles.btnPosition}>
+            <Button type="primary" icon={<PlusCircleOutlined />}>
+              新增
+            </Button>
+            <Button type="primary" icon={<PlayCircleOutlined />}>
+              运行
+            </Button>
+          </div>
           <div className={styles.tableWrapper}>
             <Table
               rowSelection={rowSelection}

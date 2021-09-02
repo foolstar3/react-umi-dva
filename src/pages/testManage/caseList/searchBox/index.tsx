@@ -91,7 +91,7 @@ const SearchBox = (props) => {
             <Col span={8}>
               <div className={styles.buttonGroup}>
                 <Button
-                  type="primary"
+                  // type="primary"
                   icon={<RedoOutlined />}
                   onClick={onReset}
                 >
