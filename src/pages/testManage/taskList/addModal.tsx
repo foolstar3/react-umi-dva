@@ -2,6 +2,7 @@ import React from "react";
 import { Switch, Card, Select,Form,Input,Modal,Table, Button, Space } from 'antd';
 const { TextArea } = Input;
 import { connect } from 'umi';
+import projectList from "../projectList";
 const { Option } = Select
 class AddModal extends React.Component{
   constructor(props: {} | Readonly<{}>){
@@ -9,9 +10,6 @@ class AddModal extends React.Component{
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
     this.handleEnvListVisible = this.handleEnvListVisible.bind(this)
-    this.state = {
-      envList: []
-    }
   }
 
   componentDidMount(){
@@ -21,9 +19,13 @@ class AddModal extends React.Component{
         page: 1 
       }
     })
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload: {
+        page: 1 
+      }
+    })
   }
-
-
 
   //点击运行环境触发事件，去envlist搜索环境列表然后打印出来每一条
   handleEnvListVisible(){
@@ -57,13 +59,15 @@ class AddModal extends React.Component{
 
   render(){
     const addVisible = this.props.addVisible
-    const envList  = this.props.envList.envList.results
+    const envList  = this.props?.envList?.envList?.results || []
+    const projectList = this.props?.projectList?.projectList || []
+    console.log('projectList',projectList)
     return(
       <Modal
         visible = { addVisible }
         title = "新增任务"
-        closable = {false}
-        footer = {null}
+        closable = { false }
+        footer = { null } 
       >
         <Form
           name = "basic_taskList"
@@ -71,7 +75,6 @@ class AddModal extends React.Component{
           wrapperCol = {{ span: 16 }}
           initialValues = {{ remember: true }}
           onFinish = {this.handleSubmit}
-          
         >
           <Form.Item
             label = "任务名称"
@@ -107,11 +110,11 @@ class AddModal extends React.Component{
           >
             {
               <Select
-                style = {{ width: 100 }}
+                style = {{ width: 150 }}
                 onFocus = {this.handleEnvListVisible} 
               > 
                 {  
-                  envList.map((item) => {
+                  envList && Array.isArray(envList) && envList.length && envList.map((item) => {
                     return(
                       <Option value = {item.env_name}>{item.env_name}</Option> 
                     )
@@ -120,6 +123,39 @@ class AddModal extends React.Component{
               </Select>
             }
           </Form.Item>
+          <Form.Item
+            label = "项目名称"
+            name = "project"
+            rules = {[{ required: true, message: '请选择项目' }]}
+          >
+            {
+              <Select
+                style = {{ width: 150 }}
+                onFocus = {this.handleEnvListVisible} 
+              > 
+                {  
+                  projectList && Array.isArray(projectList) && projectList.length && projectList.map((item) => {
+                    return(
+                      <Option value = {item.project_name}>{item.project_name}</Option> 
+                    )
+                  })
+                } 
+              </Select>
+            }
+          </Form.Item>
+          <Form.Item
+            label = "已选5用例"
+            name = "description"
+            rules = {[{ required: false }]}
+          >
+            <TextArea rows = {3} />
+          </Form.Item>
+          <Form.Item>
+            <Space size = 'middle'>
+              <Button type = "primary" htmlType = "submit">提交</Button>
+              <Button onClick = { this.handleCancel }>返回</Button>
+            </Space>
+          </Form.Item> 
           <Form.Item
             label = "简要描述"
             name = "description"
@@ -140,8 +176,8 @@ class AddModal extends React.Component{
 }
 
 
-export default connect(({ taskList,envList }) => ({
-  taskList,envList
+export default connect(({ taskList, envList, projectList }) => ({
+  taskList, envList, projectList
   }))(AddModal)
 
   

@@ -9,7 +9,8 @@ import {
 export default {
   namespace: 'envList',
   state: {
-    envList: [],
+    envList: {
+    }
   },
   reducers: {
     update(state, { payload }) {

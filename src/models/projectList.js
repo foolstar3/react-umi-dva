@@ -8,7 +8,7 @@ import {
 export default {
     namespace: 'projectList',
     state: {
-        list: [],
+        projectList: [],
     },
     effects: {
         * getProjectList ({ payload, callback }, { call, put }) {
@@ -16,7 +16,7 @@ export default {
             yield put({
                 type: 'updateProjectList',
                 payload: {
-                    list: res.results
+                    projectList: res.results
                 }
             });
             if(callback){

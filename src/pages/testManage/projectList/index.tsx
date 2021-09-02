@@ -168,7 +168,7 @@ class ProjectList extends React.Component{
   }
 
   render () {
-    const {  list } =  this.props.projectList
+    const {  projectList } =  this.props.projectList
     const { addVisible, editVisible, currentValue, tableLoading, total } = this.state
     const paginationProps = {
       showSizeChanger: false,
@@ -276,7 +276,7 @@ class ProjectList extends React.Component{
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
-            dataSource = { [...list] }
+            dataSource = { [...projectList] }
             loading = { tableLoading }
             pagination = { paginationProps }
           />
