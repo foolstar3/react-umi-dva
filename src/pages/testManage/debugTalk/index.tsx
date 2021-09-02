@@ -11,24 +11,48 @@ class DebugTalkList extends React.Component{
       super(props)
       this.state = {
         editVisible: false,
-        debugTalkContent: ''
+        //debugTalk的内容值
+        debugTalkContent: '',
+        //操作的那一项debugTalk
+        debugTalkId: '',
+        tableLoading: true,
+        total: 0
       }
+    //显示代码输入框
     this.showPythonModal = this.showPythonModal.bind(this)
+    //模态框显隐控制按钮
     this.showEditModal = this.showEditModal.bind(this)
-  }
+    //页面加载完成
+    this.getDebugTalkList = this.getDebugTalkList.bind(this)
 
-  componentDidMount(){
+    //加载列表
+    this.getDebugTalkList()
+  }
+  
+
+  getDebugTalkList(){
+    this.setState({
+      tableLoading: true
+    })
     this.props.dispatch({
       type: 'debugTalkList/getDebugTalkList',
       payload: {
         page: 1
+      },
+      callback: (res)=>{
+        this.setState({
+          tableLoading: false,
+          total: res.results.length
+        })
       }
     })
   }
 
   showPythonModal(record :any){
+    console.log('record',record)
     this.setState({
       editVisible: true, 
+      debugTalkId: record.id,
       debugTalkContent: record.debugtalk
     })
   }
@@ -42,7 +66,15 @@ class DebugTalkList extends React.Component{
 
 
   render(){
+    const { tableLoading, total } = this.state
     const { list } = this.props.debugTalkList
+    const paginationProps = {
+      showSizeChanger: false,
+      showQuickJumper: true,
+      total: total,
+      showTotal: ()=> `共${total}条`
+    }
+
     const columns = [
       { 
         title: '#',
@@ -81,6 +113,7 @@ class DebugTalkList extends React.Component{
                   onClick = { ()=>this.showPythonModal(record) } 
                   icon = { <EditOutlined/> }
                   shape = 'round'
+                  size = 'small'
                 >
                   编辑
                 </Button>
@@ -97,12 +130,15 @@ class DebugTalkList extends React.Component{
             className = "components-table-demo-nested"
             columns = { columns }
             dataSource = { [...list] }
+            loading = { tableLoading }
+            pagination = { paginationProps }
           />
         </Card>
         <EditTextModal
-          showEditModal = { this.showEditModal}
-          editVisible = {this.state.editVisible}
-          debugTalkContent = {this.state.debugTalkContent}
+          showEditModal = { this.showEditModal }
+          editVisible = { this.state.editVisible }
+          debugTalkContent = { this.state.debugTalkContent }
+          debugTalkId = { this.state.debugTalkId }
         />         
       </div>
     )

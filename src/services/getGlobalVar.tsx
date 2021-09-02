@@ -8,7 +8,7 @@ export async function getGlobalVarList(data){
     }); 
 }
 
-export async function addGlobalVar(data){
+export async function addGlobalVarList(data){
     return requestUap('/globalvar/',{
         method:'POST',
         data,
@@ -16,7 +16,7 @@ export async function addGlobalVar(data){
     });
 }
 
-export async function deleteGlobalVar(data){
+export async function deleteGlobalVarList(data){
     return requestUap(`/globalvar/${data.id}/`,{
         method:'DELETE',
         data,

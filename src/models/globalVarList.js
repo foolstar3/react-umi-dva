@@ -1,4 +1,8 @@
-import { getGlobalVarList } from '@/services/getGlobalVar';
+import { getGlobalVarList,
+         addGlobalVarList,
+         deleteGlobalVarList,
+         updateGlobalVarList 
+} from '@/services/getGlobalVar';
 
 export default {
     namespace: 'globalVarList',
@@ -6,56 +10,32 @@ export default {
         list: [],
     },
     effects: {
-        * getGlobalVarList ({ payload }, { call, put }) {
-            try {
-                const res = yield call(getGlobalVarList, { ...payload } )
-                console.log('res',res.results)
-                yield put({
-                    type: 'updateGlobalVarList',
-                    payload: {
-                        list: res.results
-                    }
-                })
-            } catch (error) {
-                console.error('...getProjectList result error', error)
+        * getGlobalVarList ({ payload, callback }, { call, put }) {
+            const res = yield call( getGlobalVarList, { ...payload } )
+            yield put({
+                type: 'updateGlobalVarList',
+                payload: {
+                    list: res.results
+                }
+            });
+            if(callback){
+                callback(res)
             }
         },
-        * addGlobalVar({payload},{call,put}){
-           try {
-                yield put({
-                    type:'updateGlobalVarList',
-                    payload:{
-                        list:payload.list,
-                    }
-               })
-           } catch (error) {
-                console.error('...getProjectList result error', error)
-           }
-        },
-        * editSubmit({payload},{call,put}){
-            try {
-                console.log('payload_edit',payload.list)
-                yield put({
-                    type:'updateGlobalVarList',
-                    payload:{
-                        list:payload.list
-                    }
-                })
-            } catch (error) {
-
+        * addGlobalVarList({ payload, callback }, { call, put }) {
+            const res = yield call( addGlobalVarList, { ...payload } );
+            yield put({
+                type:'updateGlobalVarList',
+            });
+            if(callback){
+                callback(res)
             }
         },
-        * deleteGlobalVar({payload},{call,put}){
-            try {
-                yield put({
-                    type:'updateGlobalVarList',
-                    payload:{
-                        list:payload.list
-                    }
-                })
-            } catch (error) {
-                
-            }
+        * editSubmit({ payload }, { call, put}){
+            const res = yield call( updateGlobalVarList, { ...payload } )
+        },
+        * deleteGlobalVarList({ payload }, { call, put}){
+            const res = yield call( deleteGlobalVarList, { ...payload } )
         }
     },
     reducers: {

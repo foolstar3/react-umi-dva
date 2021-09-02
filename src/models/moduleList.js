@@ -1,4 +1,9 @@
-import { getModuleList } from '@/services/getModuleList';
+import { 
+    getModuleList,
+    addModuleList,
+    deleteModuleList,
+    updateModuleList
+ } from '@/services/getModuleList';
 
 export default {
     namespace: 'moduleList',
@@ -6,56 +11,34 @@ export default {
         list: [],
     },
     effects: {
-        * getModuleList ({ payload }, { call, put }) {
-            try {
-                const res = yield call(getModuleList, { ...payload } )
-                console.log('res',res.results)
-                yield put({
-                    type: 'updateModuleList',
-                    payload: {
-                        list: res.results
-                    }
-                })
-            } catch (error) {
-                console.error('...getProjectList result error', error)
+        * getModuleList ({ payload, callback }, { call, put }) {
+            const res = yield call( getModuleList, { ...payload } )
+            yield put({
+                type: 'updateModuleList',
+                payload: {
+                    list: res.results
+                }
+            });
+            if(callback){
+                callback(res)
             }
         },
-        * addModuleList({payload},{call,put}){
-           try {
-                yield put({
-                    type:'updateModuleList',
-                    payload:{
-                        list:payload.list,
-                    }
-               })
-           } catch (error) {
-                console.error('...getProjectList result error', error)
-           }
+        * addModuleList({ payload, callback }, { call, put }){
+            const res = yield call( addModuleList, { ...payload } );
+            yield put({
+                type:'updateModuleList',
+            });
+            if(callback){
+                callback(res)
+            }
         },
-        * editSubmit({payload},{call,put}){
-            try {
-                console.log('payload_edit',payload.list)
-                yield put({
-                    type:'updateModuleList',
-                    payload:{
-                        list:payload.list
-                    }
-                })
-            } catch (error) {
 
-            }
+        * editSubmit({ payload },{ call, put }){
+            const res = yield call( updateModuleList, { ...payload } )
         },
-        * deleteModuleList({payload},{call,put}){
-            try {
-                yield put({
-                    type:'updateModuleList',
-                    payload:{
-                        list:payload.list
-                    }
-                })
-            } catch (error) {
-                
-            }
+
+        * deleteModuleList({ payload }, { call, put }){
+            const res = yield call( deleteModuleList, { ...payload } )
         }
     },
     reducers: {

@@ -4,6 +4,7 @@ import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
+
 import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
@@ -159,6 +160,7 @@ class TaskList extends React.Component{
                     type = 'primary'  
                     icon = { <PlayCircleOutlined/> }
                     shape = 'round'
+                    size = 'small'
                     
                   >
                     运行
@@ -170,6 +172,7 @@ class TaskList extends React.Component{
                   onClick = { () => this.handleEditModal(record) } 
                   icon = { <EditOutlined/> }
                   shape = 'round'
+                  size = 'small'
                 >
                   编辑
                 </Button>
@@ -183,6 +186,7 @@ class TaskList extends React.Component{
                   danger 
                   icon = { <DeleteOutlined/> }
                   shape = 'round'
+                  size = 'small'
                   >
                     删除
                   </Button>
@@ -197,8 +201,15 @@ class TaskList extends React.Component{
       <div>
         <SearchModal/>
         <Card>
-          <div className = 'button_addModule'>
-            <Button type = 'primary' onClick = { this.handleCreateTask } icon = { <PlusCircleOutlined/> } >添加任务</Button>
+          <div className = 'ant-btn-add'>
+            <Button 
+              type = 'primary' 
+              onClick = { this.handleCreateTask } 
+              icon = { <PlusCircleOutlined/> }
+              shape = 'round' 
+            >
+              添加任务
+            </Button>
           </div>
           <Table
             className = "components-table-demo-nested"

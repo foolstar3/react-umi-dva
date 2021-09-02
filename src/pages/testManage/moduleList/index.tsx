@@ -4,6 +4,7 @@ import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
+import '/src/styles/global.less';
 import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
@@ -13,70 +14,93 @@ class ModuleList extends React.Component{
     super(props)
     this.handleDelete = this.handleDelete.bind(this)
     this.showAddModal = this.showAddModal.bind(this)
-    this.handleCreateModule = this.handleCreateModule.bind(this)
+    this.handleAddModule = this.handleAddModule.bind(this)
     this.handleEditModal = this.handleEditModal.bind(this)
     this.showEditModal = this.showEditModal.bind(this)
     this.state = {
       addVisible: false,
       editVisible: false,
-      tempValue: ''
+      tempValue: '',
+      tableLoading: true,
+      total: 0
     }
+    this.getModuleList()
   }
 
-  componentDidMount(){
+  getModuleList(){
+    this.setState({
+      tableLoading: true
+    })
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload: {
         page: 1
+      },
+      callback: (res)=>{
+        this.setState({
+          tableLoading: false,
+          total: res.results.length
+        })
       }
     })
   }
+/* =======================新增按钮及模态框功能=========================== */
 
-  //添加模态框，提交时传过来的子组件——模态框的返回值
-  showAddModal (childModalState: any) {
-    console.log('childModalState', childModalState)
-    this.setState({
-      addVisible : childModalState
-    })
-  }
-
-  handleCreateModule () {
+ //主页”添加“按钮
+  showAddModal() {
     this.setState({
       addVisible : true
     })
   }
 
-
+  //模态框中的添加，子组件回传
+  handleAddModule (childModalState: any) {
+    this.setState({
+      addVisible : childModalState
+    })
+  }
+ 
+/* =======================编辑按钮及模态框功能=========================== */
   //编辑的地方弹出模态框
-  handleEditModal (record:any) {
-    console.log('record',record)
+  showEditModal(record:any) {
     this.setState({
       editVisible: true,
       tempValue: record
     })
   }
   //子模块--模态框传值
-  showEditModal(childModalState: any){
+  handleEditModal (childModalState: any){
     this.setState({
       editVisible : childModalState
     })
   }
 
+
+/* =======================删除按钮及模态框功能=========================== */
   //模块列表删除按钮
-  handleDelete(value:any){
-    const module_list = [...this.props.moduleList.list]
-    const moduleList = module_list.filter((item)=>item.module_name!==value.module_name)
+  handleDelete(record: any){
     this.props.dispatch({
       type: 'moduleList/deleteModuleList',
       payload: {
-        list:moduleList
+        id: record.id
+      },
+      callback: (res) =>{
+        console.log(res)
+        ///还需要调用获取列表
       }
     })
   }
 
   
   render(){
+    const { tableLoading, total } = this.state
     const { editVisible, list } =  this.props.moduleList
+    const paginationProps = {
+      showSizeChanger: false,
+      showQuickJumper: true,
+      total: total,
+      showTotal: ()=> `共${total}条`
+    }
     const columns = [
       {
         title:'模块编号',
@@ -127,9 +151,10 @@ class ModuleList extends React.Component{
               <Space size = 'middle'>
                 <Button 
                   type = 'primary'  
-                  onClick = { () => this.handleEditModal(record) } 
+                  onClick = { () => this.showEditModal(record) } 
                   icon = { <EditOutlined/> }
                   shape = 'round'
+                  size = 'small'
                 >
                   编辑
                 </Button>
@@ -143,6 +168,7 @@ class ModuleList extends React.Component{
                   danger 
                   icon = { <DeleteOutlined/> }
                   shape = 'round'
+                  size = 'small'
                   >
                     删除
                   </Button>
@@ -157,22 +183,31 @@ class ModuleList extends React.Component{
       <div>
         <SearchModal/>
         <Card>
-          <div className = 'button_addModule'>
-            <Button type = 'primary' onClick = { this.handleCreateModule } icon = { <PlusCircleOutlined/> } >添加模块</Button>
+          <div className = 'ant-btn-add'>
+            <Button 
+              type = 'primary'
+              onClick = { this.handleAddModule } 
+              icon = { <PlusCircleOutlined/> }
+              shape = 'round' 
+            >
+                添加模块
+            </Button>
           </div>
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
             dataSource = { [...list] }
+            loading = { tableLoading }
+            pagination = { paginationProps }
           />
         </Card>  
       
         <AddModal 
-          showAddModal = { this.showAddModal }
+          showAddModal = { this.handleAddModule }
           addVisible = { this.state.addVisible }
         />
         <EditModal 
-          editModal = { this.showEditModal }
+          showEditModal = { this.handleEditModal }
           editVisible = { this.state.editVisible }
           tempValue = { this.state.tempValue }
         />

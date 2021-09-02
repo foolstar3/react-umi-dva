@@ -10,71 +10,91 @@ class GlobalVarList extends React.Component{
   constructor(props: {} | Readonly<{}>){
     super(props)
     this.handleDelete = this.handleDelete.bind(this)
-    this.showAddGlobalVar = this.showAddGlobalVar.bind(this)
-    this.handleCreateGlobalVar = this.handleCreateGlobalVar.bind(this)
-    this.editModal = this.editModal.bind(this)
-    this.handleEditGlobalVar = this.handleEditGlobalVar.bind(this)
+    this.showAddModal = this.showAddModal.bind(this)
+    this.handleAddGlobalVar = this.handleAddGlobalVar.bind(this)
+    this.handleEditModal = this.handleEditModal.bind(this)
+    this.showEditModal = this.showEditModal.bind(this)
     this.state = {
       addVisible: false,
       editVisible: false,
-      tempValue: ''
+      tempValue: '',
+      tableLoading: true,
+      total:0
     }
+    this.getGlobalVarList()
   }
 
-  componentDidMount(){
+  getGlobalVarList(){
     this.props.dispatch({
       type: 'globalVarList/getGlobalVarList',
       payload: {
         page: 1
+      },
+      callback: (res)=>{
+        this.setState({
+          tableLoading: false,
+          total: res.results.length
+        })
       }
     })
   }
 
+/* =======================新增按钮及模态框功能=========================== */
   //添加按钮模态框
-  showAddGlobalVar (childModalState: any) {
-    console.log('childModalState', childModalState)
-    this.setState({
-      addVisible : childModalState
-    })
-  }
-
-  handleCreateGlobalVar () {
+  
+  showAddModal () {
     this.setState({
       addVisible : true
     })
   }
 
+  handleAddGlobalVar (childModalState: any) {
+    this.setState({
+      addVisible : childModalState
+    })
+  }
 
+
+/* =======================编辑按钮及模态框功能=========================== */
   //编辑的地方弹出模态框
-  editModal ( record:any ) {
+  showEditModal ( record:any ) {
     this.setState({
       editVisible: true,
       tempValue: record
     })
 
   }
-
-  handleEditGlobalVar ( childModalState:any ){
+  handleEditModal ( childModalState:any ){
     this.setState({
       editVisible: childModalState
     })
   }
 
+/* =======================删除按钮及模态框功能=========================== */
   //全局变量列表删除按钮
-  handleDelete(value:any){
-    const globalVar_list = [...this.props.globalVarList.list]
-    const globalVarList = globalVar_list.filter((item)=>item.var_name!==value.var_name)
+  handleDelete(record: any){
     this.props.dispatch({
-      type: 'globalVarList/deleteGlobalVar',
+      type: 'globalVarList/deleteModuleList',
       payload: {
-        list:globalVarList
+        id: record.id
+      },
+      callback: (res) =>{
+        console.log(res)
+        ///还需要调用获取列表
       }
     })
   }
 
   
   render(){
+    const { tableLoading, total } = this.state
     const { editVisible, list } =  this.props.globalVarList
+    const paginationProps = {
+      showSizeChanger: false,
+      showQuickJumper: true,
+      total: total,
+      showTotal: ()=> `共${total}条`
+    }
     const columns = [
       {
         title:'#',
@@ -120,9 +140,10 @@ class GlobalVarList extends React.Component{
               <Space size = 'middle'>
                 <Button
                  type = 'primary'  
-                 onClick = { () => this.editModal(record) } 
+                 onClick = { () => this.showEditModal(record) } 
                  icon = { <EditOutlined/> }
                  shape = 'round'
+                 size = 'small'
                  >
                   编辑
                  </Button>
@@ -136,6 +157,7 @@ class GlobalVarList extends React.Component{
                   danger 
                   icon = { <DeleteOutlined/> }
                   shape = 'round'
+                  size = 'small'
                   >
                     删除
                   </Button>
@@ -150,22 +172,31 @@ class GlobalVarList extends React.Component{
       <div>
         <SearchModal/>
         <Card>
-          <div className = 'button_addModule'>
-            <Button type = 'primary' onClick = {this.handleCreateGlobalVar} icon = { <PlusCircleOutlined/> } >添加全局变量</Button>
+          <div className = 'ant-btn-add'>
+            <Button 
+              type = 'primary' 
+              onClick = { this.handleAddGlobalVar } 
+              icon = { <PlusCircleOutlined/> }
+              shape = 'round' 
+            >
+              添加全局
+            </Button>
           </div>
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
             dataSource = { [...list] }
+            loading = { tableLoading }
+            pagination = { paginationProps }
           />
         </Card>  
       
         <AddModal 
-        showAddModal = { this.showAddGlobalVar }
+        showAddModal = { this.handleAddGlobalVar }
         addVisible = { this.state.addVisible }
         />
         <EditModal 
-        editModal = { this.handleEditGlobalVar } 
+        showEditModal = { this.handleEditModal } 
         editVisible = { this.state.editVisible }
         tempValue = { this.state.tempValue }
         /> 

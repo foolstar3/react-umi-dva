@@ -28,14 +28,14 @@ const SearchModel = (props: any) => {
   }
 
   return(
-    <Card className='Search' type='inner' >
+    <div>
       <Collapse >
         <Panel header="搜索框" key="1">
           <Form
             form = { form }
             layout = 'inline'
             initialValues = { { remember: false } }
-            wrapperCol = { { span: 15 } }
+            wrapperCol = { { span: 15} }
             onFinish = { handleSearch }
           >
             <Form.Item
@@ -90,7 +90,7 @@ const SearchModel = (props: any) => {
           </Form>
         </Panel>
       </Collapse>
-    </Card>
+    </div>
   )
 
 }

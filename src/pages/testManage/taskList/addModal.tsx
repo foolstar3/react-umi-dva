@@ -1,17 +1,34 @@
 import React from "react";
-import { Card, Select,Form,Input,Modal,Table, Button, Space } from 'antd';
+import { Switch, Card, Select,Form,Input,Modal,Table, Button, Space } from 'antd';
 const { TextArea } = Input;
 import { connect } from 'umi';
-
+const { Option } = Select
 class AddModal extends React.Component{
   constructor(props: {} | Readonly<{}>){
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
+    this.handleEnvListVisible = this.handleEnvListVisible.bind(this)
+    // this.state = {
+    //   envlist: [],
+    //   projectList: []
+    // }
   }
 
   componentDidMount(){
     console.log('this.pros',this.props)
+  }
+
+
+
+  //点击运行环境触发事件，去envlist搜索环境列表然后打印出来每一条
+  handleEnvListVisible(){
+    this.props.dispatch({
+      type: 'envList/getEnvList',
+      payload: {
+        page: 1 
+      }
+    })
   }
 
   //在模态框中点击提交按钮
@@ -41,15 +58,16 @@ class AddModal extends React.Component{
 
   render(){
     const addVisible = this.props.addVisible
+    const envList = this.props.envList.envList
     return(
       <Modal
         visible = {addVisible}
-        title = "模块信息"
+        title = "新增任务"
         closable = {false}
         footer = {null}
       >
         <Form
-          name = "basic_moduleList"
+          name = "basic_taskList"
           labelCol = {{ span: 5 }}
           wrapperCol = {{ span: 16 }}
           initialValues = {{ remember: true }}
@@ -57,32 +75,49 @@ class AddModal extends React.Component{
           
         >
           <Form.Item
-            label = "模块名称"
-            name = "module_name"
-            rules = {[{ required: true, message: '请输入模块名称' }]}
+            label = "任务名称"
+            name = "name"
+            rules = {[{ required: true, message: '请输入任务名称' }]}
           >
             <Input/>
           </Form.Item>
           <Form.Item
-            label = "项目名称"
-            name = "project_name"
-            rules = {[{ required: true, message: '请输入模块名称' }]}
+            label = "简要描述"
+            name = "description"
           >
             <Input/>
           </Form.Item>
           <Form.Item
-            label = "测试数"
+            label = "状态"
             name = "testcase_count"
             rules = {[{ required: true, message: '请输入测试数' }]}
           >
-            <Input />
+            <Switch
+              checkedChildren="启用"
+              unCheckedChildren="禁用"
+              defaultChecked={true}
+              // onChange={(checked) => {
+              //   this.onSwitchChange(checked, text, record);
+              // }}
+            />
           </Form.Item>
           <Form.Item
-            label = "测试人员"
-            name = "test_user"
-            rules = {[{ required: true, message: '请输入测试人员名称' }]}
+            label = "运行环境"
+            name = "env"
+            rules = {[{ required: true, message: '请选择运行环境' }]}
           >
-            <Input />
+            {
+              <Select
+                style = {{ width: 100 }}
+                onFocus = {this.handleEnvListVisible} 
+              > 
+                {
+                  envList.map(item => {
+                    return(<Option value = {item.env_name}>{item.env_name}</Option>) 
+                  })
+                }
+              </Select>
+            }
           </Form.Item>
           <Form.Item
             label = "简要描述"
@@ -104,6 +139,6 @@ class AddModal extends React.Component{
 }
 
 
-export default connect(({ moduleList }) => ({
-  moduleList
+export default connect(({ taskList, envList }) => ({
+  taskList,envList
   }))(AddModal)
