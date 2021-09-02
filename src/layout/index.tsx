@@ -5,6 +5,8 @@ import MySider from '@/layout/sider';
 import './index.less';
 import NewBreadcrumb from './breadcrumb';
 import { Link } from 'umi';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 import zhCN from 'antd/lib/locale/zh_CN';
 
 const { Content } = Layout;
