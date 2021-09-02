@@ -75,7 +75,6 @@ export default {
     },
     *updateEnv({ payload, callback }, { call, put }) {
       const res = yield call(updateEnv, payload);
-      console.log(res);
     },
   },
 };

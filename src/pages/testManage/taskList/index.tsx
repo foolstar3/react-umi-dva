@@ -153,7 +153,6 @@ class TaskList extends React.Component{
                   title = '确认运行？'
                   okText="Yes" 
                   cancelText="No"
-                  onConfirm = {console.log('1')}
                 >
                   <Button
                     className = 'button_run' 
