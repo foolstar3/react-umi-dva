@@ -391,7 +391,6 @@ export default class EnvList extends Component<any, any> {
     if (envList.results !== undefined) {
       // 为envList数组中的每个元素添加一个key属性
       envList.results.map((item) => {
-        // console.log(item);
         item.key = item.id;
       });
     }

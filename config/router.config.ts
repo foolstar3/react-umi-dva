@@ -43,7 +43,7 @@ const routes = [
     routes: [
       {
         routes: [
-          { path: '/', component: '@/pages' },
+          // { path: '/', component: '@/pages' },
           {
             path: '/testManage/projectList',
             component: '@/pages/testManage/projectList',

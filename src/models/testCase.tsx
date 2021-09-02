@@ -1,4 +1,4 @@
-import { getCaseList } from '@/services/testCase';
+import { getCaseList, deleteCase } from '@/services/testCase';
 
 export default {
   namespace: 'testCase',
@@ -23,6 +23,12 @@ export default {
         type: 'updateCaseList',
         payload: res,
       });
+      if (callback) {
+        callback();
+      }
+    },
+    *deleteCase({ payload, callback }, { call, put }) {
+      const res = yield call(deleteCase, payload);
       if (callback) {
         callback();
       }

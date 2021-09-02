@@ -82,14 +82,6 @@ class Login extends Component<any, any> {
                 >
                   登录
                 </Button>
-
-                <Button
-                  type="primary"
-                  onClick={this.handleRegistry}
-                  className={styles.loginButton}
-                >
-                  注册
-                </Button>
               </Form.Item>
             </Form>
           </div>
