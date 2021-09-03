@@ -2,12 +2,12 @@ import React from "react";
 import { Card, Select,Form,Input,Modal,Table, Button, Space, Popconfirm } from 'antd';
 import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import { connect } from 'umi';
-const { TextArea } = Input;
 import './index.less';
 import '/src/styles/global.less';
 import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
+
 //获取接口参数
 class ModuleList extends React.Component{
   constructor(props: {} | Readonly<{}>){
@@ -36,7 +36,7 @@ class ModuleList extends React.Component{
       payload: {
         page: 1
       },
-      callback: (res)=>{
+      callback: (res)=> {
         this.setState({
           tableLoading: false,
           total: res.results.length
@@ -85,7 +85,7 @@ class ModuleList extends React.Component{
         id: record.id
       },
       callback: (res) =>{
-        console.log(res)
+        
         ///还需要调用获取列表
       }
     })
@@ -94,7 +94,7 @@ class ModuleList extends React.Component{
   
   render(){
     const { tableLoading, total } = this.state
-    const { editVisible, list } =  this.props.moduleList
+    const { editVisible, moduleList } =  this.props.moduleList
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -105,46 +105,55 @@ class ModuleList extends React.Component{
       {
         title:'模块编号',
         dataIndex:'id',
-        key:'id'
+        key:'id',
+        align: 'center'
       },
       { 
         title: '模块名称',
         dataIndex: 'module_name',
-        key:'module_name'
+        key:'module_name',
+        align: 'center'
       },
       { 
         title: '项目名称',
         dataIndex: 'project_name',
-        key:'project_name' 
+        key:'project_name',
+        align: 'center'
       },
       {
         title:'测试数',
         dataIndex:'testcase_count',
-        key:'testcase_count'
+        key:'testcase_count',
+        align: 'center'
       },
       { 
         title: '测试人员', 
         dataIndex: 'test_user',
-        key:'test_user'
+        key:'test_user',
+        align: 'center'
       },
       { 
         title: '简要描述',
         dataIndex: 'description',
-        key:'description'
+        key:'description',
+        align: 'center'
       },
       { 
         title: '创建时间',
         dataIndex: 'create_time',
-        key:'create_time'
+        key:'create_time',
+        align: 'center'
       },
       { 
         title: '更新时间',
         dataIndex: 'update_time',
-        key:'update_time'
+        key:'update_time',
+        align: 'center'
         },
       { title: '相关操作', 
         dataIndex:'relateAction',
         key:'relateAction',
+        align: 'center',
         render: (_: any,record: any) => {
           return (
             <div>
@@ -181,8 +190,8 @@ class ModuleList extends React.Component{
     ]   
     return (
       <div>
-        <SearchModal/>
         <Card>
+        <SearchModal/>
           <div className = 'ant-btn-add'>
             <Button 
               type = 'primary'
@@ -196,7 +205,7 @@ class ModuleList extends React.Component{
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
-            dataSource = { [...list] }
+            dataSource = { [...moduleList] }
             loading = { tableLoading }
             pagination = { paginationProps }
           />

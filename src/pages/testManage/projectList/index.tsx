@@ -181,7 +181,7 @@ class ProjectList extends React.Component{
       {
         title:'项目编号',
         dataIndex:'id',
-        key:'id'
+        key:'id',
       },
       { 
         title: '项目名称',

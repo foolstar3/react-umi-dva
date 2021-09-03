@@ -7,7 +7,7 @@ import { getGlobalVarList,
 export default {
     namespace: 'globalVarList',
     state: {
-        list: [],
+        globalVarList: [],
     },
     effects: {
         * getGlobalVarList ({ payload, callback }, { call, put }) {
@@ -15,7 +15,7 @@ export default {
             yield put({
                 type: 'updateGlobalVarList',
                 payload: {
-                    list: res.results
+                    globalVarList: res.results
                 }
             });
             if(callback){

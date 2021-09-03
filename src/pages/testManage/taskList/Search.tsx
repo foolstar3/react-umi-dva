@@ -1,4 +1,4 @@
-import { Dropdown, Menu, DatePicker, Collapse, Card, Select,Form,Input,Modal,Table, Button, Space } from 'antd';
+import { Row, Col, Dropdown, Menu, DatePicker, Collapse, Card, Select,Form,Input,Modal,Table, Button, Space } from 'antd';
 import {UserOutlined, EditOutlined , RedoOutlined} from '@ant-design/icons';
 import { connect } from 'umi'
 import './index.less'
@@ -18,75 +18,77 @@ const SearchModel = (props: any) => {
   //进行搜索
   const handleSearch = (value: any) => {
     props.dispatch({
-      type: 'moduleList/getModuleList',
+      type: 'taskList/getTaskList',
       payload: {
         page: 2,
-        module_name: value.module_name,
-        test_user: value.test_user,
-        description: value.description,
-        project:  value.project_name
+        name: value.module_name,
+        update_time_after:1,
+        update_time_before: 1,
+        enabled: 1
       }
     })
   }
 
   return(
-    <Card className='Search' type='inner' >
       <Collapse >
-        <Panel header="搜索框" key="1">
+        <Panel header = "搜索框" key = "search">
           <Form
             form = { form }
             initialValues = { { remember: false } }
-            wrapperCol = { { span: 15 } }
+            wrapperCol = { { span: 13 } }
             onFinish = { handleSearch }
+            labelCol={{ span: 4 }}
           >
-            <Space direction = 'vertical'>
-              <Space wrap>
+            <Row>
+              <Col span = { 8 }>
                 <Form.Item
                   label = '任务名称'
                   name = 'module_name'
                 >
                   <Input autoComplete = 'off'/>
                 </Form.Item>
-                <Form.Item className = 'downdrop'
+              </Col>
+              <Col span = { 8 }>
+                <Form.Item 
                   label = '启用状态'
                   name = 'Enable_status'
                 >
-                    <Select defaultValue = "全部" style = {{ width: 100 }} >
-                      <Option value = "全部" > 全部 </Option>
-                      <Option value = "启用"> 启用 </Option>
-                      <Option value = "禁止"> 禁止 </Option>
-                    </Select>
+                  <Select defaultValue = "全部" style = {{ width: 100 }} >
+                    <Option value = "全部" > 全部 </Option>
+                    <Option value = "启用"> 启用 </Option>
+                    <Option value = "禁止"> 禁止 </Option>
+                  </Select>
                 </Form.Item>
+              </Col>
+              <Col span = { 8 }>
                 <Form.Item
                   label = '创建人'
                   name = 'test_user'
                 >
                   <Input autoComplete = 'off'/>
                 </Form.Item>
-              </Space>
-              <Space wrap>
+              </Col>
+            </Row>
+            <Row>
+              <Col span = { 8 }>
                 <Form.Item
                   label = '简要描述'
                   name = 'description'
                 >
                   <Input autoComplete = 'off'/>
                 </Form.Item>
+              </Col>
+              <Col span = { 8 }>
                 <Form.Item
-                className = 'downdrop'
-                  label = '创建时间'
-                  name = 'createDateTime'
-                >
-                  <RangePicker autoComplete = 'false'/>  
-                </Form.Item> 
-                <Form.Item
-                  className = 'downdrop_time'
                   label = '更新时间'
                   name = 'updateDateTime'
                 >
                   <RangePicker autoComplete = 'false'/>  
                 </Form.Item> 
-                <Form.Item className = 'searchButton'>
-                  <Space size = 'middle'>
+              </Col>
+              <Col span = { 8 }>
+                <Form.Item>
+                  <Space size = 'middle' className = 'space-button'>
                     <Button 
                       type = "primary" 
                       htmlType = "submit" 
@@ -104,12 +106,11 @@ const SearchModel = (props: any) => {
                     </Button>
                   </Space>
                 </Form.Item> 
-              </Space>
-            </Space>
+              </Col>
+            </Row>
           </Form>
         </Panel>
       </Collapse>
-    </Card>
   )
 
 }

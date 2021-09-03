@@ -4,79 +4,102 @@ import {EditOutlined, DeleteOutlined, PlusCircleOutlined, QuestionCircleOutlined
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
-
 import SearchModal from "./Search";
 import AddModal from "./addModal";
 import EditModal from "./editModal";
+import { FormListContext } from "@ant-design/pro-form/lib/components/List";
 //获取接口参数
 class TaskList extends React.Component{
   constructor(props: {} | Readonly<{}>){
     super(props)
     this.handleDelete = this.handleDelete.bind(this)
     this.showAddModal = this.showAddModal.bind(this)
-    this.handleCreateTask= this.handleCreateTask.bind(this)
+    this.handleAddTask= this.handleAddTask.bind(this)
     this.handleEditModal = this.handleEditModal.bind(this)
     this.showEditModal = this.showEditModal.bind(this)
     this.state = {
       addVisible: false,
       editVisible: false,
-      tempValue: ''
+      tempValue: '',
+      tableLoading: true,
+      total: 0
     }
+    this.getTaskList()
   }
 
-  componentDidMount(){
+  getTaskList(){
+    this.setState({
+      tableLoading: true
+    })
     this.props.dispatch({
       type: 'taskList/getTaskList',
       payload: {
         page: 1
+      },
+      callback: (res)=> {
+        this.setState({
+          tableLoading: false,
+          total: res.results.length
+        })
       }
     })
   }
 
-  //添加模态框，提交时传过来的子组件——模态框的返回值
-  showAddModal (childModalState: any) {
-    console.log('childModalState', childModalState)
-    this.setState({
-      addVisible : childModalState
-    })
-  }
+/* =======================新增按钮及模态框功能=========================== */
 
-  handleCreateTask () {
+  //主页”添加“按钮
+  showAddModal () {
     this.setState({
       addVisible : true
     })
   }
 
+  //模态框中的添加，子组件回传
+  handleAddTask (childModalState: any) {
+    this.setState({
+      addVisible : childModalState
+    })
+  }
 
+/* =======================编辑按钮及模态框功能=========================== */
   //编辑的地方弹出模态框
-  handleEditModal (record:any) {
-    console.log('record',record)
+  handleEditModal (childModalState: any) {
+    this.setState({
+      editVisible : childModalState
+    })
+  }
+  //子模块--模态框传值
+  showEditModal(record: any){
     this.setState({
       editVisible: true,
       tempValue: record
     })
   }
-  //子模块--模态框传值
-  showEditModal(childModalState: any){
-    this.setState({
-      editVisible : childModalState
+
+/* =======================删除按钮及模态框功能=========================== */
+  //任务列表删除按钮
+  handleDelete(record :any){
+    this.props.dispatch({
+      type: 'taskList/deleteTaskList',
+      payload: {
+        id: record.id
+      },
+      callback: (res) =>{
+        
+        ///还需要调用获取列表
+      }
     })
   }
 
-  //任务列表删除按钮
-  handleDelete(value:any){
-    // const module_list = [...this.props.moduleList.list]
-    // const moduleList = module_list.filter((item)=>item.module_name!==value.module_name)
-    // this.props.dispatch({
-    //   type: 'moduleList/deleteModuleList',
-    //   payload: {
-    //     list:moduleList
-    //   }
-    // })
-  }
-
   render(){
-    const { editVisible, list } =  this.props.taskList
+    const { tableLoading, total } =  this.state
+    const { editVisible, taskList } =  this.props.taskList
+    const paginationProps = {
+      showSizeChanger: false,
+      showQuickJumper: true,
+      total: total,
+      showTotal: ()=> `共${total}条`
+    }
     const columns = [
       {
         title:'#',
@@ -145,6 +168,7 @@ class TaskList extends React.Component{
         dataIndex:'relateAction',
         key:'relateAction',
         align: 'center',
+        width: 240,
         render: (_: any,record: any) => {
           return (
             <div>
@@ -168,7 +192,7 @@ class TaskList extends React.Component{
 
                 <Button
                   type = 'primary'  
-                  onClick = { () => this.handleEditModal(record) } 
+                  onClick = { () => this.showEditModal(record) } 
                   icon = { <EditOutlined/> }
                   shape = 'round'
                   size = 'small'
@@ -198,12 +222,12 @@ class TaskList extends React.Component{
     ]   
     return (
       <div>
-        <SearchModal/>
         <Card>
+          <SearchModal/>
           <div className = 'ant-btn-add'>
             <Button 
               type = 'primary' 
-              onClick = { this.handleCreateTask } 
+              onClick = { this.handleAddTask } 
               icon = { <PlusCircleOutlined/> }
               shape = 'round' 
             >
@@ -213,17 +237,19 @@ class TaskList extends React.Component{
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
-            dataSource = { [...list] }
+            dataSource = { [...taskList] }
             bordered
+            loading = { tableLoading }
+            pagination = { paginationProps }
           />
         </Card>  
       
         <AddModal 
-          showAddModal = { this.showAddModal }
+          showAddModal = { this.handleAddTask }
           addVisible = { this.state.addVisible }
         />
         <EditModal 
-          editModal = { this.showEditModal }
+          showEditModal = { this.handleEditModal }
           editVisible = { this.state.editVisible }
           tempValue = { this.state.tempValue }
         />

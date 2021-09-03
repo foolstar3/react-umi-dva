@@ -8,7 +8,7 @@ import {
 export default {
     namespace: 'moduleList',
     state: {
-        list: [],
+        moduleList: [],
     },
     effects: {
         * getModuleList ({ payload, callback }, { call, put }) {
@@ -16,11 +16,11 @@ export default {
             yield put({
                 type: 'updateModuleList',
                 payload: {
-                    list: res.results
+                    moduleList: res.results
                 }
             });
             if(callback){
-                callback(res)
+                callback( res )
             }
         },
         * addModuleList({ payload, callback }, { call, put }){
@@ -29,7 +29,7 @@ export default {
                 type:'updateModuleList',
             });
             if(callback){
-                callback(res)
+                callback( res )
             }
         },
 
