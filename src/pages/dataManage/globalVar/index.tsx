@@ -88,7 +88,7 @@ class GlobalVarList extends React.Component{
   
   render(){
     const { tableLoading, total } = this.state
-    const { editVisible, list } =  this.props.globalVarList
+    const { editVisible, globalVarList } =  this.props.globalVarList
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -99,41 +99,49 @@ class GlobalVarList extends React.Component{
       {
         title:'#',
         dataIndex:'id',
-        key:'id'
+        key:'id',
+        align: 'center'
       },
       { 
         title: '参数名称',
         dataIndex: 'var_name',
-        key:'var_name'
+        key:'var_name',
+        align: 'center'
       },
       { 
         title: '项目名称',
         dataIndex: 'project_name',
-        key:'project_name' 
+        key:'project_name' ,
+        align: 'center'
       },
       { 
         title: '参数值', 
         dataIndex: 'var_value',
-        key:'test_user'
+        key:'test_user',
+        align: 'center'
       },
       { 
         title: '简要描述',
         dataIndex: 'description',
-        key:'description'
+        key:'description',
+        align: 'center'
       },
       { 
         title: '创建时间',
         dataIndex: 'create_time',
-        key:'create_time'
+        key:'create_time',
+        align: 'center'
       },
       { 
         title: '更新时间',
         dataIndex: 'update_time',
-        key:'update_time'
+        key:'update_time',
+        align: 'center'
         },
       { title: '相关操作', 
         dataIndex:'relateAction',
         key:'relateAction',
+        align: 'center',
         render: (_: any,record: any)=> {
           return (
             <div>
@@ -170,8 +178,8 @@ class GlobalVarList extends React.Component{
     ]   
     return (
       <div>
-        <SearchModal/>
         <Card>
+          <SearchModal/>
           <div className = 'ant-btn-add'>
             <Button 
               type = 'primary' 
@@ -185,9 +193,10 @@ class GlobalVarList extends React.Component{
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
-            dataSource = { [...list] }
+            dataSource = { [...globalVarList] }
             loading = { tableLoading }
             pagination = { paginationProps }
+            bordered
           />
         </Card>  
       

@@ -49,7 +49,6 @@ class DebugTalkList extends React.Component{
   }
 
   showPythonModal(record :any){
-    console.log('record',record)
     this.setState({
       editVisible: true, 
       debugTalkId: record.id,
@@ -67,12 +66,12 @@ class DebugTalkList extends React.Component{
 
   render(){
     const { tableLoading, total } = this.state
-    const { list } = this.props.debugTalkList
+    const { debugTalkList } = this.props.debugTalkList
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
-      showTotal: ()=> `共${total}条`
+      showTotal: ()=> `共 ${ total } 条`
     }
 
     const columns = [
@@ -129,7 +128,7 @@ class DebugTalkList extends React.Component{
           <Table
             className = "components-table-demo-nested"
             columns = { columns }
-            dataSource = { [...list] }
+            dataSource = { [...debugTalkList] }
             loading = { tableLoading }
             pagination = { paginationProps }
           />

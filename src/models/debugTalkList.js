@@ -6,7 +6,7 @@ import {
 export default {
     namespace: 'debugTalkList',
     state: {
-        list: [],
+        debugTalkList: [],
     },
 
     effects: {
@@ -15,7 +15,7 @@ export default {
             yield put({
                 type: 'updateDebugTalkList',
                 payload: {
-                    list: res.results
+                    debugTalkList: res.results
                 }
             });
             if(callback){

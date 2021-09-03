@@ -26,7 +26,6 @@ const SearchModel = (props: any) => {
   }
 
   return(
-    <Card className = 'Search' type = 'inner' >
       <Collapse>
         <Panel header = "搜索框" key = "1">
           <Form
@@ -34,7 +33,7 @@ const SearchModel = (props: any) => {
             className = 'search' 
             layout = 'inline'
             initialValues = { { remember: false } }
-            wrapperCol = { { span: 16 } }
+            wrapperCol = { { span: 15 } }
             onFinish = { handleSearch }
           >
             <Form.Item
@@ -77,7 +76,6 @@ const SearchModel = (props: any) => {
           </Form>
         </Panel>
       </Collapse>
-    </Card>
   )
 
 }
