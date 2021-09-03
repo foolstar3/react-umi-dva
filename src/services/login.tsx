@@ -7,3 +7,11 @@ export async function login(data) {
     data,
   });
 }
+
+export async function logout(data) {
+  return requestUap('/logout/', {
+    method: 'POST',
+    requestType: 'form',
+    data,
+  });
+}
