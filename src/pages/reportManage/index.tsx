@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import config from './config';
 import { connect } from 'dva';
+import styles from './index.less';
 
 const myconnect: Function = connect;
 @myconnect(({ report }) => ({
@@ -87,9 +88,9 @@ class ViewReport extends Component<any, any> {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
-      width: '240px',
+      width: 180,
       render: (text, record) => (
-        <div key={record.id}>
+        <div key={record.id} className={styles.actionColumn}>
           <Button
             type="primary"
             icon={<ProfileOutlined />}

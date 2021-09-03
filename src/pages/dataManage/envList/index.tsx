@@ -55,19 +55,19 @@ export default class EnvList extends Component<any, any> {
           title: '#',
           dataIndex: 'id',
           key: 'id',
-          width: 50,
+          width: 70,
         },
         {
           title: '环境名称',
           dataIndex: 'env_name',
           key: 'env_name',
-          width: 100,
+          width: 120,
         },
         {
           title: '环境地址',
           dataIndex: 'base_url',
           key: 'base_url',
-          width: 200,
+          // width: 200,
         },
         {
           title: '简要描述',
@@ -75,13 +75,13 @@ export default class EnvList extends Component<any, any> {
           key: 'description',
           textWrap: 'word-break',
           ellipsis: true,
-          width: 100,
+          // width: 100,
         },
         {
           title: '状态',
           dataIndex: 'is_valid',
           key: 'is_valid',
-          width: 150,
+          width: 100,
           render: (text, record, index) => {
             return (
               <Switch
@@ -107,7 +107,7 @@ export default class EnvList extends Component<any, any> {
           key: 'action',
           width: 300,
           render: (text, record) => (
-            <Space size="middle">
+            <div className="actionColumn">
               <Button
                 type="primary"
                 icon={<FileSearchOutlined />}
@@ -145,7 +145,7 @@ export default class EnvList extends Component<any, any> {
                   删除
                 </Button>
               </Popconfirm>
-            </Space>
+            </div>
           ),
         },
       ],

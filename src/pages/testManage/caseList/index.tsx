@@ -78,9 +78,10 @@ class CaseList extends Component<any, any> {
   };
 
   handleDeleteOk = (record) => {
-    // console.log(record);
     this.deleteCase(record.id);
   };
+
+  copyCase = (record) => {};
 
   render() {
     const { tableLoading, selectedRowKeys, total } = this.state;
@@ -96,22 +97,34 @@ class CaseList extends Component<any, any> {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
-      width: 280,
+      width: 240,
       render: (text, record) => (
-        <div key={record.id}>
+        <div key={record.id} className={styles.actionColumn}>
           <Popconfirm
             title="确定运行?"
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             // onConfirm={() => this.handleDeleteOk(record)}
           >
-            <Button type="primary" title="运行" size="small" shape="round">
+            <Button
+              type="primary"
+              title="运行"
+              size="small"
+              shape="round"
+              className={styles.buttonRun}
+            >
               <PlayCircleOutlined />
             </Button>
           </Popconfirm>
           <Button type="primary" title="编辑" size="small" shape="round">
             <EditOutlined />
           </Button>
-          <Button type="primary" title="复制" size="small" shape="round">
+          <Button
+            type="primary"
+            title="复制"
+            size="small"
+            shape="round"
+            onClick={this.copyCase}
+          >
             <CopyOutlined />
           </Button>
           <Popconfirm
