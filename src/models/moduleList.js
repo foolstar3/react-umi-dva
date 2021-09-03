@@ -1,52 +1,52 @@
-import { 
-    getModuleList,
-    addModuleList,
-    deleteModuleList,
-    updateModuleList
- } from '@/services/getModuleList';
+import {
+  getModuleList,
+  addModuleList,
+  deleteModuleList,
+  updateModuleList,
+} from '@/services/getModuleList';
 
 export default {
-    namespace: 'moduleList',
-    state: {
-        list: [],
+  namespace: 'moduleList',
+  state: {
+    moduleList: [],
+  },
+  effects: {
+    *getModuleList({ payload, callback }, { call, put }) {
+      const res = yield call(getModuleList, { ...payload });
+      yield put({
+        type: 'updateModuleList',
+        payload: {
+          moduleList: res.results,
+        },
+      });
+      if (callback) {
+        callback(res);
+      }
     },
-    effects: {
-        * getModuleList ({ payload, callback }, { call, put }) {
-            const res = yield call( getModuleList, { ...payload } )
-            yield put({
-                type: 'updateModuleList',
-                payload: {
-                    list: res.results
-                }
-            });
-            if(callback){
-                callback(res)
-            }
-        },
-        * addModuleList({ payload, callback }, { call, put }){
-            const res = yield call( addModuleList, { ...payload } );
-            yield put({
-                type:'updateModuleList',
-            });
-            if(callback){
-                callback(res)
-            }
-        },
-
-        * editSubmit({ payload },{ call, put }){
-            const res = yield call( updateModuleList, { ...payload } )
-        },
-
-        * deleteModuleList({ payload }, { call, put }){
-            const res = yield call( deleteModuleList, { ...payload } )
-        }
+    *addModuleList({ payload, callback }, { call, put }) {
+      const res = yield call(addModuleList, { ...payload });
+      yield put({
+        type: 'updateModuleList',
+      });
+      if (callback) {
+        callback(res);
+      }
     },
-    reducers: {
-        updateModuleList (state, { payload }) {
-            return {
-                ...state,
-                ...payload
-            }
-        }
-    }
-}
+
+    *editSubmit({ payload }, { call, put }) {
+      const res = yield call(updateModuleList, { ...payload });
+    },
+
+    *deleteModuleList({ payload }, { call, put }) {
+      const res = yield call(deleteModuleList, { ...payload });
+    },
+  },
+  reducers: {
+    updateModuleList(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },
+  },
+};
