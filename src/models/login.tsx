@@ -1,4 +1,4 @@
-import { login } from '@/services/login';
+import { login, logout } from '@/services/login';
 
 export default {
   namespace: 'login',
@@ -30,6 +30,10 @@ export default {
       if (callback) {
         callback();
       }
+    },
+    *logout({ payload, callback }, { call, put }) {
+      const res = yield call(logout, payload);
+      callback ? callback(res) : null;
     },
   },
 };

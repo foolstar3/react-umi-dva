@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { history } from 'umi';
 import { connect } from 'dva';
 
@@ -18,6 +18,7 @@ class Login extends Component<any, any> {
         console.log(loginInfo);
         if (loginInfo.message === '登录成功') {
           history.push('/');
+          message.success('登录成功');
         }
       },
     });
