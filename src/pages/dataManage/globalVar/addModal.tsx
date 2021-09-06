@@ -49,9 +49,9 @@ class AddModal extends React.Component{
         closable = {false}
         onOk = { this.handleSubmit }
         onCancel = { this.handleCancel }
-        okText = '增加'
+        okText = '确认'
         okButtonProps = {{shape : 'round'}}
-        cancelButtonProps = {{ shape: 'round' , type: 'text'}}
+        cancelButtonProps = {{ shape: 'round'}}
       >
         <Form
           name = "basic_globalVarList"
