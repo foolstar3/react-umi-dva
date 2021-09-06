@@ -4,7 +4,7 @@ const config = [
     title: '#',
     dataIndex: 'id',
     key: 'id',
-    width: '50px',
+    width: '70px',
   },
   {
     title: '报告名称',

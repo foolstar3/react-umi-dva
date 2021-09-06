@@ -13,29 +13,34 @@
   .header_left_content {
     display: flex;
   }
-  .header_right_content {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    // .user_icon {
-    //   cursor: pointer;
-    // }
-    .user_profile_content {
-      span {
-        color: #fff;
-        cursor: pointer;
-        max-width: 120px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-      .icon {
-        color: #fff;
-        position: relative;
-        top: 2px;
-        left: 5px;
-        &:hover {
+  .header_right {
+    height: 50px;
+    line-height: 50px;
+    .header_right_content {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      min-width: 160px;
+      // .user_icon {
+      //   cursor: pointer;
+      // }
+      .user_profile_content {
+        span {
+          color: #fff;
           cursor: pointer;
+          max-width: 120px;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .icon {
+          color: #fff;
+          position: relative;
+          top: 2px;
+          left: 5px;
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }

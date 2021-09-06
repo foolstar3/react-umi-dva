@@ -93,8 +93,9 @@ class ParamsFile extends Component<any, any> {
         {
           title: '操作',
           key: 'action',
+          width: 210,
           render: (text, record) => (
-            <Space size="middle">
+            <div className="actionColumn">
               <Button
                 type="primary"
                 icon={<EditOutlined />}
@@ -121,7 +122,7 @@ class ParamsFile extends Component<any, any> {
                   删除
                 </Button>
               </Popconfirm>
-            </Space>
+            </div>
           ),
         },
       ],

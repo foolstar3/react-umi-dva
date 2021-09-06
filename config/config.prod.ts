@@ -5,6 +5,7 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
+  favicon: './images/favicon.png',
   define: {
     'process.env.var': 'prod',
     'process.env.qcFrontUrl': 'http://10.6.209.209:9999',

@@ -5,6 +5,7 @@ export default defineConfig({
   history: {
     type: 'hash',
   },
+  favicon: './images/favicon.png',
   base: './',
   publicPath: './',
   nodeModulesTransform: {

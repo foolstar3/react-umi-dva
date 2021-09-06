@@ -4,7 +4,7 @@
  */
 import { extend } from 'umi-request';
 // import { formatToken } from '@/utils/utils';
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 import { history } from 'umi';
 
 const codeMessage = {
@@ -38,16 +38,18 @@ const errorHandler = (error) => {
       localStorage.setItem('fieldsChange', false);
       history.push('/login');
     } else {
-      notification.error({
-        message: '请求错误',
-        description: codeMessage[status],
-      });
+      // notification.error({
+      //   message: '请求错误',
+      //   description: codeMessage[status],
+      // });
+      // message.error()
     }
   } else if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
+    // notification.error({
+    //   description: '您的网络发生异常，无法连接服务器',
+    //   message: '网络异常',
+    // });
+    message.error('您的网络发生异常，无法连接服务器');
   }
   return response;
 };
@@ -60,20 +62,22 @@ const request = extend({
   //credentials: 'include', // 默认请求是否带上cookie
 });
 
-// request.interceptors.request.use(async (url, options) => {
-//   const jwt = sessionStorage.getItem('jwt');
-//   const header = {};
-//   if (jwt) {
-//     header.Authorization = `Bearer ${jwt}`
-//   }
+request.interceptors.request.use(async (url, options) => {
+  // const jwt = sessionStorage.getItem('jwt');
+  const header = {};
+  const token = localStorage.getItem('qc_token');
+  if (token) {
+    header.Authorization = token;
+  }
 
-//   return (
-//     {
-//       url,
-//       options: { ...options, headers: header },
-//     }
-//   );
-// })
+  return {
+    url,
+    options: {
+      ...options,
+      headers: header,
+    },
+  };
+});
 
 // response拦截器, 处理response
 request.interceptors.response.use(async (response) => {

@@ -13,12 +13,14 @@ class Login extends Component<any, any> {
     dispatch({
       type: 'login/login',
       payload,
-      callback: () => {
+      callback: (res) => {
         const { loginInfo } = this.props;
-        console.log(loginInfo);
+        console.log(loginInfo, res);
         if (loginInfo.message === '登录成功') {
           history.push('/');
           message.success('登录成功');
+        } else {
+          message.error('账号或密码错误');
         }
       },
     });
@@ -33,12 +35,8 @@ class Login extends Component<any, any> {
   };
 
   handleLogin = (formValue) => {
-    console.log('handleLogin');
+    // console.log('handleLogin');
     this.userLogin(formValue);
-  };
-
-  handleRegistry = () => {
-    console.log('handleRegistry');
   };
 
   render() {
