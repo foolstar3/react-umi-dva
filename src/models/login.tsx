@@ -21,7 +21,8 @@ export default {
       const res = yield call(login, payload);
       if (res.user) {
         localStorage.setItem('qc_user', res.user.username);
-        // console.log(localStorage.getItem('qc_user'));
+        localStorage.setItem('qc_token', res.authorization);
+        // console.log(localStorage.getItem('qc_token'));
       }
       yield put({
         type: 'userLogin',
