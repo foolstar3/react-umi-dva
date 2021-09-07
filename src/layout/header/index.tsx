@@ -17,6 +17,14 @@ class MyHeader extends Component<any, any> {
     };
   }
 
+  // componentWillMount() {
+  //   console.log(localStorage.getItem('qc_token'));
+  //   if(!localStorage.getItem('qc_token')) {
+  //     console.log('no token');
+  //     history.push('/login')
+  //   }
+  // }
+
   logout = (value) => {
     const payload = {
       username: value,
@@ -30,6 +38,7 @@ class MyHeader extends Component<any, any> {
           history.push('/login');
           message.info('登出成功');
           localStorage.removeItem('qc_user');
+          localStorage.removeItem('token');
         }
         this.setState({
           isModalVisible: false,

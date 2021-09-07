@@ -34,21 +34,13 @@ const errorHandler = (error) => {
     // const errorText = codeMessage[response.status] || response.statusText;
     const { status } = response;
     if (status === 401) {
-      delete localStorage.userId;
-      localStorage.setItem('fieldsChange', false);
+      delete localStorage.qc_token;
+      delete localStorage.qc_user;
+      // localStorage.setItem('fieldsChange', false);
       history.push('/login');
     } else {
-      // notification.error({
-      //   message: '请求错误',
-      //   description: codeMessage[status],
-      // });
-      // message.error()
     }
   } else if (!response) {
-    // notification.error({
-    //   description: '您的网络发生异常，无法连接服务器',
-    //   message: '网络异常',
-    // });
     message.error('您的网络发生异常，无法连接服务器');
   }
   return response;

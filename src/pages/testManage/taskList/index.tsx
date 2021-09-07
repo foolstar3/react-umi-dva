@@ -116,7 +116,7 @@ class TaskList extends React.Component {
       total: total,
       showTotal: () => `共${total}条`,
     };
-    const columns = [
+    const columns: any = [
       {
         title: '#',
         dataIndex: 'id',
