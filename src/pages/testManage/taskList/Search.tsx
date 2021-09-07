@@ -62,7 +62,7 @@ const SearchModel = (props: any) => {
             </Col>
             <Col span={8}>
               <Form.Item label="启用状态" name="Enable_status">
-                <Select defaultValue="全部" style={{ width: 100 }}>
+                <Select defaultValue="全部">
                   <Option value="全部"> 全部 </Option>
                   <Option value="启用"> 启用 </Option>
                   <Option value="禁止"> 禁止 </Option>
@@ -90,19 +90,19 @@ const SearchModel = (props: any) => {
               <Form.Item>
                 <Space size="middle" className="space-button">
                   <Button
+                    onClick={onReset}
+                    icon={<RedoOutlined />}
+                    shape="round"
+                  >
+                    重置
+                  </Button>
+                  <Button
                     type="primary"
                     htmlType="submit"
                     icon={<EditOutlined />}
                     shape="round"
                   >
                     搜索
-                  </Button>
-                  <Button
-                    onClick={onReset}
-                    icon={<RedoOutlined />}
-                    shape="round"
-                  >
-                    重置
                   </Button>
                 </Space>
               </Form.Item>
