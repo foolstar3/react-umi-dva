@@ -21,7 +21,7 @@ import AddModal from './addModal';
 import EditModal from './editModal';
 import SearchModal from './Search';
 //获取接口参数
-class GlobalVarList extends React.Component {
+class GlobalVarList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
