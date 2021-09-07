@@ -1,4 +1,6 @@
 import {
+  Row,
+  Col,
   Collapse,
   Card,
   Select,
@@ -27,7 +29,7 @@ const SearchModel = (props: any) => {
     props.dispatch({
       type: 'globalVarList/getGlobalVarList',
       payload: {
-        page: 2,
+        page: 1,
         var_name: value.var_name,
         var_value: value.var_value,
         description: value.description,
@@ -41,35 +43,53 @@ const SearchModel = (props: any) => {
         <Form
           form={form}
           className="search"
-          layout="inline"
           initialValues={{ remember: false }}
           wrapperCol={{ span: 15 }}
           onFinish={handleSearch}
         >
-          <Form.Item label="参数名称" name="var_name">
-            <Input autoComplete="off" />
-          </Form.Item>
-          <Form.Item label="参数值" name="var_value">
-            <Input autoComplete="off" />
-          </Form.Item>
-          <Form.Item label="简要描述" name="description">
-            <Input autoComplete="off" />
-          </Form.Item>
-          <Form.Item>
-            <Space size="middle">
-              <Button
-                type="primary"
-                htmlType="submit"
-                icon={<EditOutlined />}
-                shape="round"
-              >
-                搜索
-              </Button>
-              <Button onClick={onReset} icon={<RedoOutlined />} shape="round">
-                重置
-              </Button>
-            </Space>
-          </Form.Item>
+          <Row>
+            <Col span={4.8}>
+              <Form.Item label="参数名称" name="var_name">
+                <Input autoComplete="off" />
+              </Form.Item>
+            </Col>
+            <Col span={4.8}>
+              <Form.Item label="参数值" name="var_value">
+                <Input autoComplete="off" />
+              </Form.Item>
+            </Col>
+            <Col span={4.8}>
+              <Form.Item label="创建日期" name="create_date">
+                <Input autoComplete="off" />
+              </Form.Item>
+            </Col>
+            <Col span={4.8}>
+              <Form.Item label="简要描述" name="description">
+                <Input autoComplete="off" />
+              </Form.Item>
+            </Col>
+            <Col span={4.8}>
+              <Form.Item>
+                <Space size="middle">
+                  <Button
+                    onClick={onReset}
+                    icon={<RedoOutlined />}
+                    shape="round"
+                  >
+                    重置
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    icon={<EditOutlined />}
+                    shape="round"
+                  >
+                    搜索
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Panel>
     </Collapse>

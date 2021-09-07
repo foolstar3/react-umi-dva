@@ -32,6 +32,7 @@ const SearchModel = (props: any) => {
     });
   };
   const [form] = Form.useForm();
+  const projectList = props.projectList.projectList;
 
   //重置搜索框
   const onReset = () => {
@@ -66,28 +67,28 @@ const SearchModel = (props: any) => {
             <Row>
               <Col span={8}>
                 <Form.Item label="模块名称" name="module_name">
+                  <Input autoComplete="off" />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="项目名称" name="project_name">
                   {
                     <Select
                       style={{ width: 269 }}
-                      onFocus={handleProjectListVisible}
+                      onClick={handleProjectListVisible}
                     >
                       {projectList &&
                         Array.isArray(projectList) &&
                         projectList.length &&
                         projectList.map((item) => {
                           return (
-                            <Option value={item.project_name}>
+                            <Option value={item.project_name} key={item.id}>
                               {item.project_name}
                             </Option>
                           );
                         })}
                     </Select>
                   }
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="项目名称" name="project_name">
-                  <Input autoComplete="off" />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -111,19 +112,19 @@ const SearchModel = (props: any) => {
                 <Form.Item>
                   <Space size="middle" className="button-space">
                     <Button
+                      onClick={onReset}
+                      icon={<RedoOutlined />}
+                      shape="round"
+                    >
+                      重置
+                    </Button>
+                    <Button
                       type="primary"
                       htmlType="submit"
                       icon={<EditOutlined />}
                       shape="round"
                     >
                       搜索
-                    </Button>
-                    <Button
-                      onClick={onReset}
-                      icon={<RedoOutlined />}
-                      shape="round"
-                    >
-                      重置
                     </Button>
                   </Space>
                 </Form.Item>
@@ -136,6 +137,7 @@ const SearchModel = (props: any) => {
   );
 };
 
-export default connect(({ moduleList }) => ({
+export default connect(({ moduleList, projectList }) => ({
   moduleList,
+  projectList,
 }))(SearchModel);

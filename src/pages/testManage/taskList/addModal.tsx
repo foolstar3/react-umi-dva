@@ -11,6 +11,7 @@ import {
   Table,
   Button,
   Space,
+  Col,
 } from 'antd';
 import { connect } from 'umi';
 import TreeNode from './treeNode';
@@ -22,8 +23,10 @@ class AddModal extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddValueChange = this.handleAddValueChange.bind(this);
+    this.caseNumber = this.caseNumber.bind(this);
     this.state = {
       tempAddValue: '',
+      caseNumber: 0,
     };
   }
 
@@ -56,8 +59,13 @@ class AddModal extends React.Component {
       payload: {
         ...addTask,
       },
-      callback: (res) => {
-        //console.log(res)
+      callback: () => {
+        this.props.dispatch({
+          type: 'taskList/getTaskListt',
+          payload: {
+            page: 1,
+          },
+        });
       },
     });
     this.props.showAddModal(false);
@@ -78,18 +86,20 @@ class AddModal extends React.Component {
   handleEnvListVisible() {}
 
   handleProjectListVisible() {}
+  //选择用例个数传参
+  caseNumber(checkedNumber: any) {
+    this.setState({
+      caseNumber: checkedNumber,
+    });
+  }
 
   render() {
+    const caseNumber = this.state.caseNumber;
     const addVisible = this.props.addVisible;
     const envList = this.props?.envList?.envList?.results || [];
     const projectList = this.props?.projectList?.projectList || [];
     const caseList = this.props?.testCase?.caseList?.results || [];
-    const options = [
-      { value: 'blue' },
-      { value: 'lime' },
-      { value: 'green' },
-      { value: 'cyan' },
-    ];
+    // const options = [{ value: 'blue' }, { value: 'lime' }, { value: 'green' }, { value: 'cyan' }]
 
     ///自定义列表参数
     function tagRender(props) {
@@ -115,12 +125,13 @@ class AddModal extends React.Component {
       <Modal
         visible={addVisible}
         title="新增任务"
-        closable={false}
+        closable={true}
+        maskClosable={false}
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
-        okText="增加"
+        okText="确认"
         okButtonProps={{ shape: 'round' }}
-        cancelButtonProps={{ shape: 'round', type: 'text' }}
+        cancelButtonProps={{ shape: 'round' }}
       >
         <Form
           name="basic_taskList"
@@ -160,7 +171,7 @@ class AddModal extends React.Component {
           >
             {
               <Select
-                style={{ width: 150 }}
+                style={{ width: 314 }}
                 onFocus={this.handleEnvListVisible}
               >
                 {envList &&
@@ -181,7 +192,7 @@ class AddModal extends React.Component {
           >
             {
               <Select
-                style={{ width: 150 }}
+                style={{ width: 314 }}
                 onFocus={this.handleProjectListVisible}
               >
                 {projectList &&
@@ -198,26 +209,26 @@ class AddModal extends React.Component {
             }
           </Form.Item>
           <Form.Item
-            label="已选5用例"
+            label={`已选 ${caseNumber} 例`}
             name="cassNumber"
             rules={[{ required: false }]}
           >
-            <TreeNode caseList={caseList} />
+            <TreeNode caseList={caseList} caseNumber={this.caseNumber} />
           </Form.Item>
-          <Form.Item
-            label="邮件列表"
-            name="emailList"
-            rules={[{ required: false }]}
+          {/* <Form.Item
+            label = '邮件列表'
+            name = 'emailList'
+            rules = {[ {required: false} ]}
           >
             <Select
-              mode="multiple"
+              mode = "multiple"
               showArrow
-              tagRender={tagRender}
-              defaultValue={['gold', 'cyan']}
-              style={{ width: '100%' }}
-              options={options}
+              tagRender = { tagRender }
+              defaultValue = {['gold', 'cyan']}
+              style = {{ width: '100%' }}
+              options = { options }
             />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
     );

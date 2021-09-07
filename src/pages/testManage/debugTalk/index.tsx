@@ -22,14 +22,9 @@ class DebugTalkList extends React.Component {
     this.showPythonModal = this.showPythonModal.bind(this);
     //模态框显隐控制按钮
     this.showEditModal = this.showEditModal.bind(this);
-    //页面加载完成
-    this.getDebugTalkList = this.getDebugTalkList.bind(this);
-
-    //加载列表
-    this.getDebugTalkList();
   }
 
-  getDebugTalkList() {
+  componentDidMount() {
     this.setState({
       tableLoading: true,
     });
@@ -64,6 +59,9 @@ class DebugTalkList extends React.Component {
   render() {
     const { tableLoading, total } = this.state;
     const { debugTalkList } = this.props.debugTalkList;
+    debugTalkList.map((item) => {
+      item.key = item.id;
+    });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -71,36 +69,46 @@ class DebugTalkList extends React.Component {
       showTotal: () => `共 ${total} 条`,
     };
 
-    const columns = [
+    const columns: any = [
       {
-        title: '#',
+        title: '编号',
         dataIndex: 'id',
         key: 'id',
+        align: 'center',
+        width: '80px',
       },
       {
         title: '项目名称',
         dataIndex: 'project_name',
         key: 'project_name',
+        align: 'center',
       },
       {
         title: 'Debugtalk',
-        dataIndex: 'DebugTalk',
+        dataIndex: 'debugtalk',
         key: 'Debugtalk',
+        align: 'center',
       },
       {
         title: '创建时间',
         dataIndex: 'create_time',
         key: 'create_time',
+        align: 'center',
+        width: '300px',
       },
       {
         title: '更新时间',
         dataIndex: 'create_time',
         key: 'create_time',
+        align: 'center',
+        width: '300px',
       },
       {
-        title: '相关操作',
+        title: '操作',
         dataIndex: 'relateAction',
         key: 'relateAction',
+        align: 'center',
+        width: '100px',
         render: (text: any, record: any) => {
           return (
             <div>
@@ -129,6 +137,7 @@ class DebugTalkList extends React.Component {
             dataSource={[...debugTalkList]}
             loading={tableLoading}
             pagination={paginationProps}
+            bordered
           />
         </Card>
         <EditTextModal

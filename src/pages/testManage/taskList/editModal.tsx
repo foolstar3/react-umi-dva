@@ -57,8 +57,13 @@ class EditModal extends React.Component {
         ...editTask,
         id: EditId,
       },
-      callback: (res) => {
-        //console.log(res)
+      callback: () => {
+        this.props.dispatch({
+          type: 'taskList/getTaskListt',
+          payload: {
+            page: 1,
+          },
+        });
       },
     });
     this.props.showEditModal(false);
@@ -115,12 +120,13 @@ class EditModal extends React.Component {
           <Modal
             visible={editVisible}
             title="修改任务信息"
-            closable={false}
+            closable={true}
+            maskClosable={false}
             onOk={this.editSubmit}
             onCancel={this.editCancel}
-            okText="修改"
+            okText="确认"
             okButtonProps={{ shape: 'round' }}
-            cancelButtonProps={{ shape: 'round', type: 'text' }}
+            cancelButtonProps={{ shape: 'round' }}
           >
             <Form
               name="basic"

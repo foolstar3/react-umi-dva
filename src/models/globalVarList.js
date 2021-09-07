@@ -24,19 +24,22 @@ export default {
       }
     },
     *addGlobalVarList({ payload, callback }, { call, put }) {
-      const res = yield call(addGlobalVarList, { ...payload });
-      yield put({
-        type: 'updateGlobalVarList',
-      });
+      yield call(addGlobalVarList, { ...payload });
       if (callback) {
-        callback(res);
+        callback();
       }
     },
     *editSubmit({ payload }, { call, put }) {
-      const res = yield call(updateGlobalVarList, { ...payload });
+      yield call(updateGlobalVarList, { ...payload });
+      if (callback) {
+        callback();
+      }
     },
     *deleteGlobalVarList({ payload }, { call, put }) {
-      const res = yield call(deleteGlobalVarList, { ...payload });
+      yield call(deleteGlobalVarList, { ...payload });
+      if (callback) {
+        callback();
+      }
     },
   },
   reducers: {

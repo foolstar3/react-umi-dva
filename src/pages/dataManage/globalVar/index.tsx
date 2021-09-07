@@ -101,6 +101,9 @@ class GlobalVarList extends React.Component<any, any> {
   render() {
     const { tableLoading, total } = this.state;
     const { editVisible, globalVarList } = this.props.globalVarList;
+    globalVarList.map((item) => {
+      item.key = item.id;
+    });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -118,12 +121,6 @@ class GlobalVarList extends React.Component<any, any> {
         title: '参数名称',
         dataIndex: 'var_name',
         key: 'var_name',
-        align: 'center',
-      },
-      {
-        title: '项目名称',
-        dataIndex: 'project_name',
-        key: 'project_name',
         align: 'center',
       },
       {
@@ -158,7 +155,7 @@ class GlobalVarList extends React.Component<any, any> {
         render: (_: any, record: any) => {
           return (
             <div>
-              <Space size="middle">
+              <Space size="small">
                 <Button
                   type="primary"
                   onClick={() => this.showEditModal(record)}

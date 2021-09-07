@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  Col,
+  Row,
   Card,
   Select,
   Form,
@@ -26,7 +28,6 @@ import editTextModal from '../debugTalk/editTextModal';
 class ProjectList extends React.Component {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.getProjectList = this.getProjectList.bind(this);
     //模态框中的提交按钮
     this.handleSubmit = this.handleSubmit.bind(this);
     //项目列表的删除按钮
@@ -57,12 +58,10 @@ class ProjectList extends React.Component {
       //总条数
       total: 0,
     };
-    //页面加载完成
-    this.getProjectList();
   }
 
   //获取列表
-  getProjectList() {
+  componentDidMount() {
     this.setState({
       tableLoading: true,
     });
@@ -114,8 +113,13 @@ class ProjectList extends React.Component {
       payload: {
         ...addProject,
       },
-      callback: (res) => {
-        //console.log(res)
+      callback: () => {
+        this.props.dispatch({
+          type: 'projectList/getProjectList',
+          payload: {
+            page: 1,
+          },
+        });
       },
     });
   }
@@ -156,8 +160,13 @@ class ProjectList extends React.Component {
         ...tempEditValue,
         id: currentValue.id,
       },
-      callback: (res) => {
-        //console.log(res)
+      callback: () => {
+        this.props.dispatch({
+          type: 'projectList/getProjectList',
+          payload: {
+            page: 1,
+          },
+        });
       },
     });
   }
@@ -166,21 +175,28 @@ class ProjectList extends React.Component {
 
   //项目表单每一项中的删除按钮
   handleDelete(record: any) {
-    console.log(record);
     this.props.dispatch({
       type: 'projectList/deleteProjectList',
       payload: {
         id: record.id,
       },
-      callback: (res) => {
-        console.log(res);
-        ///还需要调用获取列表
+      callback: () => {
+        this.props.dispatch({
+          type: 'projectList/getProjectList',
+          payload: {
+            page: 1,
+          },
+        });
       },
     });
   }
 
   render() {
     const { projectList } = this.props.projectList;
+    //为数组中每一个元素增加一个key值，防止报错
+    projectList.map((item) => {
+      item.key = item.id;
+    });
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
     const paginationProps = {
@@ -190,85 +206,94 @@ class ProjectList extends React.Component {
       showTotal: () => `共${total}条`,
     };
 
-    const columns = [
+    const columns: any = [
       {
-        title: '项目编号',
+        title: '编号',
         dataIndex: 'id',
         key: 'id',
+        align: 'center',
       },
       {
         title: '项目名称',
         dataIndex: 'project_name',
         key: 'project_name',
+        align: 'center',
       },
       {
         title: '模块数',
         dataIndex: 'module_count',
         key: 'modelNum',
+        align: 'center',
       },
       {
         title: '测试数',
         dataIndex: 'testcase_count',
         key: 'testcase_count',
+        align: 'center',
       },
       {
         title: '负责人',
         dataIndex: 'leader',
         key: 'leader',
+        align: 'center',
       },
       {
         title: '测试人员',
         dataIndex: 'test_user',
         key: 'test_user',
+        align: 'center',
       },
       {
         title: '开发人员',
         dataIndex: 'dev_user',
         key: 'dev_user',
+        align: 'center',
       },
       {
         title: '简要描述',
         dataIndex: 'description',
         key: 'description',
+        align: 'center',
       },
       {
         title: '创建时间',
         dataIndex: 'create_time',
         key: 'create_time',
+        align: 'center',
       },
       {
-        title: '相关操作',
+        title: '操作',
         dataIndex: 'relateAction',
         key: 'relateAction',
+        align: 'center',
+        width: '100px',
         render: (text, record: any) => {
           return (
-            <div>
-              <Space size="middle">
+            <div className="action_button">
+              <Button
+                type="primary"
+                onClick={() => this.showEditModal(text, record)}
+                icon={<EditOutlined />}
+                shape="round"
+                size="small"
+              >
+                编辑
+              </Button>
+              <Popconfirm
+                title="Are you 确定？"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={() => this.handleDelete(record)}
+              >
                 <Button
                   type="primary"
-                  onClick={() => this.showEditModal(text, record)}
-                  icon={<EditOutlined />}
+                  danger
+                  icon={<DeleteOutlined />}
                   shape="round"
                   size="small"
                 >
-                  编辑
+                  删除
                 </Button>
-                <Popconfirm
-                  title="Are you 确定？"
-                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                  onConfirm={() => this.handleDelete(record)}
-                >
-                  <Button
-                    type="primary"
-                    danger
-                    icon={<DeleteOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    删除
-                  </Button>
-                </Popconfirm>
-              </Space>
+              </Popconfirm>
             </div>
           );
         },
@@ -284,7 +309,7 @@ class ProjectList extends React.Component {
               icon={<PlusCircleOutlined />}
               shape="round"
             >
-              添加项目
+              新增
             </Button>
           </div>
           <Table
@@ -293,18 +318,20 @@ class ProjectList extends React.Component {
             dataSource={[...projectList]}
             loading={tableLoading}
             pagination={paginationProps}
+            bordered
           />
         </Card>
 
         <Modal
           visible={addVisible}
           title="项目信息"
-          closable={false}
+          closable={true}
+          maskClosable={false}
           onOk={this.handleSubmit}
           onCancel={this.handleCancel}
-          okText="增加"
+          okText="确认"
           okButtonProps={{ shape: 'round' }}
-          cancelButtonProps={{ shape: 'round', type: 'text' }}
+          cancelButtonProps={{ shape: 'round' }}
         >
           <Form
             name="basic_projectList"
@@ -321,30 +348,9 @@ class ProjectList extends React.Component {
               <Input />
             </Form.Item>
             <Form.Item
-              label="模块数"
-              name="module_count"
-              rules={[{ required: true, message: '请输入用例数' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
               label="负责人"
               name="leader"
               rules={[{ required: true, message: '请输入负责人名称' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="测试人员"
-              name="test_user"
-              rules={[{ required: true, message: '请输入测试人员名称' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="开发人员"
-              name="dev_user"
-              rules={[{ required: true, message: '请输入开发人员名称' }]}
             >
               <Input />
             </Form.Item>
@@ -364,12 +370,13 @@ class ProjectList extends React.Component {
           <Modal
             visible={editVisible}
             title="修改项目信息"
-            closable={false}
+            closable={true}
+            maskClosable={false}
             onOk={this.editSubmit}
             onCancel={this.editCancel}
-            okText="修改"
+            okText="确认"
             okButtonProps={{ shape: 'round' }}
-            cancelButtonProps={{ shape: 'round', type: 'text' }}
+            cancelButtonProps={{ shape: 'round' }}
           >
             <Form
               name="basic"
@@ -387,34 +394,10 @@ class ProjectList extends React.Component {
                 <Input />
               </Form.Item>
               <Form.Item
-                label="模块数"
-                name="module_count"
-                rules={[{ required: true, message: '请输入用例数' }]}
-                initialValue={currentValue.module_count}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
                 label="负责人"
                 name="leader"
                 rules={[{ required: true, message: '请输入负责人名称' }]}
                 initialValue={currentValue.leader}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="测试人员"
-                name="test_user"
-                rules={[{ required: true, message: '请输入测试人员名称' }]}
-                initialValue={currentValue.test_user}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="开发人员"
-                name="dev_user"
-                rules={[{ required: true, message: '请输入开发人员名称' }]}
-                initialValue={currentValue.dev_user}
               >
                 <Input />
               </Form.Item>

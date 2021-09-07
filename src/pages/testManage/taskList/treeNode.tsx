@@ -16,37 +16,61 @@ import {
 import { connect } from 'umi';
 const { Panel } = Collapse;
 import './index.less';
+import moduleList from '../moduleList';
 
+var treeData = [
+  {
+    title: '0-0',
+    key: '0-0',
+    children: [
+      {
+        title: '0-0-0',
+        key: '0-0-0',
+      },
+      {
+        title: '0-0-1',
+        key: '0-0-1',
+      },
+      {
+        title: '0-0-2',
+        key: '0-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-1',
+    key: '0-1',
+    children: [
+      {
+        title: '0-1-0',
+        key: '0-1-0',
+      },
+      {
+        title: '0-1-1',
+        key: '0-1-1',
+      },
+      {
+        title: '0-1-2',
+        key: '0-1-2',
+      },
+    ],
+  },
+];
 const TreeNode = (props: any) => {
   console.log('props', props.caseList);
-  const treeData = [
-    {
-      title: '0-0',
-      key: '0-0',
-      children: [
-        {
-          title: '0-0-0',
-          key: '0-0-0',
-        },
-        {
-          title: '0-0-1',
-          key: '0-0-1',
-        },
-        {
-          title: '0-0-2',
-          key: '0-0-2',
-        },
-      ],
-    },
-    {
-      title: '0-1',
-      key: '0-1',
-    },
-    {
-      title: '0-2',
-      key: '0-2',
-    },
-  ];
+  function handleChangeCollapse() {
+    props.dispatch({
+      type: 'moduleList/getModuleList',
+      payload: {
+        page: 1,
+        project_name: 'abc',
+      },
+    });
+  }
+
+  // for(var i = 0; i < props.moduleList.moduleList.length ; i++){
+  //   treeData[i] =
+  // }
 
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([
     '0-0-0',
@@ -65,8 +89,9 @@ const TreeNode = (props: any) => {
   };
 
   const onCheck = (checkedKeysValue: React.Key[]) => {
-    console.log('onCheck', checkedKeysValue);
+    console.log('onCheck', checkedKeysValue.length);
     setCheckedKeys(checkedKeysValue);
+    props.caseNumber(checkedKeysValue.length);
   };
 
   const onSelect = (selectedKeysValue: React.Key[], info: any) => {
@@ -76,7 +101,7 @@ const TreeNode = (props: any) => {
 
   return (
     <div>
-      <Collapse>
+      <Collapse onChange={handleChangeCollapse}>
         <Panel header="选择用例" key="caseNumber">
           <Tree
             checkable
@@ -95,4 +120,7 @@ const TreeNode = (props: any) => {
   );
 };
 
-export default TreeNode;
+export default connect(({ testCase, moduleList }) => ({
+  moduleList,
+  testCase,
+}))(TreeNode);

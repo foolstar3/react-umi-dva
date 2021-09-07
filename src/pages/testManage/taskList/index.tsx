@@ -110,15 +110,19 @@ class TaskList extends React.Component {
   render() {
     const { tableLoading, total } = this.state;
     const { editVisible, taskList } = this.props.taskList;
+    taskList.map((item) => {
+      item.key = item.id;
+    });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
+
       showTotal: () => `共${total}条`,
     };
     const columns: any = [
       {
-        title: '#',
+        title: '编号',
         dataIndex: 'id',
         key: 'id',
         align: 'center',
@@ -185,7 +189,7 @@ class TaskList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: 240,
+        width: '120px',
         render: (_: any, record: any) => {
           return (
             <div>
@@ -243,7 +247,7 @@ class TaskList extends React.Component {
               icon={<PlusCircleOutlined />}
               shape="round"
             >
-              添加任务
+              新增
             </Button>
           </div>
           <Table

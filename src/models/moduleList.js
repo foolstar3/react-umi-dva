@@ -23,22 +23,26 @@ export default {
         callback(res);
       }
     },
+
     *addModuleList({ payload, callback }, { call, put }) {
-      const res = yield call(addModuleList, { ...payload });
-      yield put({
-        type: 'updateModuleList',
-      });
+      yield call(addModuleList, { ...payload });
       if (callback) {
-        callback(res);
+        callback();
       }
     },
 
     *editSubmit({ payload }, { call, put }) {
-      const res = yield call(updateModuleList, { ...payload });
+      yield call(updateModuleList, { ...payload });
+      if (callback) {
+        callback();
+      }
     },
 
     *deleteModuleList({ payload }, { call, put }) {
-      const res = yield call(deleteModuleList, { ...payload });
+      yield call(deleteModuleList, { ...payload });
+      if (callback) {
+        callback();
+      }
     },
   },
   reducers: {

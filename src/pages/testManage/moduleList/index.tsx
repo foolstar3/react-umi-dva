@@ -39,10 +39,9 @@ class ModuleList extends React.Component {
       tableLoading: true,
       total: 0,
     };
-    this.getModuleList();
   }
 
-  getModuleList() {
+  componentDidMount() {
     this.setState({
       tableLoading: true,
     });
@@ -98,8 +97,13 @@ class ModuleList extends React.Component {
       payload: {
         id: record.id,
       },
-      callback: (res) => {
-        ///还需要调用获取列表
+      callback: () => {
+        this.props.dispatch({
+          type: 'moduleList/getModuleList',
+          payload: {
+            page: 1,
+          },
+        });
       },
     });
   }
@@ -107,15 +111,18 @@ class ModuleList extends React.Component {
   render() {
     const { tableLoading, total } = this.state;
     const { editVisible, moduleList } = this.props.moduleList;
+    moduleList.map((item) => {
+      item.key = item.id;
+    });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
       showTotal: () => `共${total}条`,
     };
-    const columns = [
+    const columns: any = [
       {
-        title: '模块编号',
+        title: '编号',
         dataIndex: 'id',
         key: 'id',
         align: 'center',
@@ -163,39 +170,38 @@ class ModuleList extends React.Component {
         align: 'center',
       },
       {
-        title: '相关操作',
+        title: '操作',
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
+        width: '150px',
         render: (_: any, record: any) => {
           return (
-            <div>
-              <Space size="middle">
+            <div className="action_button">
+              <Button
+                type="primary"
+                onClick={() => this.showEditModal(record)}
+                icon={<EditOutlined />}
+                shape="round"
+                size="small"
+              >
+                编辑
+              </Button>
+              <Popconfirm
+                title="Are you 确定？"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={() => this.handleDelete(record)}
+              >
                 <Button
                   type="primary"
-                  onClick={() => this.showEditModal(record)}
-                  icon={<EditOutlined />}
+                  danger
+                  icon={<DeleteOutlined />}
                   shape="round"
                   size="small"
                 >
-                  编辑
+                  删除
                 </Button>
-                <Popconfirm
-                  title="Are you 确定？"
-                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                  onConfirm={() => this.handleDelete(record)}
-                >
-                  <Button
-                    type="primary"
-                    danger
-                    icon={<DeleteOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    删除
-                  </Button>
-                </Popconfirm>
-              </Space>
+              </Popconfirm>
             </div>
           );
         },
@@ -212,7 +218,7 @@ class ModuleList extends React.Component {
               icon={<PlusCircleOutlined />}
               shape="round"
             >
-              添加模块
+              新增
             </Button>
           </div>
           <Table
@@ -221,6 +227,7 @@ class ModuleList extends React.Component {
             dataSource={[...moduleList]}
             loading={tableLoading}
             pagination={paginationProps}
+            bordered
           />
         </Card>
 
