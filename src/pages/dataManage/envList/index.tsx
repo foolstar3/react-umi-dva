@@ -152,9 +152,11 @@ export default class EnvList extends Component<any, any> {
       editorCode: '',
       total: 0,
     };
-    this.getEnvList({ page: 1 });
   }
 
+  UNSAFE_componentWillMount() {
+    this.getEnvList({ page: 1 });
+  }
   /* ============table功能============== */
 
   // 监听table选中的列发生变化的函数
@@ -257,6 +259,7 @@ export default class EnvList extends Component<any, any> {
         // if (res) {
         //   // 添加成功
         // }
+        this.getEnvList({ page: 1 });
         // console.log(res);
       },
     });
@@ -271,7 +274,8 @@ export default class EnvList extends Component<any, any> {
       type: 'envList/deleteEnvList',
       payload,
       callback: (res) => {
-        console.log(res);
+        // console.log(res);
+        this.getEnvList({ page: 1 });
       },
     });
   };
@@ -307,7 +311,8 @@ export default class EnvList extends Component<any, any> {
       type: 'envList/updateEnv',
       payload,
       callback: (res) => {
-        console.log(res);
+        // console.log(res);
+        this.getEnvList({ page: 1 });
       },
     });
   };
@@ -323,7 +328,6 @@ export default class EnvList extends Component<any, any> {
 
   // 编辑对话框内容变化
   handleEditFormValueChange = (av) => {
-    console.log(av);
     // 获取新增文件的数据
     this.setState(() => ({
       editEnvListData: av,
@@ -332,15 +336,15 @@ export default class EnvList extends Component<any, any> {
 
   // 确认编辑
   handleEditOk = () => {
-    console.log('handleEditOk');
-    console.log(this.state.editEnvListData);
+    // console.log('handleEditOk');
+    // console.log(this.state.editEnvListData);
     const { editEnvListData, currentEnvInfo } = this.state;
     // 包装请求数据
     const payload = {
       ...editEnvListData,
       id: currentEnvInfo.id,
     };
-    console.log(payload);
+    // console.log(payload);
     this.updateEnv(payload);
     this.setState({
       editModalVisiable: false,
@@ -444,7 +448,7 @@ export default class EnvList extends Component<any, any> {
           visible={addModalVisiable}
           onOk={this.handleAddOk}
           onCancel={this.handleAddCancel}
-          okText="修改"
+          okText="确定"
         >
           <Form
             {...formItemLayout}
@@ -524,7 +528,7 @@ export default class EnvList extends Component<any, any> {
                 <Switch
                   checkedChildren="启用"
                   unCheckedChildren="禁用"
-                  checked={currentEnvInfo.is_valid}
+                  defaultChecked={currentEnvInfo.is_valid}
                 />
               </Form.Item>
             </Form>

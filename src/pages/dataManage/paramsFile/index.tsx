@@ -11,6 +11,7 @@ import {
   Select,
   Upload,
   Popconfirm,
+  message,
 } from 'antd';
 import {
   QuestionCircleOutlined,
@@ -28,22 +29,21 @@ const { Option } = Select;
 
 // 新增项目对话框form布局配置
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
 };
 
 const uploadConfig = {
-  action: '//jsonplaceholder.typicode.com/posts/',
-  listType: 'picture',
-  previewFile(file) {
-    console.log('Your upload file:', file);
-    // Your process logic. Here we just mock to the same file
-    return fetch('https://next.json-generator.com/api/json/get/4ytyBoLK8', {
-      method: 'POST',
-      body: file,
-    })
-      .then((res) => res.json())
-      .then(({ thumbnail }) => thumbnail);
+  accept:
+    'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  listType: 'text',
+  beforeUpload: (file) => {
+    const fileSize = file.size / 1024 / 1024;
+    if (fileSize > 20) {
+      message.info('文件大小不得超过20M！');
+      return false;
+    }
+    return true;
   },
 };
 class ParamsFile extends Component<any, any> {
@@ -95,7 +95,7 @@ class ParamsFile extends Component<any, any> {
           key: 'action',
           width: 210,
           render: (text, record) => (
-            <div className="actionColumn">
+            <div key={record.id} className="actionColumn">
               <Button
                 type="primary"
                 icon={<EditOutlined />}
@@ -137,7 +137,7 @@ class ParamsFile extends Component<any, any> {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getParamsFileList({ page: 1 });
   }
 
@@ -184,6 +184,7 @@ class ParamsFile extends Component<any, any> {
   // 处理删除函数
   confirmDelete = (text) => {
     this.deleteParamsFile(text);
+    this.getParamsFileList({ page: 1 });
   };
 
   // 发起删除请求
@@ -206,6 +207,7 @@ class ParamsFile extends Component<any, any> {
     this.setState({
       editModalVisiable: false,
     });
+    this.getParamsFileList({ page: 1 });
   };
 
   updateParamsFileCode = (payload) => {
@@ -336,7 +338,7 @@ class ParamsFile extends Component<any, any> {
     return (
       addModalVisiable && (
         <Form
-          {...this.layout}
+          {...layout}
           ref={this.formRef}
           name="control-ref"
           onValuesChange={(cv, av) => {
@@ -369,9 +371,9 @@ class ParamsFile extends Component<any, any> {
             label="上传文件"
             valuePropName="fileList"
             getValueFromEvent={this.normFile}
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: '请选择上传的文件!' }]}
           >
-            <Upload {...this.uploadConfig}>
+            <Upload {...uploadConfig}>
               <Button icon={<UploadOutlined />}>选择文件</Button>
             </Upload>
           </Form.Item>
@@ -395,6 +397,9 @@ class ParamsFile extends Component<any, any> {
       total,
     } = this.state;
     const { paramsFileData, paramsFileCode } = this.props;
+    paramsFileData.results?.map((item) => {
+      item.key = item.id;
+    });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -424,9 +429,10 @@ class ParamsFile extends Component<any, any> {
         <Modal
           title="编辑"
           visible={editModalVisiable}
+          className="editModal"
           onOk={this.handleEditOk}
           onCancel={this.handleEditCancel}
-          width={1200}
+          width={1300}
         >
           <Editor
             content={paramsFileCode.content}
