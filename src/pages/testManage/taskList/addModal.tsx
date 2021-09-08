@@ -1,18 +1,5 @@
 import React from 'react';
-import {
-  Tag,
-  Collapse,
-  Switch,
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-  Col,
-} from 'antd';
+import { Tag, Collapse, Switch, Select, Form, Input, Modal } from 'antd';
 import { connect } from 'umi';
 import TreeNode from './treeNode';
 const { Panel } = Collapse;

@@ -32,6 +32,7 @@ class ModuleList extends React.Component {
     this.handleAddModule = this.handleAddModule.bind(this);
     this.handleEditModal = this.handleEditModal.bind(this);
     this.showEditModal = this.showEditModal.bind(this);
+    this.handleTotalNumber = this.handleTotalNumber.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -71,6 +72,13 @@ class ModuleList extends React.Component {
   handleAddModule(childModalState: any) {
     this.setState({
       addVisible: childModalState,
+    });
+  }
+  //页码数增加
+  handleTotalNumber() {
+    const total = this.state.total;
+    this.setState({
+      total: total + 1,
     });
   }
 
@@ -147,8 +155,8 @@ class ModuleList extends React.Component {
       },
       {
         title: '测试人员',
-        dataIndex: 'test_user',
-        key: 'test_user',
+        dataIndex: 'test_user_name',
+        key: 'test_user_name',
         align: 'center',
       },
       {
@@ -234,6 +242,7 @@ class ModuleList extends React.Component {
         <AddModal
           showAddModal={this.handleAddModule}
           addVisible={this.state.addVisible}
+          handleTotalNumber={this.handleTotalNumber}
         />
         <EditModal
           showEditModal={this.handleEditModal}

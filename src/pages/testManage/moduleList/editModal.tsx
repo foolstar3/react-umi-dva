@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Select, Form, Input, Modal, Table, Button, Space } from 'antd';
+import { Select, Form, Input, Modal } from 'antd';
 const { TextArea } = Input;
+const { Option } = Select;
 import { connect } from 'umi';
 
 class EditModal extends React.Component {
@@ -11,15 +12,39 @@ class EditModal extends React.Component {
     this.handleEditValueChange = this.handleEditValueChange.bind(this);
     this.state = {
       tempEditValue: '',
+      testUserList: [],
+      projectList: [],
     };
   }
 
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'projectList/getUserList',
+      callback: (res) => {
+        this.setState({
+          testUserList: res,
+        });
+      },
+    });
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload: {
+        page: 1,
+      },
+      callback: (res) => {
+        console.log('res', res);
+        this.setState({
+          projectList: res,
+        });
+      },
+    });
+  }
   //在模态框中点击提交按钮
   editSubmit() {
     const editModule = this.state.tempEditValue;
     const EditId = this.props.tempValue.id;
     this.props.dispatch({
-      type: 'moduleList/addModuleList',
+      type: 'moduleList/editModuleList',
       payload: {
         ...editModule,
         id: EditId,
@@ -42,6 +67,15 @@ class EditModal extends React.Component {
   };
 
   handleEditValueChange(singleValueChange, ValueChange) {
+    const testUserList = this.state.testUserList;
+    for (let i = 0; i < testUserList.length; i++) {
+      if (
+        ValueChange.test_user &&
+        testUserList[i].username === ValueChange.test_user
+      ) {
+        ValueChange.test_user = testUserList[i].id;
+      }
+    }
     this.setState({
       tempEditValue: ValueChange,
     });
@@ -49,6 +83,7 @@ class EditModal extends React.Component {
 
   render() {
     const { editVisible, tempValue } = this.props;
+    const testUserList = this.state.testUserList;
     return (
       <div>
         {editVisible && (
@@ -91,7 +126,21 @@ class EditModal extends React.Component {
                 rules={[{ required: true, message: '请输入测试人员名称' }]}
                 initialValue={tempValue.test_user}
               >
-                <Input />
+                {
+                  <Select style={{ width: 314 }}>
+                    {testUserList &&
+                      Array.isArray(testUserList) &&
+                      testUserList.length &&
+                      testUserList.map((item) => {
+                        return (
+                          <Option value={item.username}>
+                            {' '}
+                            {item.username}{' '}
+                          </Option>
+                        );
+                      })}
+                  </Select>
+                }
               </Form.Item>
               <Form.Item
                 label="简要描述"
@@ -109,6 +158,7 @@ class EditModal extends React.Component {
   }
 }
 
-export default connect(({ moduleList }) => ({
+export default connect(({ moduleList, projectList }) => ({
   moduleList,
+  projectList,
 }))(EditModal);

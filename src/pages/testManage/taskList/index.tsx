@@ -190,50 +190,50 @@ class TaskList extends React.Component {
         key: 'relateAction',
         align: 'center',
         width: '120px',
-        render: (_: any, record: any) => {
-          return (
-            <div>
-              <Space size="small">
-                <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
-                  <Button
-                    className="button_run"
-                    type="primary"
-                    icon={<PlayCircleOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    运行
-                  </Button>
-                </Popconfirm>
+        // render: (_: any, record: any) => {
+        //   return (
+        //     <div>
+        //       <Space size="small">
+        //         <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
+        //           <Button
+        //             className="button_run"
+        //             type="primary"
+        //             icon={<PlayCircleOutlined />}
+        //             shape="round"
+        //             size="small"
+        //           >
+        //             运行
+        //           </Button>
+        //         </Popconfirm>
 
-                <Button
-                  type="primary"
-                  onClick={() => this.showEditModal(record)}
-                  icon={<EditOutlined />}
-                  shape="round"
-                  size="small"
-                >
-                  编辑
-                </Button>
-                <Popconfirm
-                  title="Are you 确定？"
-                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                  onConfirm={() => this.handleDelete(record)}
-                >
-                  <Button
-                    type="primary"
-                    danger
-                    icon={<DeleteOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    删除
-                  </Button>
-                </Popconfirm>
-              </Space>
-            </div>
-          );
-        },
+        //         <Button
+        //           type="primary"
+        //           onClick={() => this.showEditModal(record)}
+        //           icon={<EditOutlined />}
+        //           shape="round"
+        //           size="small"
+        //         >
+        //           编辑
+        //         </Button>
+        //         <Popconfirm
+        //           title="Are you 确定？"
+        //           icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+        //           onConfirm={() => this.handleDelete(record)}
+        //         >
+        //           <Button
+        //             type="primary"
+        //             danger
+        //             icon={<DeleteOutlined />}
+        //             shape="round"
+        //             size="small"
+        //           >
+        //             删除
+        //           </Button>
+        //         </Popconfirm>
+        //       </Space>
+        //     </div>
+        //   );
+        // },
       },
     ];
     return (
@@ -241,14 +241,14 @@ class TaskList extends React.Component {
         <Card>
           <SearchModal />
           <div className="ant-btn-add">
-            <Button
+            {/* <Button
               type="primary"
               onClick={this.handleAddTask}
               icon={<PlusCircleOutlined />}
               shape="round"
             >
               新增
-            </Button>
+            </Button> */}
           </div>
           <Table
             className="components-table-demo-nested"
