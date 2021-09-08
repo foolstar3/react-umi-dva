@@ -32,7 +32,7 @@ const SearchModel = (props: any) => {
     });
   };
   const [form] = Form.useForm();
-  const projectList = props.projectList.projectList;
+  const projectList = props?.projectList?.projectList || [];
 
   //重置搜索框
   const onReset = () => {
@@ -44,7 +44,7 @@ const SearchModel = (props: any) => {
     props.dispatch({
       type: 'moduleList/getModuleList',
       payload: {
-        page: 2,
+        page: 1,
         module_name: value.module_name,
         test_user: value.test_user,
         description: value.description,

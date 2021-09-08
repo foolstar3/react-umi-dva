@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Select, Form, Input, Modal, Table, Button, Space } from 'antd';
+import { Select, Form, Input, Modal, Table, Button, Space } from 'antd';
 const { TextArea } = Input;
+const { Option } = Select;
 import { connect } from 'umi';
 
 class AddModal extends React.Component {
@@ -11,7 +12,30 @@ class AddModal extends React.Component {
     this.handleAddValueChange = this.handleAddValueChange.bind(this);
     this.state = {
       tempAddValue: '',
+      testUserList: [],
     };
+  }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'projectList/getUserList',
+      callback: (res) => {
+        this.setState({
+          testUserList: res,
+        });
+      },
+    });
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload: {
+        page: 1,
+      },
+      callback: (res) => {
+        this.setState({
+          projectList: res.results,
+        });
+      },
+    });
   }
 
   //在模态框中点击提交按钮
@@ -22,7 +46,10 @@ class AddModal extends React.Component {
       payload: {
         ...addModule,
       },
-      callback: () => {
+      callback: (res) => {
+        if (res.id !== undefined) {
+          this.props.handleTotalNumber();
+        }
         this.props.dispatch({
           type: 'moduleList/getModuleList',
           payload: {
@@ -36,6 +63,24 @@ class AddModal extends React.Component {
 
   //添加模块中监听所有值的变化
   handleAddValueChange(singleValueChange, ValueChange) {
+    const { projectList, testUserList } = this.state;
+    for (let i = 0; i < testUserList.length; i++) {
+      if (
+        ValueChange.test_user &&
+        testUserList[i].username === ValueChange.test_user
+      ) {
+        ValueChange.test_user = testUserList[i].id;
+      }
+    }
+    for (let i = 0; i < projectList.length; i++) {
+      if (
+        ValueChange.project &&
+        projectList[i].project_name == ValueChange.project
+      ) {
+        ValueChange.project = projectList[i].project;
+      }
+    }
+    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -48,6 +93,8 @@ class AddModal extends React.Component {
 
   render() {
     const addVisible = this.props.addVisible;
+    const { projectList, testUserList } = this.state;
+    console.log('projectList', projectList);
     return (
       <Modal
         visible={addVisible}
@@ -79,14 +126,39 @@ class AddModal extends React.Component {
             name="project"
             rules={[{ required: true, message: '请输入模块名称' }]}
           >
-            <Input />
+            {
+              <Select style={{ width: 314 }}>
+                {projectList &&
+                  Array.isArray(projectList) &&
+                  projectList.length &&
+                  projectList.map((item) => {
+                    return (
+                      <Option value={item.project_name}>
+                        {' '}
+                        {item.project_name}{' '}
+                      </Option>
+                    );
+                  })}
+              </Select>
+            }
           </Form.Item>
           <Form.Item
             label="测试人员"
             name="test_user"
             rules={[{ required: true, message: '请输入测试人员名称' }]}
           >
-            <Input />
+            {
+              <Select style={{ width: 314 }}>
+                {testUserList &&
+                  Array.isArray(testUserList) &&
+                  testUserList.length &&
+                  testUserList.map((item) => {
+                    return (
+                      <Option value={item.username}> {item.username} </Option>
+                    );
+                  })}
+              </Select>
+            }
           </Form.Item>
           <Form.Item
             label="简要描述"
@@ -101,6 +173,6 @@ class AddModal extends React.Component {
   }
 }
 
-export default connect(({ moduleList }) => ({
+export default connect(({ moduleList, projectList }) => ({
   moduleList,
 }))(AddModal);

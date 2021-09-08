@@ -1,15 +1,12 @@
 import React from 'react';
 import {
-  Col,
-  Row,
-  Card,
   Select,
+  Card,
   Form,
   Input,
   Modal,
   Table,
   Button,
-  Space,
   Popconfirm,
 } from 'antd';
 import {
@@ -20,11 +17,10 @@ import {
 } from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
+const { Option } = Select;
 import '/src/styles/global.less';
-import editTextModal from '../debugTalk/editTextModal';
 
 //获取接口参数
-
 class ProjectList extends React.Component {
   constructor(props: {} | Readonly<{}>) {
     super(props);
@@ -57,11 +53,21 @@ class ProjectList extends React.Component {
       tableLoading: true,
       //总条数
       total: 0,
+      //负责人列表编号和名字
+      leaderList: [],
     };
   }
 
   //获取列表
   componentDidMount() {
+    this.props.dispatch({
+      type: 'projectList/getUserList',
+      callback: (res) => {
+        this.setState({
+          leaderList: res,
+        });
+      },
+    });
     this.setState({
       tableLoading: true,
     });
@@ -93,10 +99,16 @@ class ProjectList extends React.Component {
       addVisible: false,
     });
   };
+  handleUserNameListVisible() {}
 
   //添加项目中监听所有值的变化
   handleAddValueChange(singleValueChange, ValueChange) {
-    console.log('ValueChange', ValueChange);
+    const leaderList = this.state.leaderList;
+    for (let i = 0; i < leaderList.length; i++) {
+      if (ValueChange.leader && leaderList[i].username === ValueChange.leader) {
+        ValueChange.leader = leaderList[i].id;
+      }
+    }
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -105,6 +117,7 @@ class ProjectList extends React.Component {
   //在添加项目的模态框中点击提交按钮
   handleSubmit() {
     const addProject = this.state.tempAddValue;
+    const total = this.state.total;
     this.setState({
       addVisible: false,
     });
@@ -113,7 +126,13 @@ class ProjectList extends React.Component {
       payload: {
         ...addProject,
       },
-      callback: () => {
+      callback: (res) => {
+        if (res.id !== undefined) {
+          this.setState({
+            total: total + 1,
+          });
+        }
+
         this.props.dispatch({
           type: 'projectList/getProjectList',
           payload: {
@@ -143,6 +162,12 @@ class ProjectList extends React.Component {
 
   //编辑内容的变化监听
   handleEditValueChange(singleValueChange, ValueChange) {
+    const leaderList = this.state.leaderList;
+    for (let i = 0; i < leaderList.length; i++) {
+      if (ValueChange.leader && leaderList[i].username === ValueChange.leader) {
+        ValueChange.leader = leaderList[i].id;
+      }
+    }
     this.setState({
       tempEditValue: ValueChange,
     });
@@ -193,6 +218,8 @@ class ProjectList extends React.Component {
 
   render() {
     const { projectList } = this.props.projectList;
+    const leaderList = this.state?.leaderList || [];
+    console.log('leaderList', this.state.leaderList);
     //为数组中每一个元素增加一个key值，防止报错
     projectList.map((item) => {
       item.key = item.id;
@@ -233,20 +260,8 @@ class ProjectList extends React.Component {
       },
       {
         title: '负责人',
-        dataIndex: 'leader',
-        key: 'leader',
-        align: 'center',
-      },
-      {
-        title: '测试人员',
-        dataIndex: 'test_user',
-        key: 'test_user',
-        align: 'center',
-      },
-      {
-        title: '开发人员',
-        dataIndex: 'dev_user',
-        key: 'dev_user',
+        dataIndex: 'leader_name',
+        key: 'leader_name',
         align: 'center',
       },
       {
@@ -352,7 +367,21 @@ class ProjectList extends React.Component {
               name="leader"
               rules={[{ required: true, message: '请输入负责人名称' }]}
             >
-              <Input />
+              {
+                <Select
+                  style={{ width: 314 }}
+                  onFocus={this.handleUserNameListVisible}
+                >
+                  {leaderList &&
+                    Array.isArray(leaderList) &&
+                    leaderList.length &&
+                    leaderList.map((item) => {
+                      return (
+                        <Option value={item.username}> {item.username} </Option>
+                      );
+                    })}
+                </Select>
+              }
             </Form.Item>
             <Form.Item
               label="简要描述"
@@ -399,7 +428,24 @@ class ProjectList extends React.Component {
                 rules={[{ required: true, message: '请输入负责人名称' }]}
                 initialValue={currentValue.leader}
               >
-                <Input />
+                {
+                  <Select
+                    style={{ width: 314 }}
+                    onFocus={this.handleUserNameListVisible}
+                  >
+                    {leaderList &&
+                      Array.isArray(leaderList) &&
+                      leaderList.length &&
+                      leaderList.map((item) => {
+                        return (
+                          <Option value={item.username}>
+                            {' '}
+                            {item.username}{' '}
+                          </Option>
+                        );
+                      })}
+                  </Select>
+                }
               </Form.Item>
               <Form.Item
                 label="简要描述"
@@ -417,6 +463,7 @@ class ProjectList extends React.Component {
   }
 }
 
-export default connect(({ projectList }) => ({
+export default connect(({ projectList, userList }) => ({
   projectList,
+  userList,
 }))(ProjectList);

@@ -50,7 +50,7 @@ class AddModal extends React.Component {
     return (
       <Modal
         visible={addVisible}
-        title="模块信息"
+        title="全局信息"
         closable={true}
         maskClosable={false}
         onOk={this.handleSubmit}

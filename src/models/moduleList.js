@@ -25,13 +25,13 @@ export default {
     },
 
     *addModuleList({ payload, callback }, { call, put }) {
-      yield call(addModuleList, { ...payload });
+      const res = yield call(addModuleList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
 
-    *editSubmit({ payload }, { call, put }) {
+    *editModuleList({ payload }, { call, put }) {
       yield call(updateModuleList, { ...payload });
       if (callback) {
         callback();

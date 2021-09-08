@@ -29,7 +29,7 @@ export default {
         callback();
       }
     },
-    *editSubmit({ payload }, { call, put }) {
+    *editGlobalVarList({ payload }, { call, put }) {
       yield call(updateGlobalVarList, { ...payload });
       if (callback) {
         callback();

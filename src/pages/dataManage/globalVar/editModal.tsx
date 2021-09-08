@@ -19,7 +19,7 @@ class EditModal extends React.Component {
     const editGlobalVar = this.state.tempEditValue;
     const EditId = this.props.tempValue.id;
     this.props.dispatch({
-      type: 'moduleList/addModuleList',
+      type: 'globalVarList/editGlobalVarList',
       payload: {
         ...editGlobalVar,
         id: EditId,
@@ -54,12 +54,12 @@ class EditModal extends React.Component {
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改模块信息"
+            title="修改全局信息"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}
             onCancel={this.editCancel}
-            okText="修改"
+            okText="确认"
             okButtonProps={{ shape: 'round' }}
             cancelButtonProps={{ shape: 'round', type: 'text' }}
           >

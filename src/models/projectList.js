@@ -3,6 +3,7 @@ import {
   addProjectList,
   updateProjectList,
   deleteProjectList,
+  getUserList,
 } from '@/services/getProjectList';
 
 export default {
@@ -24,9 +25,9 @@ export default {
       }
     },
     *addProjectList({ payload, callback }, { call, put }) {
-      yield call(addProjectList, { ...payload });
+      const res = yield call(addProjectList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *editProjectList({ payload, callback }, { call, put }) {
@@ -37,6 +38,13 @@ export default {
     },
     *deleteProjectList({ payload }, { call, put }) {
       const res = yield call(deleteProjectList, { ...payload });
+    },
+    *getUserList({ payload, callback }, { call, put }) {
+      const res = yield call(getUserList, { ...payload });
+      if (callback) {
+        console.log('res', res);
+        callback(res);
+      }
     },
   },
   reducers: {
