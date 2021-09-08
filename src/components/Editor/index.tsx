@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
+
 import 'codemirror/lib/codemirror.js';
 // 引入样式文件
 import 'codemirror/lib/codemirror.css';
@@ -21,7 +22,7 @@ import 'codemirror/addon/fold/foldgutter.js';
 import 'codemirror/addon/fold/brace-fold.js';
 import 'codemirror/addon/fold/comment-fold.js';
 import 'codemirror/addon/edit/closebrackets';
-
+import styles from './index.less';
 // 参考https://blog.csdn.net/JLU_Lei/article/details/80259697
 
 export default class Editor extends Component<any, any> {
@@ -43,6 +44,7 @@ export default class Editor extends Component<any, any> {
     return (
       <CodeMirror
         ref="editor"
+        className={styles.codemirror}
         value={content}
         options={{
           mode: {

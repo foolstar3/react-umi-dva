@@ -20,7 +20,7 @@ class CaseList extends Component<any, any> {
     total: 0,
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getCaseList({ page: 1 });
   }
   /**
@@ -75,6 +75,7 @@ class CaseList extends Component<any, any> {
         console.log('search');
       },
     });
+    this.getCaseList({ page: 1 });
   };
 
   handleDeleteOk = (record) => {
@@ -82,6 +83,18 @@ class CaseList extends Component<any, any> {
   };
 
   copyCase = (record) => {};
+
+  onProjectSearch = (payload) => {
+    console.log(payload);
+  };
+
+  onModuleSearch = (payload) => {
+    console.log(payload);
+  };
+
+  onProjectChange = (payload) => {
+    console.log(payload);
+  };
 
   render() {
     const { tableLoading, selectedRowKeys, total } = this.state;
@@ -166,6 +179,9 @@ class CaseList extends Component<any, any> {
             projectOptions={projectOptions}
             moduleOptions={moduleOptions}
             onSearch={this.onSearch}
+            onProjectSearch={this.onProjectSearch}
+            onProjectChange={this.onProjectChange}
+            onModuleSearch={this.onModuleSearch}
           />
           <div className={styles.btnPosition}>
             <Button type="primary" icon={<PlusCircleOutlined />}>

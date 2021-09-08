@@ -35,8 +35,23 @@ const SearchBox = (props) => {
       }
     });
     delete payload.update_time;
-    console.log(payload);
+    // console.log(payload);
     onSearch(payload);
+  };
+
+  const onProjectSearch = (val) => {
+    const { onProjectSearch } = props;
+    onProjectSearch(val);
+  };
+
+  const onProjectChange = (val) => {
+    const { onProjectChange } = props;
+    onProjectChange(val);
+  };
+
+  const onModuleSearch = (val) => {
+    const { onModuleSearch } = props;
+    onModuleSearch(val);
   };
 
   return (
@@ -52,11 +67,22 @@ const SearchBox = (props) => {
 
             <Col span={8}>
               <Form.Item label="项目名称" name="project_name">
-                <Select>
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={onProjectSearch}
+                  onChange={onProjectChange}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
                   {props.projectOptions.map((item) => (
-                    <Option key={item} value={item}>
+                    <Select.Option key={item} value={item}>
                       {item}
-                    </Option>
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -64,11 +90,21 @@ const SearchBox = (props) => {
 
             <Col span={8}>
               <Form.Item label="模块名称" name="module_name">
-                <Select>
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={onModuleSearch}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
                   {props.moduleOptions.map((item) => (
-                    <Option key={item} value={item}>
+                    <Select.Option key={item} value={item}>
                       {item}
-                    </Option>
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>

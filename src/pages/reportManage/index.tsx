@@ -21,6 +21,9 @@ class ViewReport extends Component<any, any> {
       tableLoading: true,
       total: 0,
     };
+  }
+
+  UNSAFE_componentWillMount() {
     this.getReportList({ page: 1 });
   }
 
@@ -71,6 +74,7 @@ class ViewReport extends Component<any, any> {
   handleDeleteOk = (record: any) => {
     // console.log(record);
     this.deleteReport(record.id);
+    this.getReportList({ page: 1 });
   };
 
   /**
@@ -120,6 +124,9 @@ class ViewReport extends Component<any, any> {
       ),
     };
     const columnsConfig = [...config, actionConfig];
+    reportList.results?.map((item) => {
+      item.key = item.id;
+    });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
