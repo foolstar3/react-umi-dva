@@ -56,18 +56,21 @@ export default class EnvList extends Component<any, any> {
           dataIndex: 'id',
           key: 'id',
           width: 70,
+          align: 'center',
         },
         {
           title: '环境名称',
           dataIndex: 'env_name',
           key: 'env_name',
           width: 120,
+          align: 'center',
         },
         {
           title: '环境地址',
           dataIndex: 'base_url',
           key: 'base_url',
           // width: 200,
+          align: 'center',
         },
         {
           title: '简要描述',
@@ -76,12 +79,14 @@ export default class EnvList extends Component<any, any> {
           textWrap: 'word-break',
           ellipsis: true,
           // width: 100,
+          align: 'center',
         },
         {
           title: '状态',
           dataIndex: 'is_valid',
           key: 'is_valid',
           width: 100,
+          align: 'center',
           render: (text, record, index) => {
             return (
               <Switch
@@ -101,18 +106,20 @@ export default class EnvList extends Component<any, any> {
           dataIndex: 'create_time',
           key: 'create_time',
           width: 200,
+          align: 'center',
         },
         {
           title: '操作',
           key: 'action',
           width: 300,
+          align: 'center',
           render: (text, record) => (
             <div className="actionColumn">
               <Button
                 type="primary"
                 icon={<FileSearchOutlined />}
                 onClick={() => {
-                  this.showEnvInfoModal(text, record);
+                  this.showEnvInfoModal(record);
                 }}
                 size="small"
                 shape="round"
@@ -161,7 +168,7 @@ export default class EnvList extends Component<any, any> {
 
   // 监听table选中的列发生变化的函数
   onSelectChange = (selectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    // console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
 
@@ -174,7 +181,6 @@ export default class EnvList extends Component<any, any> {
       payload,
       callback: () => {
         const { envList } = this.props;
-        console.log(envList);
         this.setState({
           tableLoading: false,
           total: envList.count,
@@ -188,7 +194,6 @@ export default class EnvList extends Component<any, any> {
   // 监听switch状态变化
   onSwitchChange = (checked, text, record) => {
     this.toggleSwitch(record);
-    console.log(record);
   };
 
   // 调用接口切换switch状态

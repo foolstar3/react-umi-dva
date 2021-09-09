@@ -39,19 +39,9 @@ const SearchBox = (props) => {
     onSearch(payload);
   };
 
-  const onProjectSearch = (val) => {
-    const { onProjectSearch } = props;
-    onProjectSearch(val);
-  };
-
   const onProjectChange = (val) => {
     const { onProjectChange } = props;
     onProjectChange(val);
-  };
-
-  const onModuleSearch = (val) => {
-    const { onModuleSearch } = props;
-    onModuleSearch(val);
   };
 
   return (
@@ -70,7 +60,6 @@ const SearchBox = (props) => {
                 <Select
                   allowClear
                   showSearch
-                  onSearch={onProjectSearch}
                   onChange={onProjectChange}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
@@ -80,8 +69,8 @@ const SearchBox = (props) => {
                   }
                 >
                   {props.projectOptions.map((item) => (
-                    <Select.Option key={item} value={item}>
-                      {item}
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.project_name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -93,7 +82,6 @@ const SearchBox = (props) => {
                 <Select
                   allowClear
                   showSearch
-                  onSearch={onModuleSearch}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     option.children
@@ -102,8 +90,8 @@ const SearchBox = (props) => {
                   }
                 >
                   {props.moduleOptions.map((item) => (
-                    <Select.Option key={item} value={item}>
-                      {item}
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.module_name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -114,7 +102,22 @@ const SearchBox = (props) => {
           <Row>
             <Col span={8}>
               <Form.Item label="测试人员" name="author">
-                <Input />
+                <Select
+                  allowClear
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {props.moduleOptions.map((item) => (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.module_name}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
 

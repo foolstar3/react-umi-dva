@@ -23,14 +23,14 @@ export default {
     setParamsFileCode(state, { payload }) {
       const newState = JSON.parse(JSON.stringify(state));
       newState.paramsFileCode = payload;
-      console.log(newState);
+      // console.log(newState);
       return {
         ...state,
         ...newState,
       };
     },
     setEditorCode(state, { payload }) {
-      console.log(payload);
+      // console.log(payload);
       const newState = JSON.parse(JSON.stringify(state));
       newState.paramsFileCode.context = payload;
       return {
@@ -72,7 +72,7 @@ export default {
     },
     *updateParamsFileCode({ payload, callback }, { call, put }) {
       const res = yield call(updateParamsFileCode, payload);
-      console.log(res);
+      // console.log(res);
     },
   },
 };
