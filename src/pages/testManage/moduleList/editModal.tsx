@@ -19,7 +19,7 @@ class EditModal extends React.Component {
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'projectList/getUserList',
+      type: 'userList/getUserList',
       callback: (res) => {
         this.setState({
           testUserList: res,
@@ -32,9 +32,8 @@ class EditModal extends React.Component {
         page: 1,
       },
       callback: (res) => {
-        console.log('res', res);
         this.setState({
-          projectList: res,
+          projectList: res.results,
         });
       },
     });
@@ -67,13 +66,21 @@ class EditModal extends React.Component {
   };
 
   handleEditValueChange(singleValueChange, ValueChange) {
-    const testUserList = this.state.testUserList;
+    const { projectList, testUserList } = this.state;
     for (let i = 0; i < testUserList.length; i++) {
       if (
         ValueChange.test_user &&
         testUserList[i].username === ValueChange.test_user
       ) {
         ValueChange.test_user = testUserList[i].id;
+      }
+    }
+    for (let i = 0; i < projectList.length; i++) {
+      if (
+        ValueChange.project &&
+        projectList[i].project_name === ValueChange.project
+      ) {
+        ValueChange.project = projectList[i].id;
       }
     }
     this.setState({
@@ -83,7 +90,7 @@ class EditModal extends React.Component {
 
   render() {
     const { editVisible, tempValue } = this.props;
-    const testUserList = this.state.testUserList;
+    const { projectList, testUserList } = this.state;
     return (
       <div>
         {editVisible && (
@@ -118,7 +125,21 @@ class EditModal extends React.Component {
                 rules={[{ required: true, message: '请输入项目名称' }]}
                 initialValue={tempValue.project_name}
               >
-                <Input />
+                {
+                  <Select style={{ width: 314 }}>
+                    {projectList &&
+                      Array.isArray(projectList) &&
+                      projectList.length &&
+                      projectList.map((item) => {
+                        return (
+                          <Option value={item.project_name}>
+                            {' '}
+                            {item.project_name}{' '}
+                          </Option>
+                        );
+                      })}
+                  </Select>
+                }
               </Form.Item>
               <Form.Item
                 label="测试人员"
@@ -158,7 +179,8 @@ class EditModal extends React.Component {
   }
 }
 
-export default connect(({ moduleList, projectList }) => ({
+export default connect(({ moduleList, projectList, userList }) => ({
   moduleList,
   projectList,
+  userList,
 }))(EditModal);

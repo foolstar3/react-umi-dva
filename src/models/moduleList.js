@@ -31,7 +31,7 @@ export default {
       }
     },
 
-    *editModuleList({ payload }, { call, put }) {
+    *editModuleList({ payload, callback }, { call, put }) {
       yield call(updateModuleList, { ...payload });
       if (callback) {
         callback();

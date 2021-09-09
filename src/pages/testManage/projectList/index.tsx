@@ -55,13 +55,14 @@ class ProjectList extends React.Component {
       total: 0,
       //负责人列表编号和名字
       leaderList: [],
+      //空数组，解决添加项目取消后，但是数据未消失情况
     };
   }
 
   //获取列表
   componentDidMount() {
     this.props.dispatch({
-      type: 'projectList/getUserList',
+      type: 'userList/getUserList',
       callback: (res) => {
         this.setState({
           leaderList: res,
@@ -79,7 +80,7 @@ class ProjectList extends React.Component {
       callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: res.results.length,
+          total: res.length,
         });
       },
     });
@@ -147,6 +148,7 @@ class ProjectList extends React.Component {
 
   //编辑的地方弹出模态框
   showEditModal(_, record) {
+    console.log('record', record);
     this.setState({
       editVisible: true,
       currentValue: record,
@@ -219,7 +221,6 @@ class ProjectList extends React.Component {
   render() {
     const { projectList } = this.props.projectList;
     const leaderList = this.state?.leaderList || [];
-    console.log('leaderList', this.state.leaderList);
     //为数组中每一个元素增加一个key值，防止报错
     projectList.map((item) => {
       item.key = item.id;
@@ -295,7 +296,7 @@ class ProjectList extends React.Component {
                 编辑
               </Button>
               <Popconfirm
-                title="Are you 确定？"
+                title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDelete(record)}
               >

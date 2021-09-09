@@ -30,10 +30,3 @@ export async function updateProjectList(data) {
     requestType: 'form',
   });
 }
-
-export async function getUserList(data) {
-  return requestUap(`/user/`, {
-    method: 'GET',
-    params: data,
-  });
-}

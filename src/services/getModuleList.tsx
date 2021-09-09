@@ -16,7 +16,7 @@ export async function addModuleList(data) {
 }
 
 export async function deleteModuleList(data) {
-  return requestUap(`/project/${data.id}/`, {
+  return requestUap(`/module/${data.id}/`, {
     method: 'DELETE',
     data,
     requestType: 'form',
@@ -24,7 +24,7 @@ export async function deleteModuleList(data) {
 }
 
 export async function updateModuleList(data) {
-  return requestUap(`/project/${data.id}/`, {
+  return requestUap(`/module/${data.id}/`, {
     method: 'PUT',
     data,
     requestType: 'form',
