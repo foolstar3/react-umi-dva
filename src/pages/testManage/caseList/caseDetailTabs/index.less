@@ -1,0 +1,45 @@
+.tabBody {
+  min-height: 600px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  :global {
+    .ant-btn {
+      color: #fff;
+    }
+  }
+  .left {
+    flex: 1;
+    .runBtn {
+      background: #2db7f5;
+      border-color: #2db7f5;
+      &:hover {
+        background: #57c5f7;
+        border-color: #57c5f7;
+      }
+    }
+    .saveBtn {
+      background: #19be6b;
+      border-color: #19be6b;
+      &:hover {
+        background: #47cb89;
+        border-color: #47cb89;
+      }
+    }
+  }
+  .right {
+    flex: 1;
+    display: flex;
+    flex-direction: row-reverse;
+    .cancelBtn {
+      background: #f90;
+      border-color: #f90;
+      &:hover {
+        background: #ffad33;
+        border-color: #ffad33;
+      }
+    }
+  }
+}

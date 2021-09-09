@@ -34,14 +34,17 @@ const layout = {
 };
 
 const uploadConfig = {
-  accept:
-    'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  accept: '.csv',
   listType: 'text',
   beforeUpload: (file) => {
     const fileSize = file.size / 1024 / 1024;
     if (fileSize > 20) {
-      message.info('文件大小不得超过20M！');
-      return false;
+      message.error('文件大小不得超过20M！');
+      return Upload.LIST_IGNORE;
+    }
+    if (file.name.split('.')[file.name.split('.').length - 1] != 'csv') {
+      message.error('文件类型只能是CSV类型');
+      return Upload.LIST_IGNORE;
     }
     return true;
   },
@@ -64,36 +67,43 @@ class ParamsFile extends Component<any, any> {
           title: '#',
           dataIndex: 'id',
           key: 'id',
+          align: 'center',
         },
         {
           title: '项目名称',
           dataIndex: 'project_name',
           key: 'project_name',
+          align: 'center',
         },
         {
           title: '文件名称',
           dataIndex: 'file',
           key: 'file',
+          align: 'center',
         },
         {
           title: '上传人员',
           dataIndex: 'author',
           key: 'author',
+          align: 'center',
         },
         {
           title: '创建时间',
           dataIndex: 'create_time',
           key: 'create_time',
+          align: 'center',
         },
         {
           title: '更新时间',
           dataIndex: 'update_time',
           key: 'update_time',
+          align: 'center',
         },
         {
           title: '操作',
           key: 'action',
           width: 210,
+          align: 'center',
           render: (text, record) => (
             <div key={record.id} className="actionColumn">
               <Button
@@ -139,7 +149,18 @@ class ParamsFile extends Component<any, any> {
 
   UNSAFE_componentWillMount() {
     this.getParamsFileList({ page: 1 });
+    this.getProjectList({ page: 1 });
   }
+
+  //获取项目名称列表
+  getProjectList = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: () => {},
+    });
+  };
 
   getParamsFileList = (payload) => {
     this.setState({
@@ -272,7 +293,7 @@ class ParamsFile extends Component<any, any> {
   };
 
   handleAddFormValueChange = (av) => {
-    // console.log(av);
+    console.log(av);
     // 获取新增文件的数据
     this.setState(() => ({
       addFileData: av,
@@ -333,8 +354,9 @@ class ParamsFile extends Component<any, any> {
   formRef = React.createRef<FormInstance>();
   // 渲染新增项目表单
   renderAddForm = () => {
-    const { paramsFileData } = this.props;
+    const { projectData } = this.props;
     const { addModalVisiable } = this.state;
+    // console.log(projectData);
     return (
       addModalVisiable && (
         <Form
@@ -353,12 +375,16 @@ class ParamsFile extends Component<any, any> {
           >
             <Select
               placeholder="请选择"
-              // onChange={this.handle}
               allowClear
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
-              {paramsFileData.results.map((item) => {
+              {projectData.map((item) => {
                 return (
-                  <Option value={item.project_name} key={item.index}>
+                  <Option value={item.id} key={item.id}>
                     {item.project_name}
                   </Option>
                 );
@@ -452,7 +478,8 @@ class ParamsFile extends Component<any, any> {
   }
 }
 
-export default connect(({ paramsFile }) => ({
+export default connect(({ paramsFile, projectList }) => ({
   paramsFileData: paramsFile.paramsFileList,
   paramsFileCode: paramsFile.paramsFileCode,
+  projectData: projectList.projectList,
 }))(ParamsFile);

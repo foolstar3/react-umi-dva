@@ -20,19 +20,19 @@ export default {
         ...newState,
       };
     },
-    updateStatus(state, { payload }) {
-      const newState = JSON.parse(JSON.stringify(state));
-      newState.envList.map((item) => {
-        if (item.id === payload.id) {
-          item = payload;
-        }
-        return item;
-      });
-      return {
-        ...state,
-        ...newState,
-      };
-    },
+    // updateStatus(state, { payload }) {
+    //   const newState = JSON.parse(JSON.stringify(state));
+    //   newState.envList.map((item) => {
+    //     if (item.id === payload.id) {
+    //       item = payload;
+    //     }
+    //     return item;
+    //   });
+    //   return {
+    //     ...state,
+    //     ...newState,
+    //   };
+    // },
     addEnvListData(state, { payload }) {
       return {
         ...state,
@@ -52,10 +52,10 @@ export default {
     },
     *toggleSwitch({ payload, callback }, { call, put }) {
       const res = yield call(toggleSwitch, payload);
-      yield put({
-        type: 'updateStatus',
-        payload: res,
-      });
+      // yield put({
+      //   type: 'updateStatus',
+      //   payload: res,
+      // });
       if (callback) {
         callback(res);
       }

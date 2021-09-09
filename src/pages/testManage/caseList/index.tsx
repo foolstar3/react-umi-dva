@@ -10,6 +10,7 @@ import {
   PlusCircleOutlined,
 } from '@ant-design/icons';
 import SearchBox from './searchBox';
+import CaseDetailTabs from './caseDetailTabs';
 import styles from './index.less';
 import tableColumns from './config';
 
@@ -18,10 +19,14 @@ class CaseList extends Component<any, any> {
     selectedRowKeys: [],
     tableLoading: false,
     total: 0,
+    showDetailTabs: false,
+    currentCase: {},
   };
 
   UNSAFE_componentWillMount() {
     this.getCaseList({ page: 1 });
+    this.getProjectList({ page: 'None' });
+    this.getModuleList({ page: 'None' });
   }
   /**
    *
@@ -43,6 +48,26 @@ class CaseList extends Component<any, any> {
           tableLoading: false,
         });
       },
+    });
+  };
+
+  getProjectList = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: (res) => {
+        console.log(res);
+      },
+    });
+  };
+
+  getModuleList = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'moduleList/getModuleList',
+      payload,
+      callback: (res) => {},
     });
   };
 
@@ -84,33 +109,35 @@ class CaseList extends Component<any, any> {
 
   copyCase = (record) => {};
 
-  onProjectSearch = (payload) => {
-    console.log(payload);
-  };
-
-  onModuleSearch = (payload) => {
-    console.log(payload);
-  };
-
   onProjectChange = (payload) => {
-    console.log(payload);
+    this.getModuleList({ page: 'None', project: payload });
   };
 
-  render() {
+  showCaseDetail = (record) => {
+    this.setState({
+      showDetailTabs: true,
+      currentCase: record,
+    });
+  };
+
+  hideCaseDetail = () => {
+    this.setState({
+      showDetailTabs: false,
+    });
+  };
+
+  renderCaseListTable = () => {
     const { tableLoading, selectedRowKeys, total } = this.state;
-    const { caseList } = this.props;
-    const projectOptions = [];
-    const moduleOptions = [];
+    const { caseList, projectData, moduleData } = this.props;
     caseList.results?.map((item) => {
       item.key = item.id;
-      projectOptions.push(item.project_name);
-      moduleOptions.push(item.module_name);
     });
     const actionColumn = {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
       width: 240,
+      align: 'center',
       render: (text, record) => (
         <div key={record.id} className={styles.actionColumn}>
           <Popconfirm
@@ -128,7 +155,13 @@ class CaseList extends Component<any, any> {
               <PlayCircleOutlined />
             </Button>
           </Popconfirm>
-          <Button type="primary" title="编辑" size="small" shape="round">
+          <Button
+            type="primary"
+            title="编辑"
+            size="small"
+            shape="round"
+            onClick={() => this.showCaseDetail(record)}
+          >
             <EditOutlined />
           </Button>
           <Button
@@ -158,7 +191,7 @@ class CaseList extends Component<any, any> {
         </div>
       ),
     };
-    const tableConfig = [...tableColumns, actionColumn];
+    const tableConfig: any = [...tableColumns, actionColumn];
     const rowSelection = {
       selectedRowKeys,
       onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
@@ -171,41 +204,60 @@ class CaseList extends Component<any, any> {
       pageSize: 10,
       showTotal: () => `共 ${total} 条`,
     };
+    return (
+      <>
+        <SearchBox
+          projectOptions={projectData}
+          moduleOptions={moduleData}
+          onSearch={this.onSearch}
+          onProjectChange={this.onProjectChange}
+        />
+        <div className={styles.btnPosition}>
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
+            onClick={() => this.showCaseDetail()}
+          >
+            新增
+          </Button>
+          <Button type="primary" icon={<PlayCircleOutlined />}>
+            运行
+          </Button>
+        </div>
+        <div className={styles.tableWrapper}>
+          <Table
+            rowSelection={rowSelection}
+            columns={tableConfig}
+            loading={tableLoading}
+            dataSource={caseList.results ?? []}
+            pagination={paginationProps}
+          />
+        </div>
+      </>
+    );
+  };
 
+  render() {
+    const { showDetailTabs, currentCase } = this.state;
     return (
       <>
         <Card>
-          <SearchBox
-            projectOptions={projectOptions}
-            moduleOptions={moduleOptions}
-            onSearch={this.onSearch}
-            onProjectSearch={this.onProjectSearch}
-            onProjectChange={this.onProjectChange}
-            onModuleSearch={this.onModuleSearch}
-          />
-          <div className={styles.btnPosition}>
-            <Button type="primary" icon={<PlusCircleOutlined />}>
-              新增
-            </Button>
-            <Button type="primary" icon={<PlayCircleOutlined />}>
-              运行
-            </Button>
-          </div>
-          <div className={styles.tableWrapper}>
-            <Table
-              rowSelection={rowSelection}
-              columns={tableConfig}
-              loading={tableLoading}
-              dataSource={caseList.results ?? []}
-              pagination={paginationProps}
+          {showDetailTabs ? (
+            <CaseDetailTabs
+              caseDetail={currentCase}
+              hideCaseDetail={this.hideCaseDetail}
             />
-          </div>
+          ) : (
+            this.renderCaseListTable()
+          )}
         </Card>
       </>
     );
   }
 }
 
-export default connect(({ testCase }) => ({
+export default connect(({ testCase, projectList, moduleList }) => ({
   caseList: testCase.caseList,
+  projectData: projectList.projectList,
+  moduleData: moduleList.moduleList,
 }))(CaseList);
