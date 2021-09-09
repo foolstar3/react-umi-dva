@@ -39,13 +39,6 @@ export default {
     *deleteProjectList({ payload }, { call, put }) {
       const res = yield call(deleteProjectList, { ...payload });
     },
-    *getUserList({ payload, callback }, { call, put }) {
-      const res = yield call(getUserList, { ...payload });
-      if (callback) {
-        console.log('res', res);
-        callback(res);
-      }
-    },
   },
   reducers: {
     updateProjectList(state, { payload }) {

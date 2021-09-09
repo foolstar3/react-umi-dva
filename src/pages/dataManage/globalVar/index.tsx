@@ -166,7 +166,7 @@ class GlobalVarList extends React.Component<any, any> {
                   编辑
                 </Button>
                 <Popconfirm
-                  title="Are you 确定？"
+                  title="确定删除？"
                   icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                   onConfirm={() => this.handleDelete(record)}
                 >

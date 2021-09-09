@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Form, Input, Modal, Table, Button, Space } from 'antd';
+import { Select, Form, Input, Modal } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
@@ -13,12 +13,13 @@ class AddModal extends React.Component {
     this.state = {
       tempAddValue: '',
       testUserList: [],
+      projectList: '',
     };
   }
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'projectList/getUserList',
+      type: 'userList/getUserList',
       callback: (res) => {
         this.setState({
           testUserList: res,
@@ -75,13 +76,12 @@ class AddModal extends React.Component {
     for (let i = 0; i < projectList.length; i++) {
       if (
         ValueChange.project &&
-        projectList[i].project_name == ValueChange.project
+        projectList[i].project_name === ValueChange.project
       ) {
-        ValueChange.project = projectList[i].project;
+        ValueChange.project = projectList[i].id;
       }
     }
-    console.log('ValueChange', ValueChange);
-    this.setState({
+    ValueChange.id = this.setState({
       tempAddValue: ValueChange,
     });
   }
@@ -94,7 +94,6 @@ class AddModal extends React.Component {
   render() {
     const addVisible = this.props.addVisible;
     const { projectList, testUserList } = this.state;
-    console.log('projectList', projectList);
     return (
       <Modal
         visible={addVisible}
@@ -173,6 +172,8 @@ class AddModal extends React.Component {
   }
 }
 
-export default connect(({ moduleList, projectList }) => ({
+export default connect(({ moduleList, projectList, userList }) => ({
   moduleList,
+  projectList,
+  userList,
 }))(AddModal);

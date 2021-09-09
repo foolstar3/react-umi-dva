@@ -3,20 +3,15 @@ import {
   Col,
   DatePicker,
   Collapse,
-  Card,
   Select,
   Form,
   Input,
-  Modal,
-  Table,
   Button,
   Space,
 } from 'antd';
 import { EditOutlined, RedoOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import './index.less';
-import { render } from 'react-dom';
-import projectList from '../projectList';
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -31,8 +26,14 @@ const SearchModel = (props: any) => {
       },
     });
   };
+  const handleUserListVisible = () => {
+    props.dispatch({
+      type: 'userList/getUserList',
+    });
+  };
   const [form] = Form.useForm();
   const projectList = props?.projectList?.projectList || [];
+  const testUserList = props?.userList?.userList || [];
 
   //重置搜索框
   const onReset = () => {
@@ -41,6 +42,16 @@ const SearchModel = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
+    for (let i = 0; i < projectList.length; i++) {
+      if (value.project && value.project == projectList[i].project_name) {
+        value.project = projectList[i].id;
+      }
+    }
+    for (let i = 0; i < testUserList.length; i++) {
+      if (value.test_user && value.test_user == testUserList[i].username) {
+        value.test_user = testUserList[i].id;
+      }
+    }
     props.dispatch({
       type: 'moduleList/getModuleList',
       payload: {
@@ -48,7 +59,7 @@ const SearchModel = (props: any) => {
         module_name: value.module_name,
         test_user: value.test_user,
         description: value.description,
-        project: value.project_name,
+        project: value.project,
       },
     });
   };
@@ -71,7 +82,7 @@ const SearchModel = (props: any) => {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="项目名称" name="project_name">
+                <Form.Item label="项目名称" name="project">
                   {
                     <Select
                       style={{ width: 269 }}
@@ -93,7 +104,24 @@ const SearchModel = (props: any) => {
               </Col>
               <Col span={8}>
                 <Form.Item label="测试人员" name="test_user">
-                  <Input autoComplete="off" />
+                  {
+                    <Select
+                      style={{ width: 314 }}
+                      onClick={handleUserListVisible}
+                    >
+                      {testUserList &&
+                        Array.isArray(testUserList) &&
+                        testUserList.length &&
+                        testUserList.map((item) => {
+                          return (
+                            <Option value={item.username} key={item.id}>
+                              {' '}
+                              {item.username}{' '}
+                            </Option>
+                          );
+                        })}
+                    </Select>
+                  }
                 </Form.Item>
               </Col>
             </Row>
@@ -137,7 +165,8 @@ const SearchModel = (props: any) => {
   );
 };
 
-export default connect(({ moduleList, projectList }) => ({
+export default connect(({ moduleList, projectList, userList }) => ({
   moduleList,
   projectList,
+  userList,
 }))(SearchModel);
