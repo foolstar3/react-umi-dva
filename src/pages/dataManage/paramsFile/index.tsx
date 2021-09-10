@@ -64,7 +64,7 @@ class ParamsFile extends Component<any, any> {
       // 参数文件表格列配置
       columns: [
         {
-          title: '#',
+          title: '编号',
           dataIndex: 'id',
           key: 'id',
           align: 'center',
@@ -450,6 +450,7 @@ class ParamsFile extends Component<any, any> {
             dataSource={paramsFileData.results}
             loading={tableLoading}
             pagination={paginationProps}
+            bordered
           />
         </Card>
         <Modal

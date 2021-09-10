@@ -57,7 +57,7 @@ class CaseList extends Component<any, any> {
       type: 'projectList/getProjectList',
       payload,
       callback: (res) => {
-        console.log(res);
+        // console.log(res);
       },
     });
   };
@@ -111,9 +111,20 @@ class CaseList extends Component<any, any> {
 
   onProjectChange = (payload) => {
     this.getModuleList({ page: 'None', project: payload });
+    this.getCaseList({ page: 'None', project: payload });
   };
 
+  onModuleChange = (module, project) => {
+    this.getCaseList({ page: 'None', project, module });
+  };
   showCaseDetail = (record) => {
+    const { caseList } = this.props;
+    caseList.result?.filter((item) =>
+      record
+        ? item.project === record.project && item.module === record.module
+        : false,
+    );
+
     this.setState({
       showDetailTabs: true,
       currentCase: record,
@@ -216,7 +227,7 @@ class CaseList extends Component<any, any> {
           <Button
             type="primary"
             icon={<PlusCircleOutlined />}
-            onClick={() => this.showCaseDetail()}
+            onClick={() => this.showCaseDetail({})}
           >
             新增
           </Button>
@@ -231,6 +242,7 @@ class CaseList extends Component<any, any> {
             loading={tableLoading}
             dataSource={caseList.results ?? []}
             pagination={paginationProps}
+            bordered
           />
         </div>
       </>
@@ -239,13 +251,19 @@ class CaseList extends Component<any, any> {
 
   render() {
     const { showDetailTabs, currentCase } = this.state;
+    const { projectData, moduleData, caseList } = this.props;
     return (
       <>
         <Card>
           {showDetailTabs ? (
             <CaseDetailTabs
               caseDetail={currentCase}
+              projectData={projectData}
+              moduleData={moduleData}
               hideCaseDetail={this.hideCaseDetail}
+              onProjectChange={this.onProjectChange}
+              onModuleChange={this.onModuleChange}
+              caseList={caseList}
             />
           ) : (
             this.renderCaseListTable()

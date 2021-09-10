@@ -1,0 +1,24 @@
+.content {
+  display: flex;
+  .left {
+    flex: 1;
+    .selectionContent {
+      :global {
+        .ant-btn {
+          height: 30px;
+          margin-right: 10px !important;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+      .topBtn {
+        margin-bottom: 10px;
+      }
+    }
+  }
+  .right {
+    flex: 1;
+    top: -250px;
+  }
+}

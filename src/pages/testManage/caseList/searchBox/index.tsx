@@ -100,7 +100,7 @@ const SearchBox = (props) => {
           </Row>
 
           <Row>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item label="测试人员" name="author">
                 <Select
                   allowClear
@@ -119,7 +119,7 @@ const SearchBox = (props) => {
                   ))}
                 </Select>
               </Form.Item>
-            </Col>
+            </Col> */}
 
             <Col span={8}>
               <Form.Item label="更新时间" name="update_time">

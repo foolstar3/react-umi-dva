@@ -1,6 +1,6 @@
 const tableColumns = [
   {
-    title: '#',
+    title: '编号',
     dataIndex: 'id',
     key: 'id',
     align: 'center',

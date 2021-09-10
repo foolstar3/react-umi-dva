@@ -1,6 +1,6 @@
 const config = [
   {
-    title: '#',
+    title: '编号',
     dataIndex: 'id',
     key: 'id',
     width: '70px',

@@ -123,7 +123,7 @@ class ViewReport extends Component<any, any> {
         </div>
       ),
     };
-    const columnsConfig = [...config, actionConfig];
+    const columnsConfig: any = [...config, actionConfig];
     reportList.results?.map((item) => {
       item.key = item.id;
     });
@@ -144,6 +144,7 @@ class ViewReport extends Component<any, any> {
               dataSource={reportList.results}
               pagination={paginationProps}
               loading={tableLoading}
+              bordered
             ></Table>
           </Card>
         </>
