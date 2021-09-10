@@ -42,6 +42,9 @@ class ProjectList extends React.Component {
     this.editSubmit = this.editSubmit.bind(this);
     //编辑取消按钮
     this.editCancel = this.editCancel.bind(this);
+    //获取列表
+    this.getProjectList = this.getProjectList.bind(this);
+
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -72,19 +75,23 @@ class ProjectList extends React.Component {
     this.setState({
       tableLoading: true,
     });
+    this.getProjectList(1);
+  }
+
+  getProjectList = (page: any) => {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
-        page: 1,
+        page: page,
       },
       callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: res.length,
+          total: res.count,
         });
       },
     });
-  }
+  };
   /* =======================新增按钮及模态框功能=========================== */
 
   //添加项目，打开模态框
@@ -219,17 +226,23 @@ class ProjectList extends React.Component {
   }
 
   render() {
-    const { projectList } = this.props.projectList;
+    const { projectList } = this.props?.projectList || [];
+    console.log('projectList', projectList);
     const leaderList = this.state?.leaderList || [];
     //为数组中每一个元素增加一个key值，防止报错
-    projectList.map((item) => {
-      item.key = item.id;
-    });
+    projectList &&
+      projectList.map((item) => {
+        item.key = item.id;
+      });
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
+      pageSize: 10,
+      onChange: (page) => {
+        this.getProjectList(page);
+      },
       total: total,
       showTotal: () => `共${total}条`,
     };

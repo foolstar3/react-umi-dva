@@ -33,6 +33,7 @@ class ModuleList extends React.Component {
     this.handleEditModal = this.handleEditModal.bind(this);
     this.showEditModal = this.showEditModal.bind(this);
     this.handleTotalNumber = this.handleTotalNumber.bind(this);
+    this.getModuleList = this.getModuleList.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -46,19 +47,23 @@ class ModuleList extends React.Component {
     this.setState({
       tableLoading: true,
     });
+    this.getModuleList(1);
+  }
+
+  getModuleList = (page: any) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload: {
-        page: 1,
+        page: page,
       },
       callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: res.results.length,
+          total: res.count,
         });
       },
     });
-  }
+  };
   /* =======================新增按钮及模态框功能=========================== */
 
   //主页”添加“按钮
@@ -127,6 +132,9 @@ class ModuleList extends React.Component {
       showQuickJumper: true,
       total: total,
       showTotal: () => `共${total}条`,
+      onChange: (page) => {
+        this.getModuleList(page);
+      },
     };
     const columns: any = [
       {

@@ -29,6 +29,7 @@ class GlobalVarList extends React.Component<any, any> {
     this.handleAddGlobalVar = this.handleAddGlobalVar.bind(this);
     this.handleEditModal = this.handleEditModal.bind(this);
     this.showEditModal = this.showEditModal.bind(this);
+    this.getGlobalVarList = this.getGlobalVarList.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -36,19 +37,22 @@ class GlobalVarList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
     };
-    this.getGlobalVarList();
   }
 
-  getGlobalVarList() {
+  componentDidMount() {
+    this.getGlobalVarList(1);
+  }
+
+  getGlobalVarList(page: any) {
     this.props.dispatch({
       type: 'globalVarList/getGlobalVarList',
       payload: {
-        page: 1,
+        page: page,
       },
       callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: res.results.length,
+          total: res.count,
         });
       },
     });
@@ -109,6 +113,9 @@ class GlobalVarList extends React.Component<any, any> {
       showQuickJumper: true,
       total: total,
       showTotal: () => `共${total}条`,
+      onChange: (page) => {
+        this.getGlobalVarList(page);
+      },
     };
     const columns = [
       {
