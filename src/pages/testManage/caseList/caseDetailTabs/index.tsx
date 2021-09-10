@@ -1,20 +1,41 @@
-import react from 'react';
+import React from 'react';
 import { Tabs, Button } from 'antd';
 import styles from './index.less';
+import MessageTab from './messageTab';
+import VariablesTab from './variablesTab';
 
 const { TabPane } = Tabs;
 
-const CaseDetailTabs = ({ caseDetail, hideCaseDetail }) => {
+const CaseDetailTabs = ({
+  caseDetail,
+  hideCaseDetail,
+  projectData,
+  moduleData,
+  onProjectChange,
+  onModuleChange,
+  caseList,
+}) => {
   console.log(caseDetail);
+  const variables = Object.keys(caseDetail).length
+    ? JSON.parse(caseDetail.request).variables
+    : [];
+  console.log(JSON.parse(caseDetail.request).variables);
   return (
     <>
       <div className={styles.tabBody}>
         <Tabs defaultActiveKey="1">
           <TabPane tab="message" key="1">
-            {/* <MessageTab /> */}
+            <MessageTab
+              caseDetail={caseDetail}
+              projectData={projectData}
+              moduleData={moduleData}
+              onProjectChange={onProjectChange}
+              onModuleChange={onModuleChange}
+              caseList={caseList}
+            />
           </TabPane>
           <TabPane tab="variables" key="2">
-            {/* Content of Tab Pane 2 */}
+            <VariablesTab variables={variables} />
           </TabPane>
           <TabPane tab="paramters" key="3">
             {/* Content of Tab Pane 3 */}

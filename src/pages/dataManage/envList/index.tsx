@@ -52,7 +52,7 @@ export default class EnvList extends Component<any, any> {
       // table列配置
       columns: [
         {
-          title: '#',
+          title: '编号',
           dataIndex: 'id',
           key: 'id',
           width: 70,
@@ -445,6 +445,7 @@ export default class EnvList extends Component<any, any> {
             dataSource={envList.results}
             loading={tableLoading}
             pagination={paginationProps}
+            bordered
           />
         </Card>
         {/* 新增对话框 */}
