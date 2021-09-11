@@ -111,12 +111,7 @@ class ModuleList extends React.Component {
         id: record.id,
       },
       callback: () => {
-        this.props.dispatch({
-          type: 'moduleList/getModuleList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.getModuleList(1);
       },
     });
   }

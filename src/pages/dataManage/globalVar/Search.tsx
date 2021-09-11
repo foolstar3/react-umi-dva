@@ -1,13 +1,10 @@
 import {
+  DatePicker,
   Row,
   Col,
   Collapse,
-  Card,
-  Select,
   Form,
   Input,
-  Modal,
-  Table,
   Button,
   Space,
 } from 'antd';
@@ -15,7 +12,7 @@ import { EditOutlined, RedoOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import './index.less';
 const { Panel } = Collapse;
-
+const { RangePicker } = DatePicker;
 const SearchModel = (props: any) => {
   const [form] = Form.useForm();
 
@@ -39,7 +36,7 @@ const SearchModel = (props: any) => {
 
   return (
     <Collapse>
-      <Panel header="搜索框" key="1">
+      <Panel header="搜索框" key="search">
         <Form
           form={form}
           className="search"
@@ -59,8 +56,8 @@ const SearchModel = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={4.8}>
-              <Form.Item label="创建日期" name="create_date">
-                <Input autoComplete="off" />
+              <Form.Item label="更新日期" name="create_date">
+                <RangePicker autoComplete="false" />
               </Form.Item>
             </Col>
             <Col span={4.8}>

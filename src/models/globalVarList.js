@@ -24,9 +24,9 @@ export default {
       }
     },
     *addGlobalVarList({ payload, callback }, { call, put }) {
-      yield call(addGlobalVarList, { ...payload });
+      const res = yield call(addGlobalVarList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *editGlobalVarList({ payload, callback }, { call, put }) {
@@ -35,7 +35,7 @@ export default {
         callback();
       }
     },
-    *deleteGlobalVarList({ payload }, { call, put }) {
+    *deleteGlobalVarList({ payload, callback }, { call, put }) {
       yield call(deleteGlobalVarList, { ...payload });
       if (callback) {
         callback();

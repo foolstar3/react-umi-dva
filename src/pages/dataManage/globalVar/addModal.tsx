@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Card, Select, Form, Input, Modal, Table, Button, Space } from 'antd';
+import React from 'react';
+import { Form, FormInstance, Input, Modal } from 'antd';
 const { TextArea } = Input;
 import { connect } from 'umi';
 
@@ -9,10 +9,14 @@ class AddModal extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddValueChange = this.handleAddValueChange.bind(this);
+    this.onReset = this.onReset.bind(this);
     this.state = {
       tempAddValue: '',
     };
   }
+
+  //获取表单域
+  formRef = React.createRef<FormInstance>();
 
   //在模态框中点击提交按钮
   handleSubmit() {
@@ -22,7 +26,10 @@ class AddModal extends React.Component {
       payload: {
         ...addGlobalVar,
       },
-      callback: () => {
+      callback: (res) => {
+        if (res.id !== undefined) {
+          this.props.handleTotalNumber();
+        }
         this.props.dispatch({
           type: 'globalVarList/getGlobalVarList',
           payload: {
@@ -43,7 +50,12 @@ class AddModal extends React.Component {
   //添加项目的返回键
   handleCancel = () => {
     this.props.showAddModal(false);
+    this.onReset();
   };
+  //重置
+  onReset() {
+    this.formRef.current!.resetFields();
+  }
 
   render() {
     const addVisible = this.props.addVisible;
@@ -63,8 +75,9 @@ class AddModal extends React.Component {
           name="basic_globalVarList"
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
+          initialValues={{ remember: false }}
           onValuesChange={this.handleAddValueChange}
+          ref={this.formRef}
         >
           <Form.Item
             label="参数名称"
