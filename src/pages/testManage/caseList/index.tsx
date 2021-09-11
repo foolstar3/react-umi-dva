@@ -27,6 +27,7 @@ class CaseList extends Component<any, any> {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
     this.getModuleList({ page: 'None' });
+    this.getEnvList({ page: 'None' });
   }
   /**
    *
@@ -68,6 +69,17 @@ class CaseList extends Component<any, any> {
       type: 'moduleList/getModuleList',
       payload,
       callback: (res) => {},
+    });
+  };
+
+  getEnvList = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'envList/getEnvList',
+      payload,
+      callback: () => {
+        // const { envList } = props;
+      },
     });
   };
 
@@ -251,7 +263,8 @@ class CaseList extends Component<any, any> {
 
   render() {
     const { showDetailTabs, currentCase } = this.state;
-    const { projectData, moduleData, caseList } = this.props;
+    const { projectData, moduleData, caseList, envList } = this.props;
+    // console.log(envList);
     return (
       <>
         <Card>
@@ -264,6 +277,7 @@ class CaseList extends Component<any, any> {
               onProjectChange={this.onProjectChange}
               onModuleChange={this.onModuleChange}
               caseList={caseList}
+              envList={envList}
             />
           ) : (
             this.renderCaseListTable()
@@ -274,8 +288,9 @@ class CaseList extends Component<any, any> {
   }
 }
 
-export default connect(({ testCase, projectList, moduleList }) => ({
+export default connect(({ testCase, projectList, moduleList, envList }) => ({
   caseList: testCase.caseList,
+  envList: envList.envList,
   projectData: projectList.projectList,
   moduleData: moduleList.moduleList,
 }))(CaseList);
