@@ -13,7 +13,8 @@ export default defineConfig({
   fastRefresh: {},
   define: {
     'process.env.var': 'local',
-    'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
+    // 'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
+    'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
   },
   devServer: {
     port: 9090,

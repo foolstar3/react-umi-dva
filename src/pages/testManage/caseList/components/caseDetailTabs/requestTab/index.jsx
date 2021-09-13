@@ -20,30 +20,33 @@ const RequestTab = ({ request }) => {
   const [headerData, setHeaderData] = useState(() => {
     const header = [];
     let index = 1;
-    for (const [key, value] of Object.entries(request.headers)) {
-      // console.log(`${key}: ${value}`);
-      header.push({
-        name: key,
-        value: value,
-        id: index,
-        key: index,
-      });
-      index++;
+    if (request.headers) {
+      for (const [key, value] of Object.entries(request.headers)) {
+        // console.log(`${key}: ${value}`);
+        header.push({
+          name: key,
+          value: value,
+          id: index,
+          key: index,
+        });
+        index++;
+      }
     }
     return header;
   });
   const [paramsData, setParamsData] = useState(() => {
     const params = [];
     let index = 1;
-    for (const [key, value] of Object.entries(request.params)) {
-      // console.log(`${key}: ${value}`);
-      params.push({
-        name: key,
-        value: value,
-        id: index,
-        key: index,
-      });
-      index++;
+    if (request.params) {
+      for (const [key, value] of Object.entries(request.params)) {
+        params.push({
+          name: key,
+          value: value,
+          id: index,
+          key: index,
+        });
+        index++;
+      }
     }
     return params;
   });
@@ -52,7 +55,6 @@ const RequestTab = ({ request }) => {
     let index = 1;
     if (request.data) {
       for (const [key, value] of Object.entries(request.data)) {
-        // console.log(`${key}: ${value}`);
         data.push({
           name: key,
           value: value,

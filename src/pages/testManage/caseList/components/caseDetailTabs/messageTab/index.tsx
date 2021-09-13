@@ -77,11 +77,13 @@ const MessageTab = ({
                   0
                 }
               >
-                {projectData.map((item) => (
-                  <Select.Option key={item.id} value={item.id}>
-                    {item.project_name}
-                  </Select.Option>
-                ))}
+                {projectData
+                  ? projectData.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.project_name}
+                      </Select.Option>
+                    ))
+                  : null}
               </Select>
             </Form.Item>
           </Col>
@@ -97,11 +99,13 @@ const MessageTab = ({
                   0
                 }
               >
-                {moduleData.map((item) => (
-                  <Select.Option key={item.id} value={item.id}>
-                    {item.module_name}
-                  </Select.Option>
-                ))}
+                {moduleData
+                  ? moduleData.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.module_name}
+                      </Select.Option>
+                    ))
+                  : null}
               </Select>
             </Form.Item>
           </Col>

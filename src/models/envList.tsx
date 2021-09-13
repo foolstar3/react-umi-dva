@@ -42,9 +42,10 @@ export default {
   effects: {
     *getEnvList({ payload, callback }, { call, put }) {
       const res = yield call(getEnvList, payload);
+      // console.log(res);
       yield put({
         type: 'update',
-        payload: res,
+        payload: res.results ?? res,
       });
       if (callback) {
         callback();

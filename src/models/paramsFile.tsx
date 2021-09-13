@@ -56,12 +56,18 @@ export default {
       /*todo
       调用reducers中的更新函数
       更新state中的paramsFileList */
+      if (callback) {
+        callback();
+      }
     },
     *deleteFile({ payload, callback }, { call, put }) {
       const data = yield call(deleteFile, payload);
       /*todo
       调用reducers中的更新函数
       更新state中的paramsFileList */
+      if (callback) {
+        callback();
+      }
     },
     *getParamsFileCode({ payload, callback }, { call, put }) {
       const data = yield call(getParamsFileCode, payload);

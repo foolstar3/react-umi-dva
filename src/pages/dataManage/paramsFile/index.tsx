@@ -46,7 +46,7 @@ const uploadConfig = {
       message.error('文件类型只能是CSV类型');
       return Upload.LIST_IGNORE;
     }
-    return true;
+    return false;
   },
 };
 class ParamsFile extends Component<any, any> {
@@ -214,6 +214,9 @@ class ParamsFile extends Component<any, any> {
     dispatch({
       type: 'paramsFile/deleteFile',
       payload,
+      callback: () => {
+        this.getParamsFileList({ page: 1 });
+      },
     });
   };
 
@@ -252,7 +255,6 @@ class ParamsFile extends Component<any, any> {
       addModalVisiable: false,
     });
     // 更新后重新获取table中的数据
-    this.getParamsFileList({ page: 1 });
   };
 
   addFile = () => {
@@ -261,6 +263,9 @@ class ParamsFile extends Component<any, any> {
     dispatch({
       type: 'paramsFile/addFile',
       payload: addFileData,
+      callback: () => {
+        this.getParamsFileList({ page: 1 });
+      },
     });
   };
 
