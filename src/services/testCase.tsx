@@ -14,3 +14,9 @@ export async function deleteCase(data) {
     requestType: 'form',
   });
 }
+
+export async function debugCase(data) {
+  return requestUap(`/debug/`, {
+    method: 'POST',
+  });
+}

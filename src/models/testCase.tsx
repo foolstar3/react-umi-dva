@@ -1,4 +1,4 @@
-import { getCaseList, deleteCase } from '@/services/testCase';
+import { getCaseList, deleteCase, debugCase } from '@/services/testCase';
 
 export default {
   namespace: 'testCase',
@@ -32,6 +32,10 @@ export default {
       if (callback) {
         callback();
       }
+    },
+    *debugCase({ payload, callback }, { call, put }) {
+      const res = yield call(debugCase, payload);
+      console.log(res);
     },
   },
 };

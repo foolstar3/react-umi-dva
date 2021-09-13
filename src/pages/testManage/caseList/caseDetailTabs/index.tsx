@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, Button, Modal, Form, Select } from 'antd';
 import styles from './index.less';
+import { connect } from 'dva';
 import MessageTab from './messageTab';
 import VariablesTab from './variablesTab';
 import ParametersTab from './parametersTab';
@@ -20,8 +21,15 @@ const CaseDetailTabs = ({
   onModuleChange,
   caseList,
   envList,
+  dispatch,
 }) => {
-  // console.log(envList);
+  const debugCase = (payload) => {
+    dispatch({
+      type: 'testCase/debugCase',
+      payload,
+    });
+  };
+
   const [isModalVisible, setModalVisible] = useState(false);
   const variables = Object.keys(caseDetail).length
     ? JSON.parse(caseDetail.request).test.variables
@@ -68,6 +76,15 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
+    console.log(caseDetail);
+    const request = JSON.parse(caseDetail.request).test;
+    const payload = {
+      ...caseDetail,
+      request,
+      export: [],
+    };
+    console.log(payload);
+    debugCase(payload);
     setModalVisible(false);
   };
 
@@ -150,4 +167,4 @@ const CaseDetailTabs = ({
   );
 };
 
-export default CaseDetailTabs;
+export default connect(({ testCase }) => ({}))(CaseDetailTabs);
