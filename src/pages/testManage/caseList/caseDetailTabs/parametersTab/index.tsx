@@ -5,7 +5,6 @@ import { Form, Switch, Button, message } from 'antd';
 import styles from './index.less';
 
 const ParametersTab = ({ onSwitchChange, parameters }) => {
-  console.log(parameters, '1');
   const [dataSource, setDataSource] = useState(() => {
     parameters.map((item, index) => {
       for (const [key, value] of Object.entries(item)) {
@@ -16,12 +15,11 @@ const ParametersTab = ({ onSwitchChange, parameters }) => {
       item.id = index + 1;
       item.key = index + 1;
     });
-    // console.log(parameters);
+
     return parameters;
   });
 
   const addParams = () => {
-    // setDataSource(dataSource => dataSource.push({}))
     message.info('功能开发中');
   };
 
