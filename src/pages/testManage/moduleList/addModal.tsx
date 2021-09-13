@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Form, Input, Modal } from 'antd';
+import { Select, Form, Input, Modal, FormInstance } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
@@ -16,6 +16,8 @@ class AddModal extends React.Component {
       projectList: '',
     };
   }
+  //创建表单实例
+  formRef = React.createRef<FormInstance>();
 
   componentDidMount() {
     this.props.dispatch({
@@ -88,8 +90,13 @@ class AddModal extends React.Component {
 
   //添加项目的返回键
   handleCancel = () => {
+    this.onReset();
     this.props.showAddModal(false);
   };
+  //重置
+  onReset() {
+    this.formRef.current!.resetFields();
+  }
 
   render() {
     const addVisible = this.props.addVisible;
@@ -112,6 +119,7 @@ class AddModal extends React.Component {
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: false }}
           onValuesChange={this.handleAddValueChange}
+          ref={this.formRef}
         >
           <Form.Item
             label="模块名称"

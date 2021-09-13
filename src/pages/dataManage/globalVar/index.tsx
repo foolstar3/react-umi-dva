@@ -30,6 +30,7 @@ class GlobalVarList extends React.Component<any, any> {
     this.handleEditModal = this.handleEditModal.bind(this);
     this.showEditModal = this.showEditModal.bind(this);
     this.getGlobalVarList = this.getGlobalVarList.bind(this);
+    this.handleTotalNumber = this.handleTotalNumber.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -55,6 +56,14 @@ class GlobalVarList extends React.Component<any, any> {
           total: res.count,
         });
       },
+    });
+  }
+
+  //添加后增加页码数
+  handleTotalNumber() {
+    const total = this.state.total;
+    this.setState({
+      total: total + 1,
     });
   }
 
@@ -91,13 +100,12 @@ class GlobalVarList extends React.Component<any, any> {
   //全局变量列表删除按钮
   handleDelete(record: any) {
     this.props.dispatch({
-      type: 'globalVarList/deleteModuleList',
+      type: 'globalVarList/deleteGlobalVarList',
       payload: {
         id: record.id,
       },
-      callback: (res) => {
-        console.log(res);
-        ///还需要调用获取列表
+      callback: () => {
+        this.getGlobalVarList(1);
       },
     });
   }
@@ -220,6 +228,7 @@ class GlobalVarList extends React.Component<any, any> {
         <AddModal
           showAddModal={this.handleAddGlobalVar}
           addVisible={this.state.addVisible}
+          handleTotalNumber={this.handleTotalNumber}
         />
         <EditModal
           showEditModal={this.handleEditModal}

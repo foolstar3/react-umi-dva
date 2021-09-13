@@ -8,6 +8,7 @@ import {
   Table,
   Button,
   Popconfirm,
+  FormInstance,
 } from 'antd';
 import {
   EditOutlined,
@@ -19,6 +20,7 @@ import { connect } from 'umi';
 const { TextArea } = Input;
 const { Option } = Select;
 import '/src/styles/global.less';
+import SearchProject from './search';
 
 //获取接口参数
 class ProjectList extends React.Component {
@@ -44,13 +46,16 @@ class ProjectList extends React.Component {
     this.editCancel = this.editCancel.bind(this);
     //获取列表
     this.getProjectList = this.getProjectList.bind(this);
-
+    //表单ref
+    this.onReset = this.onReset.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
       tempAddValue: '',
-      //人工重新编辑的表单的值
+      //人工重新编辑的表单的值,存得的人名为主键
       tempEditValue: '',
+      //存表单显示的值
+      tempDisplayEditValue: '',
       //选择按钮的那一项的原始值
       currentValue: '',
       tableLoading: true,
@@ -61,6 +66,8 @@ class ProjectList extends React.Component {
       //空数组，解决添加项目取消后，但是数据未消失情况
     };
   }
+
+  formRef = React.createRef<FormInstance>();
 
   //获取列表
   componentDidMount() {
@@ -103,11 +110,15 @@ class ProjectList extends React.Component {
 
   //添加项目模态框的返回键
   handleCancel = () => {
+    this.onReset();
     this.setState({
       addVisible: false,
     });
   };
-  handleUserNameListVisible() {}
+  onReset() {
+    this.formRef.current!.resetFields();
+  }
+  // handleUserNameListVisible() {}
 
   //添加项目中监听所有值的变化
   handleAddValueChange(singleValueChange, ValueChange) {
@@ -140,13 +151,7 @@ class ProjectList extends React.Component {
             total: total + 1,
           });
         }
-
-        this.props.dispatch({
-          type: 'projectList/getProjectList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.getProjectList(1);
       },
     });
   }
@@ -215,12 +220,7 @@ class ProjectList extends React.Component {
         id: record.id,
       },
       callback: () => {
-        this.props.dispatch({
-          type: 'projectList/getProjectList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.getProjectList(1);
       },
     });
   }
@@ -331,6 +331,7 @@ class ProjectList extends React.Component {
     return (
       <div>
         <Card>
+          <SearchProject />
           <div className="ant-btn-add">
             <Button
               type="primary"
@@ -368,6 +369,7 @@ class ProjectList extends React.Component {
             wrapperCol={{ span: 16 }}
             initialValues={{ remember: false }}
             onValuesChange={this.handleAddValueChange}
+            ref={this.formRef}
           >
             <Form.Item
               label="项目名称"
@@ -384,7 +386,7 @@ class ProjectList extends React.Component {
               {
                 <Select
                   style={{ width: 314 }}
-                  onFocus={this.handleUserNameListVisible}
+                  // onFocus={this.handleUserNameListVisible}
                 >
                   {leaderList &&
                     Array.isArray(leaderList) &&
@@ -440,7 +442,7 @@ class ProjectList extends React.Component {
                 label="负责人"
                 name="leader"
                 rules={[{ required: true, message: '请输入负责人名称' }]}
-                initialValue={currentValue.leader}
+                initialValue={currentValue.leader_name}
               >
                 {
                   <Select
