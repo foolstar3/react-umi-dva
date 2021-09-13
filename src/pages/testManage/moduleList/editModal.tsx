@@ -145,7 +145,7 @@ class EditModal extends React.Component {
                 label="测试人员"
                 name="test_user"
                 rules={[{ required: true, message: '请输入测试人员名称' }]}
-                initialValue={tempValue.test_user}
+                initialValue={tempValue.test_user_name}
               >
                 {
                   <Select style={{ width: 314 }}>

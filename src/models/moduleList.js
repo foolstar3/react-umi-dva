@@ -39,7 +39,7 @@ export default {
       }
     },
 
-    *deleteModuleList({ payload }, { call, put }) {
+    *deleteModuleList({ payload, callback }, { call, put }) {
       yield call(deleteModuleList, { ...payload });
       if (callback) {
         callback();

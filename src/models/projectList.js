@@ -36,8 +36,11 @@ export default {
         callback();
       }
     },
-    *deleteProjectList({ payload }, { call, put }) {
-      const res = yield call(deleteProjectList, { ...payload });
+    *deleteProjectList({ payload, callback }, { call, put }) {
+      yield call(deleteProjectList, { ...payload });
+      if (callback) {
+        callback();
+      }
     },
   },
   reducers: {

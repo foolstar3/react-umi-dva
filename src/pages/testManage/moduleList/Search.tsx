@@ -102,7 +102,7 @@ const SearchModel = (props: any) => {
                   }
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              {/* <Col span={8}>
                 <Form.Item label="测试人员" name="test_user">
                   {
                     <Select
@@ -123,7 +123,7 @@ const SearchModel = (props: any) => {
                     </Select>
                   }
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
             <Row>
               <Col span={8}>
@@ -132,7 +132,7 @@ const SearchModel = (props: any) => {
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="日期范围" name="rangeDateTime">
+                <Form.Item label="更新时间" name="rangeDateTime">
                   <RangePicker autoComplete="false" />
                 </Form.Item>
               </Col>
