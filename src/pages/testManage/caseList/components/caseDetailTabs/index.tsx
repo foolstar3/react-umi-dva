@@ -35,7 +35,7 @@ const CaseDetailTabs = ({
   };
   const [debugResponseVisible, setdebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const tabDatas = caseDetail.request.request[0];
+  const tabDatas = caseDetail.request.teststeps[0];
 
   const variables = tabDatas.variables ?? [];
 
@@ -58,12 +58,13 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
-    const request = caseDetail.request.request[0];
+    const request = caseDetail.request.teststeps[0];
     const payload = {
       ...caseDetail,
       request,
       export: [],
       base_url: '',
+      before: [1],
     };
     console.log(payload);
     debugCase(payload);

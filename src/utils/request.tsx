@@ -29,14 +29,12 @@ const codeMessage = {
  */
 const errorHandler = (error) => {
   const { response } = error;
-  console.log(response, 'ewewew');
   if (response && response.status) {
     // const errorText = codeMessage[response.status] || response.statusText;
     const { status } = response;
     if (status === 401) {
       delete localStorage.qc_token;
       delete localStorage.qc_user;
-      // localStorage.setItem('fieldsChange', false);
       history.push('/login');
     } else {
     }
@@ -83,7 +81,7 @@ request.interceptors.response.use(async (response) => {
   //   data = formatToken(jwt);
   //   return data;
   // }
-
+  // console.log(response);
   return response;
 });
 

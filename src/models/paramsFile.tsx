@@ -42,7 +42,6 @@ export default {
   effects: {
     *getParamsFileListData({ payload, callback }, { call, put }) {
       const data = yield call(getParamsFile, payload);
-      // console.log(data);
       yield put({
         type: 'getParmsFileList',
         payload: data,

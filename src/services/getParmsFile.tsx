@@ -8,7 +8,6 @@ export async function getParamsFile(data) {
 }
 
 export async function addFile(data) {
-  console.log(data);
   return requestUap('/paramsfile/', {
     method: 'post',
     data,
