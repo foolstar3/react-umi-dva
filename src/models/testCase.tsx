@@ -27,6 +27,7 @@ export default {
   effects: {
     *getCaseList({ payload, callback }, { call, put }) {
       const res = yield call(getCaseList, payload);
+      console.log(res);
       yield put({
         type: 'updateCaseList',
         payload: res,

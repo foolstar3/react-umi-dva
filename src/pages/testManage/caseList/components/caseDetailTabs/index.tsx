@@ -58,13 +58,14 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
-    const request = caseDetail.request;
+    const request = caseDetail.request.request[0];
     const payload = {
       ...caseDetail,
       request,
       export: [],
+      base_url: '',
     };
-
+    console.log(payload);
     debugCase(payload);
     setModalVisible(false);
     setdebugResponseVisible(true);

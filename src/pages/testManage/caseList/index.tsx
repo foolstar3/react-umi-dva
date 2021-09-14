@@ -128,6 +128,7 @@ class CaseList extends Component<any, any> {
   };
 
   onModuleChange = (module, project) => {
+    console.log(module);
     this.getCaseList({ page: 'None', project, module });
   };
   showCaseDetail = (record) => {
@@ -145,9 +146,14 @@ class CaseList extends Component<any, any> {
   };
 
   hideCaseDetail = () => {
-    this.setState({
-      showDetailTabs: false,
-    });
+    this.setState(
+      {
+        showDetailTabs: false,
+      },
+      () => {
+        this.getCaseList({ page: 1 });
+      },
+    );
   };
 
   renderCaseListTable = () => {
