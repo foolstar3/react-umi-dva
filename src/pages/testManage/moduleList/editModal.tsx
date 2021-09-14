@@ -101,7 +101,7 @@ class EditModal extends React.Component {
             maskClosable={false}
             onOk={this.editSubmit}
             onCancel={this.editCancel}
-            okText="修改"
+            okText="确认"
             okButtonProps={{ shape: 'round' }}
             cancelButtonProps={{ shape: 'round', type: 'text' }}
           >

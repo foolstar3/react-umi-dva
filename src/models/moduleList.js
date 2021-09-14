@@ -16,7 +16,7 @@ export default {
       yield put({
         type: 'updateModuleList',
         payload: {
-          moduleList: res.results,
+          moduleList: res.results ?? res,
         },
       });
       if (callback) {

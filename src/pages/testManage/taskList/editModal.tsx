@@ -162,7 +162,7 @@ class EditModal extends React.Component {
               >
                 {
                   <Select
-                    style={{ width: 150 }}
+                    style={{ width: 314 }}
                     onFocus={this.handleEnvListVisible}
                   >
                     {envList &&
@@ -183,7 +183,7 @@ class EditModal extends React.Component {
               >
                 {
                   <Select
-                    style={{ width: 150 }}
+                    style={{ width: 314 }}
                     onFocus={this.handleProjectListVisible}
                   >
                     {projectList &&
@@ -206,7 +206,7 @@ class EditModal extends React.Component {
               >
                 <TreeNode caseList={caseList} />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 label="邮件列表"
                 name="emailList"
                 rules={[{ required: false }]}
@@ -219,7 +219,7 @@ class EditModal extends React.Component {
                   style={{ width: '100%' }}
                   options={options}
                 />
-              </Form.Item>
+              </Form.Item> */}
             </Form>
           </Modal>
         )}

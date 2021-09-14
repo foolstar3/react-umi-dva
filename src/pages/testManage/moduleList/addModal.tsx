@@ -50,9 +50,8 @@ class AddModal extends React.Component {
         ...addModule,
       },
       callback: (res) => {
-        if (res.id !== undefined) {
-          this.props.handleTotalNumber();
-        }
+        this.props.handleTotalNumber();
+
         this.props.dispatch({
           type: 'moduleList/getModuleList',
           payload: {

@@ -16,7 +16,7 @@ export default {
       yield put({
         type: 'updateTaskList',
         payload: {
-          taskList: res.results,
+          taskList: res.results ?? res,
         },
       });
       if (callback) {

@@ -30,6 +30,8 @@ const SearchModel = (props: any) => {
         var_name: value.var_name,
         var_value: value.var_value,
         description: value.description,
+        update_time_after: value.rangeDateTime[0].format('YYYY-MM-DD'),
+        update_time_before: value.rangeDateTime[1].format('YYYY-MM-DD'),
       },
     });
   };
@@ -45,27 +47,27 @@ const SearchModel = (props: any) => {
           onFinish={handleSearch}
         >
           <Row>
-            <Col span={4.8}>
+            <Col span={6}>
               <Form.Item label="参数名称" name="var_name">
                 <Input autoComplete="off" />
               </Form.Item>
             </Col>
-            <Col span={4.8}>
+            <Col span={6}>
               <Form.Item label="参数值" name="var_value">
                 <Input autoComplete="off" />
               </Form.Item>
             </Col>
-            <Col span={4.8}>
+            {/* <Col span={4.8}>
               <Form.Item label="更新日期" name="create_date">
                 <RangePicker autoComplete="false" />
               </Form.Item>
-            </Col>
-            <Col span={4.8}>
+            </Col> */}
+            <Col span={6}>
               <Form.Item label="简要描述" name="description">
                 <Input autoComplete="off" />
               </Form.Item>
             </Col>
-            <Col span={4.8}>
+            <Col span={6}>
               <Form.Item>
                 <Space size="middle">
                   <Button

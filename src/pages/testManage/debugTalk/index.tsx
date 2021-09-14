@@ -1,10 +1,20 @@
 import React from 'react';
-import { Card, Select, Form, Input, Modal, Table, Button, Space } from 'antd';
+import {
+  Row,
+  Card,
+  Select,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Button,
+  Space,
+} from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
-import EditTextModal from './editTextModal';
+import EditTextModal from './debugTalkEditor';
 
 class DebugTalkList extends React.Component {
   constructor(props: {} | Readonly<{}>) {
@@ -48,6 +58,7 @@ class DebugTalkList extends React.Component {
       debugTalkId: record.id,
       debugTalkContent: record.debugtalk,
     });
+    console.log('this.state', this.state);
   }
 
   showEditModal(childPythonState: any) {
@@ -57,7 +68,7 @@ class DebugTalkList extends React.Component {
   }
 
   render() {
-    const { tableLoading, total } = this.state;
+    const { tableLoading, total, editVisible } = this.state;
     const { debugTalkList } = this.props.debugTalkList;
     debugTalkList.map((item) => {
       item.key = item.id;
@@ -131,21 +142,34 @@ class DebugTalkList extends React.Component {
     return (
       <div>
         <Card>
-          <Table
-            className="components-table-demo-nested"
-            columns={columns}
-            dataSource={[...debugTalkList]}
-            loading={tableLoading}
-            pagination={paginationProps}
-            bordered
-          />
+          {!editVisible && (
+            <Table
+              className="components-table-demo-nested"
+              columns={columns}
+              dataSource={[...debugTalkList]}
+              loading={tableLoading}
+              pagination={paginationProps}
+              bordered
+            />
+          )}
+
+          {editVisible && (
+            <div>
+              <EditTextModal
+                debugTalkContent={this.state.debugTalkContent}
+                debugTalkId={this.state.debugTalkId}
+              />
+              <div className="debug_button">
+                <Row>
+                  <Button>取消</Button>
+                  <Button shape="round" type="primary">
+                    确认
+                  </Button>
+                </Row>
+              </div>
+            </div>
+          )}
         </Card>
-        <EditTextModal
-          showEditModal={this.showEditModal}
-          editVisible={this.state.editVisible}
-          debugTalkContent={this.state.debugTalkContent}
-          debugTalkId={this.state.debugTalkId}
-        />
       </div>
     );
   }

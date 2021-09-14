@@ -12,7 +12,7 @@ export default {
       yield put({
         type: 'updateDebugTalkList',
         payload: {
-          debugTalkList: res.results,
+          debugTalkList: res.results ?? res,
         },
       });
       if (callback) {

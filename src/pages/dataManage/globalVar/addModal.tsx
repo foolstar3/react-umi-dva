@@ -27,9 +27,8 @@ class AddModal extends React.Component {
         ...addGlobalVar,
       },
       callback: (res) => {
-        if (res.id !== undefined) {
-          this.props.handleTotalNumber();
-        }
+        this.props.handleTotalNumber();
+
         this.props.dispatch({
           type: 'globalVarList/getGlobalVarList',
           payload: {
