@@ -16,7 +16,7 @@ export default {
       yield put({
         type: 'updateGlobalVarList',
         payload: {
-          globalVarList: res.results,
+          globalVarList: res.results ?? res,
         },
       });
       if (callback) {

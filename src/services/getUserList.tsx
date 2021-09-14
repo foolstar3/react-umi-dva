@@ -6,3 +6,9 @@ export async function getUserList(data) {
     params: data,
   });
 }
+export async function getUserName(data) {
+  return requestUap(`/user/${data.id}/`, {
+    method: 'GET',
+    params: data,
+  });
+}

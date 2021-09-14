@@ -34,13 +34,18 @@ class TaskList extends React.Component {
     this.handleAddTask = this.handleAddTask.bind(this);
     this.handleEditModal = this.handleEditModal.bind(this);
     this.showEditModal = this.showEditModal.bind(this);
+    this.getTaskList = this.getTaskList.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
       tempValue: '',
-      tableLoading: true,
+      tableLoading: false,
       total: 0,
+      // displayTable: []
     };
+  }
+
+  componentDidMount() {
     this.getTaskList();
   }
 
@@ -53,10 +58,23 @@ class TaskList extends React.Component {
       payload: {
         page: 1,
       },
-      callback: (res) => {
+      callback: (taskRes) => {
+        // const displayTable = []
+        // for(let i = 0; i< taskRes.results.length ; i++){
+        //   displayTable.push({
+        //     id: taskRes.results[i].id,
+        //     name:  taskRes.results[i].name,
+        //     crontab_time: taskRes.results[i].crontab_time,
+        //     description: taskRes.results[i].description,
+        //     create_time: taskRes.results[i].task_extend.create_time,
+        //     date_changed: taskRes.results[i].date_changed
+        //   })
+        // }
+
         this.setState({
           tableLoading: false,
-          total: res.results.length,
+          total: taskRes.results.length,
+          // displayTable: displayTable
         });
       },
     });
@@ -108,7 +126,7 @@ class TaskList extends React.Component {
   }
 
   render() {
-    const { tableLoading, total } = this.state;
+    const { tableLoading, total, displayTable } = this.state;
     const { editVisible, taskList } = this.props.taskList;
     taskList.map((item) => {
       item.key = item.id;
@@ -117,7 +135,6 @@ class TaskList extends React.Component {
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
-
       showTotal: () => `共${total}条`,
     };
     const columns: any = [
@@ -133,12 +150,12 @@ class TaskList extends React.Component {
         key: 'name',
         align: 'center',
       },
-      {
-        title: '创建人',
-        dataIndex: 'author',
-        key: 'author',
-        align: 'center',
-      },
+      // {
+      //   title: '创建人',
+      //   dataIndex: 'author',
+      //   key: 'author',
+      //   align: 'center',
+      // },
       {
         title: '定时状态',
         dataIndex: 'enabled',
@@ -172,16 +189,16 @@ class TaskList extends React.Component {
         width: 250,
         align: 'center',
       },
-      {
-        title: '创建时间',
-        dataIndex: 'create_time',
-        key: 'create_time',
-        align: 'center',
-      },
+      // {
+      //   title: '创建时间',
+      //   dataIndex: 'create_time',
+      //   key: 'create_time',
+      //   align: 'center',
+      // },
       {
         title: '更新时间',
-        dataIndex: 'update_time',
-        key: 'update_time',
+        dataIndex: 'date_changed',
+        key: 'date_changed',
         align: 'center',
       },
       {
@@ -190,50 +207,50 @@ class TaskList extends React.Component {
         key: 'relateAction',
         align: 'center',
         width: '120px',
-        // render: (_: any, record: any) => {
-        //   return (
-        //     <div>
-        //       <Space size="small">
-        //         <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
-        //           <Button
-        //             className="button_run"
-        //             type="primary"
-        //             icon={<PlayCircleOutlined />}
-        //             shape="round"
-        //             size="small"
-        //           >
-        //             运行
-        //           </Button>
-        //         </Popconfirm>
+        render: (_: any, record: any) => {
+          return (
+            <div>
+              <Space size="small">
+                <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
+                  <Button
+                    className="button_run"
+                    type="primary"
+                    icon={<PlayCircleOutlined />}
+                    shape="round"
+                    size="small"
+                  >
+                    运行
+                  </Button>
+                </Popconfirm>
 
-        //         <Button
-        //           type="primary"
-        //           onClick={() => this.showEditModal(record)}
-        //           icon={<EditOutlined />}
-        //           shape="round"
-        //           size="small"
-        //         >
-        //           编辑
-        //         </Button>
-        //         <Popconfirm
-        //           title="确定删除？"
-        //           icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-        //           onConfirm={() => this.handleDelete(record)}
-        //         >
-        //           <Button
-        //             type="primary"
-        //             danger
-        //             icon={<DeleteOutlined />}
-        //             shape="round"
-        //             size="small"
-        //           >
-        //             删除
-        //           </Button>
-        //         </Popconfirm>
-        //       </Space>
-        //     </div>
-        //   );
-        // },
+                <Button
+                  type="primary"
+                  onClick={() => this.showEditModal(record)}
+                  icon={<EditOutlined />}
+                  shape="round"
+                  size="small"
+                >
+                  编辑
+                </Button>
+                <Popconfirm
+                  title="确定删除？"
+                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                  onConfirm={() => this.handleDelete(record)}
+                >
+                  <Button
+                    type="primary"
+                    danger
+                    icon={<DeleteOutlined />}
+                    shape="round"
+                    size="small"
+                  >
+                    删除
+                  </Button>
+                </Popconfirm>
+              </Space>
+            </div>
+          );
+        },
       },
     ];
     return (
@@ -241,14 +258,14 @@ class TaskList extends React.Component {
         <Card>
           <SearchModal />
           <div className="ant-btn-add">
-            {/* <Button
+            <Button
               type="primary"
               onClick={this.handleAddTask}
               icon={<PlusCircleOutlined />}
               shape="round"
             >
               新增
-            </Button> */}
+            </Button>
           </div>
           <Table
             className="components-table-demo-nested"
@@ -274,6 +291,7 @@ class TaskList extends React.Component {
   }
 }
 
-export default connect(({ taskList }) => ({
+export default connect(({ taskList, userList }) => ({
   taskList,
+  userList,
 }))(TaskList);
