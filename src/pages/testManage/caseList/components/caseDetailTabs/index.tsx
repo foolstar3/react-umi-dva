@@ -23,74 +23,58 @@ const CaseDetailTabs = ({
   envList,
   dispatch,
 }) => {
+  const responseTreeData = {};
   const debugCase = (payload) => {
     dispatch({
       type: 'testCase/debugCase',
       payload,
+      callback: (res) => {
+        console.log(debugResponse);
+      },
     });
   };
-
+  const [debugResponseVisible, setdebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const variables = Object.keys(caseDetail).length
-    ? JSON.parse(caseDetail.request).test.variables
-    : [];
+  const tabDatas = caseDetail.request.request[0];
 
-  const [parameters, setParameters] = useState(
-    Object.keys(caseDetail).length
-      ? JSON.parse(caseDetail.request).test.parameters
-      : [],
-  );
+  const variables = tabDatas.variables ?? [];
 
-  const [setupHooks, setSetupHooks] = useState(
-    Object.keys(caseDetail).length
-      ? JSON.parse(caseDetail.request).test.setup_hooks
-      : [],
-  );
+  const [parameters, setParameters] = useState(tabDatas.parameters ?? []);
+
+  const [setupHooks, setSetupHooks] = useState(tabDatas.setupHooks ?? []);
 
   const [teardownHooks, setTeardownHooks] = useState(
-    Object.keys(caseDetail).length
-      ? JSON.parse(caseDetail.request).test.teardown_hooks
-      : [],
+    tabDatas.teardownHooks ?? [],
   );
 
-  const [request, setRequest] = useState(
-    Object.keys(caseDetail).length
-      ? JSON.parse(caseDetail.request).test.request
-      : [],
-  );
+  const [request, setRequest] = useState(tabDatas.request ?? []);
 
-  const [extract, setExtract] = useState(
-    Object.keys(caseDetail).length
-      ? JSON.parse(caseDetail.request).test.extract
-      : [],
-  );
+  const [extract, setExtract] = useState(tabDatas.extract ?? []);
 
-  const [validate, setValidate] = useState(
-    Object.keys(caseDetail).length
-      ? JSON.parse(caseDetail.request).test.validate
-      : [],
-  );
+  const [validate, setValidate] = useState(tabDatas.validate ?? []);
 
   const showDebugModal = () => {
     setModalVisible(true);
   };
 
   const onDebugOk = () => {
-    console.log(caseDetail);
-    const request = JSON.parse(caseDetail.request).test;
+    const request = caseDetail.request.request[0];
     const payload = {
       ...caseDetail,
       request,
       export: [],
+      base_url: '',
     };
     console.log(payload);
     debugCase(payload);
     setModalVisible(false);
+    setdebugResponseVisible(true);
   };
 
   const onDebugCancel = () => {
     setModalVisible(false);
   };
+
   return (
     <>
       <div className={styles.tabBody}>
@@ -141,6 +125,18 @@ const CaseDetailTabs = ({
           </Button>
         </div>
       </div>
+      <div
+        className={styles.debugResponse}
+        style={{ display: debugResponseVisible ? 'block' : 'none' }}
+      >
+        <div className={styles.topBtn}>
+          <Button className={styles.runBtn}>清空结果</Button>
+          <Button className={styles.runBtn}>提取数据</Button>
+        </div>
+        <div className={styles.responseTabs}>
+          <Tabs defaultActiveKey="1">{}</Tabs>
+        </div>
+      </div>
       <Modal
         title="选择运行环境"
         visible={isModalVisible}
@@ -154,7 +150,7 @@ const CaseDetailTabs = ({
             rules={[{ required: true, message: '请选择运行环境!' }]}
           >
             <Select>
-              {envList.results?.map((item) => (
+              {envList.map((item) => (
                 <Option key={item.id} value={item.id}>
                   {item.env_name}
                 </Option>
@@ -167,4 +163,6 @@ const CaseDetailTabs = ({
   );
 };
 
-export default connect(({ testCase }) => ({}))(CaseDetailTabs);
+export default connect(({ testCase }) => ({
+  debugResponse: testCase.debugResponse,
+}))(CaseDetailTabs);

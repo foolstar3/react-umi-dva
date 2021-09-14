@@ -9,8 +9,8 @@ import {
   DeleteOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
-import SearchBox from './searchBox';
-import CaseDetailTabs from './caseDetailTabs';
+import SearchBox from './components/searchBox';
+import CaseDetailTabs from './components/caseDetailTabs';
 import styles from './index.less';
 import tableColumns from './config';
 
@@ -89,7 +89,7 @@ class CaseList extends Component<any, any> {
       type: 'testCase/deleteCase',
       payload,
       callback: () => {
-        console.log('deleteOk');
+        // console.log('deleteOk');
         this.getCaseList({ page: 1 });
       },
     });
@@ -104,6 +104,7 @@ class CaseList extends Component<any, any> {
       ...payload,
       page: 1,
     };
+
     const { dispatch } = this.props;
     dispatch({
       type: 'testCase/getCaseList',
@@ -121,12 +122,13 @@ class CaseList extends Component<any, any> {
 
   copyCase = (record) => {};
 
-  onProjectChange = (payload) => {
+  onProjectChange = (payload, flag = true) => {
     this.getModuleList({ page: 'None', project: payload });
-    this.getCaseList({ page: 'None', project: payload });
+    flag ? this.getCaseList({ page: 'None', project: payload }) : '';
   };
 
   onModuleChange = (module, project) => {
+    console.log(module);
     this.getCaseList({ page: 'None', project, module });
   };
   showCaseDetail = (record) => {
@@ -144,17 +146,20 @@ class CaseList extends Component<any, any> {
   };
 
   hideCaseDetail = () => {
-    this.setState({
-      showDetailTabs: false,
-    });
+    this.setState(
+      {
+        showDetailTabs: false,
+      },
+      () => {
+        this.getCaseList({ page: 1 });
+      },
+    );
   };
 
   renderCaseListTable = () => {
     const { tableLoading, selectedRowKeys, total } = this.state;
     const { caseList, projectData, moduleData } = this.props;
-    caseList.results?.map((item) => {
-      item.key = item.id;
-    });
+
     const actionColumn = {
       title: '操作',
       dataIndex: 'action',
@@ -227,6 +232,11 @@ class CaseList extends Component<any, any> {
       pageSize: 10,
       showTotal: () => `共 ${total} 条`,
     };
+
+    caseList.results?.map((item) => {
+      item.key = item.id;
+    });
+    // console.log(projectData);
     return (
       <>
         <SearchBox
@@ -252,7 +262,7 @@ class CaseList extends Component<any, any> {
             rowSelection={rowSelection}
             columns={tableConfig}
             loading={tableLoading}
-            dataSource={caseList.results ?? []}
+            dataSource={caseList.results || []}
             pagination={paginationProps}
             bordered
           />
@@ -264,7 +274,7 @@ class CaseList extends Component<any, any> {
   render() {
     const { showDetailTabs, currentCase } = this.state;
     const { projectData, moduleData, caseList, envList } = this.props;
-    // console.log(envList);
+
     return (
       <>
         <Card>

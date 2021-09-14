@@ -1,0 +1,74 @@
+@basic-color: #2db7f5;
+@basic-color-hover: #57c5f7;
+@success-color: #19be6b;
+@success-color-hover: #47cb89;
+@warn-color: #f90;
+@warn-color-hover: #ffad33;
+
+.tabBody {
+  min-height: 600px;
+  margin-bottom: 10px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  :global {
+    .ant-btn {
+      color: #fff;
+    }
+  }
+  .left {
+    flex: 1;
+    .runBtn {
+      background: @basic-color;
+      border-color: @basic-color;
+      &:hover {
+        background: @basic-color-hover;
+        border-color: @basic-color-hover;
+      }
+    }
+    .saveBtn {
+      background: @success-color;
+      border-color: @success-color;
+      &:hover {
+        background: @success-color-hover;
+        border-color: @success-color-hover;
+      }
+    }
+  }
+  .right {
+    flex: 1;
+    display: flex;
+    flex-direction: row-reverse;
+    .cancelBtn {
+      background: @warn-color;
+      border-color: @warn-color;
+      &:hover {
+        background: @warn-color-hover;
+        border-color: @warn-color-hover;
+      }
+    }
+  }
+}
+
+.debugResponse {
+  padding-top: 10px;
+  border-top: 2px solid #ddd;
+  .topBtn {
+    :global {
+      .ant-btn {
+        color: #fff;
+      }
+    }
+    .runBtn {
+      background: @basic-color;
+      border-color: @basic-color;
+      &:hover {
+        background: @basic-color-hover;
+        border-color: @basic-color-hover;
+      }
+    }
+  }
+}

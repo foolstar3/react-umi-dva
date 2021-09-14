@@ -4,6 +4,7 @@ export default {
   namespace: 'testCase',
   state: {
     caseList: {},
+    debugResponse: {},
   },
   reducers: {
     updateCaseList(state, { payload }) {
@@ -14,11 +15,19 @@ export default {
         ...newState,
       };
     },
+    updateDebugResponse(state, { payload }) {
+      // const newState = JSON.parse(JSON.stringify(state));
+      // newState.debugResponse = payload;
+      return {
+        ...state,
+        ...payload,
+      };
+    },
   },
   effects: {
     *getCaseList({ payload, callback }, { call, put }) {
       const res = yield call(getCaseList, payload);
-      // console.log(res);
+      console.log(res);
       yield put({
         type: 'updateCaseList',
         payload: res,
@@ -35,7 +44,13 @@ export default {
     },
     *debugCase({ payload, callback }, { call, put }) {
       const res = yield call(debugCase, payload);
-      console.log(res);
+      yield put({
+        type: 'updateDebugResponse',
+        payload: { debugResponse: res },
+      });
+      if (callback) {
+        callback();
+      }
     },
   },
 };

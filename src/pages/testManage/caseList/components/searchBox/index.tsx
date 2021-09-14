@@ -27,7 +27,7 @@ const SearchBox = (props) => {
     const payload = form.getFieldsValue(true);
     // 修改时间格式
     payload.update_time?.map((item, index) => {
-      console.log(item, DateFormat(item._d));
+      // console.log(item, DateFormat(item._d));
       if (index === 0) {
         payload.update_time_before = DateFormat(item._d);
       } else if (index === 1) {
@@ -36,14 +36,20 @@ const SearchBox = (props) => {
     });
     delete payload.update_time;
     // console.log(payload);
+    const { project_name, module_name } = payload;
+    payload.project = project_name;
+    payload.module = module_name;
+    delete payload.project_name;
+    delete payload.module_name;
     onSearch(payload);
   };
 
   const onProjectChange = (val) => {
     const { onProjectChange } = props;
-    onProjectChange(val);
+    onProjectChange(val, false);
   };
 
+  // console.log(props);
   return (
     <Collapse>
       <Panel header="搜索框" key="search">

@@ -7,26 +7,36 @@ import styles from './index.less';
 const ExtractTab = ({ extract, validate }) => {
   console.log(extract, validate);
   const [extractData, setExtractData] = useState(() => {
-    extract.map((item, index) => {
-      for (const [key, value] of Object.entries(item)) {
-        item.name = key;
-        item.path = value;
-        item.id = index + 1;
-        item.key = index + 1;
-      }
-    });
-    return extract;
+    const extractArr = [];
+    let index = 1;
+    for (const [key, value] of Object.entries(extract)) {
+      extractArr.push({
+        name: key,
+        path: value,
+        id: index,
+        key: index,
+      });
+      index++;
+    }
+    return extractArr;
   });
 
   const [validateData, setValidateData] = useState(() => {
-    // const validArr = []
+    const validArr = [];
     validate.map((item, index) => {
-      item.id = index + 1;
-      item.key = index + 1;
-      const type = Object.prototype.toString.call(item.expected);
-      item.type = type.substring(7, type.length - 1);
+      const el = {};
+      el.id = index + 1;
+      el.key = index + 1;
+      for (const [key, value] of Object.entries(item)) {
+        el.comparator = key;
+        el.check = value[0];
+        el.expected = value[1];
+        const type = Object.prototype.toString.call(value[1]);
+        el.type = type.substring(7, type.length - 1);
+      }
+      validArr.push(el);
     });
-    return validate;
+    return validArr;
   });
 
   const extractTableColumns = [

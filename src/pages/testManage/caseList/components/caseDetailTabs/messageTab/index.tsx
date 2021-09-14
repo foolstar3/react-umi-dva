@@ -20,12 +20,23 @@ const MessageTab = ({
   const [curProject, setCurProject] = useState(caseDetail.project);
   const [curModuleName, setCurModuleName] = useState(caseDetail.module_name);
   const [curModuleId, setCurModuleId] = useState(caseDetail.module);
+  const children = [];
+  if (Object.keys(caseList).indexOf('results') !== -1) {
+    caseList.results.map((item) => {
+      item.title = item.name;
+      item.key = `${curModuleId}-${item.id}`;
+      return item;
+    });
+    children.push(...caseList.results);
+  } else {
+    caseList.map((item) => {
+      item.title = item.name;
+      item.key = `${curModuleId}-${item.id}`;
+      return item;
+    });
+    children.push(...caseList);
+  }
 
-  const children = caseList.results?.map((item) => {
-    item.title = item.name;
-    item.key = `${curModuleId}-${item.id}`;
-    return item;
-  });
   const treeData = curModuleName
     ? [
         {
@@ -41,11 +52,18 @@ const MessageTab = ({
     onProjectChange(val);
   };
 
-  const onModuleNameChange = (module_id, project_id) => {
-    onModuleChange(module_id, project_id);
-    const curModule = moduleData.find((item) => item.id === module_id);
-    setCurModuleName(curModule.module_name);
-    setCurModuleId(curModule.id);
+  const onModuleNameChange = (module_id = '', project_id) => {
+    console.log(module_id);
+    if (module_id) {
+      onModuleChange(module_id, project_id);
+      const curModule = moduleData.find((item) => item.id === module_id);
+      setCurModuleName(curModule.module_name);
+      setCurModuleId(curModule.id);
+    } else {
+      onModuleChange('', project_id);
+      setCurModuleName('');
+      setCurModuleId('');
+    }
   };
 
   const onSelect = (selectedKeys, info) => {
@@ -77,11 +95,13 @@ const MessageTab = ({
                   0
                 }
               >
-                {projectData.map((item) => (
-                  <Select.Option key={item.id} value={item.id}>
-                    {item.project_name}
-                  </Select.Option>
-                ))}
+                {projectData
+                  ? projectData.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.project_name}
+                      </Select.Option>
+                    ))
+                  : null}
               </Select>
             </Form.Item>
           </Col>
@@ -97,11 +117,13 @@ const MessageTab = ({
                   0
                 }
               >
-                {moduleData.map((item) => (
-                  <Select.Option key={item.id} value={item.id}>
-                    {item.module_name}
-                  </Select.Option>
-                ))}
+                {moduleData
+                  ? moduleData.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.module_name}
+                      </Select.Option>
+                    ))
+                  : null}
               </Select>
             </Form.Item>
           </Col>
