@@ -11,9 +11,11 @@ class AddModal extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddValueChange = this.handleAddValueChange.bind(this);
     this.caseNumber = this.caseNumber.bind(this);
+    this.treeNodeModule = this.treeNodeModule.bind(this);
     this.state = {
       tempAddValue: '',
       caseNumber: 0,
+      moduleNameList: [],
     };
   }
 
@@ -63,6 +65,34 @@ class AddModal extends React.Component {
     this.setState({
       tempAddValue: ValueChange,
     });
+  }
+
+  treeNodeModule() {
+    const moduleNameList = [];
+    const projectList = this.props?.projectList?.projectList || [];
+    const projectName = this.state.tempAddValue?.project;
+    let tempValue = {};
+    for (let i = 0; i < projectList.length; i++) {
+      if (projectName && projectList[i].project_name === projectName) {
+        tempValue = projectList[i].id;
+      }
+    }
+    this.props.dispatch({
+      type: 'moduleList/getModuleList',
+      payload: {
+        page: '1',
+        project: tempValue,
+      },
+      callback: (res) => {
+        res.results.map((item) => {
+          moduleNameList.push(item.module_name);
+        });
+        this.setState({
+          moduleNameList: moduleNameList,
+        });
+      },
+    });
+    console.log('this.statesasasa', this.state);
   }
 
   //添加项目的返回键
@@ -158,6 +188,13 @@ class AddModal extends React.Component {
           >
             {
               <Select
+                showSearch
+                allowClear
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 style={{ width: 314 }}
                 onFocus={this.handleEnvListVisible}
               >
@@ -181,6 +218,13 @@ class AddModal extends React.Component {
               <Select
                 style={{ width: 314 }}
                 onFocus={this.handleProjectListVisible}
+                showSearch
+                allowClear
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
               >
                 {projectList &&
                   Array.isArray(projectList) &&
@@ -200,7 +244,13 @@ class AddModal extends React.Component {
             name="cassNumber"
             rules={[{ required: false }]}
           >
-            <TreeNode caseList={caseList} caseNumber={this.caseNumber} />
+            <TreeNode
+              caseList={caseList}
+              moduleList={caseList}
+              caseNumber={this.caseNumber}
+              treeNodeModule={this.treeNodeModule}
+              moduleNameList={this.state.moduleNameList}
+            />
           </Form.Item>
           {/* <Form.Item
             label = '邮件列表'

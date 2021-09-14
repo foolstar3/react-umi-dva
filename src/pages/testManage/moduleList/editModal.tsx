@@ -126,15 +126,24 @@ class EditModal extends React.Component {
                 initialValue={tempValue.project_name}
               >
                 {
-                  <Select style={{ width: 314 }}>
+                  <Select
+                    style={{ width: 314 }}
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
                     {projectList &&
                       Array.isArray(projectList) &&
                       projectList.length &&
                       projectList.map((item) => {
                         return (
                           <Option value={item.project_name}>
-                            {' '}
-                            {item.project_name}{' '}
+                            {item.project_name}
                           </Option>
                         );
                       })}
@@ -148,16 +157,23 @@ class EditModal extends React.Component {
                 initialValue={tempValue.test_user_name}
               >
                 {
-                  <Select style={{ width: 314 }}>
+                  <Select
+                    style={{ width: 314 }}
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
                     {testUserList &&
                       Array.isArray(testUserList) &&
                       testUserList.length &&
                       testUserList.map((item) => {
                         return (
-                          <Option value={item.username}>
-                            {' '}
-                            {item.username}{' '}
-                          </Option>
+                          <Option value={item.username}>{item.username}</Option>
                         );
                       })}
                   </Select>

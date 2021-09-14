@@ -20,7 +20,7 @@ export default {
       }
     },
     *editSubmit({ payload }, { call, put }) {
-      const res = yield call(updatedDebugTalkList, payload);
+      const res = yield call(updateDebugTalkList, payload);
     },
   },
   reducers: {

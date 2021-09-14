@@ -14,7 +14,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { TextArea } = Input;
 import './index.less';
-import EditTextModal from './debugTalkEditor';
+import Editor from '@/components/Editor';
 
 class DebugTalkList extends React.Component {
   constructor(props: {} | Readonly<{}>) {
@@ -30,8 +30,9 @@ class DebugTalkList extends React.Component {
     };
     //显示代码输入框
     this.showPythonModal = this.showPythonModal.bind(this);
-    //模态框显隐控制按钮
-    this.showEditModal = this.showEditModal.bind(this);
+    this.editSubmit = this.editSubmit.bind(this);
+    this.showEditModalCancel = this.showEditModalCancel.bind(this);
+    this.getEditorContent = this.getEditorContent.bind(this);
   }
 
   componentDidMount() {
@@ -52,18 +53,44 @@ class DebugTalkList extends React.Component {
     });
   }
 
+  editSubmit() {
+    const { debugTalkId, debugTalkContent } = this.state;
+    this.setState({
+      editVisible: false,
+    });
+    this.props.dispatch({
+      type: 'debugTalkList/editSubmit',
+      payload: {
+        id: debugTalkId,
+        debugtalk: debugTalkContent,
+      },
+      callback: () => {
+        this.props.dispatch({
+          type: 'debugTalkList/getDebugTalkList',
+          payload: {
+            page: 1,
+          },
+        });
+      },
+    });
+    this.showEditModalCancel();
+  }
+
   showPythonModal(record: any) {
     this.setState({
       editVisible: true,
       debugTalkId: record.id,
-      debugTalkContent: record.debugtalk,
     });
-    console.log('this.state', this.state);
   }
 
-  showEditModal(childPythonState: any) {
+  getEditorContent(editContent: any) {
     this.setState({
-      editVisible: childPythonState,
+      debugTalkContent: editContent,
+    });
+  }
+  showEditModalCancel() {
+    this.setState({
+      editVisible: false,
     });
   }
 
@@ -155,14 +182,18 @@ class DebugTalkList extends React.Component {
 
           {editVisible && (
             <div>
-              <EditTextModal
-                debugTalkContent={this.state.debugTalkContent}
-                debugTalkId={this.state.debugTalkId}
+              <Editor
+                // content={debugTalkContent}
+                getEditorContent={this.getEditorContent}
               />
               <div className="debug_button">
                 <Row>
-                  <Button>取消</Button>
-                  <Button shape="round" type="primary">
+                  <Button onClick={this.showEditModalCancel}>取消</Button>
+                  <Button
+                    onClick={this.editSubmit}
+                    shape="round"
+                    type="primary"
+                  >
                     确认
                   </Button>
                 </Row>
