@@ -25,6 +25,7 @@ const SearchBox = (props) => {
   const onSearch = () => {
     const { onSearch } = props;
     const payload = form.getFieldsValue(true);
+    console.log(payload);
     // 修改时间格式
     payload.update_time?.map((item, index) => {
       // console.log(item, DateFormat(item._d));
@@ -36,12 +37,15 @@ const SearchBox = (props) => {
     });
     delete payload.update_time;
     // console.log(payload);
-    const { project_name, module_name } = payload;
+    const { project_name, module_name, case_name } = payload;
     payload.project = project_name;
     payload.module = module_name;
+    payload.name = case_name;
     delete payload.project_name;
     delete payload.module_name;
+    // console.log(payload);
     onSearch(payload);
+    form.resetFields();
   };
 
   const onProjectChange = (val) => {

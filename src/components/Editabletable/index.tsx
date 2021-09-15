@@ -14,10 +14,11 @@ const EditableCell = ({
   ...restProps
 }) => {
   const inputNode =
-    cellType === 'type' ? (
+    cellType === 'select' ? (
       <Select>
-        <Option value="number">Number</Option>
         <Option value="string">String</Option>
+        <Option value="number">Int</Option>
+        <Option value="number">Float</Option>
         <Option value="boolean">Boolean</Option>
       </Select>
     ) : (
@@ -107,7 +108,7 @@ const EditableTable = ({ form, dataSource, columns }) => {
     return {
       ...col,
       onCell: (record) => {
-        //console.log(col,col.dataIndex === 'type' ? 'select' : 'text');
+        // console.log(col,record,col.dataIndex === 'type');
         return {
           record,
           cellType: col.dataIndex === 'type' ? 'select' : 'text',

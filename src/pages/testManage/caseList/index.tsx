@@ -105,15 +105,7 @@ class CaseList extends Component<any, any> {
       page: 1,
     };
 
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'testCase/getCaseList',
-      payload,
-      callback: () => {
-        // console.log('search');
-      },
-    });
-    this.getCaseList({ page: 1 });
+    this.getCaseList(payload);
   };
 
   handleDeleteOk = (record) => {

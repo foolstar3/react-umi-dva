@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import EditableTable from '@/components/Editabletable';
 import { Form, Select, Button, message } from 'antd';
-
+import { DataType } from '@/utils/common';
 import styles from './index.less';
 
 const ExtractTab = ({ extract, validate }) => {
@@ -31,8 +31,13 @@ const ExtractTab = ({ extract, validate }) => {
         el.comparator = key;
         el.check = value[0];
         el.expected = value[1];
-        const type = Object.prototype.toString.call(value[1]);
-        el.type = type.substring(7, type.length - 1);
+        // const type = Object.prototype.toString.call(value[1]);
+        // if(type.substring(8, type.length - 1) == 'Number') {
+        //   el.type = value[1]%1 == 0 ? 'Int': 'Float'
+        // } else {
+        //   el.type = type.substring(8, type.length - 1);
+        // }
+        el.type = DataType(value[1]);
       }
       validArr.push(el);
     });

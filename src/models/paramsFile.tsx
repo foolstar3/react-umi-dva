@@ -55,8 +55,9 @@ export default {
       /*todo
       调用reducers中的更新函数
       更新state中的paramsFileList */
+      console.log(data);
       if (callback) {
-        callback();
+        callback(data);
       }
     },
     *deleteFile({ payload, callback }, { call, put }) {

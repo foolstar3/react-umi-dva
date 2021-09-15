@@ -79,7 +79,9 @@ const Breadcrumbs = ({ breadcrumbs }) => (
         }
         return (
           <Breadcrumb.Item key={breadcrumb.key}>
-            <span>{breadcrumb.breadcrumb.props.children}</span>
+            <span className="title">
+              {breadcrumb.breadcrumb.props.children}
+            </span>
           </Breadcrumb.Item>
         );
       })}

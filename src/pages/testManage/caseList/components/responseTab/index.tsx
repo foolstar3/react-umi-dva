@@ -13,7 +13,7 @@ const ResponseTab = ({ treeData, checkable }) => {
     }
   };
   treeData.map((node, index) => {
-    node.key = index;
+    node.key = `${index}`;
     if (node.children) {
       node.children.map((childNode, childIndex) =>
         addKeyToTree(childNode, node.key, childIndex),

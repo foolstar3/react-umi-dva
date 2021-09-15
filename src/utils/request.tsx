@@ -28,6 +28,7 @@ const codeMessage = {
  * 异常处理程序
  */
 const errorHandler = (error) => {
+  // console.log(error, 'errorHandler');
   const { response } = error;
   if (response && response.status) {
     // const errorText = codeMessage[response.status] || response.statusText;
@@ -52,7 +53,7 @@ const request = extend({
   //credentials: 'include', // 默认请求是否带上cookie
 });
 
-request.interceptors.request.use(async (url, options) => {
+request.interceptors.request.use((url, options): any => {
   // const jwt = sessionStorage.getItem('jwt');
   const header = {};
   const token = localStorage.getItem('qc_token');
@@ -72,6 +73,7 @@ request.interceptors.request.use(async (url, options) => {
 // response拦截器, 处理response
 request.interceptors.response.use(async (response) => {
   // let data = null;
+  // console.log(response,'response-interceptors', options, 'options');
   if (response.url.includes('faq')) {
     return response;
   }
