@@ -290,7 +290,6 @@ class ParamsFile extends Component<any, any> {
   };
 
   handleAddFormValueChange = (av) => {
-    console.log(av);
     // 获取新增文件的数据
     this.setState(() => ({
       addFileData: av,

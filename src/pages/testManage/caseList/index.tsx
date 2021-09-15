@@ -110,7 +110,7 @@ class CaseList extends Component<any, any> {
       type: 'testCase/getCaseList',
       payload,
       callback: () => {
-        console.log('search');
+        // console.log('search');
       },
     });
     this.getCaseList({ page: 1 });

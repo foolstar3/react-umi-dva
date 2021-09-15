@@ -9,6 +9,7 @@ import {
   Form,
   Input,
   Popconfirm,
+  message,
 } from 'antd';
 import {
   EditOutlined,
@@ -179,11 +180,10 @@ export default class EnvList extends Component<any, any> {
     dispatch({
       type: 'envList/getEnvList',
       payload,
-      callback: () => {
-        const { envList } = this.props;
+      callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: envList.count,
+          total: res.count,
         });
       },
     });
@@ -207,7 +207,8 @@ export default class EnvList extends Component<any, any> {
         判断是否成功返回数据
         成功则提示切换状态成功
         失败则提示切换状态失败 */
-        console.log(res);
+        // console.log(res);
+        message.success(res.message);
       },
     });
   };
@@ -324,7 +325,7 @@ export default class EnvList extends Component<any, any> {
 
   // 弹出编辑对话框
   showEditModal = (text, record) => {
-    console.log(record);
+    // console.log(record);
     this.setState({
       editModalVisiable: true,
       currentEnvInfo: record,
@@ -408,9 +409,10 @@ export default class EnvList extends Component<any, any> {
       total,
     } = this.state;
     const { envList } = this.props;
-    if (envList.results !== undefined) {
+    // console.log(envList);
+    if (envList !== undefined) {
       // 为envList数组中的每个元素添加一个key属性
-      envList.results.map((item) => {
+      envList.map((item) => {
         item.key = item.id;
       });
     }
@@ -442,7 +444,7 @@ export default class EnvList extends Component<any, any> {
           <Table
             columns={columns}
             rowSelection={rowSelection}
-            dataSource={envList.results}
+            dataSource={envList}
             loading={tableLoading}
             pagination={paginationProps}
             bordered
@@ -530,7 +532,7 @@ export default class EnvList extends Component<any, any> {
                 <Input />
               </Form.Item>
 
-              <Form.Item name="is_valid" label="状态">
+              <Form.Item name="is_valid" label="状态" valuePropName="checked">
                 <Switch
                   checkedChildren="启用"
                   unCheckedChildren="禁用"

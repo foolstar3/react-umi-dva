@@ -4,7 +4,6 @@ import { Button, Tree } from 'antd';
 import styles from './index.less';
 
 const ResponseTab = ({ treeData, checkable }) => {
-  // console.log(treeData);
   const addKeyToTree = (node, key, index) => {
     node.key = `${key}-${index}`;
     if (node.children) {
@@ -21,13 +20,13 @@ const ResponseTab = ({ treeData, checkable }) => {
       );
     }
   });
-  // console.log(treeData);
+
   const responseTree = [];
   return (
     <>
       <div className={styles.topBtn}>
-        <Button>TraceBack</Button>
-        <Button>Validate</Button>
+        <Button className={styles.cancelBtn}>TraceBack</Button>
+        <Button className={styles.basicBtn}>Validate</Button>
       </div>
       <div className={styles.content}>
         <div className={styles.traceback}></div>

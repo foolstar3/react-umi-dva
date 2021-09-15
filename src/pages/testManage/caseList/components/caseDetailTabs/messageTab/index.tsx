@@ -17,6 +17,7 @@ const MessageTab = ({
   onModuleChange,
   caseList,
 }) => {
+  const [curBefore, setCurBefore] = useState(caseDetail.before);
   const [curProject, setCurProject] = useState(caseDetail.project);
   const [curModuleName, setCurModuleName] = useState(caseDetail.module_name);
   const [curModuleId, setCurModuleId] = useState(caseDetail.module);
@@ -53,7 +54,6 @@ const MessageTab = ({
   };
 
   const onModuleNameChange = (module_id = '', project_id) => {
-    // console.log(module_id);
     if (module_id) {
       onModuleChange(module_id, project_id);
       const curModule = moduleData.find((item) => item.id === module_id);

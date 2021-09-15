@@ -1,0 +1,30 @@
+@import '~@/themes/index.less';
+
+.topBtn {
+  :global {
+    .ant-btn {
+      color: #fff;
+    }
+  }
+  margin-bottom: 10px;
+  .cancelBtn {
+    background: @warn-color;
+    border-color: @warn-color;
+    &:hover {
+      background: @warn-color-hover;
+      border-color: @warn-color-hover;
+    }
+  }
+  .basicBtn {
+    background: @basic-color;
+    border-color: @basic-color;
+    &:hover {
+      background: @basic-color-hover;
+      border-color: @basic-color-hover;
+    }
+  }
+}
+
+.content {
+  margin-bottom: 10px;
+}

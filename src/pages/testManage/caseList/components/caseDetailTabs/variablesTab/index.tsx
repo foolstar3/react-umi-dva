@@ -51,7 +51,7 @@ const EditableCell = ({
 const VariablesTab = ({ variables }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState(-1);
-  console.log(variables);
+  // console.log(variables);
   const variablesData = [];
   if (variables && Object.keys(variables).length !== 0) {
     let index = 1;

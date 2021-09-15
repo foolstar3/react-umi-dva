@@ -1,9 +1,4 @@
-@basic-color: #2db7f5;
-@basic-color-hover: #57c5f7;
-@success-color: #19be6b;
-@success-color-hover: #47cb89;
-@warn-color: #f90;
-@warn-color-hover: #ffad33;
+@import '~@/themes/index.less';
 
 .tabBody {
   min-height: 600px;
@@ -21,7 +16,7 @@
   }
   .left {
     flex: 1;
-    .runBtn {
+    .basicBtn {
       background: @basic-color;
       border-color: @basic-color;
       &:hover {
@@ -29,7 +24,7 @@
         border-color: @basic-color-hover;
       }
     }
-    .saveBtn {
+    .successBtn {
       background: @success-color;
       border-color: @success-color;
       &:hover {
@@ -62,7 +57,8 @@
         color: #fff;
       }
     }
-    .runBtn {
+    margin-bottom: 10px;
+    .basicBtn {
       background: @basic-color;
       border-color: @basic-color;
       &:hover {
