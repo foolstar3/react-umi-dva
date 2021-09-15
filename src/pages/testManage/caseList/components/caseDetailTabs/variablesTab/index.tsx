@@ -51,17 +51,31 @@ const EditableCell = ({
 const VariablesTab = ({ variables }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState(-1);
-
-  variables.map((item, index) => {
-    Object.keys(item).forEach((key, val) => {
-      item.name = key;
-      item.value = val;
-      const type = Object.prototype.toString.call(val);
-      item.type = type.substring(7, type.length - 1);
-    });
-    item.id = index;
-    item.key = index;
-  });
+  console.log(variables);
+  const variablesData = [];
+  if (variables && Object.keys(variables).length !== 0) {
+    let index = 1;
+    for (const [key, value] of Object.entries(variables)) {
+      variablesData.push({
+        name: key,
+        value: value,
+        id: index,
+        key: index,
+      });
+      index++;
+    }
+    console.log(variablesData);
+    // variables.map((item, index) => {
+    //   Object.keys(item).forEach((key, val) => {
+    //     item.name = key;
+    //     item.value = val;
+    //     const type = Object.prototype.toString.call(val);
+    //     item.type = type.substring(7, type.length - 1);
+    //   });
+    //   item.id = index;
+    //   item.key = index;
+    // });
+  }
 
   const cancelEdit = () => {
     setEditingKey(-1);
@@ -93,6 +107,8 @@ const VariablesTab = ({ variables }) => {
       dataIndex: 'value',
       key: 'value',
       align: 'center',
+      textWrap: 'word-break',
+      ellipsis: true,
       editable: true,
     },
     {
@@ -160,7 +176,7 @@ const VariablesTab = ({ variables }) => {
       <Form form={form} component={false}>
         <Table
           columns={mergedColumns}
-          dataSource={variables}
+          dataSource={variablesData}
           pagination={false}
           rowClassName="editable-row"
           bordered

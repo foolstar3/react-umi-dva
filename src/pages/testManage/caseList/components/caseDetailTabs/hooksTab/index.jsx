@@ -5,7 +5,7 @@ import { Form, Select, Button, message } from 'antd';
 import styles from './index.less';
 
 const HooksTab = ({ setupHooks, teardownHooks }) => {
-  console.log(setupHooks, teardownHooks);
+  // console.log(setupHooks, teardownHooks);
   const [setupData, setSetupData] = useState(() => {
     const setup = [];
     setupHooks.map((item, index) => {

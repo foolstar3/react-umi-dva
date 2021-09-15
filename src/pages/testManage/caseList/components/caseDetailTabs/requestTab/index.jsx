@@ -5,7 +5,7 @@ import { Form, Select, Button, message, Input, Row, Col } from 'antd';
 import styles from './index.less';
 
 const RequestTab = ({ request }) => {
-  console.log(request);
+  // console.log(request);
   const method = [
     { name: 'GET', value: 'GET', key: 'GET' },
     { name: 'POST', value: 'POST', key: 'POST' },
@@ -17,6 +17,10 @@ const RequestTab = ({ request }) => {
     { name: 'data', value: 'data', key: 'data' },
     { name: 'json', value: 'json', key: 'json' },
   ];
+  const requestType = {
+    url: request.url,
+    method: request.method,
+  };
   const [headerData, setHeaderData] = useState(() => {
     const header = [];
     let index = 1;
@@ -50,7 +54,7 @@ const RequestTab = ({ request }) => {
     }
     return params;
   });
-  const [requestdata, setData] = useState(() => {
+  const [requestData, setData] = useState(() => {
     const data = [];
     let index = 1;
     if (request.data) {
@@ -139,7 +143,7 @@ const RequestTab = ({ request }) => {
   return (
     <>
       <div className={styles.top}>
-        <Form initialValues={request}>
+        <Form initialValues={requestType}>
           <Row>
             <Col span={12}>
               <Form.Item
@@ -218,7 +222,7 @@ const RequestTab = ({ request }) => {
         </div>
         <EditableTable
           form={form}
-          dataSource={requestdata}
+          dataSource={requestData}
           columns={dataTableColumns}
         />
       </div>

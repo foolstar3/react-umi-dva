@@ -5,10 +5,10 @@ import { connect } from 'dva';
 import MessageTab from './messageTab';
 import VariablesTab from './variablesTab';
 import ParametersTab from './parametersTab';
+import ResponseTab from '../responseTab';
 import HooksTab from './hooksTab/index.jsx';
 import RequestTab from './requestTab/index.jsx';
 import ExtractTab from './extractTab/index.jsx';
-
 const { TabPane } = Tabs;
 const { Option } = Select;
 
@@ -22,29 +22,33 @@ const CaseDetailTabs = ({
   caseList,
   envList,
   dispatch,
+  debugResponse,
 }) => {
-  const responseTreeData = {};
+  const responseTreeData = [];
+  const responseTabs = [];
   const debugCase = (payload) => {
     dispatch({
       type: 'testCase/debugCase',
       payload,
       callback: (res) => {
-        console.log(debugResponse);
+        console.log(res);
+        // responseTabs.push(res.case_metas)
+        // responseTreeData.push(res.tree)
       },
     });
   };
   const [debugResponseVisible, setdebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const tabDatas = caseDetail.request.request[0];
+  const tabDatas = caseDetail.request.teststeps[0];
 
   const variables = tabDatas.variables ?? [];
 
   const [parameters, setParameters] = useState(tabDatas.parameters ?? []);
 
-  const [setupHooks, setSetupHooks] = useState(tabDatas.setupHooks ?? []);
+  const [setupHooks, setSetupHooks] = useState(tabDatas.setup_hooks ?? []);
 
   const [teardownHooks, setTeardownHooks] = useState(
-    tabDatas.teardownHooks ?? [],
+    tabDatas.teardown_hooks ?? [],
   );
 
   const [request, setRequest] = useState(tabDatas.request ?? []);
@@ -58,14 +62,50 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
-    const request = caseDetail.request.request[0];
+    // const { request } = caseDetail
+    // const { teststeps } = request;
+    // const payload = {
+    //   ...caseDetail,
+    //   teststeps,
+    //   export: request.export,
+    //   base_url: `https:/${teststeps[0].request.url}`,
+    // };
+
     const payload = {
-      ...caseDetail,
-      request,
+      type: 1,
+      name: 'organization_current',
+      project: 79,
+      module: 42,
+      base_url: 'https://portal-master-api.uihcloud.cn',
+      before: [1],
+      after: [],
+      params_files: [],
       export: [],
-      base_url: '',
+      teststeps: [
+        {
+          name: 'organization_current',
+          request: {
+            url: '/portal-api/v1/organization/current',
+            headers: {
+              Authorization: '$token',
+            },
+            method: 'GET',
+          },
+          extract: {
+            data_id: 'body.data[0].id',
+            msg_code: 'body.msgCode',
+          },
+          validate: [
+            {
+              equal: ['status_code', 200],
+            },
+            {
+              contains: ['$msg_code', 'success'],
+            },
+          ],
+        },
+      ],
     };
-    console.log(payload);
     debugCase(payload);
     setModalVisible(false);
     setdebugResponseVisible(true);
@@ -134,7 +174,21 @@ const CaseDetailTabs = ({
           <Button className={styles.runBtn}>提取数据</Button>
         </div>
         <div className={styles.responseTabs}>
-          <Tabs defaultActiveKey="1">{}</Tabs>
+          <Tabs defaultActiveKey="1">
+            {debugResponse.case_metas
+              ? debugResponse.case_metas.map((item, index) => {
+                  console.log(item);
+                  return (
+                    <TabPane tab={item.name} key={`${item.name}${item.index}`}>
+                      <ResponseTab
+                        treeData={debugResponse.tree[index]}
+                        checkable={item.flag}
+                      />
+                    </TabPane>
+                  );
+                })
+              : ''}
+          </Tabs>
         </div>
       </div>
       <Modal

@@ -33,26 +33,11 @@ const layout = {
   wrapperCol: { span: 20 },
 };
 
-const uploadConfig = {
-  accept: '.csv',
-  listType: 'text',
-  beforeUpload: (file) => {
-    const fileSize = file.size / 1024 / 1024;
-    if (fileSize > 20) {
-      message.error('文件大小不得超过20M！');
-      return Upload.LIST_IGNORE;
-    }
-    if (file.name.split('.')[file.name.split('.').length - 1] != 'csv') {
-      message.error('文件类型只能是CSV类型');
-      return Upload.LIST_IGNORE;
-    }
-    return false;
-  },
-};
 class ParamsFile extends Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
+      fileList: [],
       // 参数文件表格源数据
       paramsFileData: [],
       // 编辑对话框显隐
@@ -259,10 +244,17 @@ class ParamsFile extends Component<any, any> {
 
   addFile = () => {
     const { dispatch } = this.props;
-    const { addFileData } = this.state;
+    const { addFileData, fileList } = this.state;
+    const { project } = addFileData;
+    // 上传文件必须先转换成FormData格式
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append('file', file);
+    });
+    formData.append('project', project);
     dispatch({
       type: 'paramsFile/addFile',
-      payload: addFileData,
+      payload: formData,
       callback: () => {
         this.getParamsFileList({ page: 1 });
       },
@@ -315,53 +307,44 @@ class ParamsFile extends Component<any, any> {
       gender: 'male',
     });
   };
-  // 渲染编辑文件表单
-  renderEditForm = (data) => {
-    // console.log(data);
-    return (
-      <Form
-        name="basic"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 14 }}
-        onFinish={this.onFinish}
-        onFinishFailed={this.onFinishFailed}
-        onValuesChange={() => {
-          console.log('change');
-        }}
-        initialValues={data}
-      >
-        <Form.Item
-          label="项目名称"
-          name="project_name"
-          rules={[{ required: true, message: '请输入项目名称！' }]}
-        >
-          <Input />
-        </Form.Item>
 
-        <Form.Item
-          label="文件名称"
-          name="file_name"
-          rules={[{ required: true, message: '请输入文件名称！' }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          label="上传人员"
-          name="upload_staff"
-          rules={[{ required: true, message: '请输入上传人员！' }]}
-        >
-          <Input />
-        </Form.Item>
-      </Form>
-    );
-  };
   formRef = React.createRef<FormInstance>();
   // 渲染新增项目表单
   renderAddForm = () => {
     const { projectData } = this.props;
-    const { addModalVisiable } = this.state;
-    // console.log(projectData);
+    const { addModalVisiable, fileList } = this.state;
+    const uploadConfig = {
+      // action: `${process.env.qcFrontUrl}/paramsfile/`,
+      accept: '.csv',
+      listType: 'text',
+      onRemove: (file) => {
+        this.setState((state) => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: (file) => {
+        const fileSize = file.size / 1024 / 1024;
+        if (fileSize > 20) {
+          message.error('文件大小不得超过20M！');
+          return Upload.LIST_IGNORE;
+        }
+        if (file.name.split('.')[file.name.split('.').length - 1] != 'csv') {
+          message.error('文件类型只能是CSV类型');
+          return Upload.LIST_IGNORE;
+        }
+        this.setState((state) => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    };
+
     return (
       addModalVisiable && (
         <Form
