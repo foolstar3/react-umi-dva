@@ -70,7 +70,7 @@ class ProjectList extends React.Component {
   formRef = React.createRef<FormInstance>();
 
   //获取列表
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.props.dispatch({
       type: 'userList/getUserList',
       callback: (res) => {
@@ -230,10 +230,10 @@ class ProjectList extends React.Component {
     console.log('projectList', projectList);
     const leaderList = this.state?.leaderList || [];
     //为数组中每一个元素增加一个key值，防止报错
-    projectList &&
-      projectList.map((item) => {
-        item.key = item.id;
-      });
+    // projectList &&
+    //   projectList.map((item) => {
+    //     item.key = item.id;
+    //   });
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
     const paginationProps = {
@@ -385,17 +385,24 @@ class ProjectList extends React.Component {
             >
               {
                 <Select
+                  showSearch
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   style={{ width: 314 }}
                   // onFocus={this.handleUserNameListVisible}
                 >
-                  {leaderList &&
-                    Array.isArray(leaderList) &&
-                    leaderList.length &&
-                    leaderList.map((item) => {
-                      return (
-                        <Option value={item.username}> {item.username} </Option>
-                      );
-                    })}
+                  {leaderList.map((item) => {
+                    return (
+                      <Option value={item.username} key={item.username}>
+                        {item.username}
+                      </Option>
+                    );
+                  })}
                 </Select>
               }
             </Form.Item>
@@ -448,16 +455,21 @@ class ProjectList extends React.Component {
                   <Select
                     style={{ width: 314 }}
                     onFocus={this.handleUserNameListVisible}
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
                   >
                     {leaderList &&
                       Array.isArray(leaderList) &&
                       leaderList.length &&
                       leaderList.map((item) => {
                         return (
-                          <Option value={item.username}>
-                            {' '}
-                            {item.username}{' '}
-                          </Option>
+                          <Option value={item.username}>{item.username}</Option>
                         );
                       })}
                   </Select>

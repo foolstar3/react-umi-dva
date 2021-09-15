@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-  Popconfirm,
-} from 'antd';
+import { Card, Table, Button, Space, Popconfirm } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,

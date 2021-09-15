@@ -35,7 +35,7 @@ const SearchModel = (props: any) => {
     props.dispatch({
       type: 'taskList/getTaskList',
       payload: {
-        page: 2,
+        page: 1,
         name: value.module_name,
         update_time_after: 1,
         update_time_before: 1,
@@ -69,11 +69,11 @@ const SearchModel = (props: any) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={8}>
+            {/* <Col span={8}>
               <Form.Item label="创建人" name="test_user">
                 <Input autoComplete="off" />
               </Form.Item>
-            </Col>
+            </Col> */}
           </Row>
           <Row>
             <Col span={8}>
