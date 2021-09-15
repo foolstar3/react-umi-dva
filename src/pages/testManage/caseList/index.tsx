@@ -128,7 +128,6 @@ class CaseList extends Component<any, any> {
   };
 
   onModuleChange = (module, project) => {
-    console.log(module);
     this.getCaseList({ page: 'None', project, module });
   };
   showCaseDetail = (record) => {

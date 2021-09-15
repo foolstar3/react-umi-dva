@@ -53,7 +53,7 @@ const MessageTab = ({
   };
 
   const onModuleNameChange = (module_id = '', project_id) => {
-    console.log(module_id);
+    // console.log(module_id);
     if (module_id) {
       onModuleChange(module_id, project_id);
       const curModule = moduleData.find((item) => item.id === module_id);

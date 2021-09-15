@@ -49,7 +49,7 @@ export default {
         payload: { debugResponse: res },
       });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
   },

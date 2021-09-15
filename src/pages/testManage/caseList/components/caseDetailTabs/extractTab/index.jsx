@@ -5,7 +5,7 @@ import { Form, Select, Button, message } from 'antd';
 import styles from './index.less';
 
 const ExtractTab = ({ extract, validate }) => {
-  console.log(extract, validate);
+  // console.log(extract, validate);
   const [extractData, setExtractData] = useState(() => {
     const extractArr = [];
     let index = 1;
