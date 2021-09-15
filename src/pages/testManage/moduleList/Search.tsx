@@ -42,8 +42,6 @@ const SearchModel = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
-    console.log('start_time', value.rangeDateTime[0].format('YYYY-MM-DD'));
-    console.log('end_time', value.rangeDateTime[1].format('YYYY-MM-DD'));
     for (let i = 0; i < projectList.length; i++) {
       if (value.project && value.project == projectList[i].project_name) {
         value.project = projectList[i].id;
@@ -62,8 +60,10 @@ const SearchModel = (props: any) => {
         test_user: value.test_user,
         description: value.description,
         project: value.project,
-        update_time_after: value.rangeDateTime[0].format('YYYY-MM-DD'),
-        update_time_before: value.rangeDateTime[1].format('YYYY-MM-DD'),
+        update_time_after:
+          value.rangeDateTime && value.rangeDateTime[0].format('YYYY-MM-DD'),
+        update_time_before:
+          value.rangeDateTime && value.rangeDateTime[1].format('YYYY-MM-DD'),
       },
     });
   };
@@ -91,6 +91,14 @@ const SearchModel = (props: any) => {
                     <Select
                       style={{ width: 269 }}
                       onClick={handleProjectListVisible}
+                      showSearch
+                      allowClear
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
                     >
                       {projectList &&
                         Array.isArray(projectList) &&

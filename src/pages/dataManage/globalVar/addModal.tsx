@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, FormInstance, Input, Modal } from 'antd';
+import { message, Form, FormInstance, Input, Modal } from 'antd';
 const { TextArea } = Input;
 import { connect } from 'umi';
 
@@ -27,8 +27,11 @@ class AddModal extends React.Component {
         ...addGlobalVar,
       },
       callback: (res) => {
-        this.props.handleTotalNumber();
-
+        if (res.message == '保存成功') {
+          this.props.handleTotalNumber();
+        } else {
+          message.error('添加失败');
+        }
         this.props.dispatch({
           type: 'globalVarList/getGlobalVarList',
           payload: {

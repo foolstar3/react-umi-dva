@@ -20,11 +20,11 @@ import moduleList from '../moduleList';
 
 var treeData = [
   {
-    title: '0-0',
+    title: '0-0', // 模块
     key: '0-0',
     children: [
       {
-        title: '0-0-0',
+        title: '0-0-0', // 用例
         key: '0-0-0',
       },
       {
@@ -57,15 +57,9 @@ var treeData = [
   },
 ];
 const TreeNode = (props: any) => {
-  console.log('props', props.caseList);
+  console.log('moduleListprops', props.moduleNameList);
   function handleChangeCollapse() {
-    props.dispatch({
-      type: 'moduleList/getModuleList',
-      payload: {
-        page: 1,
-        project_name: 'abc',
-      },
-    });
+    props.treeNodeModule();
   }
 
   // for(var i = 0; i < props.moduleList.moduleList.length ; i++){
@@ -102,7 +96,7 @@ const TreeNode = (props: any) => {
   return (
     <div>
       <Collapse onChange={handleChangeCollapse}>
-        <Panel header="选择用例" key="caseNumber">
+        <Panel header="选择用例" key="caseNumber" forceRender>
           <Tree
             checkable
             onExpand={onExpand}

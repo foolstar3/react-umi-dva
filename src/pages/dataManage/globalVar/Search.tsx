@@ -30,8 +30,8 @@ const SearchModel = (props: any) => {
         var_name: value.var_name,
         var_value: value.var_value,
         description: value.description,
-        update_time_after: value.rangeDateTime[0].format('YYYY-MM-DD'),
-        update_time_before: value.rangeDateTime[1].format('YYYY-MM-DD'),
+        // update_time_after: value.rangeDateTime[0].format('YYYY-MM-DD'),
+        // update_time_before: value.rangeDateTime[1].format('YYYY-MM-DD'),
       },
     });
   };

@@ -133,17 +133,22 @@ class AddModal extends React.Component {
             rules={[{ required: true, message: '请输入模块名称' }]}
           >
             {
-              <Select style={{ width: 314 }}>
+              <Select
+                style={{ width: 314 }}
+                placeholder="请选择"
+                allowClear
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
                 {projectList &&
                   Array.isArray(projectList) &&
                   projectList.length &&
                   projectList.map((item) => {
-                    return (
-                      <Option value={item.project_name}>
-                        {' '}
-                        {item.project_name}{' '}
-                      </Option>
-                    );
+                    return <Option value={item.id}>{item.project_name}</Option>;
                   })}
               </Select>
             }
@@ -154,13 +159,22 @@ class AddModal extends React.Component {
             rules={[{ required: true, message: '请输入测试人员名称' }]}
           >
             {
-              <Select style={{ width: 314 }}>
+              <Select
+                style={{ width: 314 }}
+                showSearch
+                allowClear
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
                 {testUserList &&
                   Array.isArray(testUserList) &&
                   testUserList.length &&
                   testUserList.map((item) => {
                     return (
-                      <Option value={item.username}> {item.username} </Option>
+                      <Option value={item.username}>{item.username}</Option>
                     );
                   })}
               </Select>
