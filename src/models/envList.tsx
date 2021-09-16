@@ -9,7 +9,7 @@ import {
 export default {
   namespace: 'envList',
   state: {
-    envList: {},
+    envList: [],
   },
   reducers: {
     update(state, { payload }) {
@@ -20,19 +20,6 @@ export default {
         ...newState,
       };
     },
-    // updateStatus(state, { payload }) {
-    //   const newState = JSON.parse(JSON.stringify(state));
-    //   newState.envList.map((item) => {
-    //     if (item.id === payload.id) {
-    //       item = payload;
-    //     }
-    //     return item;
-    //   });
-    //   return {
-    //     ...state,
-    //     ...newState,
-    //   };
-    // },
     addEnvListData(state, { payload }) {
       return {
         ...state,
@@ -48,7 +35,7 @@ export default {
         payload: res.results ?? res,
       });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *toggleSwitch({ payload, callback }, { call, put }) {

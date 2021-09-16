@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Button, Form, Select, Input } from 'antd';
+import { DataType } from '@/utils/common';
+
 import styles from './index.less';
 
 const { Option } = Select;
@@ -51,7 +53,6 @@ const EditableCell = ({
 const VariablesTab = ({ variables }) => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState(-1);
-  console.log(variables);
   const variablesData = [];
   if (variables && Object.keys(variables).length !== 0) {
     let index = 1;
@@ -59,12 +60,13 @@ const VariablesTab = ({ variables }) => {
       variablesData.push({
         name: key,
         value: value,
+        type: DataType(value),
         id: index,
         key: index,
       });
       index++;
     }
-    console.log(variablesData);
+    // console.log(variablesData);
     // variables.map((item, index) => {
     //   Object.keys(item).forEach((key, val) => {
     //     item.name = key;

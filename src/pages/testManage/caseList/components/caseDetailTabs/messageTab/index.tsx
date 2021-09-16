@@ -17,6 +17,8 @@ const MessageTab = ({
   onModuleChange,
   caseList,
 }) => {
+  const [curBefore, setCurBefore] = useState(caseDetail.before);
+  const [checkedKeys, setCheckedKeys] = useState([]);
   const [curProject, setCurProject] = useState(caseDetail.project);
   const [curModuleName, setCurModuleName] = useState(caseDetail.module_name);
   const [curModuleId, setCurModuleId] = useState(caseDetail.module);
@@ -41,7 +43,7 @@ const MessageTab = ({
     ? [
         {
           title: curModuleName,
-          key: curModuleId,
+          key: `${curModuleId}`,
           children,
         },
       ]
@@ -53,7 +55,6 @@ const MessageTab = ({
   };
 
   const onModuleNameChange = (module_id = '', project_id) => {
-    // console.log(module_id);
     if (module_id) {
       onModuleChange(module_id, project_id);
       const curModule = moduleData.find((item) => item.id === module_id);
@@ -66,12 +67,23 @@ const MessageTab = ({
     }
   };
 
-  const onSelect = (selectedKeys, info) => {
-    console.log('selected', selectedKeys, info);
+  const onCheck = (checkedKeys, info) => {
+    // console.log('onCheck', checkedKeys, info);
+    setCheckedKeys(info.checkedNodes);
+    // console.log(info);
   };
 
-  const onCheck = (checkedKeys, info) => {
-    console.log('onCheck', checkedKeys, info);
+  const addBefore = () => {
+    setCheckedKeys(
+      checkedKeys.filter((item) => Object.keys(item).indexOf('id') !== -1),
+    );
+    /**
+     * todo
+     * 将数据添加到前后置table中
+     */
+  };
+  const renderBeforeTable = () => {
+    return <></>;
   };
 
   return (
@@ -133,19 +145,13 @@ const MessageTab = ({
                 <Panel header="前后置步骤（可选）" key="selection">
                   <div className={styles.selectionContent}>
                     <div className={styles.topBtn}>
-                      <Button type="primary">添加前置步骤</Button>
+                      <Button type="primary" onClick={() => addBefore()}>
+                        添加前置步骤
+                      </Button>
                       <Button type="primary">添加后置步骤</Button>
                     </div>
                     <div className={styles.selectionTree}>
-                      <Tree
-                        checkable
-                        // defaultExpandedKeys={['0-0-0', '0-0-1']}
-                        // defaultSelectedKeys={['0-0-0', '0-0-1']}
-                        // defaultCheckedKeys={['0-0-0', '0-0-1']}
-                        onSelect={onSelect}
-                        onCheck={onCheck}
-                        treeData={treeData}
-                      />
+                      <Tree checkable onCheck={onCheck} treeData={treeData} />
                     </div>
                   </div>
                 </Panel>
@@ -157,7 +163,9 @@ const MessageTab = ({
           <Col span={24}>
             <Form.Item name="before">
               <Collapse>
-                <Panel header="前置步骤（选中）" key="selected_before"></Panel>
+                <Panel header="前置步骤（选中）" key="selected_before">
+                  {renderBeforeTable()}
+                </Panel>
               </Collapse>
             </Form.Item>
           </Col>

@@ -46,6 +46,7 @@ class ParamsFile extends Component<any, any> {
       addModalVisiable: false,
       // table加载中
       tableLoading: true,
+      currentPage: 1,
       // 参数文件表格列配置
       columns: [
         {
@@ -207,16 +208,16 @@ class ParamsFile extends Component<any, any> {
 
   // 处理编辑对话框显隐函数
   handleEditOk = () => {
-    const { editorCode, currentEditParamsFile } = this.state;
+    const { editorCode, currentEditParamsFile, currentPage } = this.state;
     const payload = {
       content: editorCode,
       id: currentEditParamsFile.id,
     };
     this.updateParamsFileCode(payload);
+    this.getParamsFileList({ page: currentPage });
     this.setState({
       editModalVisiable: false,
     });
-    this.getParamsFileList({ page: 1 });
   };
 
   updateParamsFileCode = (payload) => {
@@ -242,6 +243,13 @@ class ParamsFile extends Component<any, any> {
     // 更新后重新获取table中的数据
   };
 
+  onPageChange = (page) => {
+    this.getParamsFileList({ page });
+    this.setState({
+      currentPage: page,
+    });
+  };
+
   addFile = () => {
     const { dispatch } = this.props;
     const { addFileData, fileList } = this.state;
@@ -255,8 +263,13 @@ class ParamsFile extends Component<any, any> {
     dispatch({
       type: 'paramsFile/addFile',
       payload: formData,
-      callback: () => {
-        this.getParamsFileList({ page: 1 });
+      callback: (res) => {
+        console.log(res);
+        if (res.data) {
+          this.getParamsFileList({ page: 1 });
+        } else if (res.status == 400) {
+          message.error('该项目下已存在同名文件!');
+        }
       },
     });
   };
@@ -290,7 +303,6 @@ class ParamsFile extends Component<any, any> {
   };
 
   handleAddFormValueChange = (av) => {
-    console.log(av);
     // 获取新增文件的数据
     this.setState(() => ({
       addFileData: av,
@@ -409,6 +421,7 @@ class ParamsFile extends Component<any, any> {
       addModalVisiable,
       tableLoading,
       total,
+      currentPage,
     } = this.state;
     const { paramsFileData, paramsFileCode } = this.props;
     paramsFileData.results?.map((item) => {
@@ -417,7 +430,8 @@ class ParamsFile extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
-      onChange: (page) => this.getParamsFileList({ page }),
+      current: currentPage,
+      onChange: (page) => this.onPageChange(page),
       total: total,
       showTotal: () => `共 ${total} 条`,
     };

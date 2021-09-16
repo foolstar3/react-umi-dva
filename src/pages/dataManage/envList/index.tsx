@@ -9,6 +9,7 @@ import {
   Form,
   Input,
   Popconfirm,
+  message,
 } from 'antd';
 import {
   EditOutlined,
@@ -27,10 +28,7 @@ const formItemLayout = {
   wrapperCol: { span: 20 },
 };
 
-@connect(({ envList }) => ({
-  envList: envList.envList,
-}))
-export default class EnvList extends Component<any, any> {
+class EnvList extends Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
@@ -179,11 +177,10 @@ export default class EnvList extends Component<any, any> {
     dispatch({
       type: 'envList/getEnvList',
       payload,
-      callback: () => {
-        const { envList } = this.props;
+      callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: envList.count,
+          total: res.count,
         });
       },
     });
@@ -207,7 +204,8 @@ export default class EnvList extends Component<any, any> {
         判断是否成功返回数据
         成功则提示切换状态成功
         失败则提示切换状态失败 */
-        console.log(res);
+        // console.log(res);
+        message.success(res.message);
       },
     });
   };
@@ -238,7 +236,6 @@ export default class EnvList extends Component<any, any> {
       ...addEnvListData,
       is_valid: addEnvListData.is_valid == false ? false : true,
     };
-    console.log(payload);
     // 发送请求
     this.addEnvListData(payload);
     this.setState({
@@ -247,7 +244,6 @@ export default class EnvList extends Component<any, any> {
   };
 
   handleAddFormValueChange = (av) => {
-    console.log(av);
     // 获取新增文件的数据
     this.setState(() => ({
       addEnvListData: av,
@@ -261,10 +257,14 @@ export default class EnvList extends Component<any, any> {
       type: 'envList/addEnvList',
       payload,
       callback: (res) => {
-        // if (res) {
-        //   // 添加成功
-        // }
-        this.getEnvList({ page: 1 });
+        console.log(res.message);
+        if (res.message) {
+          // 添加成功
+          message.success(res.message);
+          this.getEnvList({ page: 1 });
+        } else if (res.status == 400) {
+          message.error('有同名或同地址的环境,创建失败!');
+        }
         // console.log(res);
       },
     });
@@ -324,7 +324,7 @@ export default class EnvList extends Component<any, any> {
 
   // 弹出编辑对话框
   showEditModal = (text, record) => {
-    console.log(record);
+    // console.log(record);
     this.setState({
       editModalVisiable: true,
       currentEnvInfo: record,
@@ -408,9 +408,10 @@ export default class EnvList extends Component<any, any> {
       total,
     } = this.state;
     const { envList } = this.props;
-    if (envList.results !== undefined) {
+    // console.log(envList);
+    if (envList !== undefined) {
       // 为envList数组中的每个元素添加一个key属性
-      envList.results.map((item) => {
+      envList.map((item) => {
         item.key = item.id;
       });
     }
@@ -442,7 +443,7 @@ export default class EnvList extends Component<any, any> {
           <Table
             columns={columns}
             rowSelection={rowSelection}
-            dataSource={envList.results}
+            dataSource={envList}
             loading={tableLoading}
             pagination={paginationProps}
             bordered
@@ -482,7 +483,7 @@ export default class EnvList extends Component<any, any> {
               <Input />
             </Form.Item>
 
-            <Form.Item name="is_valid" label="状态">
+            <Form.Item name="is_valid" label="状态" valuePropName="checked">
               <Switch
                 checkedChildren="启用"
                 unCheckedChildren="禁用"
@@ -530,7 +531,7 @@ export default class EnvList extends Component<any, any> {
                 <Input />
               </Form.Item>
 
-              <Form.Item name="is_valid" label="状态">
+              <Form.Item name="is_valid" label="状态" valuePropName="checked">
                 <Switch
                   checkedChildren="启用"
                   unCheckedChildren="禁用"
@@ -559,3 +560,7 @@ export default class EnvList extends Component<any, any> {
     );
   }
 }
+
+export default connect(({ envList }) => ({
+  envList: envList.envList,
+}))(EnvList);

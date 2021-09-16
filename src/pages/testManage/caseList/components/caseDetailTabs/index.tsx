@@ -31,15 +31,18 @@ const CaseDetailTabs = ({
       type: 'testCase/debugCase',
       payload,
       callback: (res) => {
-        console.log(res);
+        // console.log(res);
         // responseTabs.push(res.case_metas)
         // responseTreeData.push(res.tree)
       },
     });
   };
+
   const [debugResponseVisible, setdebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const tabDatas = caseDetail.request.teststeps[0];
+  const tabDatas = Object.keys(caseDetail).length
+    ? caseDetail.request.teststeps[0]
+    : {};
 
   const variables = tabDatas.variables ?? [];
 
@@ -118,7 +121,7 @@ const CaseDetailTabs = ({
   return (
     <>
       <div className={styles.tabBody}>
-        <Tabs defaultActiveKey="1">
+        <Tabs defaultActiveKey="1" type="card">
           <TabPane tab="message" key="1">
             <MessageTab
               caseDetail={caseDetail}
@@ -154,10 +157,10 @@ const CaseDetailTabs = ({
       </div>
       <div className={styles.footer}>
         <div className={styles.left}>
-          <Button className={styles.runBtn} onClick={showDebugModal}>
+          <Button className={styles.basicBtn} onClick={showDebugModal}>
             调试
           </Button>
-          <Button className={styles.saveBtn}>保存</Button>
+          <Button className={styles.successBtn}>保存</Button>
         </div>
         <div className={styles.right}>
           <Button className={styles.cancelBtn} onClick={hideCaseDetail}>
@@ -170,14 +173,14 @@ const CaseDetailTabs = ({
         style={{ display: debugResponseVisible ? 'block' : 'none' }}
       >
         <div className={styles.topBtn}>
-          <Button className={styles.runBtn}>清空结果</Button>
-          <Button className={styles.runBtn}>提取数据</Button>
+          <Button className={styles.basicBtn}>清空结果</Button>
+          <Button className={styles.basicBtn}>提取数据</Button>
         </div>
         <div className={styles.responseTabs}>
-          <Tabs defaultActiveKey="1">
+          <Tabs defaultActiveKey="1" type="card">
             {debugResponse.case_metas
               ? debugResponse.case_metas.map((item, index) => {
-                  console.log(item);
+                  // console.log(item);
                   return (
                     <TabPane tab={item.name} key={`${item.name}${item.index}`}>
                       <ResponseTab
