@@ -26,7 +26,7 @@ import AddModal from './addModal';
 import EditModal from './editModal';
 import { FormListContext } from '@ant-design/pro-form/lib/components/List';
 //获取接口参数
-class TaskList extends React.Component {
+class TaskList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -59,22 +59,9 @@ class TaskList extends React.Component {
         page: 1,
       },
       callback: (taskRes) => {
-        // const displayTable = []
-        // for(let i = 0; i< taskRes.results.length ; i++){
-        //   displayTable.push({
-        //     id: taskRes.results[i].id,
-        //     name:  taskRes.results[i].name,
-        //     crontab_time: taskRes.results[i].crontab_time,
-        //     description: taskRes.results[i].description,
-        //     create_time: taskRes.results[i].task_extend.create_time,
-        //     date_changed: taskRes.results[i].date_changed
-        //   })
-        // }
-
         this.setState({
           tableLoading: false,
-          total: taskRes.results.length,
-          // displayTable: displayTable
+          total: taskRes.count,
         });
       },
     });
@@ -119,8 +106,8 @@ class TaskList extends React.Component {
       payload: {
         id: record.id,
       },
-      callback: (res) => {
-        ///还需要调用获取列表
+      callback: () => {
+        this.getTaskList();
       },
     });
   }

@@ -16,23 +16,8 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const SearchProject = (props: any) => {
-  //点击搜索框中的项目选择时弹出
-  // const handleProjectListVisible = () => {
-  //   props.dispatch({
-  //     type: 'projectList/getProjectList',
-  //     payload: {
-  //       page: 1,
-  //     },
-  //   });
-  // };
-  // const handleUserListVisible = () => {
-  //   props.dispatch({
-  //     type: 'userList/getUserList',
-  //   });
-  // };
+  console.log('props', props);
   const [form] = Form.useForm();
-  // const projectList = props?.projectList?.projectList || [];
-  // const testUserList = props?.userList?.userList || [];
 
   //重置搜索框
   const onReset = () => {
@@ -41,16 +26,6 @@ const SearchProject = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
-    //   for (let i = 0; i < projectList.length; i++) {
-    //     if (value.project && value.project == projectList[i].project_name) {
-    //       value.project = projectList[i].id;
-    //     }
-    //   }
-    //   for (let i = 0; i < testUserList.length; i++) {
-    //     if (value.test_user && value.test_user == testUserList[i].username) {
-    //       value.test_user = testUserList[i].id;
-    //     }
-    //   }
     props.dispatch({
       type: 'projectList/getProjectList',
       payload: {

@@ -4,7 +4,7 @@ import { connect } from 'umi';
 import TreeNode from './treeNode';
 const { Panel } = Collapse;
 const { Option } = Select;
-class EditModal extends React.Component {
+class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.editSubmit = this.editSubmit.bind(this);

@@ -10,8 +10,8 @@ export async function getTaskList(data) {
 export async function addTaskList(data) {
   return requestUap('/task/', {
     method: 'POST',
-    data,
-    requestType: 'form',
+    requestType: 'json',
+    data: data,
   });
 }
 

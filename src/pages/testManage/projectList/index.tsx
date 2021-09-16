@@ -23,7 +23,7 @@ import '/src/styles/global.less';
 import SearchProject from './search';
 
 //获取接口参数
-class ProjectList extends React.Component {
+class ProjectList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     //模态框中的提交按钮
@@ -91,10 +91,10 @@ class ProjectList extends React.Component {
       payload: {
         page: page,
       },
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.setState({
           tableLoading: false,
-          total: res.count,
+          total: rescount,
         });
       },
     });
@@ -154,6 +154,7 @@ class ProjectList extends React.Component {
         this.getProjectList(1);
       },
     });
+    this.onReset();
   }
 
   /* =======================编辑功能=========================== */
@@ -331,7 +332,7 @@ class ProjectList extends React.Component {
     return (
       <div>
         <Card>
-          <SearchProject />
+          <SearchProject getProjectList={this.getProjectList} />
           <div className="ant-btn-add">
             <Button
               type="primary"

@@ -41,6 +41,7 @@ class AddModal extends React.Component {
       },
     });
     this.props.showAddModal(false);
+    this.onReset();
   }
 
   //添加模块中监听所有值的变化

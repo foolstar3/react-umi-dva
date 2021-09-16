@@ -32,11 +32,17 @@ export default {
         callback(res);
       }
     },
-    *editSubmit({ payload }, { call, put }) {
-      const res = yield call(updateTaskList, { ...payload });
+    *editSubmit({ payload, callback }, { call, put }) {
+      yield call(updateTaskList, { ...payload });
+      if (callback) {
+        callback(res);
+      }
     },
-    *deleteTaskList({ payload }, { call, put }) {
-      const res = yield call(deleteTaskList, { ...payload });
+    *deleteTaskList({ payload, callback }, { call, put }) {
+      yield call(deleteTaskList, { ...payload });
+      if (callback) {
+        callback(res);
+      }
     },
   },
   reducers: {

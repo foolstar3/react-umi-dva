@@ -4,7 +4,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
 
-class AddModal extends React.Component {
+class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,11 +31,11 @@ class AddModal extends React.Component {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
-        page: 1,
+        page: 'None',
       },
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.setState({
-          projectList: res.results,
+          projectList: res,
         });
       },
     });
@@ -61,6 +61,7 @@ class AddModal extends React.Component {
       },
     });
     this.props.showAddModal(false);
+    this.onReset();
   }
 
   //添加模块中监听所有值的变化

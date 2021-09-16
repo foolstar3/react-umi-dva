@@ -24,7 +24,7 @@ import AddModal from './addModal';
 import EditModal from './editModal';
 
 //获取接口参数
-class ModuleList extends React.Component {
+class ModuleList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -56,10 +56,10 @@ class ModuleList extends React.Component {
       payload: {
         page: page,
       },
-      callback: (res) => {
+      callback: (res, resCount) => {
         this.setState({
           tableLoading: false,
-          total: res.count,
+          total: resCount,
         });
       },
     });
@@ -119,9 +119,10 @@ class ModuleList extends React.Component {
   render() {
     const { tableLoading, total } = this.state;
     const { editVisible, moduleList } = this.props.moduleList;
-    moduleList.map((item) => {
-      item.key = item.id;
-    });
+    moduleList &&
+      moduleList.map((item) => {
+        item.key = item.id;
+      });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
