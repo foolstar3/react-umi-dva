@@ -82,15 +82,13 @@ class ProjectList extends React.Component<any, any> {
     this.setState({
       tableLoading: true,
     });
-    this.getProjectList(1);
+    this.getProjectList({ payload: { page: 1 } });
   }
 
-  getProjectList = (page: any) => {
+  getProjectList = (payload) => {
     this.props.dispatch({
       type: 'projectList/getProjectList',
-      payload: {
-        page: page,
-      },
+      payload,
       callback: (res, rescount) => {
         this.setState({
           tableLoading: false,
@@ -151,7 +149,7 @@ class ProjectList extends React.Component<any, any> {
             total: total + 1,
           });
         }
-        this.getProjectList(1);
+        this.getProjectList({ payload: { page: 1 } });
       },
     });
     this.onReset();
@@ -161,7 +159,6 @@ class ProjectList extends React.Component<any, any> {
 
   //编辑的地方弹出模态框
   showEditModal(_, record) {
-    console.log('record', record);
     this.setState({
       editVisible: true,
       currentValue: record,
@@ -191,22 +188,15 @@ class ProjectList extends React.Component<any, any> {
   //项目列表单每一项的编辑提交
   editSubmit(value: any) {
     const { tempEditValue, currentValue } = this.state;
+    const payload = { ...tempEditValue, id: currentValue.id };
     this.setState({
       editVisible: false,
     });
     this.props.dispatch({
       type: 'projectList/editProjectList',
-      payload: {
-        ...tempEditValue,
-        id: currentValue.id,
-      },
+      payload,
       callback: () => {
-        this.props.dispatch({
-          type: 'projectList/getProjectList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.getProjectList({ payload: { page: 1 } });
       },
     });
   }
@@ -221,14 +211,13 @@ class ProjectList extends React.Component<any, any> {
         id: record.id,
       },
       callback: () => {
-        this.getProjectList(1);
+        this.getProjectList({ page: 1 });
       },
     });
   }
 
   render() {
     const { projectList } = this.props?.projectList || [];
-    console.log('projectList', projectList);
     const leaderList = this.state?.leaderList || [];
     //为数组中每一个元素增加一个key值，防止报错
     // projectList &&
@@ -242,7 +231,7 @@ class ProjectList extends React.Component<any, any> {
       showQuickJumper: true,
       pageSize: 10,
       onChange: (page) => {
-        this.getProjectList(page);
+        this.getProjectList({ page });
       },
       total: total,
       showTotal: () => `共${total}条`,
@@ -310,6 +299,8 @@ class ProjectList extends React.Component<any, any> {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDelete(record)}

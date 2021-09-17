@@ -47,15 +47,13 @@ class ModuleList extends React.Component<any, any> {
     this.setState({
       tableLoading: true,
     });
-    this.getModuleList(1);
+    this.getModuleList({ payload: { page: 1 } });
   }
 
-  getModuleList = (page: any) => {
+  getModuleList = (payload) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
-      payload: {
-        page: page,
-      },
+      payload,
       callback: (res, resCount) => {
         this.setState({
           tableLoading: false,
@@ -111,7 +109,7 @@ class ModuleList extends React.Component<any, any> {
         id: record.id,
       },
       callback: () => {
-        this.getModuleList(1);
+        this.getModuleList({ payload: { page: 1 } });
       },
     });
   }
@@ -129,7 +127,7 @@ class ModuleList extends React.Component<any, any> {
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getModuleList(page);
+        this.getModuleList({ page });
       },
     };
     const columns: any = [
@@ -200,6 +198,8 @@ class ModuleList extends React.Component<any, any> {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDelete(record)}
@@ -222,7 +222,7 @@ class ModuleList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal />
+          <SearchModal getModuleList={this.getModuleList} />
           <div className="ant-btn-add">
             <Button
               type="primary"

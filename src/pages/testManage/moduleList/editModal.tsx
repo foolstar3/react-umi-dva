@@ -103,7 +103,7 @@ class EditModal extends React.Component {
             onCancel={this.editCancel}
             okText="确认"
             okButtonProps={{ shape: 'round' }}
-            cancelButtonProps={{ shape: 'round', type: 'text' }}
+            cancelButtonProps={{ shape: 'round' }}
           >
             <Form
               name="basic"

@@ -25,6 +25,7 @@ class AddModal extends React.Component<any, any> {
     this.getModuleList = this.getModuleList.bind(this);
     this.getCaseList = this.getCaseList.bind(this);
     this.getTaskList = this.getTaskList.bind(this);
+    this.getTreeNode = this.getTreeNode.bind(this);
     this.state = {
       tempAddValue: '',
       caseNumber: 0,
@@ -35,6 +36,7 @@ class AddModal extends React.Component<any, any> {
       projectList: [],
     };
   }
+
   formRef = React.createRef<FormInstance>();
 
   componentDidMount() {
@@ -63,9 +65,7 @@ class AddModal extends React.Component<any, any> {
       type: 'moduleList/getModuleList',
       payload,
       callback: (res) => {
-        this.setState({
-          moduleList: res,
-        });
+        this.getTreeNode(res);
       },
     });
   }
@@ -90,19 +90,40 @@ class AddModal extends React.Component<any, any> {
   }
   getTaskList() {
     this.props.dispatch({
-      type: 'taskList/getTaskListt',
+      type: 'taskList/getTaskList',
       payload: {
         page: 1,
       },
     });
   }
 
+  getTreeNode(moduleListChange: any) {
+    const caseList = this.props.testCase.caseList.results;
+    const moduleList = moduleListChange;
+    const treeData = [];
+    moduleList &&
+      moduleList.forEach((moduleItem) => {
+        const children = [];
+        caseList.forEach((caseItem) => {
+          caseItem.module_name === moduleItem.module_name &&
+            children.push({
+              title: caseItem.name,
+              key: caseItem.id,
+            });
+        });
+        treeData.push({
+          title: moduleItem.module_name,
+          key: moduleItem.create_time,
+          children: children,
+        });
+      });
+    this.setState({
+      treeData: treeData,
+    });
+  }
+
   //在模态框中点击提交按钮
   handleSubmit() {
-    console.log(
-      'this.state.tempAddValue.project',
-      this.state.tempAddValue.project,
-    );
     const addTask = this.state.tempAddValue;
     if (addTask.enabled == undefined) {
       addTask.enabled = true;
@@ -136,7 +157,6 @@ class AddModal extends React.Component<any, any> {
         month_of_year: addTask.crontab.charAt(4),
       },
     };
-    console.log('requestData', requestData);
     this.props.dispatch({
       type: 'taskList/addTaskList',
       payload: {
@@ -161,8 +181,6 @@ class AddModal extends React.Component<any, any> {
   handleProjectChange(project: any) {
     console.log('project', project);
     const projectList = this.state.projectList;
-    let moduleList = [];
-    const caseList = this.props.testCase.caseList.results;
     //筛选外层数据，放入treedate外层
     for (let i = 0; i < projectList.length; i++) {
       if (project && projectList[i].project_name === project) {
@@ -170,28 +188,6 @@ class AddModal extends React.Component<any, any> {
         this.getModuleList(payload);
       }
     }
-    moduleList = this.state.moduleList;
-    const treeData = [];
-    moduleList &&
-      moduleList.forEach((moduleItem) => {
-        const children = [];
-        caseList.forEach((caseItem) => {
-          caseItem.module_name === moduleItem.module_name &&
-            children.push({
-              title: caseItem.name,
-              key: caseItem.id,
-            });
-        });
-        treeData.push({
-          title: moduleItem.module_name,
-          key: moduleItem.create_time,
-          children: children,
-        });
-      });
-    this.setState({
-      treeData: treeData,
-    });
-    console.log('this.state', this.state.treeData);
   }
 
   //添加项目的返回键
@@ -199,10 +195,6 @@ class AddModal extends React.Component<any, any> {
     this.props.showAddModal(false);
     this.onReset();
   };
-
-  handleEnvListVisible() {}
-
-  handleProjectListVisible() {}
   //选择用例个数传参
   caseNumber(caseArray: any, checkedNumber: any) {
     this.setState({
@@ -304,7 +296,6 @@ class AddModal extends React.Component<any, any> {
                   0
                 }
                 style={{ width: 314 }}
-                onFocus={this.handleEnvListVisible}
               >
                 {envList &&
                   Array.isArray(envList) &&
@@ -325,7 +316,6 @@ class AddModal extends React.Component<any, any> {
             {
               <Select
                 style={{ width: 314 }}
-                onFocus={this.handleProjectListVisible}
                 showSearch
                 allowClear
                 optionFilterProp="children"

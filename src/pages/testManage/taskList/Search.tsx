@@ -32,6 +32,13 @@ const SearchModel = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
+    if (value.Enable_status == '全部') {
+      value.Enable_status == '';
+    } else if (value.Enable_status == '启用') {
+      value.Enable_status == true;
+    } else {
+      value.Enable_status == false;
+    }
     props.dispatch({
       type: 'taskList/getTaskList',
       payload: {

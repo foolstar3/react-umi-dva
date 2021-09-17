@@ -26,14 +26,12 @@ const SearchProject = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
-    props.dispatch({
-      type: 'projectList/getProjectList',
-      payload: {
-        page: 1,
-        project_name: value.project_name,
-        description: value.description,
-      },
-    });
+    const payload = {
+      page: 1,
+      project_name: value.project_name,
+      description: value.description,
+    };
+    props.getProjectList(payload);
   };
 
   return (

@@ -39,7 +39,7 @@ export default {
     *deleteProjectList({ payload, callback }, { call, put }) {
       yield call(deleteProjectList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
   },
