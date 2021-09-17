@@ -22,6 +22,7 @@ const MessageTab = ({
   const [curBefore, setCurBefore] = useState(caseDetail.before);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [beforeTableData, setBeforeTableData] = useState([]);
+  const [afterTableData, setAfterTableData] = useState([]);
   const [curProject, setCurProject] = useState(caseDetail.project);
   const [curModuleName, setCurModuleName] = useState(caseDetail.module_name);
   const [curModuleId, setCurModuleId] = useState(caseDetail.module);
@@ -98,6 +99,30 @@ const MessageTab = ({
       return prev;
     });
   };
+  const addAfter = () => {
+    setAfterTableData((prev) => {
+      const tableData = checkedKeys.filter(
+        (item) => Object.keys(item).indexOf('id') !== -1,
+      );
+      if (tableData.length) {
+        const data = [];
+        let index = prev.length;
+        tableData.forEach((item) => {
+          data.push({
+            id: item.id,
+            name: item.name,
+            key: item.name,
+            index,
+          });
+          index++;
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        next.push(...data);
+        return next;
+      }
+      return prev;
+    });
+  };
   const renderBeforeTable = () => {
     return (
       <div
@@ -110,7 +135,18 @@ const MessageTab = ({
       </div>
     );
   };
-
+  const renderAfterTable = () => {
+    return (
+      <div
+        className={classnames(
+          styles.afterContent,
+          afterTableData.length ? '' : styles.hidden,
+        )}
+      >
+        <DragableTable tableData={afterTableData} />
+      </div>
+    );
+  };
   return (
     <Form {...formLayout} initialValues={caseDetail}>
       <div className={styles.content}>
@@ -173,7 +209,9 @@ const MessageTab = ({
                       <Button type="primary" onClick={() => addBefore()}>
                         添加前置步骤
                       </Button>
-                      <Button type="primary">添加后置步骤</Button>
+                      <Button type="primary" onClick={() => addAfter()}>
+                        添加后置步骤
+                      </Button>
                     </div>
                     <div className={styles.selectionTree}>
                       <Tree checkable onCheck={onCheck} treeData={treeData} />
@@ -197,7 +235,9 @@ const MessageTab = ({
           <Col span={24}>
             <Form.Item name="after">
               <Collapse>
-                <Panel header="后置步骤（选中）" key="selected_after"></Panel>
+                <Panel header="后置步骤（选中）" key="selected_after">
+                  {renderAfterTable()}
+                </Panel>
               </Collapse>
             </Form.Item>
           </Col>

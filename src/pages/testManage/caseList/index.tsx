@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
+import { getFuncs } from '@/services/testCase';
 import { Card, Table, Button, Popconfirm } from 'antd';
 import {
   PlayCircleOutlined,
@@ -122,7 +123,18 @@ class CaseList extends Component<any, any> {
   onModuleChange = (module, project) => {
     this.getCaseList({ page: 'None', project, module });
   };
+
   showCaseDetail = (record) => {
+    /**
+     * 获取函数hooks
+     */
+    const funcsName = getFuncs(record.project)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     const { caseList } = this.props;
     caseList.result?.filter((item) =>
       record

@@ -20,3 +20,10 @@ export async function debugCase(data) {
     data,
   });
 }
+
+export async function getFuncs(data) {
+  return requestUap(`/getfuncs`, {
+    method: 'GET',
+    data,
+  });
+}
