@@ -34,12 +34,10 @@ class GlobalVarList extends React.Component<any, any> {
     this.getGlobalVarList(1);
   }
 
-  getGlobalVarList(page: any) {
+  getGlobalVarList(payload: any) {
     this.props.dispatch({
       type: 'globalVarList/getGlobalVarList',
-      payload: {
-        page: page,
-      },
+      payload,
       callback: (res) => {
         this.setState({
           tableLoading: false,
@@ -112,7 +110,7 @@ class GlobalVarList extends React.Component<any, any> {
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getGlobalVarList(page);
+        this.getGlobalVarList({ page });
       },
     };
     const columns = [
@@ -171,6 +169,8 @@ class GlobalVarList extends React.Component<any, any> {
                   编辑
                 </Button>
                 <Popconfirm
+                  okText="Yes"
+                  cancelText="No"
                   title="确定删除？"
                   icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                   onConfirm={() => this.handleDelete(record)}
@@ -194,7 +194,7 @@ class GlobalVarList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal />
+          <SearchModal getGlobalVarList={this.getGlobalVarList} />
           <div className="ant-btn-add">
             <Button
               type="primary"

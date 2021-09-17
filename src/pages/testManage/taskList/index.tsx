@@ -24,9 +24,9 @@ import './index.less';
 import SearchModal from './Search';
 import AddModal from './addModal';
 import EditModal from './editModal';
-import { FormListContext } from '@ant-design/pro-form/lib/components/List';
+import '/src/styles/global.less';
 //获取接口参数
-class TaskList extends React.Component {
+class TaskList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -35,50 +35,48 @@ class TaskList extends React.Component {
     this.handleEditModal = this.handleEditModal.bind(this);
     this.showEditModal = this.showEditModal.bind(this);
     this.getTaskList = this.getTaskList.bind(this);
+    this.getProjectList = this.getProjectList.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
       tempValue: '',
       tableLoading: false,
       total: 0,
+      projectList: [],
       // displayTable: []
     };
   }
 
-  componentDidMount() {
-    this.getTaskList();
+  UNSAFE_componentWillMount() {
+    this.getTaskList({ payload: { page: 1 } });
   }
 
-  getTaskList() {
+  getTaskList = (payload) => {
     this.setState({
       tableLoading: true,
     });
     this.props.dispatch({
       type: 'taskList/getTaskList',
-      payload: {
-        page: 1,
-      },
-      callback: (taskRes) => {
-        // const displayTable = []
-        // for(let i = 0; i< taskRes.results.length ; i++){
-        //   displayTable.push({
-        //     id: taskRes.results[i].id,
-        //     name:  taskRes.results[i].name,
-        //     crontab_time: taskRes.results[i].crontab_time,
-        //     description: taskRes.results[i].description,
-        //     create_time: taskRes.results[i].task_extend.create_time,
-        //     date_changed: taskRes.results[i].date_changed
-        //   })
-        // }
-
+      payload,
+      callback: (res, taskCount) => {
         this.setState({
           tableLoading: false,
-          total: taskRes.results.length,
-          // displayTable: displayTable
+          total: taskCount,
         });
       },
     });
-  }
+  };
+  getProjectList = (payload: any) => {
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: (res) => {
+        this.setState({
+          projectList: res.results,
+        });
+      },
+    });
+  };
 
   /* =======================新增按钮及模态框功能=========================== */
 
@@ -119,23 +117,27 @@ class TaskList extends React.Component {
       payload: {
         id: record.id,
       },
-      callback: (res) => {
-        ///还需要调用获取列表
+      callback: () => {
+        this.getTaskList({ page: 1 });
       },
     });
   }
 
   render() {
-    const { tableLoading, total, displayTable } = this.state;
-    const { editVisible, taskList } = this.props.taskList;
-    taskList.map((item) => {
-      item.key = item.id;
-    });
+    const { tableLoading, total } = this.state;
+    const { taskList } = this.props.taskList;
+    taskList &&
+      taskList.map((item) => {
+        item.key = item.id;
+      });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
       showTotal: () => `共${total}条`,
+      onChange: (page) => {
+        this.getTaskList({ page });
+      },
     };
     const columns: any = [
       {
@@ -209,45 +211,45 @@ class TaskList extends React.Component {
         width: '120px',
         render: (_: any, record: any) => {
           return (
-            <div>
-              <Space size="small">
-                <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
-                  <Button
-                    className="button_run"
-                    type="primary"
-                    icon={<PlayCircleOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    运行
-                  </Button>
-                </Popconfirm>
-
+            <div className="action_button">
+              <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
                 <Button
+                  className="button_run"
                   type="primary"
-                  onClick={() => this.showEditModal(record)}
-                  icon={<EditOutlined />}
+                  icon={<PlayCircleOutlined />}
                   shape="round"
                   size="small"
                 >
-                  编辑
+                  运行
                 </Button>
-                <Popconfirm
-                  title="确定删除？"
-                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                  onConfirm={() => this.handleDelete(record)}
+              </Popconfirm>
+
+              <Button
+                type="primary"
+                onClick={() => this.showEditModal(record)}
+                icon={<EditOutlined />}
+                shape="round"
+                size="small"
+              >
+                编辑
+              </Button>
+              <Popconfirm
+                okText="Yes"
+                cancelText="No"
+                title="确定删除？"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={() => this.handleDelete(record)}
+              >
+                <Button
+                  type="primary"
+                  danger
+                  icon={<DeleteOutlined />}
+                  shape="round"
+                  size="small"
                 >
-                  <Button
-                    type="primary"
-                    danger
-                    icon={<DeleteOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    删除
-                  </Button>
-                </Popconfirm>
-              </Space>
+                  删除
+                </Button>
+              </Popconfirm>
             </div>
           );
         },
@@ -291,7 +293,8 @@ class TaskList extends React.Component {
   }
 }
 
-export default connect(({ taskList, userList }) => ({
+export default connect(({ taskList, userList, projectList }) => ({
   taskList,
   userList,
+  projectList,
 }))(TaskList);

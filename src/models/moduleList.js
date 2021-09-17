@@ -21,7 +21,7 @@ export default {
         },
       });
       if (callback) {
-        callback(res);
+        callback(res.results ?? res, res.count);
       }
     },
 

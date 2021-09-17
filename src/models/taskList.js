@@ -20,23 +20,26 @@ export default {
         },
       });
       if (callback) {
-        callback(res);
+        callback(res.results ?? res, res.count);
       }
     },
     *addTaskList({ payload, callback }, { call, put }) {
       const res = yield call(addTaskList, { ...payload });
-      yield put({
-        type: 'updateTaskList',
-      });
+      if (callback) {
+        callback();
+      }
+    },
+    *editSubmit({ payload, callback }, { call, put }) {
+      const res = yield call(updateTaskList, { ...payload });
       if (callback) {
         callback(res);
       }
     },
-    *editSubmit({ payload }, { call, put }) {
-      const res = yield call(updateTaskList, { ...payload });
-    },
-    *deleteTaskList({ payload }, { call, put }) {
+    *deleteTaskList({ payload, callback }, { call, put }) {
       const res = yield call(deleteTaskList, { ...payload });
+      if (callback) {
+        callback(res);
+      }
     },
   },
   reducers: {

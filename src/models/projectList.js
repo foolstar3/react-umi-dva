@@ -21,7 +21,7 @@ export default {
         },
       });
       if (callback) {
-        callback(res);
+        callback(res.results ?? res, res.count);
       }
     },
     *addProjectList({ payload, callback }, { call, put }) {
@@ -39,7 +39,7 @@ export default {
     *deleteProjectList({ payload, callback }, { call, put }) {
       yield call(deleteProjectList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
   },

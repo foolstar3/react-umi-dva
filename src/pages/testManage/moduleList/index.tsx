@@ -24,7 +24,7 @@ import AddModal from './addModal';
 import EditModal from './editModal';
 
 //获取接口参数
-class ModuleList extends React.Component {
+class ModuleList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -47,19 +47,17 @@ class ModuleList extends React.Component {
     this.setState({
       tableLoading: true,
     });
-    this.getModuleList(1);
+    this.getModuleList({ payload: { page: 1 } });
   }
 
-  getModuleList = (page: any) => {
+  getModuleList = (payload) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
-      payload: {
-        page: page,
-      },
-      callback: (res) => {
+      payload,
+      callback: (res, resCount) => {
         this.setState({
           tableLoading: false,
-          total: res.count,
+          total: resCount,
         });
       },
     });
@@ -111,7 +109,7 @@ class ModuleList extends React.Component {
         id: record.id,
       },
       callback: () => {
-        this.getModuleList(1);
+        this.getModuleList({ payload: { page: 1 } });
       },
     });
   }
@@ -119,16 +117,17 @@ class ModuleList extends React.Component {
   render() {
     const { tableLoading, total } = this.state;
     const { editVisible, moduleList } = this.props.moduleList;
-    moduleList.map((item) => {
-      item.key = item.id;
-    });
+    moduleList &&
+      moduleList.map((item) => {
+        item.key = item.id;
+      });
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getModuleList(page);
+        this.getModuleList({ page });
       },
     };
     const columns: any = [
@@ -199,6 +198,8 @@ class ModuleList extends React.Component {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDelete(record)}
@@ -221,7 +222,7 @@ class ModuleList extends React.Component {
     return (
       <div>
         <Card>
-          <SearchModal />
+          <SearchModal getModuleList={this.getModuleList} />
           <div className="ant-btn-add">
             <Button
               type="primary"
