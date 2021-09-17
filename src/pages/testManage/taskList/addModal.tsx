@@ -24,7 +24,6 @@ class AddModal extends React.Component<any, any> {
     this.getEnvList = this.getEnvList.bind(this);
     this.getModuleList = this.getModuleList.bind(this);
     this.getCaseList = this.getCaseList.bind(this);
-    this.getTaskList = this.getTaskList.bind(this);
     this.getTreeNode = this.getTreeNode.bind(this);
     this.state = {
       tempAddValue: '',
@@ -42,8 +41,7 @@ class AddModal extends React.Component<any, any> {
   componentDidMount() {
     this.getProjectList();
     this.getEnvList();
-    this.getCaseList({ payload: { page: 'None' } });
-    this.getTaskList();
+    this.getCaseList({ page: 'None' });
   }
 
   getProjectList() {
@@ -88,14 +86,6 @@ class AddModal extends React.Component<any, any> {
       },
     });
   }
-  getTaskList() {
-    this.props.dispatch({
-      type: 'taskList/getTaskList',
-      payload: {
-        page: 1,
-      },
-    });
-  }
 
   getTreeNode(moduleListChange: any) {
     const caseList = this.props.testCase.caseList.results;
@@ -125,9 +115,9 @@ class AddModal extends React.Component<any, any> {
   //在模态框中点击提交按钮
   handleSubmit() {
     const addTask = this.state.tempAddValue;
-    if (addTask.enabled == undefined) {
-      addTask.enabled = true;
-    }
+    // if (addTask.enabled == undefined) {
+    //   addTask.enabled = true;
+    // }
     const projectList = this.props.projectList.projectList;
     const envList = this.props.envList.envList;
     for (let i = 0; i < projectList.length; i++) {
@@ -146,32 +136,37 @@ class AddModal extends React.Component<any, any> {
       name: addTask.name,
       args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${addTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
       description: addTask.description,
-      enabled: addTask.enabled,
+      enabled: addTask.enabled == false ? false : true,
       email_list: ['111'],
       project: addTask.project,
       crontab: {
-        minute: addTask.crontab.charAt(0),
-        hour: addTask.crontab.charAt(1),
-        day_of_week: addTask.crontab.charAt(2),
-        day_of_month: addTask.crontab.charAt(3),
-        month_of_year: addTask.crontab.charAt(4),
+        minute: addTask?.crontab?.charAt(0) || '',
+        hour: addTask?.crontab?.charAt(1) || '',
+        day_of_week: addTask?.crontab?.charAt(2) || '',
+        day_of_month: addTask?.crontab?.charAt(3) || '',
+        month_of_year: addTask?.crontab?.charAt(4) || '',
       },
     };
-    this.props.dispatch({
-      type: 'taskList/addTaskList',
-      payload: {
-        ...requestData,
-      },
-      callback: () => {
-        this.getTaskList();
-      },
-    });
+
+    addTask.name &&
+      addTask.env &&
+      addTask.project &&
+      this.props.dispatch({
+        type: 'taskList/addTaskList',
+        payload: {
+          ...requestData,
+        },
+        callback: () => {
+          this.props.getTaskList({ page: 1 });
+        },
+      });
     this.props.showAddModal(false);
     this.onReset();
   }
 
   //添加任务中监听所有值的变化
   handleAddValueChange(singleValueChange, ValueChange) {
+    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -179,7 +174,6 @@ class AddModal extends React.Component<any, any> {
 
   //模块数据
   handleProjectChange(project: any) {
-    console.log('project', project);
     const projectList = this.state.projectList;
     //筛选外层数据，放入treedate外层
     for (let i = 0; i < projectList.length; i++) {
@@ -264,14 +258,11 @@ class AddModal extends React.Component<any, any> {
           <Form.Item label="简要描述" name="description">
             <Input />
           </Form.Item>
-          <Form.Item label="状态" name="enabled" rules={[{ required: true }]}>
+          <Form.Item label="状态" name="enabled" valuePropName="checked">
             <Switch
               checkedChildren="启用"
               unCheckedChildren="禁用"
-              defaultChecked={true}
-              // onChange={(checked) => {
-              //   this.onSwitchChange(checked, text, record);
-              // }}
+              defaultChecked
             />
           </Form.Item>
           <Form.Item
@@ -302,7 +293,9 @@ class AddModal extends React.Component<any, any> {
                   envList.length &&
                   envList.map((item) => {
                     return (
-                      <Option value={item.env_name}>{item.env_name}</Option>
+                      <Option value={item.env_name} key={item.id}>
+                        {item.env_name}
+                      </Option>
                     );
                   })}
               </Select>

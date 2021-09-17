@@ -43,12 +43,14 @@ class TaskList extends React.Component<any, any> {
       tableLoading: false,
       total: 0,
       projectList: [],
+      currentPage: 1,
       // displayTable: []
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getTaskList({ payload: { page: 1 } });
+    this.getTaskList({ page: 1 });
+    this.getProjectList({ page: 'None' });
   }
 
   getTaskList = (payload) => {
@@ -72,12 +74,27 @@ class TaskList extends React.Component<any, any> {
       payload,
       callback: (res) => {
         this.setState({
-          projectList: res.results,
+          projectList: res,
         });
       },
     });
   };
 
+  onSwitchChange = (checked, text, record) => {
+    const changeStatus = {
+      enabled: checked,
+    };
+    this.props.dispatch({
+      type: 'taskList/onSwitchTask',
+      payload: {
+        id: record.id,
+        ...changeStatus,
+      },
+      callback: (res) => {
+        this.getTaskList({ page: 1 });
+      },
+    });
+  };
   /* =======================新增按钮及模态框功能=========================== */
 
   //主页”添加“按钮
@@ -103,9 +120,16 @@ class TaskList extends React.Component<any, any> {
   }
   //子模块--模态框传值
   showEditModal(record: any) {
-    this.setState({
-      editVisible: true,
-      tempValue: record,
+    console.log('record', record);
+    const projectListId = record.task_extend.project;
+    this.state.projectList.map((projectItem) => {
+      if (projectItem.id == projectListId) {
+        record.task_extend.project = projectItem.project_name;
+        this.setState({
+          editVisible: true,
+          tempValue: record,
+        });
+      }
     });
   }
 
@@ -124,13 +148,14 @@ class TaskList extends React.Component<any, any> {
   }
 
   render() {
-    const { tableLoading, total } = this.state;
+    const { tableLoading, total, currentPage } = this.state;
     const { taskList } = this.props.taskList;
     taskList &&
       taskList.map((item) => {
         item.key = item.id;
       });
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
@@ -165,14 +190,15 @@ class TaskList extends React.Component<any, any> {
         width: 150,
         align: 'center',
         render: (text, record, index) => {
+          console.log('text', text);
           return (
             <Switch
               checkedChildren="启用"
               unCheckedChildren="禁用"
               defaultChecked={text}
-              // onChange={(checked) => {
-              //   this.onSwitchChange(checked, text, record);
-              // }}
+              onChange={(checked) => {
+                this.onSwitchChange(checked, text, record);
+              }}
               key={index}
             />
           );
@@ -191,12 +217,6 @@ class TaskList extends React.Component<any, any> {
         width: 250,
         align: 'center',
       },
-      // {
-      //   title: '创建时间',
-      //   dataIndex: 'create_time',
-      //   key: 'create_time',
-      //   align: 'center',
-      // },
       {
         title: '更新时间',
         dataIndex: 'date_changed',
@@ -258,7 +278,7 @@ class TaskList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal />
+          <SearchModal getTaskList={this.getTaskList} />
           <div className="ant-btn-add">
             <Button
               type="primary"
@@ -282,11 +302,13 @@ class TaskList extends React.Component<any, any> {
         <AddModal
           showAddModal={this.handleAddTask}
           addVisible={this.state.addVisible}
+          getTaskList={this.getTaskList}
         />
         <EditModal
           showEditModal={this.handleEditModal}
           editVisible={this.state.editVisible}
           tempValue={this.state.tempValue}
+          onSwitchChange={this.onSwitchChange}
         />
       </div>
     );

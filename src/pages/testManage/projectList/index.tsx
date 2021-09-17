@@ -64,6 +64,7 @@ class ProjectList extends React.Component<any, any> {
       //负责人列表编号和名字
       leaderList: [],
       //空数组，解决添加项目取消后，但是数据未消失情况
+      currentPage: 1,
     };
   }
 
@@ -82,7 +83,7 @@ class ProjectList extends React.Component<any, any> {
     this.setState({
       tableLoading: true,
     });
-    this.getProjectList({ payload: { page: 1 } });
+    this.getProjectList({ page: 1 });
   }
 
   getProjectList = (payload) => {
@@ -149,7 +150,7 @@ class ProjectList extends React.Component<any, any> {
             total: total + 1,
           });
         }
-        this.getProjectList({ payload: { page: 1 } });
+        this.getProjectList({ page: 1 });
       },
     });
     this.onReset();
@@ -196,7 +197,7 @@ class ProjectList extends React.Component<any, any> {
       type: 'projectList/editProjectList',
       payload,
       callback: () => {
-        this.getProjectList({ payload: { page: 1 } });
+        this.getProjectList({ page: 1 });
       },
     });
   }
@@ -211,6 +212,7 @@ class ProjectList extends React.Component<any, any> {
         id: record.id,
       },
       callback: () => {
+        console.log('callaback');
         this.getProjectList({ page: 1 });
       },
     });
@@ -218,7 +220,7 @@ class ProjectList extends React.Component<any, any> {
 
   render() {
     const { projectList } = this.props?.projectList || [];
-    const leaderList = this.state?.leaderList || [];
+    const { leaderList, currentPage } = this.state;
     //为数组中每一个元素增加一个key值，防止报错
     // projectList &&
     //   projectList.map((item) => {
@@ -227,6 +229,7 @@ class ProjectList extends React.Component<any, any> {
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       pageSize: 10,

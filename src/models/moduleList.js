@@ -33,7 +33,7 @@ export default {
     },
 
     *editModuleList({ payload, callback }, { call, put }) {
-      yield call(updateModuleList, { ...payload });
+      const res = yield call(updateModuleList, { ...payload });
       if (callback) {
         callback();
       }

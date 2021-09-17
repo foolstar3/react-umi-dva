@@ -29,11 +29,11 @@ class EditModal extends React.Component {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
-        page: 1,
+        page: 'None',
       },
       callback: (res) => {
         this.setState({
-          projectList: res.results,
+          projectList: res,
         });
       },
     });

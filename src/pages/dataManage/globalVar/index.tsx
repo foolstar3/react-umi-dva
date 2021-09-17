@@ -27,11 +27,12 @@ class GlobalVarList extends React.Component<any, any> {
       tempValue: '',
       tableLoading: true,
       total: 0,
+      currentPage: 1,
     };
   }
 
   componentDidMount() {
-    this.getGlobalVarList(1);
+    this.getGlobalVarList({ page: 1 });
   }
 
   getGlobalVarList(payload: any) {
@@ -93,18 +94,19 @@ class GlobalVarList extends React.Component<any, any> {
         id: record.id,
       },
       callback: () => {
-        this.getGlobalVarList(1);
+        this.getGlobalVarList({ page: 1 });
       },
     });
   }
 
   render() {
-    const { tableLoading, total } = this.state;
-    const { editVisible, globalVarList } = this.props.globalVarList;
+    const { tableLoading, total, currentPage } = this.state;
+    const { globalVarList } = this.props.globalVarList;
     globalVarList.map((item) => {
       item.key = item.id;
     });
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,

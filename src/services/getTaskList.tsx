@@ -26,7 +26,7 @@ export async function deleteTaskList(data) {
 export async function updateTaskList(data) {
   return requestUap(`/task/${data.id}/`, {
     method: 'PUT',
-    data,
-    requestType: 'form',
+    data: data,
+    requestType: 'json',
   });
 }

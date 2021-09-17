@@ -27,6 +27,7 @@ class EditModal extends React.Component<any, any> {
       treeData: [],
       caseArray: [],
       projectList: [],
+      currentPage: 1,
     };
   }
   formRef = React.createRef<FormInstance>();
@@ -150,16 +151,19 @@ class EditModal extends React.Component<any, any> {
         month_of_year: editTask.crontab.charAt(4),
       },
     };
-    this.props.dispatch({
-      type: 'taskList/editSubmit',
-      payload: {
-        ...requestData,
-        id: this.props.tempValue.id,
-      },
-      callback: () => {
-        this.getTaskList();
-      },
-    });
+    editTask.name &&
+      editTask.env &&
+      editTask.project &&
+      this.props.dispatch({
+        type: 'taskList/editSubmit',
+        payload: {
+          ...requestData,
+          id: this.props.tempValue.id,
+        },
+        callback: () => {
+          this.getTaskList();
+        },
+      });
     this.onReset();
     this.props.showEditModal(false);
   }
@@ -266,6 +270,7 @@ class EditModal extends React.Component<any, any> {
                 label="状态"
                 name="enabled"
                 rules={[{ required: true }]}
+                valuePropName="checked"
               >
                 <Switch
                   checkedChildren="启用"
