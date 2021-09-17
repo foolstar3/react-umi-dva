@@ -40,6 +40,7 @@ class ModuleList extends React.Component<any, any> {
       tempValue: '',
       tableLoading: true,
       total: 0,
+      currentPage: 1,
     };
   }
 
@@ -47,7 +48,7 @@ class ModuleList extends React.Component<any, any> {
     this.setState({
       tableLoading: true,
     });
-    this.getModuleList({ payload: { page: 1 } });
+    this.getModuleList({ page: 1 });
   }
 
   getModuleList = (payload) => {
@@ -115,13 +116,14 @@ class ModuleList extends React.Component<any, any> {
   }
 
   render() {
-    const { tableLoading, total } = this.state;
+    const { tableLoading, total, currentPage } = this.state;
     const { editVisible, moduleList } = this.props.moduleList;
     moduleList &&
       moduleList.map((item) => {
         item.key = item.id;
       });
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,

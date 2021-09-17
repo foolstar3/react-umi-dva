@@ -31,13 +31,13 @@ export default {
       }
     },
     *editProjectList({ payload, callback }, { call, put }) {
-      yield call(updateProjectList, { ...payload });
+      const res = yield call(updateProjectList, { ...payload });
       if (callback) {
         callback();
       }
     },
     *deleteProjectList({ payload, callback }, { call, put }) {
-      yield call(deleteProjectList, { ...payload });
+      const res = yield call(deleteProjectList, { ...payload });
       if (callback) {
         callback(res);
       }

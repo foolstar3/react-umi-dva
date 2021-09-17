@@ -28,6 +28,7 @@ class DebugTalkList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
       debugTalkValue: '',
+      currentPage: 1,
     };
     //显示代码输入框
     this.showPythonModal = this.showPythonModal.bind(this);
@@ -97,12 +98,13 @@ class DebugTalkList extends React.Component<any, any> {
   }
 
   render() {
-    const { tableLoading, total, editVisible } = this.state;
+    const { tableLoading, total, editVisible, currentPage } = this.state;
     const { debugTalkList } = this.props.debugTalkList;
     debugTalkList.map((item) => {
       item.key = item.id;
     });
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       pagesize: 10,

@@ -4,7 +4,7 @@ import {
   deleteTaskList,
   updateTaskList,
 } from '@/services/getTaskList';
-
+import { onSwitchTask } from '@/services/serviceAll';
 export default {
   namespace: 'taskList',
   state: {
@@ -37,6 +37,12 @@ export default {
     },
     *deleteTaskList({ payload, callback }, { call, put }) {
       const res = yield call(deleteTaskList, { ...payload });
+      if (callback) {
+        callback(res);
+      }
+    },
+    *onSwitchTask({ payload, callback }, { call, put }) {
+      const res = yield call(onSwitchTask, { ...payload });
       if (callback) {
         callback(res);
       }
