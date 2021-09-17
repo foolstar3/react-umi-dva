@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Card, Table, Button, Popconfirm } from 'antd';
 import {
   PlayCircleOutlined,

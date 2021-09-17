@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Tabs, Button, Modal, Form, Select } from 'antd';
+import { Tabs, Button, Modal, Form, Select, message } from 'antd';
 import styles from './index.less';
 import { connect } from 'dva';
 import MessageTab from './messageTab';
 import VariablesTab from './variablesTab';
-import ParametersTab from './parametersTab';
+/**
+ * 对此组件进行数据处理的后端框架存在bug
+ * 暂时隐藏
+ */
+// import ParametersTab from './parametersTab';
 import ResponseTab from '../responseTab';
 import HooksTab from './hooksTab/index.jsx';
-import RequestTab from './requestTab/index.jsx';
+import RequestTab from './requestTab';
 import ExtractTab from './extractTab/index.jsx';
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -31,9 +35,9 @@ const CaseDetailTabs = ({
       type: 'testCase/debugCase',
       payload,
       callback: (res) => {
-        // console.log(res);
-        // responseTabs.push(res.case_metas)
-        // responseTreeData.push(res.tree)
+        if (res.case_metas.length > 10) {
+          message.error('单次最多运行10个用例');
+        }
       },
     });
   };
@@ -65,15 +69,6 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
-    // const { request } = caseDetail
-    // const { teststeps } = request;
-    // const payload = {
-    //   ...caseDetail,
-    //   teststeps,
-    //   export: request.export,
-    //   base_url: `https:/${teststeps[0].request.url}`,
-    // };
-
     const payload = {
       type: 1,
       name: 'organization_current',
@@ -135,15 +130,14 @@ const CaseDetailTabs = ({
           <TabPane tab="variables" key="2">
             <VariablesTab variables={variables} />
           </TabPane>
-          <TabPane tab="paramters" key="3">
+          {/* <TabPane tab="paramters" key="3">
             <ParametersTab
               parameters={parameters}
               onSwitchChange={() => {
                 console.log('onSwitchChange');
               }}
-              // addParams={addParams}
             />
-          </TabPane>
+          </TabPane> */}
           <TabPane tab="hooks" key="4">
             <HooksTab setupHooks={setupHooks} teardownHooks={teardownHooks} />
           </TabPane>
@@ -180,7 +174,6 @@ const CaseDetailTabs = ({
           <Tabs defaultActiveKey="1" type="card">
             {debugResponse.case_metas
               ? debugResponse.case_metas.map((item, index) => {
-                  // console.log(item);
                   return (
                     <TabPane tab={item.name} key={`${item.name}${item.index}`}>
                       <ResponseTab

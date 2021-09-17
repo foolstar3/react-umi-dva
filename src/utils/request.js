@@ -53,7 +53,7 @@ const request = extend({
   //credentials: 'include', // 默认请求是否带上cookie
 });
 
-request.interceptors.request.use((url, options): any => {
+request.interceptors.request.use((url, options) => {
   // const jwt = sessionStorage.getItem('jwt');
   const header = {};
   const token = localStorage.getItem('qc_token');
@@ -90,7 +90,7 @@ request.interceptors.response.use(async (response) => {
 export function requestUap(url, options) {
   return request(`${process.env.qcFrontUrl}${url}`, options);
 }
-export function requestUmi(url: any, options: any) {
+export function requestUmi(url, options) {
   return request(url, options);
 }
 

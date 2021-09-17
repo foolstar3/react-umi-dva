@@ -208,15 +208,16 @@ class ParamsFile extends Component<any, any> {
 
   // 处理编辑对话框显隐函数
   handleEditOk = () => {
-    const { editorCode, currentEditParamsFile, currentPage } = this.state;
+    const { editorCode, currentEditParamsFile } = this.state;
     const payload = {
       content: editorCode,
       id: currentEditParamsFile.id,
     };
     this.updateParamsFileCode(payload);
-    this.getParamsFileList({ page: currentPage });
+    this.getParamsFileList({ page: 1 });
     this.setState({
       editModalVisiable: false,
+      currentPage: 1,
     });
   };
 
@@ -268,7 +269,7 @@ class ParamsFile extends Component<any, any> {
         if (res.data) {
           this.getParamsFileList({ page: 1 });
         } else if (res.status == 400) {
-          message.error('该项目下已存在同名文件!');
+          message.error('项目下有同名文件,添加失败');
         }
       },
     });

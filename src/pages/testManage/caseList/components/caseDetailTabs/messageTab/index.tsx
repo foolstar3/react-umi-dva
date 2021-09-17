@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { connect } from 'dva';
+import classnames from 'classnames';
 import { Form, Select, Input, Collapse, Button, Col, Tree } from 'antd';
 import styles from './index.less';
+import DragableTable from '@/components/DragableTable';
 
 const { Panel } = Collapse;
 const formLayout = {
@@ -19,6 +21,7 @@ const MessageTab = ({
 }) => {
   const [curBefore, setCurBefore] = useState(caseDetail.before);
   const [checkedKeys, setCheckedKeys] = useState([]);
+  const [beforeTableData, setBeforeTableData] = useState([]);
   const [curProject, setCurProject] = useState(caseDetail.project);
   const [curModuleName, setCurModuleName] = useState(caseDetail.module_name);
   const [curModuleId, setCurModuleId] = useState(caseDetail.module);
@@ -68,22 +71,44 @@ const MessageTab = ({
   };
 
   const onCheck = (checkedKeys, info) => {
-    // console.log('onCheck', checkedKeys, info);
     setCheckedKeys(info.checkedNodes);
-    // console.log(info);
   };
 
   const addBefore = () => {
-    setCheckedKeys(
-      checkedKeys.filter((item) => Object.keys(item).indexOf('id') !== -1),
-    );
-    /**
-     * todo
-     * 将数据添加到前后置table中
-     */
+    setBeforeTableData((prev) => {
+      const tableData = checkedKeys.filter(
+        (item) => Object.keys(item).indexOf('id') !== -1,
+      );
+      if (tableData.length) {
+        const data = [];
+        let index = prev.length;
+        tableData.forEach((item) => {
+          data.push({
+            id: item.id,
+            name: item.name,
+            key: item.name,
+            index,
+          });
+          index++;
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        next.push(...data);
+        return next;
+      }
+      return prev;
+    });
   };
   const renderBeforeTable = () => {
-    return <></>;
+    return (
+      <div
+        className={classnames(
+          styles.beforeContent,
+          beforeTableData.length ? '' : styles.hidden,
+        )}
+      >
+        <DragableTable tableData={beforeTableData} />
+      </div>
+    );
   };
 
   return (
