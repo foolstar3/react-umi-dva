@@ -1,6 +1,6 @@
 import { requestUap } from '@/utils/request';
 
-export async function getEnvList(data: any) {
+export async function getEnvList(data) {
   // console.log(data);
   return requestUap(`/env/`, {
     method: 'GET',
@@ -8,7 +8,7 @@ export async function getEnvList(data: any) {
   });
 }
 
-export async function toggleSwitch(data: any) {
+export async function toggleSwitch(data) {
   // console.log(data);
   return requestUap(`/env/${data.id}/`, {
     method: 'PUT',
@@ -17,7 +17,7 @@ export async function toggleSwitch(data: any) {
   });
 }
 
-export async function addEnvList(data: any) {
+export async function addEnvList(datay) {
   return requestUap(`/env/`, {
     method: 'POST',
     data,
@@ -27,7 +27,7 @@ export async function addEnvList(data: any) {
   });
 }
 
-export async function deleteEnvList(data: any) {
+export async function deleteEnvList(data) {
   // console.log(data);
   return requestUap(`/env/${data.id}/`, {
     method: 'DELETE',
@@ -35,7 +35,7 @@ export async function deleteEnvList(data: any) {
   });
 }
 
-export async function updateEnv(data: any) {
+export async function updateEnv(data) {
   // console.log(data);
   return requestUap(`/env/${data.id}/`, {
     method: 'PUT',

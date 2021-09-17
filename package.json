@@ -30,13 +30,15 @@
   "dependencies": {
     "@ant-design/pro-form": "^1.36.0",
     "@ant-design/pro-layout": "^6.5.0",
+    "array-move": "^4.0.0",
+    "codemirror": "^5.62.2",
     "echarts": "^5.1.2",
     "http-server": "^13.0.1",
     "react": "^16.13.0",
+    "react-codemirror2": "^7.2.1",
     "react-dom": "^16.13.0",
     "react-router-breadcrumbs-hoc": "^4.0.1",
-    "codemirror": "^5.62.2",
-    "react-codemirror2": "^7.2.1",
+    "react-sortable-hoc": "^2.0.0",
     "umi": "^3.5.15"
   },
   "devDependencies": {

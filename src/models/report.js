@@ -6,7 +6,7 @@ export default {
     reportList: {},
   },
   reducers: {
-    reportList(state: any, { payload }) {
+    reportList(state, { payload }) {
       const newState = JSON.parse(JSON.stringify(state));
       newState.reportList = payload;
       return {
