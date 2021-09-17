@@ -27,19 +27,18 @@ class GlobalVarList extends React.Component<any, any> {
       tempValue: '',
       tableLoading: true,
       total: 0,
+      currentPage: 1,
     };
   }
 
   componentDidMount() {
-    this.getGlobalVarList(1);
+    this.getGlobalVarList({ page: 1 });
   }
 
-  getGlobalVarList(page: any) {
+  getGlobalVarList(payload: any) {
     this.props.dispatch({
       type: 'globalVarList/getGlobalVarList',
-      payload: {
-        page: page,
-      },
+      payload,
       callback: (res) => {
         this.setState({
           tableLoading: false,
@@ -95,24 +94,25 @@ class GlobalVarList extends React.Component<any, any> {
         id: record.id,
       },
       callback: () => {
-        this.getGlobalVarList(1);
+        this.getGlobalVarList({ page: 1 });
       },
     });
   }
 
   render() {
-    const { tableLoading, total } = this.state;
-    const { editVisible, globalVarList } = this.props.globalVarList;
+    const { tableLoading, total, currentPage } = this.state;
+    const { globalVarList } = this.props.globalVarList;
     globalVarList.map((item) => {
       item.key = item.id;
     });
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getGlobalVarList(page);
+        this.getGlobalVarList({ page });
       },
     };
     const columns = [
@@ -171,6 +171,8 @@ class GlobalVarList extends React.Component<any, any> {
                   编辑
                 </Button>
                 <Popconfirm
+                  okText="Yes"
+                  cancelText="No"
                   title="确定删除？"
                   icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                   onConfirm={() => this.handleDelete(record)}
@@ -194,7 +196,7 @@ class GlobalVarList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal />
+          <SearchModal getGlobalVarList={this.getGlobalVarList} />
           <div className="ant-btn-add">
             <Button
               type="primary"

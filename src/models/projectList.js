@@ -21,7 +21,7 @@ export default {
         },
       });
       if (callback) {
-        callback(res);
+        callback(res.results ?? res, res.count);
       }
     },
     *addProjectList({ payload, callback }, { call, put }) {
@@ -31,15 +31,15 @@ export default {
       }
     },
     *editProjectList({ payload, callback }, { call, put }) {
-      yield call(updateProjectList, { ...payload });
+      const res = yield call(updateProjectList, { ...payload });
       if (callback) {
         callback();
       }
     },
     *deleteProjectList({ payload, callback }, { call, put }) {
-      yield call(deleteProjectList, { ...payload });
+      const res = yield call(deleteProjectList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
   },

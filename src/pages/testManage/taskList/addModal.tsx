@@ -1,122 +1,212 @@
 import React from 'react';
-import { Tag, Collapse, Switch, Select, Form, Input, Modal } from 'antd';
+import {
+  Tag,
+  Collapse,
+  Switch,
+  Select,
+  Form,
+  Input,
+  Modal,
+  FormInstance,
+} from 'antd';
 import { connect } from 'umi';
 import TreeNode from './treeNode';
-const { Panel } = Collapse;
 const { Option } = Select;
-class AddModal extends React.Component {
+class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddValueChange = this.handleAddValueChange.bind(this);
     this.caseNumber = this.caseNumber.bind(this);
-    this.treeNodeModule = this.treeNodeModule.bind(this);
+    this.handleProjectChange = this.handleProjectChange.bind(this);
+    this.getProjectList = this.getProjectList.bind(this);
+    this.getEnvList = this.getEnvList.bind(this);
+    this.getModuleList = this.getModuleList.bind(this);
+    this.getCaseList = this.getCaseList.bind(this);
+    this.getTreeNode = this.getTreeNode.bind(this);
     this.state = {
       tempAddValue: '',
       caseNumber: 0,
-      moduleNameList: [],
+      moduleList: [],
+      caseList: [],
+      treeData: [],
+      caseArray: [],
+      projectList: [],
     };
   }
 
+  formRef = React.createRef<FormInstance>();
+
   componentDidMount() {
-    this.props.dispatch({
-      type: 'testCase/getCaseList',
-      payload: {
-        page: 1,
-      },
-    });
+    this.getProjectList();
+    this.getEnvList();
+    this.getCaseList({ page: 'None' });
+  }
+
+  getProjectList() {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
-        page: 1,
+        page: 'None',
+      },
+      callback: (res) => {
+        this.setState({
+          projectList: res,
+        });
       },
     });
+  }
+
+  getModuleList(payload: any) {
+    this.props.dispatch({
+      type: 'moduleList/getModuleList',
+      payload,
+      callback: (res) => {
+        this.getTreeNode(res);
+      },
+    });
+  }
+  getEnvList() {
     this.props.dispatch({
       type: 'envList/getEnvList',
       payload: {
-        page: 1,
+        page: 'None',
       },
+    });
+  }
+  getCaseList(payload: any) {
+    this.props.dispatch({
+      type: 'testCase/getCaseList',
+      payload,
+      callback: (res) => {
+        this.setState({
+          caseList: res.results,
+        });
+      },
+    });
+  }
+
+  getTreeNode(moduleListChange: any) {
+    const caseList = this.props.testCase.caseList.results;
+    const moduleList = moduleListChange;
+    const treeData = [];
+    moduleList &&
+      moduleList.forEach((moduleItem) => {
+        const children = [];
+        caseList.forEach((caseItem) => {
+          caseItem.module_name === moduleItem.module_name &&
+            children.push({
+              title: caseItem.name,
+              key: caseItem.id,
+            });
+        });
+        treeData.push({
+          title: moduleItem.module_name,
+          key: moduleItem.create_time,
+          children: children,
+        });
+      });
+    this.setState({
+      treeData: treeData,
     });
   }
 
   //在模态框中点击提交按钮
   handleSubmit() {
     const addTask = this.state.tempAddValue;
-    this.props.dispatch({
-      type: 'taskList/addTaskList',
-      payload: {
-        ...addTask,
+    // if (addTask.enabled == undefined) {
+    //   addTask.enabled = true;
+    // }
+    const projectList = this.props.projectList.projectList;
+    const envList = this.props.envList.envList;
+    for (let i = 0; i < projectList.length; i++) {
+      if (addTask.project && projectList[i].project_name === addTask.project) {
+        addTask.project = projectList[i].id;
+      }
+    }
+    for (let i = 0; i < envList.length; i++) {
+      if (addTask.env && envList[i].env_name === addTask.env) {
+        addTask.env = envList[i].id;
+      }
+    }
+
+    //数据处理逻辑与转换
+    const requestData = {
+      name: addTask.name,
+      args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${addTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
+      description: addTask.description,
+      enabled: addTask.enabled == false ? false : true,
+      email_list: ['111'],
+      project: addTask.project,
+      crontab: {
+        minute: addTask?.crontab?.charAt(0) || '',
+        hour: addTask?.crontab?.charAt(1) || '',
+        day_of_week: addTask?.crontab?.charAt(2) || '',
+        day_of_month: addTask?.crontab?.charAt(3) || '',
+        month_of_year: addTask?.crontab?.charAt(4) || '',
       },
-      callback: () => {
-        this.props.dispatch({
-          type: 'taskList/getTaskListt',
-          payload: {
-            page: 1,
-          },
-        });
-      },
-    });
+    };
+
+    addTask.name &&
+      addTask.env &&
+      addTask.project &&
+      this.props.dispatch({
+        type: 'taskList/addTaskList',
+        payload: {
+          ...requestData,
+        },
+        callback: () => {
+          this.props.getTaskList({ page: 1 });
+        },
+      });
     this.props.showAddModal(false);
+    this.onReset();
   }
 
   //添加任务中监听所有值的变化
   handleAddValueChange(singleValueChange, ValueChange) {
+    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
   }
 
-  treeNodeModule() {
-    const moduleNameList = [];
-    const projectList = this.props?.projectList?.projectList || [];
-    const projectName = this.state.tempAddValue?.project;
-    let tempValue = {};
+  //模块数据
+  handleProjectChange(project: any) {
+    const projectList = this.state.projectList;
+    //筛选外层数据，放入treedate外层
     for (let i = 0; i < projectList.length; i++) {
-      if (projectName && projectList[i].project_name === projectName) {
-        tempValue = projectList[i].id;
+      if (project && projectList[i].project_name === project) {
+        const payload = { page: 'None', project: projectList[i].id };
+        this.getModuleList(payload);
       }
     }
-    this.props.dispatch({
-      type: 'moduleList/getModuleList',
-      payload: {
-        page: '1',
-        project: tempValue,
-      },
-      callback: (res) => {
-        res.results.map((item) => {
-          moduleNameList.push(item.module_name);
-        });
-        this.setState({
-          moduleNameList: moduleNameList,
-        });
-      },
-    });
-    console.log('this.statesasasa', this.state);
   }
 
   //添加项目的返回键
   handleCancel = () => {
     this.props.showAddModal(false);
+    this.onReset();
   };
-
-  handleEnvListVisible() {}
-
-  handleProjectListVisible() {}
   //选择用例个数传参
-  caseNumber(checkedNumber: any) {
+  caseNumber(caseArray: any, checkedNumber: any) {
     this.setState({
       caseNumber: checkedNumber,
+      caseArray: caseArray,
     });
+  }
+
+  onReset() {
+    this.formRef.current!.resetFields();
   }
 
   render() {
     const caseNumber = this.state.caseNumber;
     const addVisible = this.props.addVisible;
-    const envList = this.props?.envList?.envList?.results || [];
+    const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
-    const caseList = this.props?.testCase?.caseList?.results || [];
-    // const options = [{ value: 'blue' }, { value: 'lime' }, { value: 'green' }, { value: 'cyan' }]
+    const treeData = [...this.state.treeData];
 
     ///自定义列表参数
     function tagRender(props) {
@@ -154,8 +244,9 @@ class AddModal extends React.Component {
           name="basic_taskList"
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
+          initialValues={{ remember: false }}
           onValuesChange={this.handleAddValueChange}
+          ref={this.formRef}
         >
           <Form.Item
             label="任务名称"
@@ -167,19 +258,19 @@ class AddModal extends React.Component {
           <Form.Item label="简要描述" name="description">
             <Input />
           </Form.Item>
-          <Form.Item
-            label="状态"
-            name="testcase_count"
-            rules={[{ required: true, message: '请输入测试数' }]}
-          >
+          <Form.Item label="状态" name="enabled" valuePropName="checked">
             <Switch
               checkedChildren="启用"
               unCheckedChildren="禁用"
-              defaultChecked={true}
-              // onChange={(checked) => {
-              //   this.onSwitchChange(checked, text, record);
-              // }}
+              defaultChecked
             />
+          </Form.Item>
+          <Form.Item
+            label="定时计划"
+            name="crontab"
+            rules={[{ required: true }]}
+          >
+            <Input />
           </Form.Item>
           <Form.Item
             label="运行环境"
@@ -196,14 +287,15 @@ class AddModal extends React.Component {
                   0
                 }
                 style={{ width: 314 }}
-                onFocus={this.handleEnvListVisible}
               >
                 {envList &&
                   Array.isArray(envList) &&
                   envList.length &&
                   envList.map((item) => {
                     return (
-                      <Option value={item.env_name}>{item.env_name}</Option>
+                      <Option value={item.env_name} key={item.id}>
+                        {item.env_name}
+                      </Option>
                     );
                   })}
               </Select>
@@ -217,7 +309,6 @@ class AddModal extends React.Component {
             {
               <Select
                 style={{ width: 314 }}
-                onFocus={this.handleProjectListVisible}
                 showSearch
                 allowClear
                 optionFilterProp="children"
@@ -225,6 +316,7 @@ class AddModal extends React.Component {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
+                onSelect={this.handleProjectChange}
               >
                 {projectList &&
                   Array.isArray(projectList) &&
@@ -244,13 +336,7 @@ class AddModal extends React.Component {
             name="cassNumber"
             rules={[{ required: false }]}
           >
-            <TreeNode
-              caseList={caseList}
-              moduleList={caseList}
-              caseNumber={this.caseNumber}
-              treeNodeModule={this.treeNodeModule}
-              moduleNameList={this.state.moduleNameList}
-            />
+            <TreeNode treeData={[...treeData]} caseNumber={this.caseNumber} />
           </Form.Item>
           {/* <Form.Item
             label = '邮件列表'
@@ -272,9 +358,12 @@ class AddModal extends React.Component {
   }
 }
 
-export default connect(({ taskList, envList, projectList, testCase }) => ({
-  taskList,
-  envList,
-  projectList,
-  testCase,
-}))(AddModal);
+export default connect(
+  ({ taskList, envList, projectList, testCase, moduleList }) => ({
+    taskList,
+    envList,
+    projectList,
+    testCase,
+    moduleList,
+  }),
+)(AddModal);

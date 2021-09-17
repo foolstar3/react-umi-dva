@@ -22,13 +22,8 @@ const SearchModel = (props: any) => {
     props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
-        page: 1,
+        page: 'None',
       },
-    });
-  };
-  const handleUserListVisible = () => {
-    props.dispatch({
-      type: 'userList/getUserList',
     });
   };
   const [form] = Form.useForm();
@@ -52,20 +47,18 @@ const SearchModel = (props: any) => {
         value.test_user = testUserList[i].id;
       }
     }
-    props.dispatch({
-      type: 'moduleList/getModuleList',
-      payload: {
-        page: 1,
-        module_name: value.module_name,
-        test_user: value.test_user,
-        description: value.description,
-        project: value.project,
-        update_time_after:
-          value.rangeDateTime && value.rangeDateTime[0].format('YYYY-MM-DD'),
-        update_time_before:
-          value.rangeDateTime && value.rangeDateTime[1].format('YYYY-MM-DD'),
-      },
-    });
+    const payload = {
+      page: 1,
+      module_name: value.module_name,
+      test_user: value.test_user,
+      description: value.description,
+      project: value.project,
+      update_time_after:
+        value.rangeDateTime && value.rangeDateTime[0].format('YYYY-MM-DD'),
+      update_time_before:
+        value.rangeDateTime && value.rangeDateTime[1].format('YYYY-MM-DD'),
+    };
+    props.getModuleList(payload);
   };
 
   return (

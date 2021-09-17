@@ -23,17 +23,13 @@ const SearchModel = (props: any) => {
 
   //进行搜索
   const handleSearch = (value: any) => {
-    props.dispatch({
-      type: 'globalVarList/getGlobalVarList',
-      payload: {
-        page: 1,
-        var_name: value.var_name,
-        var_value: value.var_value,
-        description: value.description,
-        // update_time_after: value.rangeDateTime[0].format('YYYY-MM-DD'),
-        // update_time_before: value.rangeDateTime[1].format('YYYY-MM-DD'),
-      },
-    });
+    const payload = {
+      page: 1,
+      var_name: value.var_name,
+      var_value: value.var_value,
+      description: value.description,
+    };
+    props.getGlobalVarList(payload);
   };
 
   return (

@@ -23,7 +23,7 @@ import '/src/styles/global.less';
 import SearchProject from './search';
 
 //获取接口参数
-class ProjectList extends React.Component {
+class ProjectList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     //模态框中的提交按钮
@@ -64,6 +64,7 @@ class ProjectList extends React.Component {
       //负责人列表编号和名字
       leaderList: [],
       //空数组，解决添加项目取消后，但是数据未消失情况
+      currentPage: 1,
     };
   }
 
@@ -82,19 +83,17 @@ class ProjectList extends React.Component {
     this.setState({
       tableLoading: true,
     });
-    this.getProjectList(1);
+    this.getProjectList({ page: 1 });
   }
 
-  getProjectList = (page: any) => {
+  getProjectList = (payload) => {
     this.props.dispatch({
       type: 'projectList/getProjectList',
-      payload: {
-        page: page,
-      },
-      callback: (res) => {
+      payload,
+      callback: (res, rescount) => {
         this.setState({
           tableLoading: false,
-          total: res.count,
+          total: rescount,
         });
       },
     });
@@ -151,16 +150,16 @@ class ProjectList extends React.Component {
             total: total + 1,
           });
         }
-        this.getProjectList(1);
+        this.getProjectList({ page: 1 });
       },
     });
+    this.onReset();
   }
 
   /* =======================编辑功能=========================== */
 
   //编辑的地方弹出模态框
   showEditModal(_, record) {
-    console.log('record', record);
     this.setState({
       editVisible: true,
       currentValue: record,
@@ -190,22 +189,15 @@ class ProjectList extends React.Component {
   //项目列表单每一项的编辑提交
   editSubmit(value: any) {
     const { tempEditValue, currentValue } = this.state;
+    const payload = { ...tempEditValue, id: currentValue.id };
     this.setState({
       editVisible: false,
     });
     this.props.dispatch({
       type: 'projectList/editProjectList',
-      payload: {
-        ...tempEditValue,
-        id: currentValue.id,
-      },
+      payload,
       callback: () => {
-        this.props.dispatch({
-          type: 'projectList/getProjectList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.getProjectList({ page: 1 });
       },
     });
   }
@@ -220,15 +212,15 @@ class ProjectList extends React.Component {
         id: record.id,
       },
       callback: () => {
-        this.getProjectList(1);
+        console.log('callaback');
+        this.getProjectList({ page: 1 });
       },
     });
   }
 
   render() {
     const { projectList } = this.props?.projectList || [];
-    console.log('projectList', projectList);
-    const leaderList = this.state?.leaderList || [];
+    const { leaderList, currentPage } = this.state;
     //为数组中每一个元素增加一个key值，防止报错
     // projectList &&
     //   projectList.map((item) => {
@@ -237,11 +229,12 @@ class ProjectList extends React.Component {
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       pageSize: 10,
       onChange: (page) => {
-        this.getProjectList(page);
+        this.getProjectList({ page });
       },
       total: total,
       showTotal: () => `共${total}条`,
@@ -309,6 +302,8 @@ class ProjectList extends React.Component {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDelete(record)}
@@ -331,7 +326,7 @@ class ProjectList extends React.Component {
     return (
       <div>
         <Card>
-          <SearchProject />
+          <SearchProject getProjectList={this.getProjectList} />
           <div className="ant-btn-add">
             <Button
               type="primary"

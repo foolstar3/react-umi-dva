@@ -19,8 +19,11 @@ export default {
         callback(res);
       }
     },
-    *editSubmit({ payload }, { call, put }) {
-      const res = yield call(updateDebugTalkList, payload);
+    *editSubmit({ payload, callback }, { call, put }) {
+      yield call(updateDebugTalkList, { ...payload });
+      if (callback) {
+        callback();
+      }
     },
   },
   reducers: {

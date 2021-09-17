@@ -22,6 +22,7 @@ import Editor from '@/components/Editor';
 
 import './index.less';
 import { connect } from 'umi';
+import { Row } from 'antd/lib/grid';
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -430,25 +431,27 @@ class EnvList extends Component<any, any> {
     };
     return (
       <>
-        <Card bordered={false}>
-          <div className="btn-postion">
-            <Button
-              type="primary"
-              icon={<PlusCircleOutlined />}
-              onClick={this.showAddEnvModal}
-            >
-              新增
-            </Button>
-          </div>
-          <Table
-            columns={columns}
-            rowSelection={rowSelection}
-            dataSource={envList}
-            loading={tableLoading}
-            pagination={paginationProps}
-            bordered
-          />
-        </Card>
+        {!envInfoModalVisiable && (
+          <Card bordered={false}>
+            <div className="btn-postion">
+              <Button
+                type="primary"
+                icon={<PlusCircleOutlined />}
+                onClick={this.showAddEnvModal}
+              >
+                新增
+              </Button>
+            </div>
+            <Table
+              columns={columns}
+              rowSelection={rowSelection}
+              dataSource={envList}
+              loading={tableLoading}
+              pagination={paginationProps}
+              bordered
+            />
+          </Card>
+        )}
         {/* 新增对话框 */}
         <Modal
           title="新增"
@@ -543,18 +546,24 @@ class EnvList extends Component<any, any> {
         )}
         {/* 环境信息编辑框 */}
         {envInfoModalVisiable && (
-          <Modal
-            title="环境信息"
-            visible={envInfoModalVisiable}
-            onOk={this.handleEnvInfoOk}
-            onCancel={this.handleEnvInfoCancel}
-            width={1200}
-          >
+          <div>
             <Editor
               content={editorCode}
               getEditorContent={(value) => this.editorCodeChange(value)}
             />
-          </Modal>
+            <div className="debug_button">
+              <Row>
+                <Button onClick={this.handleEnvInfoCancel}>取消</Button>
+                <Button
+                  onClick={this.handleEnvInfoOk}
+                  shape="round"
+                  type="primary"
+                >
+                  确认
+                </Button>
+              </Row>
+            </div>
+          </div>
         )}
       </>
     );

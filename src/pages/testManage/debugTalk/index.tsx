@@ -16,7 +16,7 @@ const { TextArea } = Input;
 import './index.less';
 import Editor from '@/components/Editor';
 
-class DebugTalkList extends React.Component {
+class DebugTalkList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
@@ -27,27 +27,34 @@ class DebugTalkList extends React.Component {
       debugTalkId: '',
       tableLoading: true,
       total: 0,
+      debugTalkValue: '',
+      currentPage: 1,
     };
     //显示代码输入框
     this.showPythonModal = this.showPythonModal.bind(this);
     this.editSubmit = this.editSubmit.bind(this);
     this.showEditModalCancel = this.showEditModalCancel.bind(this);
     this.getEditorContent = this.getEditorContent.bind(this);
+    this.getDebugTalkList = this.getDebugTalkList.bind(this);
   }
 
   componentDidMount() {
     this.setState({
       tableLoading: true,
     });
+    this.getDebugTalkList(1);
+  }
+
+  getDebugTalkList(page: any) {
     this.props.dispatch({
       type: 'debugTalkList/getDebugTalkList',
       payload: {
-        page: 1,
+        page: page,
       },
       callback: (res) => {
         this.setState({
           tableLoading: false,
-          total: res.results.length,
+          total: res.count,
         });
       },
     });
@@ -65,12 +72,7 @@ class DebugTalkList extends React.Component {
         debugtalk: debugTalkContent,
       },
       callback: () => {
-        this.props.dispatch({
-          type: 'debugTalkList/getDebugTalkList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.getDebugTalkList(1);
       },
     });
     this.showEditModalCancel();
@@ -80,6 +82,7 @@ class DebugTalkList extends React.Component {
     this.setState({
       editVisible: true,
       debugTalkId: record.id,
+      debugTalkValue: record.debugtalk,
     });
   }
 
@@ -95,14 +98,19 @@ class DebugTalkList extends React.Component {
   }
 
   render() {
-    const { tableLoading, total, editVisible } = this.state;
+    const { tableLoading, total, editVisible, currentPage } = this.state;
     const { debugTalkList } = this.props.debugTalkList;
     debugTalkList.map((item) => {
       item.key = item.id;
     });
     const paginationProps = {
+      current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
+      pagesize: 10,
+      onChange: (page) => {
+        this.getDebugTalkList(page);
+      },
       total: total,
       showTotal: () => `共 ${total} 条`,
     };
@@ -183,7 +191,7 @@ class DebugTalkList extends React.Component {
           {editVisible && (
             <div>
               <Editor
-                // content={debugTalkContent}
+                content={this.state.debugTalkValue}
                 getEditorContent={this.getEditorContent}
               />
               <div className="debug_button">

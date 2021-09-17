@@ -12,6 +12,7 @@ import {
   Upload,
   Popconfirm,
   message,
+  Row,
 } from 'antd';
 import {
   QuestionCircleOutlined,
@@ -439,36 +440,47 @@ class ParamsFile extends Component<any, any> {
     return (
       <>
         <Card bordered={false}>
-          <div className="btn-postion">
-            <Button
-              type="primary"
-              icon={<PlusCircleOutlined />}
-              onClick={this.handleAddFile}
-            >
-              新增
-            </Button>
-          </div>
-          <Table
-            columns={columns}
-            dataSource={paramsFileData.results}
-            loading={tableLoading}
-            pagination={paginationProps}
-            bordered
-          />
+          {!editModalVisiable && (
+            <div>
+              <div className="btn-postion">
+                <Button
+                  type="primary"
+                  icon={<PlusCircleOutlined />}
+                  onClick={this.handleAddFile}
+                >
+                  新增
+                </Button>
+              </div>
+              <Table
+                columns={columns}
+                dataSource={paramsFileData.results}
+                loading={tableLoading}
+                pagination={paginationProps}
+                bordered
+              />
+            </div>
+          )}
+          {editModalVisiable && (
+            <div>
+              <Editor
+                content={paramsFileCode.content}
+                getEditorContent={this.getEditorContent}
+              />
+              <div className="debug_button">
+                <Row>
+                  <Button onClick={this.handleEditCancel}>取消</Button>
+                  <Button
+                    onClick={this.handleEditOk}
+                    shape="round"
+                    type="primary"
+                  >
+                    确认
+                  </Button>
+                </Row>
+              </div>
+            </div>
+          )}
         </Card>
-        <Modal
-          title="编辑"
-          visible={editModalVisiable}
-          className="editModal"
-          onOk={this.handleEditOk}
-          onCancel={this.handleEditCancel}
-          width={1300}
-        >
-          <Editor
-            content={paramsFileCode.content}
-            getEditorContent={this.getEditorContent}
-          />
-        </Modal>
         <Modal
           title="新增项目"
           visible={addModalVisiable}

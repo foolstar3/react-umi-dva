@@ -3,7 +3,7 @@ import { Card, Select, Form, Input, Modal, Table, Button, Space } from 'antd';
 const { TextArea } = Input;
 import { connect } from 'umi';
 
-class EditModal extends React.Component {
+class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.editSubmit = this.editSubmit.bind(this);
@@ -61,7 +61,7 @@ class EditModal extends React.Component {
             onCancel={this.editCancel}
             okText="确认"
             okButtonProps={{ shape: 'round' }}
-            cancelButtonProps={{ shape: 'round', type: 'text' }}
+            cancelButtonProps={{ shape: 'round' }}
           >
             <Form
               name="basic"

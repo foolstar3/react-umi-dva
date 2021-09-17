@@ -18,74 +18,26 @@ const { Panel } = Collapse;
 import './index.less';
 import moduleList from '../moduleList';
 
-var treeData = [
-  {
-    title: '0-0', // 模块
-    key: '0-0',
-    children: [
-      {
-        title: '0-0-0', // 用例
-        key: '0-0-0',
-      },
-      {
-        title: '0-0-1',
-        key: '0-0-1',
-      },
-      {
-        title: '0-0-2',
-        key: '0-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  },
-];
 const TreeNode = (props: any) => {
-  console.log('moduleListprops', props.moduleNameList);
-  function handleChangeCollapse() {
-    props.treeNodeModule();
-  }
-
-  // for(var i = 0; i < props.moduleList.moduleList.length ; i++){
-  //   treeData[i] =
-  // }
-
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([
-    '0-0-0',
-    '0-0-1',
-  ]);
-  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(['0-0-0']);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
   const onExpand = (expandedKeysValue: React.Key[]) => {
     console.log('onExpand', expandedKeysValue);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
-    setExpandedKeys(expandedKeysValue);
     setAutoExpandParent(false);
   };
 
   const onCheck = (checkedKeysValue: React.Key[]) => {
-    console.log('onCheck', checkedKeysValue.length);
-    setCheckedKeys(checkedKeysValue);
-    props.caseNumber(checkedKeysValue.length);
+    const caseArray = [];
+    checkedKeysValue &&
+      checkedKeysValue.map((item) => {
+        if (!isNaN(item)) {
+          caseArray.push(item);
+        }
+      });
+    console.log('onCheck', checkedKeysValue);
+    console.log('caseArray', caseArray);
+    props.caseNumber(caseArray, caseArray.length);
   };
 
   const onSelect = (selectedKeysValue: React.Key[], info: any) => {
@@ -95,18 +47,16 @@ const TreeNode = (props: any) => {
 
   return (
     <div>
-      <Collapse onChange={handleChangeCollapse}>
+      <Collapse>
         <Panel header="选择用例" key="caseNumber" forceRender>
           <Tree
             checkable
             onExpand={onExpand}
-            expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
             onCheck={onCheck}
-            checkedKeys={checkedKeys}
             onSelect={onSelect}
             selectedKeys={selectedKeys}
-            treeData={treeData}
+            treeData={props.treeData}
           />
         </Panel>
       </Collapse>
