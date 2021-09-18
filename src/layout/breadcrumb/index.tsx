@@ -69,13 +69,8 @@ const Breadcrumbs = ({ breadcrumbs }) => (
   <>
     <Breadcrumb className="breadcrumb" separator=">">
       {breadcrumbs.map((breadcrumb: any) => {
-        // console.log(breadcrumb);
         if (breadcrumb.key === '/') {
-          return (
-            <Breadcrumb.Item key="home">
-              {/* <span>{breadcrumb.breadcrumb.props.children}</span> */}
-            </Breadcrumb.Item>
-          );
+          return <Breadcrumb.Item key="home"></Breadcrumb.Item>;
         }
         return (
           <Breadcrumb.Item key={breadcrumb.key}>

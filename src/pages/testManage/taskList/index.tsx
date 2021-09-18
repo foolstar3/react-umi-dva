@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  Switch,
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-  Popconfirm,
-} from 'antd';
+import { Switch, Card, Table, Button, Popconfirm } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -19,7 +8,6 @@ import {
   PlayCircleOutlined,
 } from '@ant-design/icons';
 import { connect } from 'umi';
-const { TextArea } = Input;
 import './index.less';
 import SearchModal from './Search';
 import AddModal from './addModal';
@@ -29,13 +17,6 @@ import '/src/styles/global.less';
 class TaskList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.showAddModal = this.showAddModal.bind(this);
-    this.handleAddTask = this.handleAddTask.bind(this);
-    this.handleEditModal = this.handleEditModal.bind(this);
-    this.showEditModal = this.showEditModal.bind(this);
-    this.getTaskList = this.getTaskList.bind(this);
-    this.getProjectList = this.getProjectList.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -44,7 +25,6 @@ class TaskList extends React.Component<any, any> {
       total: 0,
       projectList: [],
       currentPage: 1,
-      // displayTable: []
     };
   }
 
@@ -72,7 +52,7 @@ class TaskList extends React.Component<any, any> {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload,
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.setState({
           projectList: res,
         });
@@ -95,61 +75,68 @@ class TaskList extends React.Component<any, any> {
       },
     });
   };
-  /* =======================新增按钮及模态框功能=========================== */
 
-  //主页”添加“按钮
-  showAddModal() {
+  onPageChange = (page: any) => {
+    this.getTaskList({ page });
+    this.setState({
+      currentPage: page,
+    });
+  };
+  childrenPageChange = () => {
+    this.getTaskList({ page: 1 });
+    this.setState({
+      currentPage: 1,
+    });
+  };
+  showAddModal = () => {
     this.setState({
       addVisible: true,
     });
-  }
+  };
 
-  //模态框中的添加，子组件回传
-  handleAddTask(childModalState: any) {
+  handleAddTask = (childModalState: any) => {
     this.setState({
       addVisible: childModalState,
     });
-  }
+  };
 
-  /* =======================编辑按钮及模态框功能=========================== */
-  //编辑的地方弹出模态框
-  handleEditModal(childModalState: any) {
+  handleEditModal = (childModalState: any) => {
     this.setState({
       editVisible: childModalState,
     });
-  }
-  //子模块--模态框传值
-  showEditModal(record: any) {
+  };
+
+  showEditModal = (record: any) => {
+    const strRecord = JSON.stringify(record);
+    const recordTempValue = JSON.parse(strRecord);
     console.log('record', record);
-    const projectListId = record.task_extend.project;
+    const projectListId = recordTempValue?.task_extend?.project;
     this.state.projectList.map((projectItem) => {
       if (projectItem.id == projectListId) {
-        record.task_extend.project = projectItem.project_name;
+        recordTempValue.task_extend.project = projectItem.project_name;
         this.setState({
           editVisible: true,
-          tempValue: record,
+          tempValue: recordTempValue,
         });
       }
     });
-  }
+  };
 
-  /* =======================删除按钮及模态框功能=========================== */
-  //任务列表删除按钮
-  handleDelete(record: any) {
+  handleDelete = (record: any) => {
     this.props.dispatch({
       type: 'taskList/deleteTaskList',
       payload: {
         id: record.id,
       },
       callback: () => {
-        this.getTaskList({ page: 1 });
+        this.childrenPageChange();
       },
     });
-  }
+  };
 
   render() {
     const { tableLoading, total, currentPage } = this.state;
-    const { taskList } = this.props.taskList;
+    const { taskList } = this.props?.taskList;
     taskList &&
       taskList.map((item) => {
         item.key = item.id;
@@ -161,7 +148,7 @@ class TaskList extends React.Component<any, any> {
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getTaskList({ page });
+        this.onPageChange(page);
       },
     };
     const columns: any = [
@@ -177,12 +164,6 @@ class TaskList extends React.Component<any, any> {
         key: 'name',
         align: 'center',
       },
-      // {
-      //   title: '创建人',
-      //   dataIndex: 'author',
-      //   key: 'author',
-      //   align: 'center',
-      // },
       {
         title: '定时状态',
         dataIndex: 'enabled',
@@ -190,7 +171,6 @@ class TaskList extends React.Component<any, any> {
         width: 150,
         align: 'center',
         render: (text, record, index) => {
-          console.log('text', text);
           return (
             <Switch
               checkedChildren="启用"
@@ -303,12 +283,14 @@ class TaskList extends React.Component<any, any> {
           showAddModal={this.handleAddTask}
           addVisible={this.state.addVisible}
           getTaskList={this.getTaskList}
+          childrenPageChange={this.childrenPageChange}
         />
         <EditModal
           showEditModal={this.handleEditModal}
           editVisible={this.state.editVisible}
           tempValue={this.state.tempValue}
           onSwitchChange={this.onSwitchChange}
+          childrenPageChange={this.childrenPageChange}
         />
       </div>
     );

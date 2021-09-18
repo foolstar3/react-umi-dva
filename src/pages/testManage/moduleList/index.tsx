@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-  Popconfirm,
-} from 'antd';
+import { Card, Table, Button, Popconfirm } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -23,17 +13,9 @@ import SearchModal from './Search';
 import AddModal from './addModal';
 import EditModal from './editModal';
 
-//获取接口参数
 class ModuleList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.showAddModal = this.showAddModal.bind(this);
-    this.handleAddModule = this.handleAddModule.bind(this);
-    this.handleEditModal = this.handleEditModal.bind(this);
-    this.showEditModal = this.showEditModal.bind(this);
-    this.handleTotalNumber = this.handleTotalNumber.bind(this);
-    this.getModuleList = this.getModuleList.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -63,61 +45,66 @@ class ModuleList extends React.Component<any, any> {
       },
     });
   };
-  /* =======================新增按钮及模态框功能=========================== */
 
-  //主页”添加“按钮
-  showAddModal() {
+  onPageChange = (page: any) => {
+    this.getModuleList({ page });
+    this.setState({
+      currentPage: page,
+    });
+  };
+  childrenPageChange = () => {
+    this.getModuleList({ page: 1 });
+    this.setState({
+      currentPage: 1,
+    });
+  };
+  showAddModal = () => {
     this.setState({
       addVisible: true,
     });
-  }
+  };
 
-  //模态框中的添加，子组件回传
-  handleAddModule(childModalState: any) {
+  handleAddModule = (childModalState: any) => {
     this.setState({
       addVisible: childModalState,
     });
-  }
-  //页码数增加
-  handleTotalNumber() {
+  };
+
+  handleTotalNumber = () => {
     const total = this.state.total;
     this.setState({
       total: total + 1,
     });
-  }
+  };
 
-  /* =======================编辑按钮及模态框功能=========================== */
-  //编辑的地方弹出模态框
-  showEditModal(record: any) {
+  showEditModal = (record: any) => {
     this.setState({
       editVisible: true,
       tempValue: record,
     });
-  }
-  //子模块--模态框传值
-  handleEditModal(childModalState: any) {
+  };
+
+  handleEditModal = (childModalState: any) => {
     this.setState({
       editVisible: childModalState,
     });
-  }
+  };
 
-  /* =======================删除按钮及模态框功能=========================== */
-  //模块列表删除按钮
-  handleDelete(record: any) {
+  handleDelete = (record: any) => {
     this.props.dispatch({
       type: 'moduleList/deleteModuleList',
       payload: {
         id: record.id,
       },
       callback: () => {
-        this.getModuleList({ payload: { page: 1 } });
+        this.childrenPageChange();
       },
     });
-  }
+  };
 
   render() {
     const { tableLoading, total, currentPage } = this.state;
-    const { editVisible, moduleList } = this.props.moduleList;
+    const { moduleList } = this.props.moduleList;
     moduleList &&
       moduleList.map((item) => {
         item.key = item.id;
@@ -129,7 +116,7 @@ class ModuleList extends React.Component<any, any> {
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getModuleList({ page });
+        this.onPageChange(page);
       },
     };
     const columns: any = [
@@ -249,11 +236,13 @@ class ModuleList extends React.Component<any, any> {
           showAddModal={this.handleAddModule}
           addVisible={this.state.addVisible}
           handleTotalNumber={this.handleTotalNumber}
+          childrenPageChange={this.childrenPageChange}
         />
         <EditModal
           showEditModal={this.handleEditModal}
           editVisible={this.state.editVisible}
           tempValue={this.state.tempValue}
+          childrenPageChange={this.childrenPageChange}
         />
       </div>
     );

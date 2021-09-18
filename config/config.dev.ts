@@ -12,8 +12,8 @@ export default defineConfig({
     'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
   },
   devServer: {
-    port: 9001,
-    host: '10.6.209.209',
+    port: 9999,
+    host: '10.5.65.24',
   },
   history: {
     type: 'hash',

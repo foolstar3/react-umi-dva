@@ -22,55 +22,25 @@ const { Option } = Select;
 import '/src/styles/global.less';
 import SearchProject from './search';
 
-//获取接口参数
 class ProjectList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    //模态框中的提交按钮
-    this.handleSubmit = this.handleSubmit.bind(this);
-    //项目列表的删除按钮
-    this.handleDelete = this.handleDelete.bind(this);
-    //模态框中的取消按钮
-    this.handleCancel = this.handleCancel.bind(this);
-    //显示添加按钮
-    this.showAddModal = this.showAddModal.bind(this);
-    //项目增加的改变监听
-    this.handleAddValueChange = this.handleAddValueChange.bind(this);
-    //显示编辑按钮
-    this.showEditModal = this.showEditModal.bind(this);
-    //项目编辑的改变监听
-    this.handleEditValueChange = this.handleEditValueChange.bind(this);
-    //编辑提交按钮
-    this.editSubmit = this.editSubmit.bind(this);
-    //编辑取消按钮
-    this.editCancel = this.editCancel.bind(this);
-    //获取列表
-    this.getProjectList = this.getProjectList.bind(this);
-    //表单ref
-    this.onReset = this.onReset.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
       tempAddValue: '',
-      //人工重新编辑的表单的值,存得的人名为主键
       tempEditValue: '',
-      //存表单显示的值
       tempDisplayEditValue: '',
-      //选择按钮的那一项的原始值
       currentValue: '',
       tableLoading: true,
-      //总条数
       total: 0,
-      //负责人列表编号和名字
       leaderList: [],
-      //空数组，解决添加项目取消后，但是数据未消失情况
       currentPage: 1,
     };
   }
 
   formRef = React.createRef<FormInstance>();
 
-  //获取列表
   UNSAFE_componentWillMount() {
     this.props.dispatch({
       type: 'userList/getUserList',
@@ -98,16 +68,19 @@ class ProjectList extends React.Component<any, any> {
       },
     });
   };
-  /* =======================新增按钮及模态框功能=========================== */
+  onPageChange = (page: any) => {
+    this.getProjectList({ page });
+    this.setState({
+      currentPage: page,
+    });
+  };
 
-  //添加项目，打开模态框
   showAddModal = () => {
     this.setState({
       addVisible: true,
     });
   };
 
-  //添加项目模态框的返回键
   handleCancel = () => {
     this.onReset();
     this.setState({
@@ -117,10 +90,8 @@ class ProjectList extends React.Component<any, any> {
   onReset() {
     this.formRef.current!.resetFields();
   }
-  // handleUserNameListVisible() {}
 
-  //添加项目中监听所有值的变化
-  handleAddValueChange(singleValueChange, ValueChange) {
+  handleAddValueChange = (singleValueChange, ValueChange) => {
     const leaderList = this.state.leaderList;
     for (let i = 0; i < leaderList.length; i++) {
       if (ValueChange.leader && leaderList[i].username === ValueChange.leader) {
@@ -130,10 +101,9 @@ class ProjectList extends React.Component<any, any> {
     this.setState({
       tempAddValue: ValueChange,
     });
-  }
+  };
 
-  //在添加项目的模态框中点击提交按钮
-  handleSubmit() {
+  handleSubmit = () => {
     const addProject = this.state.tempAddValue;
     const total = this.state.total;
     this.setState({
@@ -148,33 +118,29 @@ class ProjectList extends React.Component<any, any> {
         if (res.id !== undefined) {
           this.setState({
             total: total + 1,
+            currentPage: 1,
           });
         }
         this.getProjectList({ page: 1 });
       },
     });
     this.onReset();
-  }
+  };
 
-  /* =======================编辑功能=========================== */
-
-  //编辑的地方弹出模态框
-  showEditModal(_, record) {
+  showEditModal = (_, record) => {
     this.setState({
       editVisible: true,
       currentValue: record,
     });
-  }
+  };
 
-  //修改项目模态框的返回键
-  editCancel() {
+  editCancel = () => {
     this.setState({
       editVisible: false,
     });
-  }
+  };
 
-  //编辑内容的变化监听
-  handleEditValueChange(singleValueChange, ValueChange) {
+  handleEditValueChange = (singleValueChange, ValueChange) => {
     const leaderList = this.state.leaderList;
     for (let i = 0; i < leaderList.length; i++) {
       if (ValueChange.leader && leaderList[i].username === ValueChange.leader) {
@@ -184,10 +150,9 @@ class ProjectList extends React.Component<any, any> {
     this.setState({
       tempEditValue: ValueChange,
     });
-  }
+  };
 
-  //项目列表单每一项的编辑提交
-  editSubmit(value: any) {
+  editSubmit = (value: any) => {
     const { tempEditValue, currentValue } = this.state;
     const payload = { ...tempEditValue, id: currentValue.id };
     this.setState({
@@ -198,34 +163,31 @@ class ProjectList extends React.Component<any, any> {
       payload,
       callback: () => {
         this.getProjectList({ page: 1 });
+        this.setState({
+          currentPage: 1,
+        });
       },
     });
-  }
+  };
 
-  /*=============================删除功能==================================*/
-
-  //项目表单每一项中的删除按钮
-  handleDelete(record: any) {
+  handleDelete = (record: any) => {
     this.props.dispatch({
       type: 'projectList/deleteProjectList',
       payload: {
         id: record.id,
       },
       callback: () => {
-        console.log('callaback');
         this.getProjectList({ page: 1 });
+        this.setState({
+          currentPage: 1,
+        });
       },
     });
-  }
+  };
 
   render() {
     const { projectList } = this.props?.projectList || [];
     const { leaderList, currentPage } = this.state;
-    //为数组中每一个元素增加一个key值，防止报错
-    // projectList &&
-    //   projectList.map((item) => {
-    //     item.key = item.id;
-    //   });
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
     const paginationProps = {
@@ -234,7 +196,7 @@ class ProjectList extends React.Component<any, any> {
       showQuickJumper: true,
       pageSize: 10,
       onChange: (page) => {
-        this.getProjectList({ page });
+        this.onPageChange(page);
       },
       total: total,
       showTotal: () => `共${total}条`,
@@ -411,8 +373,6 @@ class ProjectList extends React.Component<any, any> {
           </Form>
         </Modal>
 
-        {/* 这里仔细看下 */}
-
         {editVisible && (
           <Modal
             visible={editVisible}
@@ -449,7 +409,6 @@ class ProjectList extends React.Component<any, any> {
                 {
                   <Select
                     style={{ width: 314 }}
-                    onFocus={this.handleUserNameListVisible}
                     showSearch
                     allowClear
                     optionFilterProp="children"

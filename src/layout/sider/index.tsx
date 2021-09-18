@@ -104,9 +104,7 @@ class MySider extends Component {
     };
   }
   render() {
-    let MenuList = () => {
-      // console.log('1');
-    };
+    let MenuList = () => {};
     return (
       <div
         style={{ width: 250, height: 870 }}
@@ -115,15 +113,12 @@ class MySider extends Component {
         <Menu
           mode="inline"
           theme="dark"
-          // defaultSelectedKeys={this.state.navMenu.defaultSelectedKeys}
-          // defaultOpenKeys={this.state.navMenu.defaultOpenKeys}
           style={{ height: '100vh', borderRight: 0 }}
         >
           {navMenu.children.map((item) => {
             const icon = React.createElement(Icon[item.icon], {
               style: { fontSize: '16px' },
             });
-            // console.log(icon);
             return (
               <SubMenu key={item.key} title={item.title} icon={icon}>
                 {item.children.map((i) => {

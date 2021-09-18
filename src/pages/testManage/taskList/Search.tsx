@@ -1,20 +1,15 @@
 import {
   Row,
   Col,
-  Dropdown,
-  Menu,
   DatePicker,
   Collapse,
-  Card,
   Select,
   Form,
   Input,
-  Modal,
-  Table,
   Button,
   Space,
 } from 'antd';
-import { UserOutlined, EditOutlined, RedoOutlined } from '@ant-design/icons';
+import { EditOutlined, RedoOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import './index.less';
 const { Panel } = Collapse;
@@ -28,7 +23,6 @@ const SearchModel = (props: any) => {
     form.resetFields();
   };
 
-  //进行搜索
   const handleSearch = (value: any) => {
     if (value.enable_status == '启用') {
       const payload = {
@@ -93,11 +87,6 @@ const SearchModel = (props: any) => {
                 </Select>
               </Form.Item>
             </Col>
-            {/* <Col span={8}>
-              <Form.Item label="创建人" name="test_user">
-                <Input autoComplete="off" />
-              </Form.Item>
-            </Col> */}
           </Row>
           <Row>
             <Col span={8}>

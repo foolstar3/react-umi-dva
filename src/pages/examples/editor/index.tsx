@@ -42,7 +42,6 @@ export default class Editor extends Component {
 
   // 更新编辑器中的code
   getEditorCode(value) {
-    // console.log(value);
     const { dispatch } = this.props;
     // 同步到models中
     dispatch({
@@ -53,15 +52,12 @@ export default class Editor extends Component {
 
   componentDidMount() {}
   componentDidUpdate() {}
-  componentWillReceiveProps(prevProps) {
-    console.log(prevProps);
-  }
+  componentWillReceiveProps(prevProps) {}
   render() {
     const { content } = this.props;
 
     // const {payload} = content
     // const {res} = payload
-    //console.log(content.context);
     return (
       <CodeMirror
         ref="editor"
@@ -79,7 +75,6 @@ export default class Editor extends Component {
           lineNumbers: true,
         }}
         onChange={(editor, data, value) => {
-          // console.log(data, value);
           this.getEditorCode(value);
         }}
       />

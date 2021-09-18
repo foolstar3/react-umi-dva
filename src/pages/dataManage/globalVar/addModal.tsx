@@ -3,23 +3,17 @@ import { message, Form, FormInstance, Input, Modal } from 'antd';
 const { TextArea } = Input;
 import { connect } from 'umi';
 
-class AddModal extends React.Component {
+class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.handleAddValueChange = this.handleAddValueChange.bind(this);
-    this.onReset = this.onReset.bind(this);
     this.state = {
       tempAddValue: '',
     };
   }
 
-  //获取表单域
   formRef = React.createRef<FormInstance>();
 
-  //在模态框中点击提交按钮
-  handleSubmit() {
+  handleSubmit = () => {
     const addGlobalVar = this.state.tempAddValue;
     this.props.dispatch({
       type: 'globalVarList/addGlobalVarList',
@@ -32,36 +26,30 @@ class AddModal extends React.Component {
         } else {
           message.error('添加失败');
         }
-        this.props.dispatch({
-          type: 'globalVarList/getGlobalVarList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.props.childrenPageChange();
       },
     });
     this.props.showAddModal(false);
     this.onReset();
-  }
+  };
 
-  //添加模块中监听所有值的变化
-  handleAddValueChange(singleValueChange, ValueChange) {
+  handleAddValueChange = (singleValueChange, ValueChange) => {
     this.setState({
       tempAddValue: ValueChange,
     });
-  }
-  //添加项目的返回键
+  };
+
   handleCancel = () => {
     this.props.showAddModal(false);
     this.onReset();
   };
-  //重置
-  onReset() {
+
+  onReset = () => {
     this.formRef.current!.resetFields();
-  }
+  };
 
   render() {
-    const addVisible = this.props.addVisible;
+    const addVisible = this.props?.addVisible;
     return (
       <Modal
         visible={addVisible}
