@@ -1,18 +1,7 @@
 import React from 'react';
-import {
-  Row,
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-} from 'antd';
+import { Row, Card, Table, Button, Space } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
-const { TextArea } = Input;
 import './index.less';
 import Editor from '@/components/Editor';
 
@@ -21,36 +10,26 @@ class DebugTalkList extends React.Component<any, any> {
     super(props);
     this.state = {
       editVisible: false,
-      //debugTalk的内容值
       debugTalkContent: '',
-      //操作的那一项debugTalk
       debugTalkId: '',
       tableLoading: true,
       total: 0,
       debugTalkValue: '',
       currentPage: 1,
     };
-    //显示代码输入框
-    this.showPythonModal = this.showPythonModal.bind(this);
-    this.editSubmit = this.editSubmit.bind(this);
-    this.showEditModalCancel = this.showEditModalCancel.bind(this);
-    this.getEditorContent = this.getEditorContent.bind(this);
-    this.getDebugTalkList = this.getDebugTalkList.bind(this);
   }
 
   componentDidMount() {
     this.setState({
       tableLoading: true,
     });
-    this.getDebugTalkList(1);
+    this.getDebugTalkList({ page: 1 });
   }
 
-  getDebugTalkList(page: any) {
+  getDebugTalkList = (payload) => {
     this.props.dispatch({
       type: 'debugTalkList/getDebugTalkList',
-      payload: {
-        page: page,
-      },
+      payload,
       callback: (res) => {
         this.setState({
           tableLoading: false,
@@ -58,9 +37,14 @@ class DebugTalkList extends React.Component<any, any> {
         });
       },
     });
-  }
-
-  editSubmit() {
+  };
+  onPageChange = (page: any) => {
+    this.getDebugTalkList({ page });
+    this.setState({
+      currentPage: page,
+    });
+  };
+  editSubmit = () => {
     const { debugTalkId, debugTalkContent } = this.state;
     this.setState({
       editVisible: false,
@@ -72,44 +56,48 @@ class DebugTalkList extends React.Component<any, any> {
         debugtalk: debugTalkContent,
       },
       callback: () => {
-        this.getDebugTalkList(1);
+        this.getDebugTalkList({ page: 1 });
+        this.setState({
+          currentPage: 1,
+        });
       },
     });
     this.showEditModalCancel();
-  }
+  };
 
-  showPythonModal(record: any) {
+  showPythonModal = (record: any) => {
     this.setState({
       editVisible: true,
       debugTalkId: record.id,
       debugTalkValue: record.debugtalk,
     });
-  }
+  };
 
-  getEditorContent(editContent: any) {
+  getEditorContent = (editContent: any) => {
     this.setState({
       debugTalkContent: editContent,
     });
-  }
-  showEditModalCancel() {
+  };
+  showEditModalCancel = () => {
     this.setState({
       editVisible: false,
     });
-  }
+  };
 
   render() {
     const { tableLoading, total, editVisible, currentPage } = this.state;
-    const { debugTalkList } = this.props.debugTalkList;
-    debugTalkList.map((item) => {
-      item.key = item.id;
-    });
+    const { debugTalkList } = this.props?.debugTalkList;
+    debugTalkList &&
+      debugTalkList.map((item) => {
+        item.key = item.id;
+      });
     const paginationProps = {
       current: currentPage,
       showSizeChanger: false,
       showQuickJumper: true,
       pagesize: 10,
       onChange: (page) => {
-        this.getDebugTalkList(page);
+        this.onPageChange(page);
       },
       total: total,
       showTotal: () => `共 ${total} 条`,

@@ -8,17 +8,6 @@ const { Option } = Select;
 class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.editSubmit = this.editSubmit.bind(this);
-    this.editCancel = this.editCancel.bind(this);
-    this.handleEditValueChange = this.handleEditValueChange.bind(this);
-    this.handleProjectChange = this.handleProjectChange.bind(this);
-    this.caseNumber = this.caseNumber.bind(this);
-    this.getProjectList = this.getProjectList.bind(this);
-    this.getEnvList = this.getEnvList.bind(this);
-    this.getModuleList = this.getModuleList.bind(this);
-    this.getCaseList = this.getCaseList.bind(this);
-    this.getTaskList = this.getTaskList.bind(this);
-    this.getTreeNode = this.getTreeNode.bind(this);
     this.state = {
       tempEditValue: '',
       caseNumber: 0,
@@ -35,41 +24,41 @@ class EditModal extends React.Component<any, any> {
   componentDidMount() {
     this.getProjectList();
     this.getEnvList();
-    this.getCaseList({ payload: { page: 'None' } });
+    this.getCaseList({ page: 'None' });
     this.getTaskList();
   }
 
-  getProjectList() {
+  getProjectList = () => {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
         page: 'None',
       },
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.setState({
           projectList: res,
         });
       },
     });
-  }
-  getModuleList(payload: any) {
+  };
+  getModuleList = (payload: any) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload,
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.getTreeNode(res);
       },
     });
-  }
-  getEnvList() {
+  };
+  getEnvList = () => {
     this.props.dispatch({
       type: 'envList/getEnvList',
       payload: {
         page: 'None',
       },
     });
-  }
-  getCaseList(payload: any) {
+  };
+  getCaseList = (payload: any) => {
     this.props.dispatch({
       type: 'testCase/getCaseList',
       payload,
@@ -79,17 +68,17 @@ class EditModal extends React.Component<any, any> {
         });
       },
     });
-  }
-  getTaskList() {
+  };
+  getTaskList = () => {
     this.props.dispatch({
       type: 'taskList/getTaskList',
       payload: {
         page: 1,
       },
     });
-  }
+  };
 
-  getTreeNode(moduleListChange: any) {
+  getTreeNode = (moduleListChange: any) => {
     const caseList = this.props.testCase.caseList.results;
     const moduleList = moduleListChange;
     const treeData = [];
@@ -112,9 +101,9 @@ class EditModal extends React.Component<any, any> {
     this.setState({
       treeData: treeData,
     });
-  }
-  //在模态框中点击提交按钮
-  editSubmit() {
+  };
+
+  editSubmit = () => {
     const editTask = this.state.tempEditValue;
     if (editTask.enabled == undefined) {
       editTask.enabled = true;
@@ -135,7 +124,6 @@ class EditModal extends React.Component<any, any> {
       }
     }
 
-    //数据处理逻辑与转换
     const requestData = {
       name: editTask.name,
       args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${editTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
@@ -161,47 +149,43 @@ class EditModal extends React.Component<any, any> {
           id: this.props.tempValue.id,
         },
         callback: () => {
-          this.getTaskList();
+          this.props.childrenPageChange();
         },
       });
     this.onReset();
     this.props.showEditModal(false);
-  }
+  };
 
-  //修改项目的返回键
   editCancel = () => {
     this.props.showEditModal(false);
     this.onReset();
   };
 
-  handleEditValueChange(singleValueChange, ValueChange) {
+  handleEditValueChange = (singleValueChange, ValueChange) => {
     this.setState({
       tempEditValue: ValueChange,
     });
-  }
+  };
 
-  //模块数据
-  handleProjectChange(project: any) {
+  handleProjectChange = (project: any) => {
     const projectList = this.state.projectList;
-    //筛选外层数据，放入treedate外层
     for (let i = 0; i < projectList.length; i++) {
       if (project && projectList[i].project_name === project) {
         const payload = { page: 'None', project: projectList[i].id };
         this.getModuleList(payload);
       }
     }
-  }
+  };
 
-  //选择用例个数传参
-  caseNumber(caseArray: any, checkedNumber: any) {
+  caseNumber = (caseArray: any, checkedNumber: any) => {
     this.setState({
       caseNumber: checkedNumber,
       caseArray: caseArray,
     });
-  }
-  onReset() {
+  };
+  onReset = () => {
     this.formRef.current!.resetFields();
-  }
+  };
 
   render() {
     const { editVisible, tempValue } = this.props;
@@ -210,7 +194,6 @@ class EditModal extends React.Component<any, any> {
     const treeData = [...this.state.treeData];
     const caseNumber = this.state.caseNumber;
 
-    ///自定义列表参数
     function tagRender(props) {
       const { label, value, closable, onClose } = props;
       const onPreventMouseDown = (event) => {
@@ -287,7 +270,7 @@ class EditModal extends React.Component<any, any> {
                 rules={[{ required: true }]}
                 initialValue={tempValue.crontab_time}
               >
-                <Input />
+                <Input addonAfter="计划 (m/h/d/dM/MY)" />
               </Form.Item>
               <Form.Item
                 label="运行环境"
@@ -360,7 +343,8 @@ class EditModal extends React.Component<any, any> {
                   caseNumber={this.caseNumber}
                 />
               </Form.Item>
-              {/* <Form.Item
+              {/* TO DO
+              <Form.Item
                 label="邮件列表"
                 name="emailList"
                 rules={[{ required: false }]}

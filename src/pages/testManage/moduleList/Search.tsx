@@ -17,7 +17,6 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const SearchModel = (props: any) => {
-  //点击搜索框中的项目选择时弹出
   const handleProjectListVisible = () => {
     props.dispatch({
       type: 'projectList/getProjectList',
@@ -30,12 +29,10 @@ const SearchModel = (props: any) => {
   const projectList = props?.projectList?.projectList || [];
   const testUserList = props?.userList?.userList || [];
 
-  //重置搜索框
   const onReset = () => {
     form.resetFields();
   };
 
-  //进行搜索
   const handleSearch = (value: any) => {
     for (let i = 0; i < projectList.length; i++) {
       if (value.project && value.project == projectList[i].project_name) {
@@ -107,7 +104,8 @@ const SearchModel = (props: any) => {
                   }
                 </Form.Item>
               </Col>
-              {/* <Col span={8}>
+              {/* TO DO后续可能添加该选项
+              <Col span={8}>
                 <Form.Item label="测试人员" name="test_user">
                   {
                     <Select

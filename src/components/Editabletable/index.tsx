@@ -75,7 +75,6 @@ const EditableTable = ({ form, dataSource, columns }) => {
   columns.push(actionCol);
 
   const cancelEdit = () => {
-    // console.log(columns);
     Object.keys(columns.find((item) => item.dataIndex === 'action')).length
       ? columns.pop()
       : '';
@@ -87,7 +86,6 @@ const EditableTable = ({ form, dataSource, columns }) => {
   };
 
   const edit = (record) => {
-    // console.log(columns);
     Object.keys(columns.find((item) => item.dataIndex === 'action')).length
       ? columns.pop()
       : '';
@@ -108,7 +106,6 @@ const EditableTable = ({ form, dataSource, columns }) => {
     return {
       ...col,
       onCell: (record) => {
-        // console.log(col,record,col.dataIndex === 'type');
         return {
           record,
           cellType: col.dataIndex === 'type' ? 'select' : 'text',

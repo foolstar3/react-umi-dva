@@ -8,23 +8,15 @@ import {
   Input,
   Modal,
   FormInstance,
+  Row,
 } from 'antd';
 import { connect } from 'umi';
 import TreeNode from './treeNode';
+import './index.less';
 const { Option } = Select;
 class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.handleAddValueChange = this.handleAddValueChange.bind(this);
-    this.caseNumber = this.caseNumber.bind(this);
-    this.handleProjectChange = this.handleProjectChange.bind(this);
-    this.getProjectList = this.getProjectList.bind(this);
-    this.getEnvList = this.getEnvList.bind(this);
-    this.getModuleList = this.getModuleList.bind(this);
-    this.getCaseList = this.getCaseList.bind(this);
-    this.getTreeNode = this.getTreeNode.bind(this);
     this.state = {
       tempAddValue: '',
       caseNumber: 0,
@@ -38,57 +30,58 @@ class AddModal extends React.Component<any, any> {
 
   formRef = React.createRef<FormInstance>();
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.getProjectList();
     this.getEnvList();
     this.getCaseList({ page: 'None' });
   }
 
-  getProjectList() {
+  getProjectList = () => {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload: {
         page: 'None',
       },
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.setState({
           projectList: res,
         });
       },
     });
-  }
+  };
 
-  getModuleList(payload: any) {
+  getModuleList = (payload: any) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload,
-      callback: (res) => {
+      callback: (res, rescount) => {
         this.getTreeNode(res);
       },
     });
-  }
-  getEnvList() {
+  };
+  getEnvList = () => {
     this.props.dispatch({
       type: 'envList/getEnvList',
       payload: {
         page: 'None',
       },
     });
-  }
-  getCaseList(payload: any) {
+  };
+  getCaseList = (payload: any) => {
     this.props.dispatch({
       type: 'testCase/getCaseList',
       payload,
       callback: (res) => {
         this.setState({
-          caseList: res.results,
+          caseList: res,
         });
       },
     });
-  }
+  };
 
-  getTreeNode(moduleListChange: any) {
-    const caseList = this.props.testCase.caseList.results;
+  getTreeNode = (moduleListChange: any) => {
+    console.log('moduleListChange', moduleListChange);
+    const caseList = this.props.testCase.caseList;
     const moduleList = moduleListChange;
     const treeData = [];
     moduleList &&
@@ -110,14 +103,10 @@ class AddModal extends React.Component<any, any> {
     this.setState({
       treeData: treeData,
     });
-  }
+  };
 
-  //在模态框中点击提交按钮
-  handleSubmit() {
+  handleSubmit = () => {
     const addTask = this.state.tempAddValue;
-    // if (addTask.enabled == undefined) {
-    //   addTask.enabled = true;
-    // }
     const projectList = this.props.projectList.projectList;
     const envList = this.props.envList.envList;
     for (let i = 0; i < projectList.length; i++) {
@@ -131,7 +120,6 @@ class AddModal extends React.Component<any, any> {
       }
     }
 
-    //数据处理逻辑与转换
     const requestData = {
       name: addTask.name,
       args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${addTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
@@ -157,49 +145,44 @@ class AddModal extends React.Component<any, any> {
           ...requestData,
         },
         callback: () => {
-          this.props.getTaskList({ page: 1 });
+          this.props.childrenPageChange();
         },
       });
     this.props.showAddModal(false);
     this.onReset();
-  }
+  };
 
-  //添加任务中监听所有值的变化
-  handleAddValueChange(singleValueChange, ValueChange) {
-    console.log('ValueChange', ValueChange);
+  handleAddValueChange = (singleValueChange, ValueChange) => {
     this.setState({
       tempAddValue: ValueChange,
     });
-  }
+  };
 
-  //模块数据
-  handleProjectChange(project: any) {
+  handleProjectChange = (project: any) => {
     const projectList = this.state.projectList;
-    //筛选外层数据，放入treedate外层
     for (let i = 0; i < projectList.length; i++) {
       if (project && projectList[i].project_name === project) {
         const payload = { page: 'None', project: projectList[i].id };
         this.getModuleList(payload);
       }
     }
-  }
+  };
 
-  //添加项目的返回键
   handleCancel = () => {
     this.props.showAddModal(false);
     this.onReset();
   };
-  //选择用例个数传参
-  caseNumber(caseArray: any, checkedNumber: any) {
+
+  caseNumber = (caseArray: any, checkedNumber: any) => {
     this.setState({
       caseNumber: checkedNumber,
       caseArray: caseArray,
     });
-  }
+  };
 
-  onReset() {
+  onReset = () => {
     this.formRef.current!.resetFields();
-  }
+  };
 
   render() {
     const caseNumber = this.state.caseNumber;
@@ -208,7 +191,6 @@ class AddModal extends React.Component<any, any> {
     const projectList = this.props?.projectList?.projectList || [];
     const treeData = [...this.state.treeData];
 
-    ///自定义列表参数
     function tagRender(props) {
       const { label, value, closable, onClose } = props;
       const onPreventMouseDown = (event) => {
@@ -269,8 +251,9 @@ class AddModal extends React.Component<any, any> {
             label="定时计划"
             name="crontab"
             rules={[{ required: true }]}
+            id="basic_taskList_crontab"
           >
-            <Input />
+            <Input addonAfter="计划 (m/h/d/dM/MY)" />
           </Form.Item>
           <Form.Item
             label="运行环境"
@@ -316,7 +299,7 @@ class AddModal extends React.Component<any, any> {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                onSelect={this.handleProjectChange}
+                onChange={this.handleProjectChange}
               >
                 {projectList &&
                   Array.isArray(projectList) &&
@@ -338,7 +321,8 @@ class AddModal extends React.Component<any, any> {
           >
             <TreeNode treeData={[...treeData]} caseNumber={this.caseNumber} />
           </Form.Item>
-          {/* <Form.Item
+          {/* TO DO
+          <Form.Item
             label = '邮件列表'
             name = 'emailList'
             rules = {[ {required: false} ]}
