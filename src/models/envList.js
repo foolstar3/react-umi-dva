@@ -29,7 +29,6 @@ export default {
   effects: {
     *getEnvList({ payload, callback }, { call, put }) {
       const res = yield call(getEnvList, payload);
-      // console.log(res);
       yield put({
         type: 'update',
         payload: res.results ?? res,
@@ -40,10 +39,6 @@ export default {
     },
     *toggleSwitch({ payload, callback }, { call, put }) {
       const res = yield call(toggleSwitch, payload);
-      // yield put({
-      //   type: 'updateStatus',
-      //   payload: res,
-      // });
       if (callback) {
         callback(res);
       }
@@ -59,11 +54,11 @@ export default {
     },
     *deleteEnvList({ payload, callback }, { call, put }) {
       const res = yield call(deleteEnvList, payload);
-      // console.log(res);
+      callback();
     },
     *updateEnv({ payload, callback }, { call, put }) {
       const res = yield call(updateEnv, payload);
-      if (callback) {
+      if (res.code === 'U000000') {
         callback(res);
       }
     },

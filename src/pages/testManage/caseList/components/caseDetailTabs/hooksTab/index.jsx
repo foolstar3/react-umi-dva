@@ -4,19 +4,12 @@ import { Form, Select, Button, message } from 'antd';
 
 import styles from './index.less';
 
-const HooksTab = ({ setupHooks, teardownHooks }) => {
-  // console.log(setupHooks, teardownHooks);
+const HooksTab = ({ setupHooks, teardownHooks, funcs }) => {
   const [setupData, setSetupData] = useState(() => {
     const setup = [];
     setupHooks.map((item, index) => {
-      // for (const [key, value] of Object.entries(item)) {
-      //   // console.log(`${key}: ${value}`);
-      //   item.name = key
-      //   item.value = JSON.stringify(value)
-      // }
-
       setup.push({
-        name: item,
+        funcName: item,
         id: index + 1,
         key: index + 1,
       });
@@ -27,14 +20,8 @@ const HooksTab = ({ setupHooks, teardownHooks }) => {
   const [teardownData, setTeardownData] = useState(() => {
     const teardown = [];
     teardownHooks.map((item, index) => {
-      // for (const [key, value] of Object.entries(item)) {
-      //   // console.log(`${key}: ${value}`);
-      //   item.name = key
-      //   item.value = JSON.stringify(value)
-      // }
-
       teardown.push({
-        name: item,
+        funcName: item,
         id: index + 1,
         key: index + 1,
       });
@@ -50,7 +37,7 @@ const HooksTab = ({ setupHooks, teardownHooks }) => {
     },
     {
       title: '函数名',
-      dataIndex: 'name',
+      dataIndex: 'funcName',
       editable: true,
       align: 'center',
     },
@@ -65,7 +52,7 @@ const HooksTab = ({ setupHooks, teardownHooks }) => {
     },
     {
       title: '函数名',
-      dataIndex: 'name',
+      dataIndex: 'funcName',
       editable: true,
       align: 'center',
     },
@@ -82,6 +69,7 @@ const HooksTab = ({ setupHooks, teardownHooks }) => {
           form={form}
           dataSource={setupData}
           columns={setupTableColumns}
+          funcs={funcs}
         />
       </div>
       <div className={styles.teardownHooksContent}>
@@ -92,6 +80,7 @@ const HooksTab = ({ setupHooks, teardownHooks }) => {
           form={form}
           dataSource={teardownData}
           columns={teardownTableColumns}
+          funcs={funcs}
         />
       </div>
     </>

@@ -57,7 +57,6 @@ class ViewReport extends Component<any, any> {
       type: 'report/deleteReport',
       payload,
       callback: () => {
-        console.log('deleteReport');
         /**
          * todo
          * 删除成功
@@ -72,7 +71,6 @@ class ViewReport extends Component<any, any> {
    */
 
   handleDeleteOk = (record: any) => {
-    // console.log(record);
     this.deleteReport(record.id);
     this.getReportList({ page: 1 });
   };
@@ -106,6 +104,8 @@ class ViewReport extends Component<any, any> {
             详情
           </Button>
           <Popconfirm
+            okText="Yes"
+            cancelText="No"
             title="确定删除?"
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             onConfirm={() => this.handleDeleteOk(record)}

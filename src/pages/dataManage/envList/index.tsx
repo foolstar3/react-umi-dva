@@ -46,8 +46,6 @@ class EnvList extends Component<any, any> {
       addEnvListData: {},
       // 编辑环境列表数据
       editEnvListData: {},
-      // table加载中
-      tableLoading: true,
       // table列配置
       columns: [
         {
@@ -137,6 +135,8 @@ class EnvList extends Component<any, any> {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDeleteOk(text)}
@@ -167,20 +167,17 @@ class EnvList extends Component<any, any> {
 
   // 监听table选中的列发生变化的函数
   onSelectChange = (selectedRowKeys) => {
-    // console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
 
   // 获取table数据的函数
   getEnvList = (payload) => {
-    this.setState({ tableLoading: true });
     const { dispatch } = this.props;
     dispatch({
       type: 'envList/getEnvList',
       payload,
       callback: (res) => {
         this.setState({
-          tableLoading: false,
           total: res.count,
         });
       },
@@ -205,7 +202,6 @@ class EnvList extends Component<any, any> {
         判断是否成功返回数据
         成功则提示切换状态成功
         失败则提示切换状态失败 */
-        // console.log(res);
         message.success(res.message);
       },
     });
@@ -258,7 +254,6 @@ class EnvList extends Component<any, any> {
       type: 'envList/addEnvList',
       payload,
       callback: (res) => {
-        console.log(res.message);
         if (res.message) {
           // 添加成功
           message.success(res.message);
@@ -266,7 +261,6 @@ class EnvList extends Component<any, any> {
         } else if (res.status == 400) {
           message.error('有同名或同地址的环境,创建失败!');
         }
-        // console.log(res);
       },
     });
   };
@@ -279,8 +273,7 @@ class EnvList extends Component<any, any> {
     dispatch({
       type: 'envList/deleteEnvList',
       payload,
-      callback: (res) => {
-        // console.log(res);
+      callback: () => {
         this.getEnvList({ page: 1 });
       },
     });
@@ -317,7 +310,7 @@ class EnvList extends Component<any, any> {
       type: 'envList/updateEnv',
       payload,
       callback: (res) => {
-        // console.log(res);
+        message.success(res.message);
         this.getEnvList({ page: 1 });
       },
     });
@@ -325,7 +318,6 @@ class EnvList extends Component<any, any> {
 
   // 弹出编辑对话框
   showEditModal = (text, record) => {
-    // console.log(record);
     this.setState({
       editModalVisiable: true,
       currentEnvInfo: record,
@@ -342,15 +334,12 @@ class EnvList extends Component<any, any> {
 
   // 确认编辑
   handleEditOk = () => {
-    // console.log('handleEditOk');
-    // console.log(this.state.editEnvListData);
     const { editEnvListData, currentEnvInfo } = this.state;
     // 包装请求数据
     const payload = {
       ...editEnvListData,
       id: currentEnvInfo.id,
     };
-    // console.log(payload);
     this.updateEnv(payload);
     this.setState({
       editModalVisiable: false,
@@ -359,7 +348,6 @@ class EnvList extends Component<any, any> {
 
   // 取消编辑
   handleEditCancel = () => {
-    console.log('handleEditCancel');
     this.setState({
       editModalVisiable: false,
     });
@@ -368,7 +356,6 @@ class EnvList extends Component<any, any> {
   /** ============环境信息对话框=========== */
   // 弹出环境信息对话框
   showEnvInfoModal = (record) => {
-    console.log(record);
     this.setState({
       envInfoModalVisiable: true,
       currentEnvInfo: record,
@@ -377,6 +364,12 @@ class EnvList extends Component<any, any> {
   };
 
   handleEnvInfoOk = () => {
+    const { editorCode, currentEnvInfo } = this.state;
+    const payload = {
+      ...currentEnvInfo,
+      env_vars: editorCode,
+    };
+    this.updateEnv(payload);
     this.setState({
       envInfoModalVisiable: false,
     });
@@ -390,7 +383,6 @@ class EnvList extends Component<any, any> {
 
   // 获取编辑器内容
   editorCodeChange = (value) => {
-    // console.log(value);
     this.setState({
       editorCode: value,
     });
@@ -404,12 +396,10 @@ class EnvList extends Component<any, any> {
       currentEnvInfo,
       editModalVisiable,
       envInfoModalVisiable,
-      tableLoading,
       editorCode,
       total,
     } = this.state;
-    const { envList } = this.props;
-    // console.log(envList);
+    const { envList, tableLoading } = this.props;
     if (envList !== undefined) {
       // 为envList数组中的每个元素添加一个key属性
       envList.map((item) => {
@@ -546,7 +536,7 @@ class EnvList extends Component<any, any> {
         )}
         {/* 环境信息编辑框 */}
         {envInfoModalVisiable && (
-          <div>
+          <Card bordered={false}>
             <Editor
               content={editorCode}
               getEditorContent={(value) => this.editorCodeChange(value)}
@@ -563,13 +553,14 @@ class EnvList extends Component<any, any> {
                 </Button>
               </Row>
             </div>
-          </div>
+          </Card>
         )}
       </>
     );
   }
 }
 
-export default connect(({ envList }) => ({
+export default connect(({ envList, loading }) => ({
   envList: envList.envList,
+  tableLoading: loading.effects['envList/getEnvList'],
 }))(EnvList);

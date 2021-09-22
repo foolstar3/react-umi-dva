@@ -24,7 +24,6 @@ import {
 import Editor from '@/components/Editor';
 import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
-// import Editor from '@/pages/examples/editor';
 import './index.less';
 const { Option } = Select;
 
@@ -105,6 +104,8 @@ class ParamsFile extends Component<any, any> {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除?"
                 onConfirm={() => this.confirmDelete(text)}
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
@@ -158,9 +159,7 @@ class ParamsFile extends Component<any, any> {
       type: 'paramsFile/getParamsFileListData',
       payload,
       callback: (res) => {
-        // console.log(res);
         const { paramsFileData } = this.props;
-        // console.log(paramsFileData);
         this.setState({
           tableLoading: false,
           total: paramsFileData.count,
@@ -176,10 +175,9 @@ class ParamsFile extends Component<any, any> {
 
     this.setState(() => ({
       currentEditParamsFile: text,
-      editModalVisiable: true,
       editorCode: paramsFileCode.content,
+      editModalVisiable: true,
     }));
-    // console.log(this.state.currentEditParamsFile);
   };
 
   getParamsFileCode = (payload) => {
@@ -210,6 +208,8 @@ class ParamsFile extends Component<any, any> {
   // 处理编辑对话框显隐函数
   handleEditOk = () => {
     const { editorCode, currentEditParamsFile } = this.state;
+    const { paramsFileCode } = this.props;
+    paramsFileCode.content = '';
     const payload = {
       content: editorCode,
       id: currentEditParamsFile.id,
@@ -231,6 +231,8 @@ class ParamsFile extends Component<any, any> {
   };
 
   handleEditCancel = () => {
+    const { paramsFileCode } = this.props;
+    paramsFileCode.content = '';
     this.setState({
       editModalVisiable: false,
     });
@@ -266,7 +268,6 @@ class ParamsFile extends Component<any, any> {
       type: 'paramsFile/addFile',
       payload: formData,
       callback: (res) => {
-        console.log(res);
         if (res.data) {
           this.getParamsFileList({ page: 1 });
         } else if (res.status == 400) {
@@ -288,16 +289,11 @@ class ParamsFile extends Component<any, any> {
     });
   };
 
-  onFinish = (values: any) => {
-    // console.log('Success:', values);
-  };
+  onFinish = (values: any) => {};
 
-  onFinishFailed = (errorInfo: any) => {
-    // console.log('Failed:', errorInfo);
-  };
+  onFinishFailed = (errorInfo: any) => {};
   // 文件上传
   normFile = (e: any) => {
-    // console.log('Upload event:', e);
     if (Array.isArray(e)) {
       return e;
     }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'umi';
 import { Form, Table, Select, Input, Button } from 'antd';
 import styles from './index.less';
 const { Option } = Select;
@@ -13,17 +14,31 @@ const EditableCell = ({
   children,
   ...restProps
 }) => {
-  const inputNode =
-    cellType === 'select' ? (
-      <Select>
-        <Option value="string">String</Option>
-        <Option value="number">Int</Option>
-        <Option value="number">Float</Option>
-        <Option value="boolean">Boolean</Option>
-      </Select>
-    ) : (
-      <Input />
-    );
+  const inputNode = () => {
+    if (cellType === 'typeSelect') {
+      return (
+        <Select>
+          <Option value="string">String</Option>
+          <Option value="number">Int</Option>
+          <Option value="number">Float</Option>
+          <Option value="boolean">Boolean</Option>
+        </Select>
+      );
+    } else if (cellType === 'funcSelect') {
+      return (
+        <Select>
+          {restProps.funcs.map((item) => (
+            <Option value={item} key={item}>
+              {item}
+            </Option>
+          ))}
+        </Select>
+      );
+    } else {
+      return <Input />;
+    }
+  };
+
   return (
     <td {...restProps}>
       {editing ? (
@@ -39,7 +54,7 @@ const EditableCell = ({
             },
           ]}
         >
-          {inputNode}
+          {inputNode()}
         </Form.Item>
       ) : (
         children
@@ -48,7 +63,14 @@ const EditableCell = ({
   );
 };
 
-const EditableTable = ({ form, dataSource, columns }) => {
+const EditableTable = ({
+  form,
+  dataSource,
+  columns,
+  funcs = [],
+  lineDelete = (_line) => {},
+  lineSave = (_line) => {},
+}) => {
   const [editingKey, setEditingKey] = useState(-1);
   const actionCol = {
     title: '操作',
@@ -59,26 +81,26 @@ const EditableTable = ({ form, dataSource, columns }) => {
       const editable = isEditing(record);
       return editable ? (
         <>
-          <Button type="primary">保存</Button>
+          <Button type="primary" onClick={() => save(record.key)}>
+            保存
+          </Button>
           <Button onClick={() => cancelEdit()}>取消</Button>
         </>
       ) : (
         <>
           <Button onClick={() => edit(record)}>编辑</Button>
-          <Button type="primary" danger>
+          <Button type="primary" danger onClick={() => lineDelete(record)}>
             删除
           </Button>
         </>
       );
     },
   };
+  // 若操作列已存在，删除最后一列
+  // 否则不操作
+  columns.find((item) => item.dataIndex === 'action') ? columns.pop() : '';
   columns.push(actionCol);
-
   const cancelEdit = () => {
-    // console.log(columns);
-    Object.keys(columns.find((item) => item.dataIndex === 'action')).length
-      ? columns.pop()
-      : '';
     setEditingKey(-1);
   };
 
@@ -87,10 +109,6 @@ const EditableTable = ({ form, dataSource, columns }) => {
   };
 
   const edit = (record) => {
-    // console.log(columns);
-    Object.keys(columns.find((item) => item.dataIndex === 'action')).length
-      ? columns.pop()
-      : '';
     form.setFieldsValue({
       name: '',
       type: '',
@@ -98,6 +116,20 @@ const EditableTable = ({ form, dataSource, columns }) => {
       ...record,
     });
     setEditingKey(record.key);
+  };
+
+  const save = async (key) => {
+    try {
+      const row = await form.validateFields();
+      const line = { ...row, key };
+      lineSave(line);
+      Object.keys(columns.find((item) => item.dataIndex === 'action')).length
+        ? columns.pop()
+        : '';
+      setEditingKey(-1);
+    } catch (errInfo) {
+      console.log('校验失败:', errInfo);
+    }
   };
 
   const mergedColumns = columns.map((col) => {
@@ -108,10 +140,22 @@ const EditableTable = ({ form, dataSource, columns }) => {
     return {
       ...col,
       onCell: (record) => {
-        // console.log(col,record,col.dataIndex === 'type');
+        let type = '';
+        switch (col.dataIndex) {
+          case 'type':
+            type = 'typeSelect';
+            break;
+          case 'funcName':
+            type = 'funcSelect';
+            break;
+          default:
+            type = 'text';
+            break;
+        }
         return {
+          funcs,
           record,
-          cellType: col.dataIndex === 'type' ? 'select' : 'text',
+          cellType: type,
           dataIndex: col.dataIndex,
           title: col.title,
           editing: isEditing(record),
