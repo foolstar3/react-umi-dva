@@ -4,8 +4,7 @@ import { Form, Select, Button, message } from 'antd';
 import { DataType } from '@/utils/common';
 import styles from './index.less';
 
-const ExtractTab = ({ extract, validate }) => {
-  // console.log(extract, validate);
+const ExtractTab = ({ extract, validate, save }) => {
   const [extractData, setExtractData] = useState(() => {
     const extractArr = [];
     let index = 1;
@@ -31,18 +30,88 @@ const ExtractTab = ({ extract, validate }) => {
         el.comparator = key;
         el.check = value[0];
         el.expected = value[1];
-        // const type = Object.prototype.toString.call(value[1]);
-        // if(type.substring(8, type.length - 1) == 'Number') {
-        //   el.type = value[1]%1 == 0 ? 'Int': 'Float'
-        // } else {
-        //   el.type = type.substring(8, type.length - 1);
-        // }
         el.type = DataType(value[1]);
       }
       validArr.push(el);
     });
     return validArr;
   });
+
+  const lineAdd = (table) => {
+    if (table === 'extract') {
+      setExtractData((prev) => {
+        prev.push({
+          id: prev.length + 1,
+          key: prev.length + 1,
+          name: '',
+          path: '',
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        return next;
+      });
+    } else if (table === 'validate') {
+      setValidateData((prev) => {
+        prev.push({
+          id: prev.length + 1,
+          key: prev.length + 1,
+          check: '',
+          comparator: '',
+          type: '',
+          expected: '',
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        return next;
+      });
+    }
+  };
+
+  const lineDelete = (line, table) => {
+    if (table === 'extract') {
+      setExtractData((prev) => {
+        const next = prev.filter((item) => item.name !== line.name);
+        save(next, 'extract');
+        return next;
+      });
+    } else if (table === 'validate') {
+      setValidateData((prev) => {
+        const next = prev.filter((item) => item.check !== line.check);
+        save(next, 'validate');
+        return next;
+      });
+    }
+  };
+
+  const lineSave = (line, table) => {
+    if (table === 'extract') {
+      setExtractData((prev) => {
+        const index = prev.findIndex((item) => item.key === line.key);
+        let next = [];
+        // key有重复后的保存
+        if (index > -1) {
+          prev[index].name = line.name;
+          prev[index].path = line.path;
+          next = prev;
+        }
+        save(next, 'extract');
+        return next;
+      });
+    } else if (table === 'validate') {
+      setValidateData((prev) => {
+        const index = prev.findIndex((item) => item.key === line.key);
+        let next = [];
+        // key有重复后的保存
+        if (index > -1) {
+          prev[index].check = line.check;
+          prev[index].comparator = line.comparator;
+          prev[index].type = line.type;
+          prev[index].expected = line.expected;
+          next = prev;
+        }
+        save(next, 'validate');
+        return next;
+      });
+    }
+  };
 
   const extractTableColumns = [
     {
@@ -103,22 +172,30 @@ const ExtractTab = ({ extract, validate }) => {
     <>
       <div className={styles.extractContent}>
         <div className={styles.topBtn}>
-          <Button type="primary">添加extract</Button>
+          <Button type="primary" onClick={() => lineAdd('extract')}>
+            添加extract
+          </Button>
         </div>
         <EditableTable
           form={form}
           dataSource={extractData}
           columns={extractTableColumns}
+          lineDelete={(record) => lineDelete(record, 'extract')}
+          lineSave={(record) => lineSave(record, 'extract')}
         />
       </div>
       <div className={styles.validateContent}>
         <div className={styles.topBtn}>
-          <Button type="primary">添加validate</Button>
+          <Button type="primary" onClick={() => lineAdd('validate')}>
+            添加validate
+          </Button>
         </div>
         <EditableTable
           form={form}
           dataSource={validateData}
           columns={validateTableColumns}
+          lineDelete={(record) => lineDelete(record, 'validate')}
+          lineSave={(record) => lineSave(record, 'validate')}
         />
       </div>
     </>

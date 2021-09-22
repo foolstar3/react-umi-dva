@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import EditableTable from '@/components/Editabletable';
+import { DataType } from '@/utils/common';
 import { Form, Select, Button, message, Input, Row, Col } from 'antd';
 
 import styles from './index.less';
 
-const RequestTab = ({ request }) => {
-  // console.log(request);
+const RequestTab = ({ request, save }) => {
   const method = [
     { name: 'GET', value: 'GET', key: 'GET' },
     { name: 'POST', value: 'POST', key: 'POST' },
@@ -26,12 +26,12 @@ const RequestTab = ({ request }) => {
     let index = 1;
     if (request.headers) {
       for (const [key, value] of Object.entries(request.headers)) {
-        // console.log(`${key}: ${value}`);
         header.push({
           name: key,
           value: value,
           id: index,
           key: index,
+          type: DataType(value),
         });
         index++;
       }
@@ -48,6 +48,7 @@ const RequestTab = ({ request }) => {
           value: value,
           id: index,
           key: index,
+          type: DataType(value),
         });
         index++;
       }
@@ -64,12 +65,118 @@ const RequestTab = ({ request }) => {
           value: value,
           id: index,
           key: index,
+          type: DataType(value),
         });
         index++;
       }
     }
     return data;
   });
+
+  const lineAdd = (table) => {
+    if (table === 'headers') {
+      setHeaderData((prev) => {
+        prev.push({
+          id: prev.length + 1,
+          key: prev.length + 1,
+          name: '',
+          value: '',
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        return next;
+      });
+    } else if (table === 'params') {
+      setParamsData((prev) => {
+        prev.push({
+          id: prev.length + 1,
+          key: prev.length + 1,
+          name: '',
+          value: '',
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        return next;
+      });
+    } else if (table === 'data') {
+      setData((prev) => {
+        prev.push({
+          id: prev.length + 1,
+          key: prev.length + 1,
+          name: '',
+          value: '',
+          type: '',
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        return next;
+      });
+    }
+  };
+
+  const lineDelete = (line, table) => {
+    if (table === 'headers') {
+      setHeaderData((prev) => {
+        const next = prev.filter((item) => item.name !== line.name);
+        save(next, table);
+        return next;
+      });
+    } else if (table === 'params') {
+      setParamsData((prev) => {
+        const next = prev.filter((item) => item.name !== line.name);
+        save(next, table);
+        return next;
+      });
+    } else if (table === 'data') {
+      setData((prev) => {
+        const next = prev.filter((item) => item.name !== line.name);
+        save(next, table);
+        return next;
+      });
+    }
+  };
+
+  const lineSave = (line, table) => {
+    if (table === 'headers') {
+      setHeaderData((prev) => {
+        const index = prev.findIndex((item) => item.key === line.key);
+        let next = [];
+        // key有重复后的保存
+        if (index > -1) {
+          prev[index].name = line.name;
+          prev[index].value = line.value;
+          next = prev;
+        }
+        save(next, table);
+        return next;
+      });
+    } else if (table === 'params') {
+      setParamsData((prev) => {
+        const index = prev.findIndex((item) => item.key === line.key);
+        let next = [];
+        // key有重复后的保存
+        if (index > -1) {
+          prev[index].name = line.name;
+          prev[index].value = line.value;
+          next = prev;
+        }
+        save(next, table);
+        return next;
+      });
+    } else if (table === 'data') {
+      setData((prev) => {
+        const index = prev.findIndex((item) => item.key === line.key);
+        let next = [];
+        // key有重复后的保存
+        if (index > -1) {
+          prev[index].name = line.name;
+          prev[index].value = line.value;
+          prev[index].type = line.type;
+          next = prev;
+        }
+        save(next, table);
+        return next;
+      });
+    }
+  };
+
   const headerTableColumns = [
     {
       title: '编号',
@@ -198,32 +305,44 @@ const RequestTab = ({ request }) => {
       </div>
       <div className={styles.headerContent}>
         <div className={styles.topBtn}>
-          <Button type="primary">添加headers</Button>
+          <Button type="primary" onClick={() => lineAdd('headers')}>
+            添加headers
+          </Button>
         </div>
         <EditableTable
           form={form}
           dataSource={headerData}
           columns={headerTableColumns}
+          lineDelete={(record) => lineDelete(record, 'headers')}
+          lineSave={(record) => lineSave(record, 'headers')}
         />
       </div>
       <div className={styles.paramsContent}>
         <div className={styles.topBtn}>
-          <Button type="primary">添加params</Button>
+          <Button type="primary" onClick={() => lineAdd('params')}>
+            添加params
+          </Button>
         </div>
         <EditableTable
           form={form}
           dataSource={paramsData}
           columns={paramsTableColumns}
+          lineDelete={(record) => lineDelete(record, 'params')}
+          lineSave={(record) => lineSave(record, 'params')}
         />
       </div>
       <div className={styles.dataContent}>
         <div className={styles.topBtn}>
-          <Button type="primary">添加data</Button>
+          <Button type="primary" onClick={() => lineAdd('data')}>
+            添加data
+          </Button>
         </div>
         <EditableTable
           form={form}
           dataSource={requestData}
           columns={dataTableColumns}
+          lineDelete={(record) => lineDelete(record, 'data')}
+          lineSave={(record) => lineSave(record, 'data')}
         />
       </div>
     </>

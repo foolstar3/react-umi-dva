@@ -23,14 +23,12 @@ export default {
     setParamsFileCode(state, { payload }) {
       const newState = JSON.parse(JSON.stringify(state));
       newState.paramsFileCode = payload;
-      // console.log(newState);
       return {
         ...state,
         ...newState,
       };
     },
     setEditorCode(state, { payload }) {
-      // console.log(payload);
       const newState = JSON.parse(JSON.stringify(state));
       newState.paramsFileCode.context = payload;
       return {
@@ -55,7 +53,6 @@ export default {
       /*todo
       调用reducers中的更新函数
       更新state中的paramsFileList */
-      console.log(data);
       if (callback) {
         callback(data);
       }
@@ -78,7 +75,6 @@ export default {
     },
     *updateParamsFileCode({ payload, callback }, { call, put }) {
       const res = yield call(updateParamsFileCode, payload);
-      // console.log(res);
     },
   },
 };

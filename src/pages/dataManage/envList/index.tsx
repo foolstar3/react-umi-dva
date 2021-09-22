@@ -46,8 +46,6 @@ class EnvList extends Component<any, any> {
       addEnvListData: {},
       // 编辑环境列表数据
       editEnvListData: {},
-      // table加载中
-      tableLoading: true,
       // table列配置
       columns: [
         {
@@ -137,6 +135,8 @@ class EnvList extends Component<any, any> {
                 编辑
               </Button>
               <Popconfirm
+                okText="Yes"
+                cancelText="No"
                 title="确定删除？"
                 icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 onConfirm={() => this.handleDeleteOk(text)}
@@ -172,14 +172,12 @@ class EnvList extends Component<any, any> {
 
   // 获取table数据的函数
   getEnvList = (payload) => {
-    this.setState({ tableLoading: true });
     const { dispatch } = this.props;
     dispatch({
       type: 'envList/getEnvList',
       payload,
       callback: (res) => {
         this.setState({
-          tableLoading: false,
           total: res.count,
         });
       },
@@ -275,7 +273,7 @@ class EnvList extends Component<any, any> {
     dispatch({
       type: 'envList/deleteEnvList',
       payload,
-      callback: (res) => {
+      callback: () => {
         this.getEnvList({ page: 1 });
       },
     });
@@ -312,6 +310,7 @@ class EnvList extends Component<any, any> {
       type: 'envList/updateEnv',
       payload,
       callback: (res) => {
+        message.success(res.message);
         this.getEnvList({ page: 1 });
       },
     });
@@ -365,6 +364,12 @@ class EnvList extends Component<any, any> {
   };
 
   handleEnvInfoOk = () => {
+    const { editorCode, currentEnvInfo } = this.state;
+    const payload = {
+      ...currentEnvInfo,
+      env_vars: editorCode,
+    };
+    this.updateEnv(payload);
     this.setState({
       envInfoModalVisiable: false,
     });
@@ -391,11 +396,10 @@ class EnvList extends Component<any, any> {
       currentEnvInfo,
       editModalVisiable,
       envInfoModalVisiable,
-      tableLoading,
       editorCode,
       total,
     } = this.state;
-    const { envList } = this.props;
+    const { envList, tableLoading } = this.props;
     if (envList !== undefined) {
       // 为envList数组中的每个元素添加一个key属性
       envList.map((item) => {
@@ -532,7 +536,7 @@ class EnvList extends Component<any, any> {
         )}
         {/* 环境信息编辑框 */}
         {envInfoModalVisiable && (
-          <div>
+          <Card bordered={false}>
             <Editor
               content={editorCode}
               getEditorContent={(value) => this.editorCodeChange(value)}
@@ -549,13 +553,14 @@ class EnvList extends Component<any, any> {
                 </Button>
               </Row>
             </div>
-          </div>
+          </Card>
         )}
       </>
     );
   }
 }
 
-export default connect(({ envList }) => ({
+export default connect(({ envList, loading }) => ({
   envList: envList.envList,
+  tableLoading: loading.effects['envList/getEnvList'],
 }))(EnvList);

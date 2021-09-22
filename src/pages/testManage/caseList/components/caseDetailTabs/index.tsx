@@ -27,6 +27,8 @@ const CaseDetailTabs = ({
   envList,
   dispatch,
   debugResponse,
+  funcs,
+  onS,
 }) => {
   const responseTreeData = [];
   const responseTabs = [];
@@ -72,12 +74,11 @@ const CaseDetailTabs = ({
     const payload = {
       type: 1,
       name: 'organization_current',
-      project: 79,
-      module: 42,
+      project: 109,
+      module: 75,
       base_url: 'https://portal-master-api.uihcloud.cn',
       before: [1],
       after: [],
-      params_files: [],
       export: [],
       teststeps: [
         {
@@ -113,6 +114,84 @@ const CaseDetailTabs = ({
     setModalVisible(false);
   };
 
+  // 编辑删除后保存当前tab的数据
+  const saveData = (data, table) => {
+    switch (table) {
+      case 'extract':
+        setExtract(() => {
+          const obj = {};
+          data.forEach((item) => {
+            obj[item.name] = item.path;
+          });
+          return obj;
+        });
+        break;
+      case 'validate':
+        setValidate(() => {
+          const obj = {};
+          data.forEach((item) => {
+            obj[item.comparator] = [item.check, item.expected];
+          });
+          return obj;
+        });
+        break;
+      case 'headers':
+        setRequest((prev) => {
+          const obj = {
+            ...prev,
+            headers: {},
+          };
+          const child = {};
+          data.forEach((item) => {
+            child[item.name] = item.value;
+          });
+          obj.headers = child;
+          return obj;
+        });
+        break;
+      case 'params':
+        setRequest((prev) => {
+          const obj = {
+            ...prev,
+            params: {},
+          };
+          const child = {};
+          data.forEach((item) => {
+            child[item.name] = item.value;
+          });
+          obj.params = child;
+          return obj;
+        });
+        break;
+      case 'data':
+        setRequest((prev) => {
+          const obj = {
+            ...prev,
+            data: {},
+          };
+          const child = {};
+          data.forEach((item) => {
+            child[item.name] = item.value;
+          });
+          obj.data = child;
+          return obj;
+        });
+        break;
+      case 'url':
+        setRequest((prev) => {
+          const obj = {
+            ...prev,
+            url: '',
+          };
+          obj.url = data;
+          return obj;
+        });
+        break;
+    }
+  };
+
+  const onSave = () => {};
+
   return (
     <>
       <div className={styles.tabBody}>
@@ -134,18 +213,21 @@ const CaseDetailTabs = ({
             <ParametersTab
               parameters={parameters}
               onSwitchChange={() => {
-                console.log('onSwitchChange');
               }}
             />
           </TabPane> */}
           <TabPane tab="hooks" key="4">
-            <HooksTab setupHooks={setupHooks} teardownHooks={teardownHooks} />
+            <HooksTab
+              funcs={funcs}
+              setupHooks={setupHooks}
+              teardownHooks={teardownHooks}
+            />
           </TabPane>
           <TabPane tab="request" key="5">
-            <RequestTab request={request} />
+            <RequestTab request={request} save={saveData} />
           </TabPane>
           <TabPane tab="extract/validate" key="6">
-            <ExtractTab extract={extract} validate={validate} />
+            <ExtractTab extract={extract} validate={validate} save={saveData} />
           </TabPane>
         </Tabs>
       </div>
@@ -154,7 +236,9 @@ const CaseDetailTabs = ({
           <Button className={styles.basicBtn} onClick={showDebugModal}>
             调试
           </Button>
-          <Button className={styles.successBtn}>保存</Button>
+          <Button className={styles.successBtn} onClick={onSave}>
+            保存
+          </Button>
         </div>
         <div className={styles.right}>
           <Button className={styles.cancelBtn} onClick={hideCaseDetail}>

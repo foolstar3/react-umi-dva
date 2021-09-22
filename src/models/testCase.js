@@ -1,10 +1,16 @@
-import { getCaseList, deleteCase, debugCase } from '@/services/testCase';
+import {
+  getCaseList,
+  deleteCase,
+  debugCase,
+  getFuncs,
+} from '@/services/testCase';
 
 export default {
   namespace: 'testCase',
   state: {
     caseList: {},
     debugResponse: {},
+    funcsName: [],
   },
   reducers: {
     updateCaseList(state, { payload }) {
@@ -16,8 +22,6 @@ export default {
       };
     },
     updateDebugResponse(state, { payload }) {
-      // const newState = JSON.parse(JSON.stringify(state));
-      // newState.debugResponse = payload;
       return {
         ...state,
         ...payload,
@@ -50,6 +54,16 @@ export default {
       if (callback) {
         callback(res);
       }
+    },
+    *getFuncs({ payload, callback }, { call, put }) {
+      const res = yield call(getFuncs, payload);
+      let funcs = [];
+      Object.keys(res).forEach((key) => (funcs = res[key].concat(funcs)));
+      yield put({
+        type: 'updateDebugResponse',
+        payload: { funcsName: funcs },
+      });
+      callback();
     },
   },
 };

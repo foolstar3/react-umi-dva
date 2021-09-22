@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { getFuncs } from '@/services/testCase';
 import { Card, Table, Button, Popconfirm } from 'antd';
 import {
   PlayCircleOutlined,
@@ -18,7 +17,6 @@ import tableColumns from './config';
 class CaseList extends Component<any, any> {
   state = {
     selectedRowKeys: [],
-    tableLoading: false,
     total: 0,
     showDetailTabs: false,
     currentCase: {},
@@ -36,9 +34,6 @@ class CaseList extends Component<any, any> {
    *
    */
   getCaseList = (payload) => {
-    this.setState({
-      tableLoading: true,
-    });
     const { dispatch } = this.props;
     dispatch({
       type: 'testCase/getCaseList',
@@ -47,7 +42,6 @@ class CaseList extends Component<any, any> {
         const { caseList } = this.props;
         this.setState({
           total: caseList.count,
-          tableLoading: false,
         });
       },
     });
@@ -58,9 +52,7 @@ class CaseList extends Component<any, any> {
     dispatch({
       type: 'projectList/getProjectList',
       payload,
-      callback: (res) => {
-        // console.log(res);
-      },
+      callback: (res) => {},
     });
   };
 
@@ -90,12 +82,19 @@ class CaseList extends Component<any, any> {
       type: 'testCase/deleteCase',
       payload,
       callback: () => {
-        // console.log('deleteOk');
         this.getCaseList({ page: 1 });
       },
     });
   };
 
+  getFuncs = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'testCase/getFuncs',
+      payload,
+      callback: () => {},
+    });
+  };
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
   };
@@ -128,13 +127,7 @@ class CaseList extends Component<any, any> {
     /**
      * 获取函数hooks
      */
-    const funcsName = getFuncs(record.project)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.getFuncs({ project_id: record.project });
     const { caseList } = this.props;
     caseList.result?.filter((item) =>
       record
@@ -160,8 +153,8 @@ class CaseList extends Component<any, any> {
   };
 
   renderCaseListTable = () => {
-    const { tableLoading, selectedRowKeys, total } = this.state;
-    const { caseList, projectData, moduleData } = this.props;
+    const { selectedRowKeys, total } = this.state;
+    const { caseList, projectData, moduleData, tableLoading } = this.props;
 
     const actionColumn = {
       title: '操作',
@@ -172,6 +165,8 @@ class CaseList extends Component<any, any> {
       render: (text, record) => (
         <div key={record.id} className={styles.actionColumn}>
           <Popconfirm
+            okText="Yes"
+            cancelText="No"
             title="确定运行?"
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             // onConfirm={() => this.handleDeleteOk(record)}
@@ -205,6 +200,8 @@ class CaseList extends Component<any, any> {
             <CopyOutlined />
           </Button>
           <Popconfirm
+            okText="Yes"
+            cancelText="No"
             title="确定删除?"
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
             onConfirm={() => this.handleDeleteOk(record)}
@@ -239,7 +236,7 @@ class CaseList extends Component<any, any> {
     caseList.results?.map((item) => {
       item.key = item.id;
     });
-    // console.log(projectData);
+
     return (
       <>
         <SearchBox
@@ -276,7 +273,7 @@ class CaseList extends Component<any, any> {
 
   render() {
     const { showDetailTabs, currentCase } = this.state;
-    const { projectData, moduleData, caseList, envList } = this.props;
+    const { projectData, moduleData, caseList, envList, funcs } = this.props;
 
     return (
       <>
@@ -291,6 +288,7 @@ class CaseList extends Component<any, any> {
               onModuleChange={this.onModuleChange}
               caseList={caseList}
               envList={envList}
+              funcs={funcs}
             />
           ) : (
             this.renderCaseListTable()
@@ -301,9 +299,13 @@ class CaseList extends Component<any, any> {
   }
 }
 
-export default connect(({ testCase, projectList, moduleList, envList }) => ({
-  caseList: testCase.caseList,
-  envList: envList.envList,
-  projectData: projectList.projectList,
-  moduleData: moduleList.moduleList,
-}))(CaseList);
+export default connect(
+  ({ testCase, projectList, moduleList, envList, loading }) => ({
+    caseList: testCase.caseList,
+    envList: envList.envList,
+    projectData: projectList.projectList,
+    moduleData: moduleList.moduleList,
+    funcs: testCase.funcsName,
+    tableLoading: loading.effects['testCase/getCaseList'],
+  }),
+)(CaseList);
