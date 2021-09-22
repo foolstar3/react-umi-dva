@@ -1,30 +1,15 @@
-import {
-  Row,
-  Col,
-  DatePicker,
-  Collapse,
-  Select,
-  Form,
-  Input,
-  Button,
-  Space,
-} from 'antd';
+import { Row, Col, Collapse, Form, Input, Button, Space } from 'antd';
 import { EditOutlined, RedoOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { Panel } = Collapse;
-const { RangePicker } = DatePicker;
-const { Option } = Select;
 
 const SearchProject = (props: any) => {
-  console.log('props', props);
   const [form] = Form.useForm();
 
-  //重置搜索框
   const onReset = () => {
     form.resetFields();
   };
 
-  //进行搜索
   const handleSearch = (value: any) => {
     const payload = {
       page: 1,

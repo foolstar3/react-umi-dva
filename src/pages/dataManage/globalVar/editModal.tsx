@@ -6,16 +6,12 @@ import { connect } from 'umi';
 class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.editSubmit = this.editSubmit.bind(this);
-    this.editCancel = this.editCancel.bind(this);
-    this.handleEditValueChange = this.handleEditValueChange.bind(this);
     this.state = {
       tempEditValue: '',
     };
   }
 
-  //在模态框中点击提交按钮
-  editSubmit(value: any) {
+  editSubmit = (value: any) => {
     const editGlobalVar = this.state.tempEditValue;
     const EditId = this.props.tempValue.id;
     this.props.dispatch({
@@ -25,27 +21,21 @@ class EditModal extends React.Component<any, any> {
         id: EditId,
       },
       callback: () => {
-        this.props.dispatch({
-          type: 'globalVarList/getGlobalVarList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.props.childrenPageChange();
       },
     });
     this.props.showEditModal(false);
-  }
+  };
 
-  //修改项目的返回键
   editCancel = () => {
     this.props.showEditModal(false);
   };
 
-  handleEditValueChange(singleValueChange, ValueChange) {
+  handleEditValueChange = (singleValueChange, ValueChange) => {
     this.setState({
       tempEditValue: ValueChange,
     });
-  }
+  };
 
   render() {
     const { editVisible, tempValue } = this.props;

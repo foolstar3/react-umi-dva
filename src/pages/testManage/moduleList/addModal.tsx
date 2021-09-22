@@ -7,16 +7,12 @@ import { connect } from 'umi';
 class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.handleAddValueChange = this.handleAddValueChange.bind(this);
     this.state = {
       tempAddValue: '',
       testUserList: [],
       projectList: '',
     };
   }
-  //创建表单实例
   formRef = React.createRef<FormInstance>();
 
   componentDidMount() {
@@ -41,8 +37,7 @@ class AddModal extends React.Component<any, any> {
     });
   }
 
-  //在模态框中点击提交按钮
-  handleSubmit() {
+  handleSubmit = () => {
     const addModule = this.state.tempAddValue;
     this.props.dispatch({
       type: 'moduleList/addModuleList',
@@ -51,21 +46,14 @@ class AddModal extends React.Component<any, any> {
       },
       callback: (res) => {
         this.props.handleTotalNumber();
-
-        this.props.dispatch({
-          type: 'moduleList/getModuleList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.props.childrenPageChange();
       },
     });
     this.props.showAddModal(false);
     this.onReset();
-  }
+  };
 
-  //添加模块中监听所有值的变化
-  handleAddValueChange(singleValueChange, ValueChange) {
+  handleAddValueChange = (singleValueChange, ValueChange) => {
     const { projectList, testUserList } = this.state;
     for (let i = 0; i < testUserList.length; i++) {
       if (
@@ -86,20 +74,19 @@ class AddModal extends React.Component<any, any> {
     ValueChange.id = this.setState({
       tempAddValue: ValueChange,
     });
-  }
+  };
 
-  //添加项目的返回键
   handleCancel = () => {
     this.onReset();
     this.props.showAddModal(false);
   };
-  //重置
-  onReset() {
+
+  onReset = () => {
     this.formRef.current!.resetFields();
-  }
+  };
 
   render() {
-    const addVisible = this.props.addVisible;
+    const addVisible = this.props?.addVisible;
     const { projectList, testUserList } = this.state;
     return (
       <Modal

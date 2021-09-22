@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'umi';
 import { Form, Table, Select, Input, Button } from 'antd';
 import styles from './index.less';
 const { Option } = Select;

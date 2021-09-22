@@ -14,13 +14,6 @@ import SearchModal from './Search';
 class GlobalVarList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.handleDelete = this.handleDelete.bind(this);
-    this.showAddModal = this.showAddModal.bind(this);
-    this.handleAddGlobalVar = this.handleAddGlobalVar.bind(this);
-    this.handleEditModal = this.handleEditModal.bind(this);
-    this.showEditModal = this.showEditModal.bind(this);
-    this.getGlobalVarList = this.getGlobalVarList.bind(this);
-    this.handleTotalNumber = this.handleTotalNumber.bind(this);
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -35,7 +28,7 @@ class GlobalVarList extends React.Component<any, any> {
     this.getGlobalVarList({ page: 1 });
   }
 
-  getGlobalVarList(payload: any) {
+  getGlobalVarList = (payload: any) => {
     this.props.dispatch({
       type: 'globalVarList/getGlobalVarList',
       payload,
@@ -46,62 +39,65 @@ class GlobalVarList extends React.Component<any, any> {
         });
       },
     });
-  }
-
-  //添加后增加页码数
-  handleTotalNumber() {
+  };
+  onPageChange = (page: any) => {
+    this.getGlobalVarList({ page });
+    this.setState({
+      currentPage: page,
+    });
+  };
+  childrenPageChange = () => {
+    this.getGlobalVarList({ page: 1 });
+    this.setState({
+      currentPage: 1,
+    });
+  };
+  handleTotalNumber = () => {
     const total = this.state.total;
     this.setState({
       total: total + 1,
     });
-  }
+  };
 
-  /* =======================新增按钮及模态框功能=========================== */
-  //添加按钮模态框
-
-  showAddModal() {
+  showAddModal = () => {
     this.setState({
       addVisible: true,
     });
-  }
+  };
 
-  handleAddGlobalVar(childModalState: any) {
+  handleAddGlobalVar = (childModalState: any) => {
     this.setState({
       addVisible: childModalState,
     });
-  }
+  };
 
-  /* =======================编辑按钮及模态框功能=========================== */
-  //编辑的地方弹出模态框
-  showEditModal(record: any) {
+  showEditModal = (record: any) => {
     this.setState({
       editVisible: true,
       tempValue: record,
     });
-  }
-  handleEditModal(childModalState: any) {
+  };
+  handleEditModal = (childModalState: any) => {
     this.setState({
       editVisible: childModalState,
     });
-  }
+  };
 
-  /* =======================删除按钮及模态框功能=========================== */
-  //全局变量列表删除按钮
-  handleDelete(record: any) {
+  handleDelete = (record: any) => {
     this.props.dispatch({
       type: 'globalVarList/deleteGlobalVarList',
       payload: {
         id: record.id,
       },
       callback: () => {
-        this.getGlobalVarList({ page: 1 });
+        this.childrenPageChange();
       },
     });
-  }
+  };
 
   render() {
     const { tableLoading, total, currentPage } = this.state;
-    const { globalVarList } = this.props.globalVarList;
+    const { globalVarList } = this.props?.globalVarList;
     globalVarList.map((item) => {
       item.key = item.id;
     });
@@ -112,7 +108,7 @@ class GlobalVarList extends React.Component<any, any> {
       total: total,
       showTotal: () => `共${total}条`,
       onChange: (page) => {
-        this.getGlobalVarList({ page });
+        this.onPageChange(page);
       },
     };
     const columns = [
@@ -221,11 +217,13 @@ class GlobalVarList extends React.Component<any, any> {
           showAddModal={this.handleAddGlobalVar}
           addVisible={this.state.addVisible}
           handleTotalNumber={this.handleTotalNumber}
+          childrenPageChange={this.childrenPageChange}
         />
         <EditModal
           showEditModal={this.handleEditModal}
           editVisible={this.state.editVisible}
           tempValue={this.state.tempValue}
+          childrenPageChange={this.childrenPageChange}
         />
       </div>
     );

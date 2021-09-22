@@ -4,12 +4,9 @@ const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
 
-class EditModal extends React.Component {
+class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
-    this.editSubmit = this.editSubmit.bind(this);
-    this.editCancel = this.editCancel.bind(this);
-    this.handleEditValueChange = this.handleEditValueChange.bind(this);
     this.state = {
       tempEditValue: '',
       testUserList: [],
@@ -38,8 +35,8 @@ class EditModal extends React.Component {
       },
     });
   }
-  //在模态框中点击提交按钮
-  editSubmit() {
+
+  editSubmit = () => {
     const editModule = this.state.tempEditValue;
     const EditId = this.props.tempValue.id;
     this.props.dispatch({
@@ -49,23 +46,17 @@ class EditModal extends React.Component {
         id: EditId,
       },
       callback: () => {
-        this.props.dispatch({
-          type: 'moduleList/getModuleList',
-          payload: {
-            page: 1,
-          },
-        });
+        this.props.childrenPageChange();
       },
     });
     this.props.showEditModal(false);
-  }
+  };
 
-  //修改项目的返回键
   editCancel = () => {
     this.props.showEditModal(false);
   };
 
-  handleEditValueChange(singleValueChange, ValueChange) {
+  handleEditValueChange = (singleValueChange, ValueChange) => {
     const { projectList, testUserList } = this.state;
     for (let i = 0; i < testUserList.length; i++) {
       if (
@@ -86,7 +77,7 @@ class EditModal extends React.Component {
     this.setState({
       tempEditValue: ValueChange,
     });
-  }
+  };
 
   render() {
     const { editVisible, tempValue } = this.props;

@@ -1,29 +1,14 @@
 import React, { useState } from 'react';
-import {
-  Col,
-  DatePicker,
-  Collapse,
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-  Tree,
-} from 'antd';
+import { Collapse, Tree } from 'antd';
 import { connect } from 'umi';
 const { Panel } = Collapse;
 import './index.less';
-import moduleList from '../moduleList';
 
 const TreeNode = (props: any) => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
   const onExpand = (expandedKeysValue: React.Key[]) => {
-    console.log('onExpand', expandedKeysValue);
     setAutoExpandParent(false);
   };
 
@@ -35,13 +20,10 @@ const TreeNode = (props: any) => {
           caseArray.push(item);
         }
       });
-    console.log('onCheck', checkedKeysValue);
-    console.log('caseArray', caseArray);
     props.caseNumber(caseArray, caseArray.length);
   };
 
   const onSelect = (selectedKeysValue: React.Key[], info: any) => {
-    console.log('onSelect', info);
     setSelectedKeys(selectedKeysValue);
   };
 
