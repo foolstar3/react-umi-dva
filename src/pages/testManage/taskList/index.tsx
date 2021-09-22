@@ -20,7 +20,7 @@ class TaskList extends React.Component<any, any> {
     this.state = {
       addVisible: false,
       editVisible: false,
-      tempValue: '',
+      tempValue: {},
       tableLoading: false,
       total: 0,
       projectList: [],
@@ -109,8 +109,11 @@ class TaskList extends React.Component<any, any> {
   showEditModal = (record: any) => {
     const strRecord = JSON.stringify(record);
     const recordTempValue = JSON.parse(strRecord);
-    console.log('record', record);
     const projectListId = recordTempValue?.task_extend?.project;
+
+    // const record_args = JSON.parse(record.args)
+    // const envListId = record_args.env
+    // console.log('envListId',envListId)
     this.state.projectList.map((projectItem) => {
       if (projectItem.id == projectListId) {
         recordTempValue.task_extend.project = projectItem.project_name;
@@ -120,6 +123,14 @@ class TaskList extends React.Component<any, any> {
         });
       }
     });
+    // this.props.envList?.envList?.map((envItem)=>{
+    //   if(envItem.id == envListId){
+    //     recordTempValue.env = envItem.env_name
+    //     this.setState({
+    //       tempValue: recordTempValue,
+    //     })
+    //   }
+    // })
   };
 
   handleDelete = (record: any) => {

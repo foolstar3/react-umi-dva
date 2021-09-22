@@ -1,15 +1,15 @@
 import React from 'react';
 import {
-  Tag,
-  Collapse,
+  InputNumber,
   Switch,
   Select,
   Form,
   Input,
   Modal,
   FormInstance,
-  Row,
+  Popover,
 } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import TreeNode from './treeNode';
 import './index.less';
@@ -25,6 +25,12 @@ class AddModal extends React.Component<any, any> {
       treeData: [],
       caseArray: [],
       projectList: [],
+      checked: false,
+      Minutes: 1,
+      Hours: 1,
+      Day_of_month: 1,
+      Month: 1,
+      Day_of_week: 1,
     };
   }
 
@@ -49,21 +55,20 @@ class AddModal extends React.Component<any, any> {
       },
     });
   };
-
+  getEnvList = () => {
+    this.props.dispatch({
+      type: 'envList/getEnvList',
+      payload: {
+        page: 'None',
+      },
+    });
+  };
   getModuleList = (payload: any) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload,
       callback: (res, rescount) => {
         this.getTreeNode(res);
-      },
-    });
-  };
-  getEnvList = () => {
-    this.props.dispatch({
-      type: 'envList/getEnvList',
-      payload: {
-        page: 'None',
       },
     });
   };
@@ -80,7 +85,6 @@ class AddModal extends React.Component<any, any> {
   };
 
   getTreeNode = (moduleListChange: any) => {
-    console.log('moduleListChange', moduleListChange);
     const caseList = this.props.testCase.caseList;
     const moduleList = moduleListChange;
     const treeData = [];
@@ -119,20 +123,29 @@ class AddModal extends React.Component<any, any> {
         addTask.env = envList[i].id;
       }
     }
-
+    const args = {
+      case_list: {
+        case: this.state.caseArray,
+      },
+      env: addTask.env,
+      report_name: addTask.name,
+      description: this.state.tempAddValue.description,
+      receivers: [''],
+    };
+    const json_args = JSON.stringify(args);
     const requestData = {
       name: addTask.name,
-      args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${addTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
+      args: json_args,
       description: addTask.description,
-      enabled: addTask.enabled == false ? false : true,
-      email_list: ['111'],
+      enabled: this.state.checked,
+      email_list: addTask.emailList,
       project: addTask.project,
       crontab: {
-        minute: addTask?.crontab?.charAt(0) || '',
-        hour: addTask?.crontab?.charAt(1) || '',
-        day_of_week: addTask?.crontab?.charAt(2) || '',
-        day_of_month: addTask?.crontab?.charAt(3) || '',
-        month_of_year: addTask?.crontab?.charAt(4) || '',
+        minute: this.state.Minutes,
+        hour: this.state.Hours,
+        day_of_week: this.state.Day_of_month,
+        day_of_month: this.state.Month,
+        month_of_year: this.state.Day_of_week,
       },
     };
 
@@ -153,6 +166,7 @@ class AddModal extends React.Component<any, any> {
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
+    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -183,33 +197,52 @@ class AddModal extends React.Component<any, any> {
   onReset = () => {
     this.formRef.current!.resetFields();
   };
+  onSwitchChange = (checked) => {
+    this.setState({
+      checked: checked,
+    });
+  };
+  handlecrontab_M = (number: any) => {
+    this.setState({
+      Minutes: number,
+    });
+  };
+  handlecrontab_H = (number: any) => {
+    this.setState({
+      Hours: number,
+    });
+  };
+  handlecrontab_DM = (number: any) => {
+    this.setState({
+      Day_of_month: number,
+    });
+  };
+  handlecrontab_Mon = (number: any) => {
+    this.setState({
+      Month: number,
+    });
+  };
+  handlecrontab_DW = (number: any) => {
+    this.setState({
+      Day_of_week: number,
+    });
+  };
 
   render() {
-    const caseNumber = this.state.caseNumber;
+    const { caseNumber, checked } = this.state;
     const addVisible = this.props.addVisible;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
     const treeData = [...this.state.treeData];
-
-    function tagRender(props) {
-      const { label, value, closable, onClose } = props;
-      const onPreventMouseDown = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-      };
-      return (
-        <Tag
-          color="blue"
-          onMouseDown={onPreventMouseDown}
-          closable={closable}
-          onClose={onClose}
-          style={{ marginRight: 3 }}
-        >
-          {label}
-        </Tag>
-      );
-    }
-
+    const content = (
+      <div>
+        <p>M:分钟</p>
+        <p>H:小时</p>
+        <p>D:天</p>
+        <p>Mon:月</p>
+        <p>DW: 周几</p>
+      </div>
+    );
     return (
       <Modal
         visible={addVisible}
@@ -244,17 +277,59 @@ class AddModal extends React.Component<any, any> {
             <Switch
               checkedChildren="启用"
               unCheckedChildren="禁用"
-              defaultChecked
+              defaultChecked={this.state.checked}
+              onChange={(checked) => {
+                this.onSwitchChange(checked);
+              }}
             />
           </Form.Item>
-          <Form.Item
-            label="定时计划"
-            name="crontab"
-            rules={[{ required: true }]}
-            id="basic_taskList_crontab"
-          >
-            <Input addonAfter="计划 (m/h/d/dM/MY)" />
-          </Form.Item>
+          {checked && (
+            <Form.Item
+              label="定时计划"
+              name="crontab"
+              rules={[{ required: true }]}
+              id="basic_taskList_crontab"
+            >
+              <InputNumber
+                min={0}
+                max={59}
+                defaultValue={1}
+                bordered
+                onChange={(num) => this.handlecrontab_M(num)}
+              />
+              <InputNumber
+                min={0}
+                max={23}
+                defaultValue={1}
+                bordered
+                onChange={(num) => this.handlecrontab_H(num)}
+              />
+              <InputNumber
+                min={1}
+                max={31}
+                defaultValue={1}
+                bordered
+                onChange={(num) => this.handlecrontab_DM(num)}
+              />
+              <InputNumber
+                min={1}
+                max={12}
+                defaultValue={1}
+                bordered
+                onChange={(num) => this.handlecrontab_Mon(num)}
+              />
+              <InputNumber
+                min={0}
+                max={6}
+                defaultValue={1}
+                bordered
+                onChange={(num) => this.handlecrontab_DW(num)}
+              />
+              {/* <Popover content={content}>
+                {<QuestionCircleOutlined style={{color:'orange'}}/>}
+              </Popover> */}
+            </Form.Item>
+          )}
           <Form.Item
             label="运行环境"
             name="env"
@@ -306,7 +381,7 @@ class AddModal extends React.Component<any, any> {
                   projectList.length &&
                   projectList.map((item) => {
                     return (
-                      <Option value={item.project_name}>
+                      <Option value={item.project_name} key={item.project_name}>
                         {item.project_name}
                       </Option>
                     );
@@ -321,21 +396,18 @@ class AddModal extends React.Component<any, any> {
           >
             <TreeNode treeData={[...treeData]} caseNumber={this.caseNumber} />
           </Form.Item>
-          {/* TO DO
+
           <Form.Item
-            label = '邮件列表'
-            name = 'emailList'
-            rules = {[ {required: false} ]}
+            label="邮件列表"
+            name="emailList"
+            rules={[{ required: false }]}
           >
             <Select
-              mode = "multiple"
-              showArrow
-              tagRender = { tagRender }
-              defaultValue = {['gold', 'cyan']}
-              style = {{ width: '100%' }}
-              options = { options }
+              mode="tags"
+              placeholder="请输入邮箱"
+              style={{ width: '100%' }}
             />
-          </Form.Item> */}
+          </Form.Item>
         </Form>
       </Modal>
     );
