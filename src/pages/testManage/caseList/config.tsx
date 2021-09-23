@@ -1,3 +1,5 @@
+import { DateFormat } from '@/utils/common';
+
 const tableColumns = [
   {
     title: '编号',
@@ -34,12 +36,20 @@ const tableColumns = [
     dataIndex: 'update_time',
     key: 'update_time',
     align: 'center',
+    render: (text) => {
+      const time = DateFormat(text);
+      return <span>{time}</span>;
+    },
   },
   {
     title: '更新时间',
     dataIndex: 'create_time',
     key: 'create_time',
     align: 'center',
+    render: (text) => {
+      const time = DateFormat(text);
+      return <span>{time}</span>;
+    },
   },
 ];
 

@@ -17,10 +17,11 @@ const RequestTab = ({ request, save }) => {
     { name: 'data', value: 'data', key: 'data' },
     { name: 'json', value: 'json', key: 'json' },
   ];
-  const requestType = {
+  const [requestType, setRequestType] = useState({
     url: request.url,
     method: request.method,
-  };
+  });
+
   const [headerData, setHeaderData] = useState(() => {
     const header = [];
     let index = 1;
@@ -75,10 +76,11 @@ const RequestTab = ({ request, save }) => {
 
   const lineAdd = (table) => {
     if (table === 'headers') {
-      setHeaderData((prev) => {
+      setHeaderData((prev = []) => {
+        const id = prev.length ? prev[prev.length - 1].id + 1 : 1;
         prev.push({
-          id: prev.length + 1,
-          key: prev.length + 1,
+          id,
+          key: id,
           name: '',
           value: '',
         });
@@ -86,10 +88,11 @@ const RequestTab = ({ request, save }) => {
         return next;
       });
     } else if (table === 'params') {
-      setParamsData((prev) => {
+      setParamsData((prev = []) => {
+        const id = prev.length ? prev[prev.length - 1].id + 1 : 1;
         prev.push({
-          id: prev.length + 1,
-          key: prev.length + 1,
+          id,
+          key: id,
           name: '',
           value: '',
         });
@@ -97,10 +100,11 @@ const RequestTab = ({ request, save }) => {
         return next;
       });
     } else if (table === 'data') {
-      setData((prev) => {
+      setData((prev = []) => {
+        const id = prev.length ? prev[prev.length - 1].id + 1 : 1;
         prev.push({
-          id: prev.length + 1,
-          key: prev.length + 1,
+          id,
+          key: id,
           name: '',
           value: '',
           type: '',
@@ -114,19 +118,19 @@ const RequestTab = ({ request, save }) => {
   const lineDelete = (line, table) => {
     if (table === 'headers') {
       setHeaderData((prev) => {
-        const next = prev.filter((item) => item.name !== line.name);
+        const next = prev.filter((item) => item.key !== line.key);
         save(next, table);
         return next;
       });
     } else if (table === 'params') {
       setParamsData((prev) => {
-        const next = prev.filter((item) => item.name !== line.name);
+        const next = prev.filter((item) => item.key !== line.key);
         save(next, table);
         return next;
       });
     } else if (table === 'data') {
       setData((prev) => {
-        const next = prev.filter((item) => item.name !== line.name);
+        const next = prev.filter((item) => item.key !== line.key);
         save(next, table);
         return next;
       });
@@ -247,6 +251,27 @@ const RequestTab = ({ request, save }) => {
   ];
   const [form] = Form.useForm();
 
+  const requestTypeChange = (val, type) => {
+    if (type === 'url') {
+      setRequestType((prev = {}) => {
+        const next = {
+          ...prev,
+          url: val,
+        };
+        save(next, 'request');
+        return next;
+      });
+    } else if (type === 'method') {
+      setRequestType((prev = {}) => {
+        const next = {
+          ...prev,
+          method: val,
+        };
+        save(next, 'request');
+        return next;
+      });
+    }
+  };
   return (
     <>
       <div className={styles.top}>
@@ -259,7 +284,9 @@ const RequestTab = ({ request, save }) => {
                 labelCol={{ span: 1 }}
                 wrapperCol={{ span: 22 }}
               >
-                <Input />
+                <Input
+                  onChange={(e) => requestTypeChange(e.target.value, 'url')}
+                />
               </Form.Item>
             </Col>
 
@@ -270,9 +297,7 @@ const RequestTab = ({ request, save }) => {
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 18 }}
               >
-                <Select
-                // onChange={onProjectNameChange}
-                >
+                <Select onChange={(val) => requestTypeChange(val, 'method')}>
                   {method.map((item) => (
                     <Select.Option key={item.key} value={item.value}>
                       {item.name}

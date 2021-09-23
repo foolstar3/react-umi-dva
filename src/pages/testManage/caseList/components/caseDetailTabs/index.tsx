@@ -28,7 +28,6 @@ const CaseDetailTabs = ({
   dispatch,
   debugResponse,
   funcs,
-  onS,
 }) => {
   const responseTreeData = [];
   const responseTabs = [];
@@ -43,14 +42,13 @@ const CaseDetailTabs = ({
       },
     });
   };
-
   const [debugResponseVisible, setdebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const tabDatas = Object.keys(caseDetail).length
     ? caseDetail.request.teststeps[0]
     : {};
 
-  const variables = tabDatas.variables ?? [];
+  const [variables, setVariables] = useState(tabDatas.variables ?? []);
 
   const [parameters, setParameters] = useState(tabDatas.parameters ?? []);
 
@@ -66,6 +64,7 @@ const CaseDetailTabs = ({
 
   const [validate, setValidate] = useState(tabDatas.validate ?? []);
 
+  const [checkedData, setCheckedData] = useState({ extract: {}, validate: [] });
   const showDebugModal = () => {
     setModalVisible(true);
   };
@@ -75,23 +74,22 @@ const CaseDetailTabs = ({
       type: 1,
       name: 'organization_current',
       project: 109,
-      module: 75,
-      base_url: 'https://portal-master-api.uihcloud.cn',
-      before: [1],
+      module: 77,
+      base_url: 'https://portal-dev-api.uihcloud.cn/portal-api',
+      before: [],
       after: [],
       export: [],
       teststeps: [
         {
           name: 'organization_current',
           request: {
-            url: '/portal-api/v1/organization/current',
+            url: '/v1/organization/current',
             headers: {
-              Authorization: '$token',
+              Authorization: 'token',
             },
             method: 'GET',
           },
           extract: {
-            data_id: 'body.data[0].id',
             msg_code: 'body.msgCode',
           },
           validate: [
@@ -128,9 +126,11 @@ const CaseDetailTabs = ({
         break;
       case 'validate':
         setValidate(() => {
-          const obj = {};
+          const obj = [];
           data.forEach((item) => {
-            obj[item.comparator] = [item.check, item.expected];
+            const child = {};
+            child[item.comparator] = [item.check, item.expected];
+            obj.push(child);
           });
           return obj;
         });
@@ -177,27 +177,100 @@ const CaseDetailTabs = ({
           return obj;
         });
         break;
-      case 'url':
+      case 'request':
         setRequest((prev) => {
           const obj = {
             ...prev,
-            url: '',
+            url: data.url,
+            method: data.method,
           };
-          obj.url = data;
+          return obj;
+        });
+        break;
+      case 'setup':
+        setSetupHooks(() => {
+          const obj = [];
+          data.forEach((item) => {
+            obj.push(item.funcName);
+          });
+          return obj;
+        });
+        break;
+      case 'teardown':
+        setTeardownHooks(() => {
+          const obj = [];
+          data.forEach((item) => {
+            obj.push(item.funcName);
+          });
+          return obj;
+        });
+        break;
+      case 'variables':
+        setVariables(() => {
+          const obj = {};
+          data.forEach((item) => {
+            obj[item.name] = item.value;
+          });
           return obj;
         });
         break;
     }
   };
 
-  const onSave = () => {};
+  const getMessageData = (datas) => {
+    console.log(datas);
+  };
 
+  const onSave = () => {
+    console.log(
+      variables,
+      request,
+      extract,
+      validate,
+      setupHooks,
+      teardownHooks,
+    );
+  };
+
+  const checkedChange = (val) => {
+    setCheckedData(() => {
+      const obj = {
+        extract: {},
+        validate: [],
+      };
+      val.forEach((item) => {
+        const child = {};
+        obj.extract[item.name] = item.path;
+        child['equal'] = [item.name, item.expect];
+        obj.validate.push(child);
+      });
+      return obj;
+    });
+  };
+  const extractData = () => {
+    setExtract((prev = {}) => {
+      const { extract } = checkedData;
+      const next = {
+        ...prev,
+        ...extract,
+      };
+      console.log(next);
+      return next;
+    });
+    setValidate((prev = []) => {
+      const { validate } = checkedData;
+      const next = prev.concat(validate);
+      console.log(next);
+      return next;
+    });
+  };
   return (
     <>
       <div className={styles.tabBody}>
         <Tabs defaultActiveKey="1" type="card">
           <TabPane tab="message" key="1">
             <MessageTab
+              getMessageData={getMessageData}
               caseDetail={caseDetail}
               projectData={projectData}
               moduleData={moduleData}
@@ -207,7 +280,7 @@ const CaseDetailTabs = ({
             />
           </TabPane>
           <TabPane tab="variables" key="2">
-            <VariablesTab variables={variables} />
+            <VariablesTab variables={variables} save={saveData} />
           </TabPane>
           {/* <TabPane tab="paramters" key="3">
             <ParametersTab
@@ -221,6 +294,7 @@ const CaseDetailTabs = ({
               funcs={funcs}
               setupHooks={setupHooks}
               teardownHooks={teardownHooks}
+              save={saveData}
             />
           </TabPane>
           <TabPane tab="request" key="5">
@@ -252,7 +326,9 @@ const CaseDetailTabs = ({
       >
         <div className={styles.topBtn}>
           <Button className={styles.basicBtn}>清空结果</Button>
-          <Button className={styles.basicBtn}>提取数据</Button>
+          <Button className={styles.basicBtn} onClick={() => extractData()}>
+            提取数据
+          </Button>
         </div>
         <div className={styles.responseTabs}>
           <Tabs defaultActiveKey="1" type="card">
@@ -262,7 +338,9 @@ const CaseDetailTabs = ({
                     <TabPane tab={item.name} key={`${item.name}${item.index}`}>
                       <ResponseTab
                         treeData={debugResponse.tree[index]}
-                        checkable={item.flag}
+                        checkable={true}
+                        validators={item.validators.validate_extractor || []}
+                        onCheckedChange={checkedChange}
                       />
                     </TabPane>
                   );

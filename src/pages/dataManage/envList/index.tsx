@@ -19,6 +19,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
+import { DateFormat } from '@/utils/common';
 
 import './index.less';
 import { connect } from 'umi';
@@ -104,6 +105,10 @@ class EnvList extends Component<any, any> {
           key: 'create_time',
           width: 200,
           align: 'center',
+          render: (text) => {
+            const time = DateFormat(text);
+            return <span>{time}</span>;
+          },
         },
         {
           title: '操作',
@@ -160,7 +165,7 @@ class EnvList extends Component<any, any> {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getEnvList({ page: 1 });
   }
   /* ============table功能============== */

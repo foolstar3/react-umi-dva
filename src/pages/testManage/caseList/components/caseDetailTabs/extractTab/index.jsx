@@ -1,10 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditableTable from '@/components/Editabletable';
 import { Form, Select, Button, message } from 'antd';
 import { DataType } from '@/utils/common';
 import styles from './index.less';
 
 const ExtractTab = ({ extract, validate, save }) => {
+  console.log(extract, validate);
+  useEffect(() => {
+    setExtractData(() => {
+      const extractArr = [];
+      let index = 1;
+      for (const [key, value] of Object.entries(extract)) {
+        extractArr.push({
+          name: key,
+          path: value,
+          id: index,
+          key: index,
+        });
+        index++;
+      }
+      return extractArr;
+    });
+    setValidateData(() => {
+      const validArr = [];
+      validate.map((item, index) => {
+        const el = {};
+        el.id = index + 1;
+        el.key = index + 1;
+        for (const [key, value] of Object.entries(item)) {
+          el.comparator = key;
+          el.check = value[0];
+          el.expected = value[1];
+          el.type = DataType(value[1]);
+        }
+        validArr.push(el);
+      });
+      return validArr;
+    });
+  }, [extract, validate]);
   const [extractData, setExtractData] = useState(() => {
     const extractArr = [];
     let index = 1;
@@ -40,9 +73,10 @@ const ExtractTab = ({ extract, validate, save }) => {
   const lineAdd = (table) => {
     if (table === 'extract') {
       setExtractData((prev) => {
+        const id = prev.length ? prev[prev.length - 1].id + 1 : 1;
         prev.push({
-          id: prev.length + 1,
-          key: prev.length + 1,
+          id,
+          key: id,
           name: '',
           path: '',
         });
@@ -51,9 +85,10 @@ const ExtractTab = ({ extract, validate, save }) => {
       });
     } else if (table === 'validate') {
       setValidateData((prev) => {
+        const id = prev.length ? prev[prev.length - 1].id + 1 : 1;
         prev.push({
-          id: prev.length + 1,
-          key: prev.length + 1,
+          id,
+          key: id,
           check: '',
           comparator: '',
           type: '',
@@ -68,13 +103,13 @@ const ExtractTab = ({ extract, validate, save }) => {
   const lineDelete = (line, table) => {
     if (table === 'extract') {
       setExtractData((prev) => {
-        const next = prev.filter((item) => item.name !== line.name);
+        const next = prev.filter((item) => item.key !== line.key);
         save(next, 'extract');
         return next;
       });
     } else if (table === 'validate') {
       setValidateData((prev) => {
-        const next = prev.filter((item) => item.check !== line.check);
+        const next = prev.filter((item) => item.key !== line.key);
         save(next, 'validate');
         return next;
       });

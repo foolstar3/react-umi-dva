@@ -27,4 +27,23 @@
 
 .content {
   margin-bottom: 10px;
+  display: flex;
+  .validate {
+    .validateCollapse {
+      min-width: 600px;
+      .fail {
+        :global {
+          .ant-collapse-header {
+            background-color: red;
+          }
+        }
+      }
+      span {
+        font-weight: bold;
+      }
+    }
+    &.hidden {
+      display: none;
+    }
+  }
 }

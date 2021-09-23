@@ -1,3 +1,5 @@
+import { DateFormat } from '@/utils/common';
+
 const config = [
   {
     title: '编号',
@@ -40,6 +42,10 @@ const config = [
     textWrap: 'word-break',
     ellipsis: true,
     align: 'center',
+    render: (text) => {
+      const time = DateFormat(text);
+      return <span>{time}</span>;
+    },
   },
   {
     title: '运行时长',

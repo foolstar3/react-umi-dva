@@ -5,6 +5,7 @@ import { Form, Select, Input, Collapse, Button, Col, Tree } from 'antd';
 import styles from './index.less';
 import DragableTable from '@/components/DragableTable';
 
+const { Option } = Select;
 const { Panel } = Collapse;
 const formLayout = {
   labelCol: { span: 4 },
@@ -18,7 +19,9 @@ const MessageTab = ({
   onProjectChange,
   onModuleChange,
   caseList,
+  getMessageData,
 }) => {
+  const [form] = Form.useForm();
   const [curBefore, setCurBefore] = useState(caseDetail.before);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [beforeTableData, setBeforeTableData] = useState([]);
@@ -43,6 +46,7 @@ const MessageTab = ({
     children.push(...caseList);
   }
 
+  const exportChildren = [];
   const treeData = curModuleName
     ? [
         {
@@ -147,13 +151,20 @@ const MessageTab = ({
       </div>
     );
   };
+
+  const formChange = (val, type) => {
+    const obj = {};
+    obj[type] = val;
+    form.setFieldsValue(obj);
+  };
+
   return (
-    <Form {...formLayout} initialValues={caseDetail}>
+    <Form {...formLayout} initialValues={caseDetail} form={form}>
       <div className={styles.content}>
         <div className={styles.left}>
           <Col span={24}>
             <Form.Item label="用例名称" name="name">
-              <Input />
+              <Input onChange={(e) => formChange(e.target.value, 'name')} />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -170,9 +181,9 @@ const MessageTab = ({
               >
                 {projectData
                   ? projectData.map((item) => (
-                      <Select.Option key={item.id} value={item.id}>
+                      <Option key={item.id} value={item.id}>
                         {item.project_name}
-                      </Select.Option>
+                      </Option>
                     ))
                   : null}
               </Select>
@@ -192,11 +203,18 @@ const MessageTab = ({
               >
                 {moduleData
                   ? moduleData.map((item) => (
-                      <Select.Option key={item.id} value={item.id}>
+                      <Option key={item.id} value={item.id}>
                         {item.module_name}
-                      </Select.Option>
+                      </Option>
                     ))
                   : null}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item label="export" name="request.export">
+              <Select mode="tags" tokenSeparators={[',']}>
+                {exportChildren}
               </Select>
             </Form.Item>
           </Col>

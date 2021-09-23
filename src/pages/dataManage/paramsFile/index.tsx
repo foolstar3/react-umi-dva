@@ -22,6 +22,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
+import { DateFormat } from '@/utils/common';
 import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
 import './index.less';
@@ -78,12 +79,20 @@ class ParamsFile extends Component<any, any> {
           dataIndex: 'create_time',
           key: 'create_time',
           align: 'center',
+          render: (text) => {
+            const time = DateFormat(text);
+            return <span>{time}</span>;
+          },
         },
         {
           title: '更新时间',
           dataIndex: 'update_time',
           key: 'update_time',
           align: 'center',
+          render: (text) => {
+            const time = DateFormat(text);
+            return <span>{time}</span>;
+          },
         },
         {
           title: '操作',
@@ -135,7 +144,7 @@ class ParamsFile extends Component<any, any> {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getParamsFileList({ page: 1 });
     this.getProjectList({ page: 1 });
   }
@@ -241,10 +250,6 @@ class ParamsFile extends Component<any, any> {
   handleAddOk = () => {
     // 将新增的文件数据发送给后端
     this.addFile();
-    this.setState({
-      addModalVisiable: false,
-    });
-    // 更新后重新获取table中的数据
   };
 
   onPageChange = (page) => {
@@ -260,6 +265,7 @@ class ParamsFile extends Component<any, any> {
     const { project } = addFileData;
     // 上传文件必须先转换成FormData格式
     const formData = new FormData();
+    if (!fileList.length) return message.error('请添加文件！');
     fileList.forEach((file) => {
       formData.append('file', file);
     });
@@ -270,6 +276,9 @@ class ParamsFile extends Component<any, any> {
       callback: (res) => {
         if (res.data) {
           this.getParamsFileList({ page: 1 });
+          this.setState({
+            addModalVisiable: false,
+          });
         } else if (res.status == 400) {
           message.error('项目下有同名文件,添加失败');
         }
