@@ -25,7 +25,13 @@ const EditableCell = ({
       );
     } else if (cellType === 'funcSelect') {
       return (
-        <Select>
+        <Select
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+        >
           {restProps.funcs.map((item) => (
             <Option value={item} key={item}>
               {item}

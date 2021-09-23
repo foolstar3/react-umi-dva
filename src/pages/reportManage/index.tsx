@@ -23,7 +23,7 @@ class ViewReport extends Component<any, any> {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getReportList({ page: 1 });
   }
 

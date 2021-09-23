@@ -22,7 +22,7 @@ class CaseList extends Component<any, any> {
     currentCase: {},
   };
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
     this.getModuleList({ page: 'None' });
