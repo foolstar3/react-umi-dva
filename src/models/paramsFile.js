@@ -66,7 +66,7 @@ export default {
         callback();
       }
     },
-    *getParamsFileCode({ payload, callback }, { call, put }) {
+    *getParamsFileCode({ payload }, { call, put }) {
       const data = yield call(getParamsFileCode, payload);
       yield put({
         type: 'setParamsFileCode',
@@ -75,6 +75,7 @@ export default {
     },
     *updateParamsFileCode({ payload, callback }, { call, put }) {
       const res = yield call(updateParamsFileCode, payload);
+      callback(res);
     },
   },
 };

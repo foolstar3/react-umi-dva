@@ -233,9 +233,17 @@ class ParamsFile extends Component<any, any> {
 
   updateParamsFileCode = (payload) => {
     const { dispatch } = this.props;
+    console.log(payload, dispatch);
     dispatch({
       type: 'paramsFile/updateParamsFileCode',
       payload,
+      callback: (res) => {
+        if (Object.keys(res).indexOf('status') !== -1) {
+          message.error('更新失败');
+        } else {
+          message.success('编辑成功');
+        }
+      },
     });
   };
 
@@ -275,6 +283,7 @@ class ParamsFile extends Component<any, any> {
       payload: formData,
       callback: (res) => {
         if (res.data) {
+          message.success('添加成功');
           this.getParamsFileList({ page: 1 });
           this.setState({
             addModalVisiable: false,

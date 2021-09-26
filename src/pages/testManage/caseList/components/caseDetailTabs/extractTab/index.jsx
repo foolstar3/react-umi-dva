@@ -5,7 +5,6 @@ import { DataType } from '@/utils/common';
 import styles from './index.less';
 
 const ExtractTab = ({ extract, validate, save }) => {
-  console.log(extract, validate);
   useEffect(() => {
     setExtractData(() => {
       const extractArr = [];

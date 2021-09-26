@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Tabs, Button, Modal, Form, Select, message } from 'antd';
 import styles from './index.less';
 import { connect } from 'dva';
@@ -31,6 +31,8 @@ const CaseDetailTabs = ({
 }) => {
   const responseTreeData = [];
   const responseTabs = [];
+  const editorRef = useRef(null);
+  const messageRef = useRef(null);
   const debugCase = (payload) => {
     dispatch({
       type: 'testCase/debugCase',
@@ -42,7 +44,7 @@ const CaseDetailTabs = ({
       },
     });
   };
-  const [debugResponseVisible, setdebugResponseVisible] = useState(false);
+  const [debugResponseVisible, setDebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const tabDatas = Object.keys(caseDetail).length
     ? caseDetail.request.teststeps[0]
@@ -70,6 +72,7 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
+    // console.log(editorRef.current.sendCode());
     const payload = {
       type: 1,
       name: 'organization_current',
@@ -105,7 +108,7 @@ const CaseDetailTabs = ({
     };
     debugCase(payload);
     setModalVisible(false);
-    setdebugResponseVisible(true);
+    setDebugResponseVisible(true);
   };
 
   const onDebugCancel = () => {
@@ -222,14 +225,36 @@ const CaseDetailTabs = ({
   };
 
   const onSave = () => {
-    console.log(
+    // 处理requestTab
+    let dataType = '';
+    if (editorRef.current) {
+      try {
+        request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
+      } catch (err) {
+        message.info('请检查JSON数据格式');
+      }
+      dataType = editorRef.current.sendCode().dataType;
+    }
+    const newRequest = JSON.parse(JSON.stringify(request));
+    // 处理messageTab
+    const messageData = messageRef.current.getMessageData();
+    let payload = {
+      ...messageData,
       variables,
-      request,
+      request: {},
       extract,
       validate,
       setupHooks,
       teardownHooks,
-    );
+    };
+    if (dataType === 'data') {
+      delete newRequest.json;
+      payload.request = newRequest;
+    } else {
+      delete newRequest.data;
+      payload.request = newRequest;
+    }
+    console.log(payload);
   };
 
   const checkedChange = (val) => {
@@ -238,6 +263,7 @@ const CaseDetailTabs = ({
         extract: {},
         validate: [],
       };
+      const record = [];
       val.forEach((item) => {
         const child = {};
         obj.extract[item.name] = item.path;
@@ -254,15 +280,29 @@ const CaseDetailTabs = ({
         ...prev,
         ...extract,
       };
-      console.log(next);
       return next;
     });
     setValidate((prev = []) => {
       const { validate } = checkedData;
+      validate.forEach((item) => {
+        prev = prev.filter((child) => {
+          // 判断是否和已有数据重复
+          if (child.equal) {
+            return child.equal[0] !== item.equal[0];
+          }
+          return true;
+        });
+      });
       const next = prev.concat(validate);
-      console.log(next);
       return next;
     });
+  };
+  const clearResult = () => {
+    dispatch({
+      type: 'testCase/updateDebugResponse',
+      payload: { debugResponse: {} },
+    });
+    setDebugResponseVisible(false);
   };
   return (
     <>
@@ -277,6 +317,7 @@ const CaseDetailTabs = ({
               onProjectChange={onProjectChange}
               onModuleChange={onModuleChange}
               caseList={caseList}
+              ref={messageRef}
             />
           </TabPane>
           <TabPane tab="variables" key="2">
@@ -298,7 +339,7 @@ const CaseDetailTabs = ({
             />
           </TabPane>
           <TabPane tab="request" key="5">
-            <RequestTab request={request} save={saveData} />
+            <RequestTab request={request} save={saveData} ref={editorRef} />
           </TabPane>
           <TabPane tab="extract/validate" key="6">
             <ExtractTab extract={extract} validate={validate} save={saveData} />
@@ -325,8 +366,10 @@ const CaseDetailTabs = ({
         style={{ display: debugResponseVisible ? 'block' : 'none' }}
       >
         <div className={styles.topBtn}>
-          <Button className={styles.basicBtn}>清空结果</Button>
-          <Button className={styles.basicBtn} onClick={() => extractData()}>
+          <Button className={styles.basicBtn} onClick={clearResult}>
+            清空结果
+          </Button>
+          <Button className={styles.basicBtn} onClick={extractData}>
             提取数据
           </Button>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { Form, Select, Input, Collapse, Button, Col, Tree } from 'antd';
@@ -12,15 +12,29 @@ const formLayout = {
   wrapperCol: { span: 16 },
 };
 
-const MessageTab = ({
-  caseDetail,
-  projectData,
-  moduleData,
-  onProjectChange,
-  onModuleChange,
-  caseList,
-  getMessageData,
-}) => {
+const MessageTab = (props, ref) => {
+  useImperativeHandle(ref, () => {
+    return {
+      getMessageData() {
+        return {
+          module: curModuleId,
+          project: curProject,
+          name: form.getFieldValue('name'),
+          before: [],
+          after: [],
+        };
+      },
+    };
+  });
+  const {
+    caseDetail,
+    projectData,
+    moduleData,
+    onProjectChange,
+    onModuleChange,
+    caseList,
+    getMessageData,
+  } = props;
   const [form] = Form.useForm();
   const [curBefore, setCurBefore] = useState(caseDetail.before);
   const [checkedKeys, setCheckedKeys] = useState([]);
@@ -57,12 +71,17 @@ const MessageTab = ({
       ]
     : [];
 
-  const onProjectNameChange = (val) => {
+  const onProjectNameChange = (val, opt) => {
     setCurProject(val);
     onProjectChange(val);
+    form.setFieldsValue({
+      project_name: opt.title,
+      module_name: '',
+    });
+    console.log(form.getFieldsValue());
   };
 
-  const onModuleNameChange = (module_id = '', project_id) => {
+  const onModuleNameChange = (module_id = '', project_id, opt) => {
     if (module_id) {
       onModuleChange(module_id, project_id);
       const curModule = moduleData.find((item) => item.id === module_id);
@@ -73,6 +92,10 @@ const MessageTab = ({
       setCurModuleName('');
       setCurModuleId('');
     }
+    form.setFieldsValue({
+      module_name: opt.children,
+    });
+    console.log(form.getFieldsValue());
   };
 
   const onCheck = (checkedKeys, info) => {
@@ -159,7 +182,7 @@ const MessageTab = ({
   };
 
   return (
-    <Form {...formLayout} initialValues={caseDetail} form={form}>
+    <Form {...formLayout} initialValues={caseDetail} form={form} ref={ref}>
       <div className={styles.content}>
         <div className={styles.left}>
           <Col span={24}>
@@ -173,7 +196,7 @@ const MessageTab = ({
                 allowClear
                 showSearch
                 optionFilterProp="children"
-                onChange={onProjectNameChange}
+                onChange={(val, opt) => onProjectNameChange(val, opt)}
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
@@ -181,7 +204,11 @@ const MessageTab = ({
               >
                 {projectData
                   ? projectData.map((item) => (
-                      <Option key={item.id} value={item.id}>
+                      <Option
+                        key={item.id}
+                        value={item.id}
+                        title={item.project_name}
+                      >
                         {item.project_name}
                       </Option>
                     ))
@@ -195,7 +222,9 @@ const MessageTab = ({
                 allowClear
                 showSearch
                 optionFilterProp="children"
-                onChange={(val) => onModuleNameChange(val, curProject)}
+                onChange={(val, opt) =>
+                  onModuleNameChange(val, curProject, opt)
+                }
                 filterOption={(input, option) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
@@ -212,14 +241,14 @@ const MessageTab = ({
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="export" name="request.export">
+            <Form.Item label="export" name="export">
               <Select mode="tags" tokenSeparators={[',']}>
                 {exportChildren}
               </Select>
             </Form.Item>
           </Col>
           <Col span={24} offset={4}>
-            <Form.Item name="selection" wrapperCol={{ span: 19 }}>
+            <Form.Item wrapperCol={{ span: 19 }}>
               <Collapse>
                 <Panel header="前后置步骤（可选）" key="selection">
                   <div className={styles.selectionContent}>
@@ -265,4 +294,4 @@ const MessageTab = ({
   );
 };
 
-export default MessageTab;
+export default forwardRef(MessageTab);

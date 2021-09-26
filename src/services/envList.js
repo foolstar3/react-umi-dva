@@ -1,7 +1,6 @@
 import { requestUap } from '@/utils/request';
 
 export async function getEnvList(data) {
-  // console.log(data);
   return requestUap(`/env/`, {
     method: 'GET',
     params: data,
@@ -9,7 +8,6 @@ export async function getEnvList(data) {
 }
 
 export async function toggleSwitch(data) {
-  // console.log(data);
   return requestUap(`/env/${data.id}/`, {
     method: 'PUT',
     data,
@@ -17,7 +15,7 @@ export async function toggleSwitch(data) {
   });
 }
 
-export async function addEnvList(datay) {
+export async function addEnvList(data) {
   return requestUap(`/env/`, {
     method: 'POST',
     data,
@@ -28,7 +26,6 @@ export async function addEnvList(datay) {
 }
 
 export async function deleteEnvList(data) {
-  // console.log(data);
   return requestUap(`/env/${data.id}/`, {
     method: 'DELETE',
     requestType: 'form',
@@ -36,7 +33,6 @@ export async function deleteEnvList(data) {
 }
 
 export async function updateEnv(data) {
-  // console.log(data);
   return requestUap(`/env/${data.id}/`, {
     method: 'PUT',
     data,
