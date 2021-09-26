@@ -56,6 +56,7 @@ const SearchModel = (props: any) => {
         value.rangeDateTime && value.rangeDateTime[1].format('YYYY-MM-DD'),
     };
     props.getModuleList(payload);
+    props.handleChildrenSearch(payload);
   };
 
   return (
@@ -146,6 +147,7 @@ const SearchModel = (props: any) => {
                       onClick={onReset}
                       icon={<RedoOutlined />}
                       shape="round"
+                      size="small"
                     >
                       重置
                     </Button>
@@ -154,6 +156,7 @@ const SearchModel = (props: any) => {
                       htmlType="submit"
                       icon={<EditOutlined />}
                       shape="round"
+                      size="small"
                     >
                       搜索
                     </Button>

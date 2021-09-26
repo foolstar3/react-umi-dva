@@ -21,6 +21,9 @@ class GlobalVarList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
       currentPage: 1,
+      var_name: '',
+      var_value: '',
+      description: '',
     };
   }
 
@@ -41,9 +44,22 @@ class GlobalVarList extends React.Component<any, any> {
     });
   };
   onPageChange = (page: any) => {
-    this.getGlobalVarList({ page });
+    const payload = {
+      page: page,
+      var_name: this.state.var_name,
+      var_value: this.state.var_value,
+      description: this.state.description,
+    };
+    this.getGlobalVarList(payload);
     this.setState({
       currentPage: page,
+    });
+  };
+  handleSearchChildren = (var_name, var_value, description) => {
+    this.setState({
+      var_name: var_name,
+      description: description,
+      var_value: var_value,
     });
   };
   childrenPageChange = () => {
@@ -70,7 +86,6 @@ class GlobalVarList extends React.Component<any, any> {
       addVisible: childModalState,
     });
   };
-
   showEditModal = (record: any) => {
     this.setState({
       editVisible: true,
@@ -113,7 +128,7 @@ class GlobalVarList extends React.Component<any, any> {
     };
     const columns = [
       {
-        title: '#',
+        title: '编号',
         dataIndex: 'id',
         key: 'id',
         align: 'center',
@@ -153,6 +168,7 @@ class GlobalVarList extends React.Component<any, any> {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
+        width: '100px',
         render: (_: any, record: any) => {
           return (
             <div>
@@ -192,15 +208,19 @@ class GlobalVarList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal getGlobalVarList={this.getGlobalVarList} />
+          <SearchModal
+            getGlobalVarList={this.getGlobalVarList}
+            handleSearchChildren={this.handleSearchChildren}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.handleAddGlobalVar}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
-              添加全局
+              新增
             </Button>
           </div>
           <Table

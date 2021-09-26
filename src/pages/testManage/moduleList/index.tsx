@@ -23,6 +23,12 @@ class ModuleList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
       currentPage: 1,
+      module_name: '',
+      test_user: '',
+      description: '',
+      project: '',
+      update_time_after: '',
+      update_time_before: '',
     };
   }
 
@@ -47,7 +53,16 @@ class ModuleList extends React.Component<any, any> {
   };
 
   onPageChange = (page: any) => {
-    this.getModuleList({ page });
+    const payload = {
+      page: page,
+      module_name: this.state.module_name,
+      test_user: this.state.test_user,
+      description: this.state.description,
+      project: this.state.project,
+      update_time_after: this.state.update_time_after,
+      update_time_before: this.state.update_time_before,
+    };
+    this.getModuleList(payload);
     this.setState({
       currentPage: page,
     });
@@ -99,6 +114,16 @@ class ModuleList extends React.Component<any, any> {
       callback: () => {
         this.childrenPageChange();
       },
+    });
+  };
+  handleChildrenSearch = (payload: any) => {
+    this.setState({
+      module_name: payload.module_name,
+      test_user: payload.test_user,
+      description: payload.description,
+      project: payload.project,
+      update_time_after: payload.update_time_after,
+      update_time_before: payload.update_time_before,
     });
   };
 
@@ -211,13 +236,17 @@ class ModuleList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal getModuleList={this.getModuleList} />
+          <SearchModal
+            getModuleList={this.getModuleList}
+            handleChildrenSearch={this.handleChildrenSearch}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.handleAddModule}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
               新增
             </Button>
