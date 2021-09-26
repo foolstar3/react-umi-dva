@@ -137,13 +137,11 @@ class TaskList extends React.Component<any, any> {
     const record_args = JSON.parse(record.args);
     const envListId = record_args[0].env;
     const envList = this.props?.envList?.envList;
-    console.log('envList', record_args);
     envList.map((envItem) => {
       if (envListId == envItem.id) {
         this.setState({
           envName: envItem.env_name,
         });
-        console.log('envItem', envItem.env_name);
       }
     });
     this.state.projectList.map((projectItem) => {

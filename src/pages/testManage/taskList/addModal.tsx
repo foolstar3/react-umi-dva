@@ -68,18 +68,10 @@ class AddModal extends React.Component<any, any> {
   };
 
   getTreeNode = (moduleListChange: any) => {
-    const caseList = this.props.testCase.caseList;
     const moduleList = moduleListChange;
     const treeData_moduleList = [];
     moduleList &&
       moduleList.forEach((moduleItem) => {
-        // caseList.forEach((caseItem) => {
-        //   caseItem.module_name === moduleItem.module_name &&
-        //     children.push({
-        //       title: caseItem.name,
-        //       key: caseItem.id,
-        //     });
-        //   });
         treeData_moduleList.push({
           title: moduleItem.module_name,
           key: moduleItem.id,
@@ -154,7 +146,6 @@ class AddModal extends React.Component<any, any> {
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
-    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
