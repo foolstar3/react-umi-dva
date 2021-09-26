@@ -31,6 +31,9 @@ class TaskList extends React.Component<any, any> {
       update_time_before: '',
       description: '',
       enabled: '',
+      caseNumber: '',
+      projectId: 0,
+      caseArray: [],
     };
   }
 
@@ -38,6 +41,9 @@ class TaskList extends React.Component<any, any> {
     this.getTaskList({ page: 1 });
     this.getProjectList({ page: 'None' });
   }
+  onRef = (ref) => {
+    this.EditModal = ref;
+  };
 
   getTaskList = (payload) => {
     this.setState({
@@ -133,9 +139,13 @@ class TaskList extends React.Component<any, any> {
     const strRecord = JSON.stringify(record);
     const recordTempValue = JSON.parse(strRecord);
     const projectListId = recordTempValue?.task_extend?.project;
-
     const record_args = JSON.parse(record.args);
     const envListId = record_args[0].env;
+    const caseNumber = record_args[0].case_list?.case?.length;
+    this.setState({
+      caseNumber: caseNumber,
+      caseArray: record_args[0].case_list?.case,
+    });
     const envList = this.props?.envList?.envList;
     envList.map((envItem) => {
       if (envListId == envItem.id) {
@@ -146,6 +156,7 @@ class TaskList extends React.Component<any, any> {
     });
     this.state.projectList.map((projectItem) => {
       if (projectItem.id == projectListId) {
+        this.EditModal.handleProjectChange(projectItem.project_name);
         recordTempValue.task_extend.project = projectItem.project_name;
         this.setState({
           editVisible: true,
@@ -329,6 +340,9 @@ class TaskList extends React.Component<any, any> {
           onSwitchChange={this.onSwitchChange}
           childrenPageChange={this.childrenPageChange}
           envName={this.state.envName}
+          caseNumber={this.state.caseNumber}
+          onRef={this.onRef}
+          caseArray={this.state.caseArray}
         />
       </div>
     );

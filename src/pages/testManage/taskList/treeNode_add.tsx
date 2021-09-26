@@ -23,7 +23,7 @@ function updateTreeData(
   return list;
 }
 
-const TreeNode: React.FC<{}> = (props: any) => {
+const TreeNode_Add: React.FC<{}> = (props: any) => {
   const initTreeData: any = props.treeData_moduleList;
   const [treeData, setTreeData] = useState(initTreeData);
   useEffect(() => {
@@ -64,15 +64,16 @@ const TreeNode: React.FC<{}> = (props: any) => {
         payload: payload,
         callback: (caseList) => {
           const children = [];
-          caseList.map((caseItem) => {
-            if (caseItem.module === key) {
-              children.push({
-                title: caseItem.name,
-                key: `${caseItem.id}`,
-                isLeaf: true,
-              });
-            }
-          });
+          caseList &&
+            caseList?.map((caseItem) => {
+              if (caseItem.module === key) {
+                children.push({
+                  title: caseItem.name,
+                  key: `${caseItem.id}`,
+                  isLeaf: true,
+                });
+              }
+            });
           setTimeout(() => {
             setTreeData((origin) => {
               updateTreeData(origin, key, children);
@@ -102,4 +103,4 @@ const TreeNode: React.FC<{}> = (props: any) => {
 export default connect(({ testCase, moduleList }) => ({
   moduleList,
   testCase,
-}))(TreeNode);
+}))(TreeNode_Add);

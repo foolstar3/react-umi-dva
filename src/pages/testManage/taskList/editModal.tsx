@@ -9,7 +9,7 @@ import {
   InputNumber,
 } from 'antd';
 import { connect } from 'umi';
-import TreeNode from './treeNode';
+import TreeNode_Edit from './treeNode_edit';
 import { FormInstance } from '@ant-design/pro-form';
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -29,7 +29,18 @@ class EditModal extends React.Component<any, any> {
       Day_of_month: 1,
       Month: 1,
       Day_of_week: 1,
+      checked_projectListId: 0,
     };
+  }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      caseNumber: nextProps.caseNumber,
+      caseArray: nextProps.caseArray,
+    });
   }
   formRef = React.createRef<FormInstance>();
 
@@ -44,22 +55,32 @@ class EditModal extends React.Component<any, any> {
   };
 
   getTreeNode = (moduleListChange: any) => {
-    const caseList = this.props.testCase.caseList;
     const moduleList = moduleListChange;
     const treeData = [];
     moduleList &&
       moduleList.forEach((moduleItem) => {
         const children = [];
-        caseList.forEach((caseItem) => {
-          caseItem.module_name === moduleItem.module_name &&
-            children.push({
-              title: caseItem.name,
-              key: caseItem.id,
-            });
+        this.props.dispatch({
+          type: 'testCase/getCaseList',
+          payload: {
+            page: 'None',
+            project: moduleItem.project,
+            module: moduleItem.id,
+          },
+          callback: (caseList) => {
+            caseList &&
+              caseList.forEach((caseItem) => {
+                caseItem.module_name === moduleItem.module_name &&
+                  children.push({
+                    title: caseItem.name,
+                    key: caseItem.id,
+                  });
+              });
+          },
         });
         treeData.push({
           title: moduleItem.module_name,
-          key: moduleItem.create_time,
+          key: moduleItem.module_name,
           children: children,
         });
       });
@@ -70,11 +91,6 @@ class EditModal extends React.Component<any, any> {
 
   editSubmit = () => {
     const tempEditValue = this.state.tempEditValue;
-    // if (tempEditValue?.enabled === undefined) {
-    //   tempEditValue.enabled = this.props.tempValue.enabled;
-    //   console.log('tempEditValue',tempEditValue)
-    // }
-
     const editTaskValue = JSON.stringify(tempEditValue);
     const editTask = JSON.parse(editTaskValue);
     const projectList = this.props.projectList.projectList;
@@ -111,7 +127,7 @@ class EditModal extends React.Component<any, any> {
       enabled: editTask?.enabled,
       email_list: editTask?.emailList,
       project: editTask?.project,
-      crontab: editTask.crontab && {
+      crontab: {
         minute: this.state.Minutes,
         hour: this.state.Hours,
         day_of_week: this.state.Day_of_week,
@@ -150,6 +166,9 @@ class EditModal extends React.Component<any, any> {
     for (let i = 0; i < projectList.length; i++) {
       if (projectList && projectList[i].project_name === project) {
         const payload = { page: 'None', project: projectList[i].id };
+        this.setState({
+          checked_projectListId: projectList[i].id,
+        });
         this.getModuleList(payload);
       }
     }
@@ -200,8 +219,8 @@ class EditModal extends React.Component<any, any> {
     const { editVisible, tempValue, envName } = this.props;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
-    const treeData = [...this.state.treeData];
     const { caseNumber, checked } = this.state;
+    const treeData = [...this.state.treeData];
     return (
       <div>
         {editVisible && (
@@ -269,52 +288,52 @@ class EditModal extends React.Component<any, any> {
                     <InputNumber
                       min={0}
                       max={59}
-                      defaultValue={1}
+                      defaultValue={parseInt(tempValue.crontab_time[0])}
                       bordered
                       onChange={(num) => this.handlecrontab_M(num)}
                       style={{ width: '100px' }}
-                      formatter={(value) => `${value} 分`}
-                      parser={(value) => value?.replace(' 分', '')}
+                      formatter={(value) => `${value} M`}
+                      parser={(value) => value?.replace(' M', '')}
                     />
                     <InputNumber
                       min={0}
                       max={23}
-                      defaultValue={1}
+                      defaultValue={parseInt(tempValue.crontab_time[2])}
                       bordered
                       onChange={(num) => this.handlecrontab_H(num)}
                       style={{ width: '100px' }}
-                      formatter={(value) => `${value} 时`}
-                      parser={(value) => value?.replace(' 时', '')}
+                      formatter={(value) => `${value} H`}
+                      parser={(value) => value?.replace(' H', '')}
                     />
                     <InputNumber
                       min={1}
                       max={31}
-                      defaultValue={1}
+                      defaultValue={parseInt(tempValue.crontab_time[4])}
                       bordered
                       onChange={(num) => this.handlecrontab_DM(num)}
                       style={{ width: '100px' }}
-                      formatter={(value) => `${value} 天`}
-                      parser={(value) => value?.replace(' 天', '')}
+                      formatter={(value) => `${value} dM`}
+                      parser={(value) => value?.replace(' dM', '')}
                     />
                     <InputNumber
                       min={1}
                       max={12}
-                      defaultValue={1}
+                      defaultValue={parseInt(tempValue.crontab_time[6])}
                       bordered
                       onChange={(num) => this.handlecrontab_Mon(num)}
                       style={{ width: '100px' }}
-                      formatter={(value) => `${value} 月`}
-                      parser={(value) => value?.replace(' 月', '')}
+                      formatter={(value) => `${value} MY`}
+                      parser={(value) => value?.replace(' MY', '')}
                     />
                     <InputNumber
                       min={0}
                       max={6}
-                      defaultValue={1}
+                      defaultValue={parseInt(tempValue.crontab_time[8])}
                       bordered
                       onChange={(num) => this.handlecrontab_DW(num)}
                       style={{ width: '100px' }}
-                      formatter={(value) => `周 ${value}`}
-                      parser={(value) => value?.replace('周 ', '')}
+                      formatter={(value) => `${value} d`}
+                      parser={(value) => value?.replace(' d', '')}
                     />
                   </div>
                 </Form.Item>
@@ -393,9 +412,11 @@ class EditModal extends React.Component<any, any> {
                 rules={[{ required: false }]}
                 key="cassNumber"
               >
-                <TreeNode
+                <TreeNode_Edit
                   treeData={[...treeData]}
                   caseNumber={this.caseNumber}
+                  caseArray={this.props.caseArray}
+                  checked_projectListId={this.state.checked_projectListId}
                 />
               </Form.Item>
               <Form.Item
