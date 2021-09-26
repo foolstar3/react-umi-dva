@@ -9,7 +9,7 @@ import {
   FormInstance,
 } from 'antd';
 import { connect } from 'umi';
-import TreeNode from './treeNode';
+import TreeNode_Add from './treeNode_add';
 import './index.less';
 const { Option } = Select;
 class AddModal extends React.Component<any, any> {
@@ -146,6 +146,7 @@ class AddModal extends React.Component<any, any> {
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
+    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -275,8 +276,8 @@ class AddModal extends React.Component<any, any> {
                 bordered
                 onChange={(num) => this.handlecrontab_M(num)}
                 style={{ width: '100px' }}
-                formatter={(value) => `${value} 分`}
-                parser={(value) => value?.replace(' 分', '')}
+                formatter={(value) => `${value} M`}
+                parser={(value) => value?.replace(' M', '')}
               />
               <InputNumber
                 min={0}
@@ -285,8 +286,8 @@ class AddModal extends React.Component<any, any> {
                 bordered
                 onChange={(num) => this.handlecrontab_H(num)}
                 style={{ width: '100px' }}
-                formatter={(value) => `${value} 时`}
-                parser={(value) => value?.replace(' 时', '')}
+                formatter={(value) => `${value} H`}
+                parser={(value) => value?.replace(' H', '')}
               />
               <InputNumber
                 min={1}
@@ -295,8 +296,8 @@ class AddModal extends React.Component<any, any> {
                 bordered
                 onChange={(num) => this.handlecrontab_DM(num)}
                 style={{ width: '100px' }}
-                formatter={(value) => `${value} 天`}
-                parser={(value) => value?.replace(' 天', '')}
+                formatter={(value) => `${value} dM`}
+                parser={(value) => value?.replace(' dM', '')}
               />
               <InputNumber
                 min={1}
@@ -305,8 +306,8 @@ class AddModal extends React.Component<any, any> {
                 bordered
                 onChange={(num) => this.handlecrontab_Mon(num)}
                 style={{ width: '100px' }}
-                formatter={(value) => `${value} 月`}
-                parser={(value) => value?.replace(' 月', '')}
+                formatter={(value) => `${value} MY`}
+                parser={(value) => value?.replace(' MY', '')}
               />
               <InputNumber
                 min={0}
@@ -315,8 +316,8 @@ class AddModal extends React.Component<any, any> {
                 bordered
                 onChange={(num) => this.handlecrontab_DW(num)}
                 style={{ width: '100px' }}
-                formatter={(value) => `周 ${value}`}
-                parser={(value) => value?.replace('周 ', '')}
+                formatter={(value) => `${value} d`}
+                parser={(value) => value?.replace(' d', '')}
               />
               {/* <Popover content={content}>
                 {<QuestionCircleOutlined style={{color:'orange'}}/>}
@@ -387,7 +388,7 @@ class AddModal extends React.Component<any, any> {
             name="cassNumber"
             rules={[{ required: false }]}
           >
-            <TreeNode
+            <TreeNode_Add
               treeData_moduleList={[...treeData_moduleList]}
               caseNumber={this.caseNumber}
               checked_projectListId={this.state.checked_projectListId}
