@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import EditableTable from '@/components/Editabletable';
 import { DataType } from '@/utils/common';
 import { Form, Select, Button, message, Input, Row, Col } from 'antd';
+import Editor from '@/components/Editor';
 
 import styles from './index.less';
 
-const RequestTab = ({ request, save }) => {
+const RequestTab = (props, ref) => {
+  const { request, save } = props;
+  useImperativeHandle(ref, () => {
+    return {
+      sendCode() {
+        return {
+          jsonCode,
+          dataType,
+        };
+      },
+    };
+  });
+
   const method = [
     { name: 'GET', value: 'GET', key: 'GET' },
     { name: 'POST', value: 'POST', key: 'POST' },
@@ -17,11 +30,12 @@ const RequestTab = ({ request, save }) => {
     { name: 'data', value: 'data', key: 'data' },
     { name: 'json', value: 'json', key: 'json' },
   ];
+
   const [requestType, setRequestType] = useState({
     url: request.url,
     method: request.method,
   });
-
+  const [dataType, setDataType] = useState(request.json ? 'json' : 'data');
   const [headerData, setHeaderData] = useState(() => {
     const header = [];
     let index = 1;
@@ -73,7 +87,8 @@ const RequestTab = ({ request, save }) => {
     }
     return data;
   });
-
+  // 子组件的jsonCode
+  const [jsonCode, setJsonCode] = useState(request.json ?? '');
   const lineAdd = (table) => {
     if (table === 'headers') {
       setHeaderData((prev = []) => {
@@ -249,6 +264,12 @@ const RequestTab = ({ request, save }) => {
       align: 'center',
     },
   ];
+
+  const getDataCode = (val) => {
+    // setJsonData(val)
+    setJsonCode(val);
+  };
+
   const [form] = Form.useForm();
 
   const requestTypeChange = (val, type) => {
@@ -313,10 +334,9 @@ const RequestTab = ({ request, save }) => {
                 name="data"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 18 }}
+                initialValue={dataType}
               >
-                <Select
-                // onChange={onProjectNameChange}
-                >
+                <Select onChange={(val) => setDataType(val)}>
                   {data.map((item) => (
                     <Select.Option key={item.key} value={item.value}>
                       {item.name}
@@ -357,21 +377,34 @@ const RequestTab = ({ request, save }) => {
         />
       </div>
       <div className={styles.dataContent}>
-        <div className={styles.topBtn}>
-          <Button type="primary" onClick={() => lineAdd('data')}>
-            添加data
-          </Button>
-        </div>
-        <EditableTable
-          form={form}
-          dataSource={requestData}
-          columns={dataTableColumns}
-          lineDelete={(record) => lineDelete(record, 'data')}
-          lineSave={(record) => lineSave(record, 'data')}
-        />
+        {dataType === 'json' && (
+          <div className={styles.editor}>
+            <Editor
+              getEditorContent={getDataCode}
+              content={jsonCode}
+              ref={ref}
+            />
+          </div>
+        )}
+        {dataType === 'data' && (
+          <>
+            <div className={styles.topBtn}>
+              <Button type="primary" onClick={() => lineAdd('data')}>
+                添加data
+              </Button>
+            </div>
+            <EditableTable
+              form={form}
+              dataSource={requestData}
+              columns={dataTableColumns}
+              lineDelete={(record) => lineDelete(record, 'data')}
+              lineSave={(record) => lineSave(record, 'data')}
+            />
+          </>
+        )}
       </div>
     </>
   );
 };
 
-export default RequestTab;
+export default forwardRef(RequestTab);

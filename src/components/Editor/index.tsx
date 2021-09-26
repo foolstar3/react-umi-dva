@@ -54,8 +54,14 @@ export default class Editor extends Component<any, any> {
             // python编辑器模式
             // name: 'python'
           },
+          extraKeys: { Ctrl: 'autocomplete' },
           theme: 'monokai',
           lineNumbers: true,
+          styleActiveLine: true,
+          autofocus: true,
+          lineWrapping: true,
+          foldGutter: true,
+          gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
         }}
         onChange={(editor, data, contentValue) => {
           this.getEditorCode(contentValue);

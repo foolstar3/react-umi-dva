@@ -20,11 +20,6 @@ export default {
         ...newState,
       };
     },
-    addEnvListData(state, { payload }) {
-      return {
-        ...state,
-      };
-    },
   },
   effects: {
     *getEnvList({ payload, callback }, { call, put }) {
@@ -45,16 +40,13 @@ export default {
     },
     *addEnvList({ payload, callback }, { call, put }) {
       const res = yield call(addEnvList, payload);
-      yield put({
-        type: 'addEnvListData',
-      });
       if (callback) {
         callback(res);
       }
     },
     *deleteEnvList({ payload, callback }, { call, put }) {
       const res = yield call(deleteEnvList, payload);
-      callback();
+      callback(res);
     },
     *updateEnv({ payload, callback }, { call, put }) {
       const res = yield call(updateEnv, payload);

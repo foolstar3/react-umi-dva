@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DateFormat } from '@/utils/format';
 import {
   Collapse,
@@ -21,14 +21,14 @@ const SearchBox = (props) => {
   const onReset = () => {
     form.resetFields();
   };
-
   const onSearch = () => {
     const { onSearch } = props;
     const payload = form.getFieldsValue(true);
-    console.log(payload);
+    form.setFieldsValue({
+      update_time: payload.update_time,
+    });
     // 修改时间格式
     payload.update_time?.map((item, index) => {
-      // console.log(item, DateFormat(item._d));
       if (index === 0) {
         payload.update_time_before = DateFormat(item._d);
       } else if (index === 1) {
@@ -36,16 +36,17 @@ const SearchBox = (props) => {
       }
     });
     delete payload.update_time;
-    // console.log(payload);
     const { project_name, module_name, case_name } = payload;
     payload.project = project_name;
     payload.module = module_name;
     payload.name = case_name;
+    form.setFieldsValue({
+      project_name: payload.project_name,
+      module_name: payload.module_name,
+    });
     delete payload.project_name;
     delete payload.module_name;
-    // console.log(payload);
     onSearch(payload);
-    form.resetFields();
   };
 
   const onProjectChange = (val) => {
@@ -53,7 +54,6 @@ const SearchBox = (props) => {
     onProjectChange(val, false);
   };
 
-  // console.log(props);
   return (
     <Collapse>
       <Panel header="搜索框" key="search">

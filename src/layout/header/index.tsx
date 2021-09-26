@@ -105,7 +105,7 @@ class MyHeader extends Component<any, any> {
           onOk={(e) => this.logout(localStorage.getItem('qc_user'))}
           onCancel={this.handleCancel}
         >
-          <p>您确定退出登陆？</p>
+          <p>您确定退出登录？</p>
         </Modal>
       </Header>
     );

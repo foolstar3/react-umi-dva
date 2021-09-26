@@ -162,6 +162,7 @@ class EnvList extends Component<any, any> {
       ],
       editorCode: '',
       total: 0,
+      currentPage: 1,
     };
   }
 
@@ -263,6 +264,9 @@ class EnvList extends Component<any, any> {
           // 添加成功
           message.success(res.message);
           this.getEnvList({ page: 1 });
+          this.setState({
+            currentPage: 1,
+          });
         } else if (res.status == 400) {
           message.error('有同名或同地址的环境,创建失败!');
         }
@@ -278,8 +282,11 @@ class EnvList extends Component<any, any> {
     dispatch({
       type: 'envList/deleteEnvList',
       payload,
-      callback: () => {
+      callback: (res) => {
         this.getEnvList({ page: 1 });
+        this.setState({
+          currentPage: 1,
+        });
       },
     });
   };
@@ -317,6 +324,9 @@ class EnvList extends Component<any, any> {
       callback: (res) => {
         message.success(res.message);
         this.getEnvList({ page: 1 });
+        this.setState({
+          currentPage: 1,
+        });
       },
     });
   };
@@ -403,6 +413,7 @@ class EnvList extends Component<any, any> {
       envInfoModalVisiable,
       editorCode,
       total,
+      currentPage,
     } = this.state;
     const { envList, tableLoading } = this.props;
     if (envList !== undefined) {
@@ -414,7 +425,11 @@ class EnvList extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
+      current: currentPage,
       onChange: (page) => {
+        this.setState({
+          currentPage: page,
+        });
         this.getEnvList({ page });
       },
       total: total,
@@ -544,7 +559,7 @@ class EnvList extends Component<any, any> {
           <Card bordered={false}>
             <Editor
               content={editorCode}
-              getEditorContent={(value) => this.editorCodeChange(value)}
+              getEditorContent={this.editorCodeChange}
             />
             <div className="debug_button">
               <Row>
