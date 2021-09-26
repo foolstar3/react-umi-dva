@@ -3,7 +3,6 @@ import { Collapse, Tree } from 'antd';
 import { connect } from 'umi';
 const { Panel } = Collapse;
 import './index.less';
-import { extend } from 'umi-request';
 interface DataNode {
   title: string;
   key: string;
@@ -11,25 +10,17 @@ interface DataNode {
   children?: DataNode[];
 }
 
-// It's just a simple demo. You can use tree map to optimize update perf.
 function updateTreeData(
   list: DataNode[],
   key: React.Key,
   children: DataNode[],
 ): DataNode[] {
-  console.log('children', children);
   list.map((moduleListItem) => {
     if (moduleListItem.key === key) {
       moduleListItem.children = children;
     }
-    // if (node.children) {
-    //   return {
-    //     ...node,
-    //     children: updateTreeData(node.children, key, children),
-    //   };
-    //
   });
-  console.log('lsit', list);
+  return list;
 }
 
 const TreeNode: React.FC<{}> = (props: any) => {
@@ -38,6 +29,25 @@ const TreeNode: React.FC<{}> = (props: any) => {
   useEffect(() => {
     setTreeData(initTreeData);
   });
+
+  const onCheckCase = (checkedKeysValue: React.Key[]) => {
+    // console.log('onCheck', checkedKeysValue);
+    const new_CheckedListString = [];
+    const new_CheckedListNumber = [];
+    checkedKeysValue &&
+      checkedKeysValue.map((checkedItem) => {
+        if (typeof checkedItem == 'string') {
+          new_CheckedListString.push(checkedItem);
+        }
+      });
+    new_CheckedListString &&
+      new_CheckedListString.map((checkedItem) => {
+        new_CheckedListNumber.push(parseInt(checkedItem));
+      });
+
+    props.caseNumber(new_CheckedListNumber, new_CheckedListNumber.length);
+  };
+
   const onLoadData = ({ key, children }: any) =>
     new Promise<void>((resolve) => {
       if (children) {
@@ -58,7 +68,7 @@ const TreeNode: React.FC<{}> = (props: any) => {
             if (caseItem.module === key) {
               children.push({
                 title: caseItem.name,
-                key: caseItem.id,
+                key: `${caseItem.id}`,
                 isLeaf: true,
               });
             }
@@ -77,7 +87,12 @@ const TreeNode: React.FC<{}> = (props: any) => {
     <div>
       <Collapse>
         <Panel header="请选择用例" key="caseNumber" forceRender>
-          <Tree treeData={treeData} loadData={onLoadData} checkable />
+          <Tree
+            treeData={treeData}
+            loadData={onLoadData}
+            checkable
+            onCheck={onCheckCase}
+          />
         </Panel>
       </Collapse>
     </div>
