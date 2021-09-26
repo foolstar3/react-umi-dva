@@ -36,7 +36,7 @@ export default {
         payload: res,
       });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *deleteCase({ payload, callback }, { call, put }) {

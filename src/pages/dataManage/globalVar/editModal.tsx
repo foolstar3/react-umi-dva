@@ -44,7 +44,7 @@ class EditModal extends React.Component<any, any> {
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改全局信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}

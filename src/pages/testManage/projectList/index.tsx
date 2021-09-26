@@ -21,6 +21,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 import '/src/styles/global.less';
 import SearchProject from './search';
+import ButtonSize from '@/pages/examples/button';
 
 class ProjectList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
@@ -36,6 +37,8 @@ class ProjectList extends React.Component<any, any> {
       total: 0,
       leaderList: [],
       currentPage: 1,
+      project_name: '',
+      description: '',
     };
   }
 
@@ -69,9 +72,21 @@ class ProjectList extends React.Component<any, any> {
     });
   };
   onPageChange = (page: any) => {
-    this.getProjectList({ page });
+    const payload = {
+      page: page,
+      project_name: this.state.project_name,
+      description: this.state.description,
+    };
+
+    this.getProjectList(payload);
     this.setState({
       currentPage: page,
+    });
+  };
+  handleSearchChildren = (project_name, description) => {
+    this.setState({
+      project_name: project_name,
+      description: description,
     });
   };
 
@@ -288,13 +303,17 @@ class ProjectList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchProject getProjectList={this.getProjectList} />
+          <SearchProject
+            getProjectList={this.getProjectList}
+            handleSearchChildren={this.handleSearchChildren}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.showAddModal}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
               新增
             </Button>
@@ -311,7 +330,7 @@ class ProjectList extends React.Component<any, any> {
 
         <Modal
           visible={addVisible}
-          title="项目信息"
+          title="新增"
           closable={true}
           maskClosable={false}
           onOk={this.handleSubmit}
@@ -376,7 +395,7 @@ class ProjectList extends React.Component<any, any> {
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改项目信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}

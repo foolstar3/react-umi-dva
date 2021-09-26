@@ -9,31 +9,7 @@ class EditModal extends React.Component<any, any> {
     super(props);
     this.state = {
       tempEditValue: '',
-      testUserList: [],
-      projectList: [],
     };
-  }
-
-  componentDidMount() {
-    this.props.dispatch({
-      type: 'userList/getUserList',
-      callback: (res) => {
-        this.setState({
-          testUserList: res,
-        });
-      },
-    });
-    this.props.dispatch({
-      type: 'projectList/getProjectList',
-      payload: {
-        page: 'None',
-      },
-      callback: (res) => {
-        this.setState({
-          projectList: res,
-        });
-      },
-    });
   }
 
   editSubmit = () => {
@@ -57,7 +33,10 @@ class EditModal extends React.Component<any, any> {
   };
 
   handleEditValueChange = (singleValueChange, ValueChange) => {
-    const { projectList, testUserList } = this.state;
+    // const { projectList, testUserList } = this.props;
+    console.log('this.props', this.props);
+    const projectList = this.props.projectList.projectList;
+    const testUserList = this.props.userList.userList;
     for (let i = 0; i < testUserList.length; i++) {
       if (
         ValueChange.test_user &&
@@ -81,13 +60,14 @@ class EditModal extends React.Component<any, any> {
 
   render() {
     const { editVisible, tempValue } = this.props;
-    const { projectList, testUserList } = this.state;
+    const projectList = this.props.projectList.projectList;
+    const testUserList = this.props.userList.userList;
     return (
       <div>
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改模块信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}

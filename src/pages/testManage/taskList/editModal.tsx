@@ -1,5 +1,13 @@
 import React from 'react';
-import { Tag, Switch, Collapse, Select, Form, Input, Modal } from 'antd';
+import {
+  Switch,
+  Collapse,
+  Select,
+  Form,
+  Input,
+  Modal,
+  InputNumber,
+} from 'antd';
 import { connect } from 'umi';
 import TreeNode from './treeNode';
 import { FormInstance } from '@ant-design/pro-form';
@@ -12,69 +20,25 @@ class EditModal extends React.Component<any, any> {
       tempEditValue: {},
       caseNumber: 0,
       moduleList: [],
-      caseList: [],
       treeData: [],
       caseArray: [],
-      projectList: [],
       currentPage: 1,
       checked: true,
+      Minutes: 1,
+      Hours: 1,
+      Day_of_month: 1,
+      Month: 1,
+      Day_of_week: 1,
     };
   }
   formRef = React.createRef<FormInstance>();
 
-  componentDidMount() {
-    this.getProjectList();
-    this.getEnvList();
-    this.getCaseList({ page: 'None' });
-    this.getTaskList();
-  }
-
-  getProjectList = () => {
-    this.props.dispatch({
-      type: 'projectList/getProjectList',
-      payload: {
-        page: 'None',
-      },
-      callback: (res, rescount) => {
-        this.setState({
-          projectList: res,
-        });
-      },
-    });
-  };
   getModuleList = (payload: any) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload,
       callback: (res, rescount) => {
         this.getTreeNode(res);
-      },
-    });
-  };
-  getEnvList = () => {
-    this.props.dispatch({
-      type: 'envList/getEnvList',
-      payload: {
-        page: 'None',
-      },
-    });
-  };
-  getCaseList = (payload: any) => {
-    this.props.dispatch({
-      type: 'testCase/getCaseList',
-      payload,
-      callback: (res) => {
-        this.setState({
-          caseList: res,
-        });
-      },
-    });
-  };
-  getTaskList = () => {
-    this.props.dispatch({
-      type: 'taskList/getTaskList',
-      payload: {
-        page: 1,
       },
     });
   };
@@ -113,7 +77,6 @@ class EditModal extends React.Component<any, any> {
 
     const editTaskValue = JSON.stringify(tempEditValue);
     const editTask = JSON.parse(editTaskValue);
-    console.log('editTask', editTask);
     const projectList = this.props.projectList.projectList;
     const envList = this.props.envList.envList;
     for (let i = 0; i < projectList.length; i++) {
@@ -129,20 +92,31 @@ class EditModal extends React.Component<any, any> {
         editTask.env = envList[i].id;
       }
     }
-
+    const args = [
+      {
+        case_list: {
+          case: this.state.caseArray,
+        },
+        env: editTask.env,
+        report_name: editTask.name,
+        description: this.state.tempEditValue.description,
+        receivers: [''],
+      },
+    ];
+    const json_args = JSON.stringify(args);
     const requestData = {
       name: editTask?.name,
-      args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${editTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
+      args: json_args,
       description: editTask?.description,
       enabled: editTask?.enabled,
       email_list: editTask?.emailList,
       project: editTask?.project,
       crontab: editTask.crontab && {
-        minute: editTask.crontab.charAt(0),
-        hour: editTask.crontab.charAt(1),
-        day_of_week: editTask.crontab.charAt(2),
-        day_of_month: editTask.crontab.charAt(3),
-        month_of_year: editTask.crontab.charAt(4),
+        minute: this.state.Minutes,
+        hour: this.state.Hours,
+        day_of_week: this.state.Day_of_week,
+        day_of_month: this.state.Day_of_month,
+        month_of_year: this.state.Month,
       },
     };
     this.props.dispatch({
@@ -172,7 +146,7 @@ class EditModal extends React.Component<any, any> {
   };
 
   handleProjectChange = (project: any) => {
-    const projectList = this.state.projectList;
+    const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (projectList && projectList[i].project_name === project) {
         const payload = { page: 'None', project: projectList[i].id };
@@ -196,8 +170,34 @@ class EditModal extends React.Component<any, any> {
     });
   };
 
+  handlecrontab_M = (number: any) => {
+    this.setState({
+      Minutes: number,
+    });
+  };
+  handlecrontab_H = (number: any) => {
+    this.setState({
+      Hours: number,
+    });
+  };
+  handlecrontab_DM = (number: any) => {
+    this.setState({
+      Day_of_month: number,
+    });
+  };
+  handlecrontab_Mon = (number: any) => {
+    this.setState({
+      Month: number,
+    });
+  };
+  handlecrontab_DW = (number: any) => {
+    this.setState({
+      Day_of_week: number,
+    });
+  };
+
   render() {
-    const { editVisible, tempValue } = this.props;
+    const { editVisible, tempValue, envName } = this.props;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
     const treeData = [...this.state.treeData];
@@ -207,7 +207,7 @@ class EditModal extends React.Component<any, any> {
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改任务信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}
@@ -252,7 +252,6 @@ class EditModal extends React.Component<any, any> {
                 <Switch
                   checkedChildren="启用"
                   unCheckedChildren="禁用"
-                  // defaultChecked={tempValue.enabled}
                   onChange={(checked, record) => {
                     this.onEditSwitchChange(checked, record);
                   }}
@@ -266,14 +265,65 @@ class EditModal extends React.Component<any, any> {
                   initialValue={tempValue.crontab_time}
                   key="crontab"
                 >
-                  <Input addonAfter="计划 (m/h/d/dM/MY)" />
+                  <div>
+                    <InputNumber
+                      min={0}
+                      max={59}
+                      defaultValue={1}
+                      bordered
+                      onChange={(num) => this.handlecrontab_M(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} 分`}
+                      parser={(value) => value?.replace(' 分', '')}
+                    />
+                    <InputNumber
+                      min={0}
+                      max={23}
+                      defaultValue={1}
+                      bordered
+                      onChange={(num) => this.handlecrontab_H(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} 时`}
+                      parser={(value) => value?.replace(' 时', '')}
+                    />
+                    <InputNumber
+                      min={1}
+                      max={31}
+                      defaultValue={1}
+                      bordered
+                      onChange={(num) => this.handlecrontab_DM(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} 天`}
+                      parser={(value) => value?.replace(' 天', '')}
+                    />
+                    <InputNumber
+                      min={1}
+                      max={12}
+                      defaultValue={1}
+                      bordered
+                      onChange={(num) => this.handlecrontab_Mon(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} 月`}
+                      parser={(value) => value?.replace(' 月', '')}
+                    />
+                    <InputNumber
+                      min={0}
+                      max={6}
+                      defaultValue={1}
+                      bordered
+                      onChange={(num) => this.handlecrontab_DW(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `周 ${value}`}
+                      parser={(value) => value?.replace('周 ', '')}
+                    />
+                  </div>
                 </Form.Item>
               )}
               <Form.Item
                 label="运行环境"
                 name="env"
                 rules={[{ required: true, message: '请选择运行环境' }]}
-                initialValue={tempValue.env}
+                initialValue={envName}
                 key="env"
               >
                 {

@@ -36,7 +36,8 @@ const SearchModel = (props: any) => {
         enabled: true,
       };
       props.getTaskList(payload);
-    } else if (value.enable_status == '禁止') {
+      props.handleSearchChildren(payload);
+    } else if (value.enable_status == '禁用') {
       const payload = {
         page: 1,
         name: value.task_name,
@@ -48,6 +49,7 @@ const SearchModel = (props: any) => {
         enabled: false,
       };
       props.getTaskList(payload);
+      props.handleSearchChildren(payload);
     } else {
       const payload = {
         page: 1,
@@ -83,7 +85,7 @@ const SearchModel = (props: any) => {
                 <Select defaultValue="全部">
                   <Option value="全部"> 全部 </Option>
                   <Option value="启用"> 启用 </Option>
-                  <Option value="禁止"> 禁止 </Option>
+                  <Option value="禁用"> 禁用 </Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -106,6 +108,7 @@ const SearchModel = (props: any) => {
                     onClick={onReset}
                     icon={<RedoOutlined />}
                     shape="round"
+                    size="small"
                   >
                     重置
                   </Button>
@@ -114,6 +117,7 @@ const SearchModel = (props: any) => {
                     htmlType="submit"
                     icon={<EditOutlined />}
                     shape="round"
+                    size="small"
                   >
                     搜索
                   </Button>

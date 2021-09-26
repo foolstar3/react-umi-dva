@@ -25,6 +25,12 @@ class TaskList extends React.Component<any, any> {
       total: 0,
       projectList: [],
       currentPage: 1,
+      envName: '',
+      name: '',
+      update_time_after: '',
+      update_time_before: '',
+      description: '',
+      enabled: '',
     };
   }
 
@@ -77,9 +83,26 @@ class TaskList extends React.Component<any, any> {
   };
 
   onPageChange = (page: any) => {
-    this.getTaskList({ page });
+    const payload = {
+      page: 1,
+      name: this.state.name,
+      update_time_after: this.state.update_time_after,
+      update_time_before: this.state.update_time_before,
+      description: this.state.description,
+      enabled: this.state.enabled,
+    };
+    this.getTaskList(payload);
     this.setState({
       currentPage: page,
+    });
+  };
+  handleSearchChildren = (payload) => {
+    this.setState({
+      name: payload.name,
+      update_time_after: payload.update_time_after,
+      update_time_before: payload.update_time_before,
+      description: payload.description,
+      enabled: payload.enabled,
     });
   };
   childrenPageChange = () => {
@@ -111,9 +134,18 @@ class TaskList extends React.Component<any, any> {
     const recordTempValue = JSON.parse(strRecord);
     const projectListId = recordTempValue?.task_extend?.project;
 
-    // const record_args = JSON.parse(record.args)
-    // const envListId = record_args.env
-    // console.log('envListId',envListId)
+    const record_args = JSON.parse(record.args);
+    const envListId = record_args[0].env;
+    const envList = this.props?.envList?.envList;
+    console.log('envList', record_args);
+    envList.map((envItem) => {
+      if (envListId == envItem.id) {
+        this.setState({
+          envName: envItem.env_name,
+        });
+        console.log('envItem', envItem.env_name);
+      }
+    });
     this.state.projectList.map((projectItem) => {
       if (projectItem.id == projectListId) {
         recordTempValue.task_extend.project = projectItem.project_name;
@@ -123,14 +155,6 @@ class TaskList extends React.Component<any, any> {
         });
       }
     });
-    // this.props.envList?.envList?.map((envItem)=>{
-    //   if(envItem.id == envListId){
-    //     recordTempValue.env = envItem.env_name
-    //     this.setState({
-    //       tempValue: recordTempValue,
-    //     })
-    //   }
-    // })
   };
 
   handleDelete = (record: any) => {
@@ -269,13 +293,17 @@ class TaskList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal getTaskList={this.getTaskList} />
+          <SearchModal
+            getTaskList={this.getTaskList}
+            handleSearchChildren={this.handleSearchChildren}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.handleAddTask}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
               新增
             </Button>
@@ -302,14 +330,16 @@ class TaskList extends React.Component<any, any> {
           tempValue={this.state.tempValue}
           onSwitchChange={this.onSwitchChange}
           childrenPageChange={this.childrenPageChange}
+          envName={this.state.envName}
         />
       </div>
     );
   }
 }
 
-export default connect(({ taskList, userList, projectList }) => ({
+export default connect(({ taskList, userList, projectList, envList }) => ({
   taskList,
   userList,
   projectList,
+  envList,
 }))(TaskList);

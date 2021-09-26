@@ -16,12 +16,10 @@ const { RangePicker } = DatePicker;
 const SearchModel = (props: any) => {
   const [form] = Form.useForm();
 
-  //重置搜索框
   const onReset = () => {
     form.resetFields();
   };
 
-  //进行搜索
   const handleSearch = (value: any) => {
     const payload = {
       page: 1,
@@ -30,6 +28,11 @@ const SearchModel = (props: any) => {
       description: value.description,
     };
     props.getGlobalVarList(payload);
+    props.handleSearchChildren(
+      value.var_name,
+      value.var_value,
+      value.description,
+    );
   };
 
   return (
@@ -70,6 +73,7 @@ const SearchModel = (props: any) => {
                     onClick={onReset}
                     icon={<RedoOutlined />}
                     shape="round"
+                    size="small"
                   >
                     重置
                   </Button>
@@ -78,6 +82,7 @@ const SearchModel = (props: any) => {
                     htmlType="submit"
                     icon={<EditOutlined />}
                     shape="round"
+                    size="small"
                   >
                     搜索
                   </Button>

@@ -17,6 +17,7 @@ const SearchProject = (props: any) => {
       description: value.description,
     };
     props.getProjectList(payload);
+    props.handleSearchChildren(value.project_name, value.description);
   };
 
   return (
@@ -70,6 +71,7 @@ const SearchProject = (props: any) => {
                       onClick={onReset}
                       icon={<RedoOutlined />}
                       shape="round"
+                      size="small"
                     >
                       重置
                     </Button>
@@ -78,6 +80,7 @@ const SearchProject = (props: any) => {
                       htmlType="submit"
                       icon={<EditOutlined />}
                       shape="round"
+                      size="small"
                     >
                       搜索
                     </Button>
