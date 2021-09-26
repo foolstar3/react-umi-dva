@@ -88,7 +88,9 @@ const RequestTab = (props, ref) => {
     return data;
   });
   // 子组件的jsonCode
-  const [jsonCode, setJsonCode] = useState(request.json ?? '');
+  const [jsonCode, setJsonCode] = useState(
+    request.json ? JSON.stringify(request.json) : '',
+  );
   const lineAdd = (table) => {
     if (table === 'headers') {
       setHeaderData((prev = []) => {
@@ -293,6 +295,7 @@ const RequestTab = (props, ref) => {
       });
     }
   };
+  console.log(jsonCode);
   return (
     <>
       <div className={styles.top}>
