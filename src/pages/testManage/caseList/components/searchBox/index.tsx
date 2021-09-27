@@ -17,6 +17,7 @@ const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 
 const SearchBox = (props) => {
+  const { projectOptions, moduleOptions } = props;
   const [form] = Form.useForm();
   const onReset = () => {
     form.resetFields();
@@ -78,11 +79,12 @@ const SearchBox = (props) => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  {props.projectOptions.map((item) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.project_name}
-                    </Select.Option>
-                  ))}
+                  {projectOptions.length &&
+                    projectOptions.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.project_name}
+                      </Select.Option>
+                    ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -99,11 +101,12 @@ const SearchBox = (props) => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  {props.moduleOptions.map((item) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.module_name}
-                    </Select.Option>
-                  ))}
+                  {moduleOptions.length &&
+                    moduleOptions.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.module_name}
+                      </Select.Option>
+                    ))}
                 </Select>
               </Form.Item>
             </Col>

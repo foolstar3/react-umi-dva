@@ -3,6 +3,8 @@ import {
   deleteCase,
   debugCase,
   getFuncs,
+  getCalls,
+  updateCase,
 } from '@/services/testCase';
 
 export default {
@@ -11,6 +13,7 @@ export default {
     caseList: {},
     debugResponse: {},
     funcsName: [],
+    callCase: {},
   },
   reducers: {
     updateCaseList(state, { payload }) {
@@ -64,6 +67,19 @@ export default {
         payload: { funcsName: funcs },
       });
       callback();
+    },
+    *getCalls({ payload }, { call, put }) {
+      const res = yield call(getCalls, payload);
+      yield put({
+        type: 'updateDebugResponse',
+        payload: { callCase: res },
+      });
+    },
+    *updateCase({ payload, callback }, { call, put }) {
+      const res = yield call(updateCase, payload);
+      if (callback) {
+        callback(res);
+      }
     },
   },
 };

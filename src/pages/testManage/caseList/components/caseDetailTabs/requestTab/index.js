@@ -295,7 +295,6 @@ const RequestTab = (props, ref) => {
       });
     }
   };
-  console.log(jsonCode);
   return (
     <>
       <div className={styles.top}>

@@ -12,30 +12,6 @@ const DragHandle = SortableHandle(() => (
   <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
 ));
 
-const columns: any = [
-  {
-    title: '编号',
-    width: 60,
-    className: 'drag-visible',
-    render: () => <DragHandle />,
-  },
-  {
-    title: '用例名称',
-    dataIndex: 'name',
-    align: 'center',
-    className: 'drag-visible',
-  },
-  {
-    title: '操作',
-    align: 'center',
-    className: 'drag-visible',
-    render: (_, record) => (
-      <Button type="primary" danger icon={<DeleteOutlined />}>
-        删除
-      </Button>
-    ),
-  },
-];
 const SortableItem = SortableElement((props) => <tr {...props} />);
 const CusSortableContainer = SortableContainer((props) => <tbody {...props} />);
 
@@ -44,8 +20,38 @@ class SortableTable extends React.Component<any, any> {
     super(props);
     this.state = {
       dataSource: props.tableData,
+      columns: [
+        {
+          title: '编号',
+          width: 60,
+          className: 'drag-visible',
+          render: () => <DragHandle />,
+        },
+        {
+          title: '用例名称',
+          dataIndex: 'name',
+          align: 'center',
+          className: 'drag-visible',
+        },
+        {
+          title: '操作',
+          align: 'center',
+          className: 'drag-visible',
+          render: (text) => (
+            <Button
+              type="primary"
+              onClick={() => this.deleteLine(text)}
+              danger
+              icon={<DeleteOutlined />}
+            >
+              删除
+            </Button>
+          ),
+        },
+      ],
     };
   }
+
   UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       dataSource: nextProps.tableData,
@@ -61,6 +67,11 @@ class SortableTable extends React.Component<any, any> {
       ).filter((el) => !!el);
       this.setState({ dataSource: newData });
     }
+  };
+
+  deleteLine = (text) => {
+    const { deleteCall } = this.props;
+    deleteCall(text);
   };
 
   DraggableContainer = (props) => (
@@ -83,7 +94,7 @@ class SortableTable extends React.Component<any, any> {
   };
 
   render() {
-    const { dataSource } = this.state;
+    const { dataSource, columns } = this.state;
     return (
       <>
         <div>

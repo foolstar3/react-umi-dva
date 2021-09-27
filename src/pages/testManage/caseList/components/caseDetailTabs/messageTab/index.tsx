@@ -1,4 +1,9 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+} from 'react';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import { Form, Select, Input, Collapse, Button, Col, Tree } from 'antd';
@@ -12,16 +17,25 @@ const formLayout = {
   wrapperCol: { span: 16 },
 };
 
-const MessageTab = (props, ref) => {
-  useImperativeHandle(ref, () => {
+const MessageTab = (props) => {
+  const { refInstance } = props;
+  useImperativeHandle(refInstance, () => {
     return {
       getMessageData() {
+        const before = [];
+        const after = [];
+        beforeTableData.forEach((item) => {
+          before.push(item.id);
+        });
+        afterTableData.forEach((item) => {
+          after.push(item.id);
+        });
         return {
           module: curModuleId,
           project: curProject,
           name: form.getFieldValue('name'),
-          before: [],
-          after: [],
+          before,
+          after,
         };
       },
     };
@@ -34,6 +48,7 @@ const MessageTab = (props, ref) => {
     onModuleChange,
     caseList,
     getMessageData,
+    callCase,
   } = props;
   const [form] = Form.useForm();
   const [curBefore, setCurBefore] = useState(caseDetail.before);
@@ -43,6 +58,33 @@ const MessageTab = (props, ref) => {
   const [curProject, setCurProject] = useState(caseDetail.project);
   const [curModuleName, setCurModuleName] = useState(caseDetail.module_name);
   const [curModuleId, setCurModuleId] = useState(caseDetail.module);
+  useEffect(() => {
+    const data = {
+      before: [],
+      after: [],
+    };
+    // 保留源数据
+    Object.assign(data, callCase);
+    if (Object.keys(callCase).length !== 0) {
+      setBeforeTableData(() => {
+        data.before.map((item, index) => {
+          item.key = item.name;
+          item.index = index + 1;
+        });
+        return data.before;
+      });
+      setAfterTableData(() => {
+        if (data.after.length !== 0) {
+          data.after.map((item, index) => {
+            item.key = item.name;
+            item.index = index + 1;
+          });
+          return data.after;
+        }
+        return [];
+      });
+    }
+  }, [callCase]);
   const children = [];
   if (Object.keys(caseList).indexOf('results') !== -1) {
     caseList.results.map((item) => {
@@ -78,7 +120,6 @@ const MessageTab = (props, ref) => {
       project_name: opt.title,
       module_name: '',
     });
-    console.log(form.getFieldsValue());
   };
 
   const onModuleNameChange = (module_id = '', project_id, opt) => {
@@ -95,7 +136,6 @@ const MessageTab = (props, ref) => {
     form.setFieldsValue({
       module_name: opt.children,
     });
-    console.log(form.getFieldsValue());
   };
 
   const onCheck = (checkedKeys, info) => {
@@ -109,7 +149,7 @@ const MessageTab = (props, ref) => {
       );
       if (tableData.length) {
         const data = [];
-        let index = prev.length;
+        let index = prev.length + 1;
         tableData.forEach((item) => {
           data.push({
             id: item.id,
@@ -150,6 +190,21 @@ const MessageTab = (props, ref) => {
       return prev;
     });
   };
+  const deleteCall = (record, table) => {
+    if (table === 'before') {
+      setBeforeTableData((prev) => {
+        const next = JSON.parse(JSON.stringify(prev));
+        next.splice(record.index - 1, 1);
+        return next;
+      });
+    } else if (table === 'after') {
+      setAfterTableData((prev) => {
+        const next = JSON.parse(JSON.stringify(prev));
+        next.splice(record.index - 1, 1);
+        return next;
+      });
+    }
+  };
   const renderBeforeTable = () => {
     return (
       <div
@@ -158,7 +213,10 @@ const MessageTab = (props, ref) => {
           beforeTableData.length ? '' : styles.hidden,
         )}
       >
-        <DragableTable tableData={beforeTableData} />
+        <DragableTable
+          tableData={beforeTableData}
+          deleteCall={(record) => deleteCall(record, 'before')}
+        />
       </div>
     );
   };
@@ -170,7 +228,10 @@ const MessageTab = (props, ref) => {
           afterTableData.length ? '' : styles.hidden,
         )}
       >
-        <DragableTable tableData={afterTableData} />
+        <DragableTable
+          tableData={afterTableData}
+          deleteCall={(record) => deleteCall(record, 'after')}
+        />
       </div>
     );
   };
@@ -182,7 +243,7 @@ const MessageTab = (props, ref) => {
   };
 
   return (
-    <Form {...formLayout} initialValues={caseDetail} form={form} ref={ref}>
+    <Form {...formLayout} initialValues={caseDetail} form={form}>
       <div className={styles.content}>
         <div className={styles.left}>
           <Col span={24}>
@@ -293,5 +354,10 @@ const MessageTab = (props, ref) => {
     </Form>
   );
 };
+const ConnectedMessageTab = connect(({ testCase }) => ({
+  callCase: testCase.callCase,
+}))(MessageTab);
 
-export default forwardRef(MessageTab);
+export default forwardRef((props, ref) => (
+  <ConnectedMessageTab {...props} refInstance={ref} />
+));

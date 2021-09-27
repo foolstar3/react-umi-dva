@@ -27,3 +27,19 @@ export async function getFuncs(data) {
     data,
   });
 }
+
+export async function getCalls(data) {
+  return requestUap(`/get_call_case/${data}`, {
+    method: 'GET',
+  });
+}
+
+export async function updateCase(data) {
+  const id = data.id;
+  delete data.id;
+  return requestUap(`/testcase/${id}/`, {
+    method: 'PUT',
+    data,
+    requestType: 'form',
+  });
+}

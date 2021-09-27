@@ -95,6 +95,15 @@ class CaseList extends Component<any, any> {
       callback: () => {},
     });
   };
+
+  getCalls = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'testCase/getCalls',
+      payload,
+    });
+  };
+
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
   };
@@ -128,6 +137,7 @@ class CaseList extends Component<any, any> {
      * 获取函数hooks
      */
     this.getFuncs({ project_id: record.project });
+    this.getCalls(record.id);
     const { caseList } = this.props;
     caseList.result?.filter((item) =>
       record

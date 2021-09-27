@@ -496,7 +496,7 @@ class ParamsFile extends Component<any, any> {
           )}
         </Card>
         <Modal
-          title="新增项目"
+          title="新增"
           visible={addModalVisiable}
           onOk={this.handleAddOk}
           onCancel={this.handleAddCancel}

@@ -44,6 +44,21 @@ const CaseDetailTabs = ({
       },
     });
   };
+
+  const updateCase = (payload) => {
+    dispatch({
+      type: 'testCase/updateCase',
+      payload,
+      callback: (res) => {
+        if (res.code === 'U000000') {
+          message.success(res.message);
+          hideCaseDetail();
+        } else {
+          message.error('编辑失败!');
+        }
+      },
+    });
+  };
   const [debugResponseVisible, setDebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const tabDatas = Object.keys(caseDetail).length
@@ -228,33 +243,55 @@ const CaseDetailTabs = ({
     // 处理requestTab
     let dataType = '';
     if (editorRef.current) {
+      dataType = editorRef.current.sendCode().dataType;
+    } else {
+      dataType =
+        Object.keys(caseDetail.request).indexOf('json') !== -1
+          ? 'json'
+          : 'data';
+    }
+    if (dataType === 'json') {
       try {
         request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
       } catch (err) {
         message.info('请检查JSON数据格式');
       }
-      dataType = editorRef.current.sendCode().dataType;
     }
     const newRequest = JSON.parse(JSON.stringify(request));
     // 处理messageTab
     const messageData = messageRef.current.getMessageData();
     let payload = {
       ...messageData,
-      variables,
-      request: {},
-      extract,
-      validate,
-      setupHooks,
-      teardownHooks,
+      id: caseDetail.id,
+      params_files: [],
+      type: 1,
+      request: {
+        export: [],
+        teststeps: [
+          {
+            name: messageData.name,
+            request: {},
+            variables,
+            extract,
+            validate,
+            setup_hooks: setupHooks,
+            teardown_hooks: teardownHooks,
+          },
+        ],
+      },
     };
     if (dataType === 'data') {
       delete newRequest.json;
-      payload.request = newRequest;
+      payload.request.teststeps[0].request = newRequest;
     } else {
       delete newRequest.data;
-      payload.request = newRequest;
+      payload.request.teststeps[0].request = newRequest;
     }
-    console.log(payload);
+    payload.before = JSON.stringify(payload.before);
+    payload.params_files = JSON.stringify(payload.params_files);
+    payload.after = JSON.stringify(payload.after);
+    payload.request = JSON.stringify(payload.request);
+    updateCase(payload);
   };
 
   const checkedChange = (val) => {
