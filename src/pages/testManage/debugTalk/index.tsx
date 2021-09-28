@@ -3,6 +3,7 @@ import { Row, Card, Table, Button, Space } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import './index.less';
+import { DateFormat } from '@/utils/common';
 import Editor from '@/components/Editor';
 
 class DebugTalkList extends React.Component<any, any> {
@@ -129,6 +130,10 @@ class DebugTalkList extends React.Component<any, any> {
         key: 'create_time',
         align: 'center',
         width: '300px',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '更新时间',
@@ -136,6 +141,10 @@ class DebugTalkList extends React.Component<any, any> {
         key: 'create_time',
         align: 'center',
         width: '300px',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '操作',

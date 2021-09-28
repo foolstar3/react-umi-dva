@@ -9,6 +9,7 @@ import {
 import { connect } from 'umi';
 import AddModal from './addModal';
 import EditModal from './editModal';
+import { DateFormat } from '@/utils/common';
 import SearchModal from './Search';
 //获取接口参数
 class GlobalVarList extends React.Component<any, any> {
@@ -24,11 +25,13 @@ class GlobalVarList extends React.Component<any, any> {
       var_name: '',
       var_value: '',
       description: '',
+      project: '',
     };
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.getGlobalVarList({ page: 1 });
+    this.getProjectList({ page: 'None' });
   }
 
   getGlobalVarList = (payload: any) => {
@@ -43,9 +46,19 @@ class GlobalVarList extends React.Component<any, any> {
       },
     });
   };
+
+  getProjectList = (payload: any) => {
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: (res) => {},
+    });
+  };
+
   onPageChange = (page: any) => {
     const payload = {
       page: page,
+      project: this.state.project,
       var_name: this.state.var_name,
       var_value: this.state.var_value,
       description: this.state.description,
@@ -55,11 +68,12 @@ class GlobalVarList extends React.Component<any, any> {
       currentPage: page,
     });
   };
-  handleSearchChildren = (var_name, var_value, description) => {
+  handleSearchChildren = (var_name, var_value, description, project) => {
     this.setState({
       var_name: var_name,
       description: description,
       var_value: var_value,
+      project: project,
     });
   };
   childrenPageChange = () => {
@@ -134,6 +148,12 @@ class GlobalVarList extends React.Component<any, any> {
         align: 'center',
       },
       {
+        title: '项目名称',
+        dataIndex: 'project_name',
+        key: 'project_name',
+        align: 'center',
+      },
+      {
         title: '参数名称',
         dataIndex: 'var_name',
         key: 'var_name',
@@ -156,12 +176,20 @@ class GlobalVarList extends React.Component<any, any> {
         dataIndex: 'create_time',
         key: 'create_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '相关操作',

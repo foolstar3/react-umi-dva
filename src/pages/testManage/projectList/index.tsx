@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  message,
   Select,
   Card,
   Form,
@@ -21,7 +22,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 import '/src/styles/global.less';
 import SearchProject from './search';
-import ButtonSize from '@/pages/examples/button';
+import { DateFormat } from '@/utils/common';
 
 class ProjectList extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
@@ -136,6 +137,7 @@ class ProjectList extends React.Component<any, any> {
             currentPage: 1,
           });
         }
+        message.success(res.message);
         this.getProjectList({ page: 1 });
       },
     });
@@ -259,6 +261,10 @@ class ProjectList extends React.Component<any, any> {
         dataIndex: 'create_time',
         key: 'create_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '操作',

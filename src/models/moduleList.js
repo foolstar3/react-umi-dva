@@ -35,14 +35,14 @@ export default {
     *editModuleList({ payload, callback }, { call, put }) {
       const res = yield call(updateModuleList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
 
     *deleteModuleList({ payload, callback }, { call, put }) {
-      yield call(deleteModuleList, { ...payload });
+      const res = yield call(deleteModuleList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
   },

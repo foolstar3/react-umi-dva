@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  message,
   Switch,
   Collapse,
   Select,
@@ -40,6 +41,7 @@ class EditModal extends React.Component<any, any> {
     this.setState({
       caseNumber: nextProps.caseNumber,
       caseArray: nextProps.caseArray,
+      checked: nextProps.tempValue.enabled,
     });
   }
   formRef = React.createRef<FormInstance>();
@@ -141,8 +143,9 @@ class EditModal extends React.Component<any, any> {
         ...requestData,
         id: this.props.tempValue.id,
       },
-      callback: () => {
+      callback: (res) => {
         this.props.childrenPageChange();
+        message.success(res.message);
       },
     });
     this.onReset();
@@ -422,7 +425,7 @@ class EditModal extends React.Component<any, any> {
               <Form.Item
                 label="邮件列表"
                 name="emailList"
-                rules={[{ required: false }]}
+                rules={[{ required: true }]}
                 initialValue={tempValue.task_extend.email_list}
               >
                 <Select

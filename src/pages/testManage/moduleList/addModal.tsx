@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Form, Input, Modal, FormInstance } from 'antd';
+import { message, Select, Form, Input, Modal, FormInstance } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
@@ -47,6 +47,7 @@ class AddModal extends React.Component<any, any> {
       callback: (res) => {
         this.props.handleTotalNumber();
         this.props.childrenPageChange();
+        message.success(res.message);
       },
     });
     this.props.showAddModal(false);
@@ -118,7 +119,7 @@ class AddModal extends React.Component<any, any> {
           <Form.Item
             label="项目名称"
             name="project"
-            rules={[{ required: true, message: '请输入模块名称' }]}
+            rules={[{ required: true, message: '请输入项目名称' }]}
           >
             {
               <Select

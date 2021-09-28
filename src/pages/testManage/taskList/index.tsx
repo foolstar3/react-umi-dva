@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Card, Table, Button, Popconfirm } from 'antd';
+import { message, Switch, Card, Table, Button, Popconfirm } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -12,6 +12,7 @@ import './index.less';
 import SearchModal from './Search';
 import AddModal from './addModal';
 import EditModal from './editModal';
+import { DateFormat } from '@/utils/common';
 import '/src/styles/global.less';
 //获取接口参数
 class TaskList extends React.Component<any, any> {
@@ -34,6 +35,7 @@ class TaskList extends React.Component<any, any> {
       caseNumber: '',
       projectId: 0,
       caseArray: [],
+      project: '',
     };
   }
 
@@ -83,7 +85,7 @@ class TaskList extends React.Component<any, any> {
         ...changeStatus,
       },
       callback: (res) => {
-        this.getTaskList({ page: 1 });
+        message.success(res.message);
       },
     });
   };
@@ -91,6 +93,7 @@ class TaskList extends React.Component<any, any> {
   onPageChange = (page: any) => {
     const payload = {
       page: 1,
+      project: this.state.project,
       name: this.state.name,
       update_time_after: this.state.update_time_after,
       update_time_before: this.state.update_time_before,
@@ -105,6 +108,7 @@ class TaskList extends React.Component<any, any> {
   handleSearchChildren = (payload) => {
     this.setState({
       name: payload.name,
+      project: payload.project,
       update_time_after: payload.update_time_after,
       update_time_before: payload.update_time_before,
       description: payload.description,
@@ -209,6 +213,12 @@ class TaskList extends React.Component<any, any> {
         align: 'center',
       },
       {
+        title: '项目名称',
+        dataIndex: 'project_name',
+        key: 'project_name',
+        align: 'center',
+      },
+      {
         title: '定时状态',
         dataIndex: 'enabled',
         key: 'enabled',
@@ -246,6 +256,10 @@ class TaskList extends React.Component<any, any> {
         dataIndex: 'date_changed',
         key: 'date_changed',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '相关操作',
