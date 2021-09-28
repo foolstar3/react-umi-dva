@@ -26,7 +26,7 @@ class CaseList extends Component<any, any> {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
     this.getModuleList({ page: 'None' });
-    this.getEnvList({ page: 'None' });
+    this.getEnvList({ page: 'None', is_valid: true });
   }
   /**
    *
@@ -234,10 +234,10 @@ class CaseList extends Component<any, any> {
       ),
     };
     const tableConfig: any = [...tableColumns, actionColumn];
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
-    };
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
+    // };
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -273,7 +273,7 @@ class CaseList extends Component<any, any> {
         </div>
         <div className={styles.tableWrapper}>
           <Table
-            rowSelection={rowSelection}
+            // rowSelection={rowSelection}
             columns={tableConfig}
             loading={tableLoading}
             dataSource={caseList.results || []}

@@ -38,7 +38,8 @@ const errorHandler = (error) => {
       delete localStorage.openKey;
       delete localStorage.selectedKey;
       history.push('/login');
-    } else {
+    } else if (status === 403) {
+      message.error('您没有执行该操作的权限');
     }
   } else if (!response) {
     message.error('您的网络发生异常，无法连接服务器');

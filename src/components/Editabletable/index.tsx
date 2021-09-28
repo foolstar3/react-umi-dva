@@ -16,6 +16,8 @@ const EditableCell = ({
   const [optionRecord, setRecord] = useState('');
   const change = (val, opt) => {
     console.log(val, opt);
+    restProps.updateFuncs(opt.key, val);
+    setRecord(val);
   };
 
   const search = (val) => {
@@ -29,6 +31,7 @@ const EditableCell = ({
   //     change(optionRecord)
   //   }
   // }
+
   const inputNode = () => {
     if (cellType === 'typeSelect') {
       return (
@@ -46,7 +49,8 @@ const EditableCell = ({
           optionFilterProp="children"
           onChange={change}
           onSearch={search}
-          // onBlur={blur}
+          onBlur={search}
+          value={optionRecord}
           filterOption={(input, option) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
@@ -160,7 +164,14 @@ const EditableTable = ({
     if (!col.editable) {
       return col;
     }
-
+    const updateFuncs = (key, val) => {
+      funcs.map((item) => {
+        console.log(item);
+        if (item === key) {
+          item = val;
+        }
+      });
+    };
     return {
       ...col,
       onCell: (record) => {
@@ -178,6 +189,9 @@ const EditableTable = ({
         }
         return {
           funcs,
+          updateFuncs: (key, val) => {
+            updateFuncs(key, val);
+          },
           record,
           cellType: type,
           dataIndex: col.dataIndex,

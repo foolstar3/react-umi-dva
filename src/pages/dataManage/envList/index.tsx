@@ -110,6 +110,17 @@ class EnvList extends Component<any, any> {
           },
         },
         {
+          title: '创建时间',
+          dataIndex: 'create_time',
+          key: 'create_time',
+          width: 200,
+          align: 'center',
+          render: (text) => {
+            const time = DateFormat(text);
+            return <span>{time}</span>;
+          },
+        },
+        {
           title: '更新时间',
           dataIndex: 'update_time',
           key: 'update_time',
@@ -192,7 +203,6 @@ class EnvList extends Component<any, any> {
   };
 
   onSearch = (payload) => {
-    console.log(payload);
     this.getEnvList({ page: 1, ...payload });
   };
   /* ============table功能============== */
@@ -220,7 +230,7 @@ class EnvList extends Component<any, any> {
 
   // 监听switch状态变化
   onSwitchChange = (checked, text, record) => {
-    this.toggleSwitch(record);
+    this.toggleSwitch({ ...record, is_valid: checked });
   };
 
   // 调用接口切换switch状态
@@ -286,15 +296,15 @@ class EnvList extends Component<any, any> {
       type: 'envList/addEnvList',
       payload,
       callback: (res) => {
-        if (res.message) {
+        if (res.code && res.code !== 'U000400') {
           // 添加成功
           message.success(res.message);
           this.getEnvList({ page: 1 });
           this.setState({
             currentPage: 1,
           });
-        } else if (res.status == 400) {
-          message.error('有同名或同地址的环境,创建失败!');
+        } else {
+          message.error(res.message);
         }
       },
     });
@@ -401,6 +411,7 @@ class EnvList extends Component<any, any> {
       envInfoModalVisiable: true,
       currentEnvInfo: record,
       editorCode: record.env_vars,
+      envInfoInitCode: record.env_vars,
     });
   };
 
@@ -437,9 +448,9 @@ class EnvList extends Component<any, any> {
       currentEnvInfo,
       editModalVisiable,
       envInfoModalVisiable,
-      editorCode,
       total,
       currentPage,
+      envInfoInitCode,
     } = this.state;
     const { envList, tableLoading, projectList } = this.props;
     if (envList !== undefined && envList.length) {
@@ -461,10 +472,10 @@ class EnvList extends Component<any, any> {
       total: total,
       showTotal: () => `共 ${total} 条`,
     };
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: this.onSelectChange,
+    // };
     return (
       <>
         {!envInfoModalVisiable && (
@@ -481,7 +492,7 @@ class EnvList extends Component<any, any> {
             </div>
             <Table
               columns={columns}
-              rowSelection={rowSelection}
+              // rowSelection={rowSelection}
               dataSource={envList}
               loading={tableLoading}
               pagination={paginationProps}
@@ -607,7 +618,7 @@ class EnvList extends Component<any, any> {
         {envInfoModalVisiable && (
           <Card bordered={false}>
             <Editor
-              content={editorCode}
+              content={envInfoInitCode}
               getEditorContent={this.editorCodeChange}
             />
             <div className="debug_button">
