@@ -22,6 +22,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
+// import SearchBox from './searchBox'
 import { DateFormat } from '@/utils/common';
 import { connect } from 'umi';
 import { FormInstance } from 'antd/lib/form';
@@ -146,7 +147,7 @@ class ParamsFile extends Component<any, any> {
 
   componentDidMount() {
     this.getParamsFileList({ page: 1 });
-    this.getProjectList({ page: 1 });
+    this.getProjectList({ page: 'None' });
   }
 
   //获取项目名称列表
@@ -456,6 +457,7 @@ class ParamsFile extends Component<any, any> {
         <Card bordered={false}>
           {!editModalVisiable && (
             <div>
+              {/* <SearchBox /> */}
               <div className="btn-postion">
                 <Button
                   type="primary"
@@ -496,7 +498,7 @@ class ParamsFile extends Component<any, any> {
           )}
         </Card>
         <Modal
-          title="新增项目"
+          title="新增"
           visible={addModalVisiable}
           onOk={this.handleAddOk}
           onCancel={this.handleAddCancel}

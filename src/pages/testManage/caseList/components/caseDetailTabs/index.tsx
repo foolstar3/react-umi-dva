@@ -29,11 +29,11 @@ const CaseDetailTabs = ({
   debugResponse,
   funcs,
 }) => {
-  const responseTreeData = [];
-  const responseTabs = [];
+  const [form] = Form.useForm();
   const editorRef = useRef(null);
   const messageRef = useRef(null);
   const debugCase = (payload) => {
+    console.log(payload);
     dispatch({
       type: 'testCase/debugCase',
       payload,
@@ -44,13 +44,43 @@ const CaseDetailTabs = ({
       },
     });
   };
+
+  const updateCase = (payload) => {
+    dispatch({
+      type: 'testCase/updateCase',
+      payload,
+      callback: (res) => {
+        if (res.code === 'U000000') {
+          message.success(res.message);
+          hideCaseDetail();
+        } else {
+          message.error('编辑失败!');
+        }
+      },
+    });
+  };
+
+  const createCase = (payload) => {
+    dispatch({
+      type: 'testCase/createCase',
+      payload,
+      callback: (res) => {
+        if (res.code === 'U000000') {
+          message.success(res.message);
+          hideCaseDetail();
+        } else {
+          message.error('保存失败!');
+        }
+      },
+    });
+  };
+
   const [debugResponseVisible, setDebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const tabDatas = Object.keys(caseDetail).length
     ? caseDetail.request.teststeps[0]
     : {};
-
-  const [variables, setVariables] = useState(tabDatas.variables ?? []);
+  const [variables, setVariables] = useState(tabDatas.variables ?? {});
 
   const [parameters, setParameters] = useState(tabDatas.parameters ?? []);
 
@@ -60,9 +90,9 @@ const CaseDetailTabs = ({
     tabDatas.teardown_hooks ?? [],
   );
 
-  const [request, setRequest] = useState(tabDatas.request ?? []);
+  const [request, setRequest] = useState(tabDatas.request ?? {});
 
-  const [extract, setExtract] = useState(tabDatas.extract ?? []);
+  const [extract, setExtract] = useState(tabDatas.extract ?? {});
 
   const [validate, setValidate] = useState(tabDatas.validate ?? []);
 
@@ -72,40 +102,45 @@ const CaseDetailTabs = ({
   };
 
   const onDebugOk = () => {
-    // console.log(editorRef.current.sendCode());
-    const payload = {
-      type: 1,
-      name: 'organization_current',
-      project: 109,
-      module: 77,
-      base_url: 'https://portal-dev-api.uihcloud.cn/portal-api',
-      before: [],
-      after: [],
-      export: [],
-      teststeps: [
-        {
-          name: 'organization_current',
-          request: {
-            url: '/v1/organization/current',
-            headers: {
-              Authorization: 'token',
-            },
-            method: 'GET',
-          },
-          extract: {
-            msg_code: 'body.msgCode',
-          },
-          validate: [
-            {
-              equal: ['status_code', 200],
-            },
-            {
-              contains: ['$msg_code', 'success'],
-            },
-          ],
-        },
-      ],
-    };
+    // 验证是否已选择运行环境
+    let base_url = '';
+    if (form.getFieldsValue().env) {
+      base_url = envList.find(
+        (item) => item.id === form.getFieldsValue().env,
+      ).base_url;
+    } else {
+      return message.info('请选择运行环境');
+    }
+    const payload = getPayload();
+    // 验证是否存在未填的必需项
+    if (
+      Object.keys(payload.request.teststeps[0].request).indexOf('method') == -1
+    ) {
+      return message.info('请求方法method不能为空，请在request中填写');
+    }
+    if (
+      Object.keys(payload.request.teststeps[0].request).indexOf('url') === -1 ||
+      payload.request.teststeps[0].request.url === ''
+    ) {
+      return message.info('请求方法url不能为空，请在request中填写');
+    }
+    payload.export = payload.request.export;
+    payload.teststeps = payload.request.teststeps;
+    payload.teststeps[0].setup_hooks.length
+      ? ''
+      : delete payload.teststeps[0].setup_hooks;
+    payload.teststeps[0].teardown_hooks.length
+      ? ''
+      : delete payload.teststeps[0].teardown_hooks;
+    Object.keys(payload.teststeps[0].extract).length
+      ? ''
+      : delete payload.teststeps[0].extract;
+    Object.keys(payload.teststeps[0].variables).length
+      ? ''
+      : delete payload.teststeps[0].variables;
+    payload.base_url = base_url;
+    delete payload.request;
+    console.log(payload);
     debugCase(payload);
     setModalVisible(false);
     setDebugResponseVisible(true);
@@ -220,43 +255,63 @@ const CaseDetailTabs = ({
     }
   };
 
-  const getMessageData = (datas) => {
-    console.log(datas);
+  const onSave = () => {
+    const payload = getPayload();
+    caseDetail.id == undefined
+      ? createCase(payload)
+      : updateCase({ id: caseDetail.id, payload });
   };
 
-  const onSave = () => {
+  const getPayload = () => {
     // 处理requestTab
     let dataType = '';
     if (editorRef.current) {
+      dataType = editorRef.current.sendCode().dataType;
+    } else if (caseDetail.request) {
+      dataType =
+        Object.keys(caseDetail.request).indexOf('json') !== -1
+          ? 'json'
+          : 'data';
+    } else {
+      dataType = 'data';
+    }
+    if (dataType === 'json') {
       try {
         request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
       } catch (err) {
         message.info('请检查JSON数据格式');
       }
-      dataType = editorRef.current.sendCode().dataType;
     }
     const newRequest = JSON.parse(JSON.stringify(request));
     // 处理messageTab
     const messageData = messageRef.current.getMessageData();
     let payload = {
       ...messageData,
-      variables,
-      request: {},
-      extract,
-      validate,
-      setupHooks,
-      teardownHooks,
+      type: 1,
+      request: {
+        export: [],
+        teststeps: [
+          {
+            name: messageData.name,
+            request: {},
+            variables,
+            extract,
+            validate,
+            setup_hooks: setupHooks,
+            teardown_hooks: teardownHooks,
+          },
+        ],
+      },
     };
     if (dataType === 'data') {
       delete newRequest.json;
-      payload.request = newRequest;
+      payload.request.teststeps[0].request = newRequest;
     } else {
       delete newRequest.data;
-      payload.request = newRequest;
+      payload.request.teststeps[0].request = newRequest;
     }
-    console.log(payload);
+    return payload;
   };
-
   const checkedChange = (val) => {
     setCheckedData(() => {
       const obj = {
@@ -310,7 +365,6 @@ const CaseDetailTabs = ({
         <Tabs defaultActiveKey="1" type="card">
           <TabPane tab="message" key="1">
             <MessageTab
-              getMessageData={getMessageData}
               caseDetail={caseDetail}
               projectData={projectData}
               moduleData={moduleData}
@@ -398,7 +452,7 @@ const CaseDetailTabs = ({
         onOk={onDebugOk}
         onCancel={onDebugCancel}
       >
-        <Form>
+        <Form form={form}>
           <Form.Item
             label="运行环境"
             name="env"

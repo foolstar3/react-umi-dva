@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DateFormat } from '@/utils/format';
+import { DateFormat } from '@/utils/common';
 import {
   Collapse,
   Form,
@@ -13,11 +13,23 @@ import {
 import styles from './index.less';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 
+const { Option } = Select;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
-
+const env_status = [
+  {
+    key: '启用',
+    value: true,
+    children: '启用',
+  },
+  {
+    key: '禁用',
+    value: false,
+    children: '禁用',
+  },
+];
 const SearchBox = (props) => {
-  const { projectOptions, moduleOptions } = props;
+  const { projectOptions } = props;
   const [form] = Form.useForm();
   const onReset = () => {
     form.resetFields();
@@ -30,6 +42,7 @@ const SearchBox = (props) => {
     });
     // 修改时间格式
     payload.update_time?.map((item, index) => {
+      console.log(item);
       if (index === 0) {
         payload.update_time_before = DateFormat(item._d);
       } else if (index === 1) {
@@ -37,22 +50,18 @@ const SearchBox = (props) => {
       }
     });
     delete payload.update_time;
-    const { project_name, module_name, case_name } = payload;
+    const { project_name } = payload;
     payload.project = project_name;
-    payload.module = module_name;
-    payload.name = case_name;
     form.setFieldsValue({
       project_name: payload.project_name,
-      module_name: payload.module_name,
     });
     delete payload.project_name;
-    delete payload.module_name;
     onSearch(payload);
   };
 
   const onProjectChange = (val) => {
-    const { onProjectChange } = props;
-    onProjectChange(val, false);
+    // const { onProjectChange } = props;
+    // onProjectChange(val, false);
   };
 
   return (
@@ -61,7 +70,7 @@ const SearchBox = (props) => {
         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 13 }} form={form}>
           <Row>
             <Col span={8}>
-              <Form.Item label="用例名称" name="case_name">
+              <Form.Item label="环境名称" name="env_name">
                 <Input />
               </Form.Item>
             </Col>
@@ -90,23 +99,13 @@ const SearchBox = (props) => {
             </Col>
 
             <Col span={8}>
-              <Form.Item label="模块名称" name="module_name">
-                <Select
-                  allowClear
-                  showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {moduleOptions.length &&
-                    moduleOptions.map((item) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.module_name}
-                      </Select.Option>
-                    ))}
+              <Form.Item label="状态" name="is_valid">
+                <Select>
+                  {env_status.map((item) => (
+                    <Option key={item.key} value={item.value}>
+                      {item.children}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>

@@ -61,7 +61,7 @@ const SearchBox = (props) => {
         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 13 }} form={form}>
           <Row>
             <Col span={8}>
-              <Form.Item label="用例名称" name="case_name">
+              <Form.Item label="文件名称" name="file_name">
                 <Input />
               </Form.Item>
             </Col>
@@ -79,12 +79,12 @@ const SearchBox = (props) => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  {projectOptions.length &&
+                  {/* {projectOptions.length &&
                     projectOptions.map((item) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.project_name}
                       </Select.Option>
-                    ))}
+                    ))} */}
                 </Select>
               </Form.Item>
             </Col>
@@ -101,12 +101,12 @@ const SearchBox = (props) => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  {moduleOptions.length &&
+                  {/* {moduleOptions.length &&
                     moduleOptions.map((item) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.module_name}
                       </Select.Option>
-                    ))}
+                    ))} */}
                 </Select>
               </Form.Item>
             </Col>

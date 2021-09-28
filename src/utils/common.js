@@ -1,6 +1,6 @@
 export const DateFormat = (date) => {
   if (date instanceof Date) {
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   } else {
     return date.replace(/T/, ' ').substring(0, date.indexOf('.'));
   }
