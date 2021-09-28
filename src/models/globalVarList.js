@@ -30,15 +30,15 @@ export default {
       }
     },
     *editGlobalVarList({ payload, callback }, { call, put }) {
-      yield call(updateGlobalVarList, { ...payload });
+      const res = yield call(updateGlobalVarList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *deleteGlobalVarList({ payload, callback }, { call, put }) {
-      yield call(deleteGlobalVarList, { ...payload });
+      const res = yield call(deleteGlobalVarList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
   },

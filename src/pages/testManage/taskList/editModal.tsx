@@ -1,7 +1,16 @@
 import React from 'react';
-import { Tag, Switch, Collapse, Select, Form, Input, Modal } from 'antd';
+import {
+  message,
+  Switch,
+  Collapse,
+  Select,
+  Form,
+  Input,
+  Modal,
+  InputNumber,
+} from 'antd';
 import { connect } from 'umi';
-import TreeNode from './treeNode';
+import TreeNode_Edit from './treeNode_edit';
 import { FormInstance } from '@ant-design/pro-form';
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -12,36 +21,31 @@ class EditModal extends React.Component<any, any> {
       tempEditValue: {},
       caseNumber: 0,
       moduleList: [],
-      caseList: [],
       treeData: [],
       caseArray: [],
-      projectList: [],
       currentPage: 1,
       checked: true,
+      Minutes: 1,
+      Hours: 1,
+      Day_of_month: 1,
+      Month: 1,
+      Day_of_week: 1,
+      checked_projectListId: 0,
     };
+  }
+  componentDidMount() {
+    this.props.onRef(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      caseNumber: nextProps.caseNumber,
+      caseArray: nextProps.caseArray,
+      checked: nextProps.tempValue.enabled,
+    });
   }
   formRef = React.createRef<FormInstance>();
 
-  componentDidMount() {
-    this.getProjectList();
-    this.getEnvList();
-    this.getCaseList({ page: 'None' });
-    this.getTaskList();
-  }
-
-  getProjectList = () => {
-    this.props.dispatch({
-      type: 'projectList/getProjectList',
-      payload: {
-        page: 'None',
-      },
-      callback: (res, rescount) => {
-        this.setState({
-          projectList: res,
-        });
-      },
-    });
-  };
   getModuleList = (payload: any) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
@@ -51,51 +55,34 @@ class EditModal extends React.Component<any, any> {
       },
     });
   };
-  getEnvList = () => {
-    this.props.dispatch({
-      type: 'envList/getEnvList',
-      payload: {
-        page: 'None',
-      },
-    });
-  };
-  getCaseList = (payload: any) => {
-    this.props.dispatch({
-      type: 'testCase/getCaseList',
-      payload,
-      callback: (res) => {
-        this.setState({
-          caseList: res,
-        });
-      },
-    });
-  };
-  getTaskList = () => {
-    this.props.dispatch({
-      type: 'taskList/getTaskList',
-      payload: {
-        page: 1,
-      },
-    });
-  };
 
   getTreeNode = (moduleListChange: any) => {
-    const caseList = this.props.testCase.caseList;
     const moduleList = moduleListChange;
     const treeData = [];
     moduleList &&
       moduleList.forEach((moduleItem) => {
         const children = [];
-        caseList.forEach((caseItem) => {
-          caseItem.module_name === moduleItem.module_name &&
-            children.push({
-              title: caseItem.name,
-              key: caseItem.id,
-            });
+        this.props.dispatch({
+          type: 'testCase/getCaseList',
+          payload: {
+            page: 'None',
+            project: moduleItem.project,
+            module: moduleItem.id,
+          },
+          callback: (caseList) => {
+            caseList &&
+              caseList.forEach((caseItem) => {
+                caseItem.module_name === moduleItem.module_name &&
+                  children.push({
+                    title: caseItem.name,
+                    key: caseItem.id,
+                  });
+              });
+          },
         });
         treeData.push({
           title: moduleItem.module_name,
-          key: moduleItem.create_time,
+          key: moduleItem.module_name,
           children: children,
         });
       });
@@ -106,14 +93,8 @@ class EditModal extends React.Component<any, any> {
 
   editSubmit = () => {
     const tempEditValue = this.state.tempEditValue;
-    // if (tempEditValue?.enabled === undefined) {
-    //   tempEditValue.enabled = this.props.tempValue.enabled;
-    //   console.log('tempEditValue',tempEditValue)
-    // }
-
     const editTaskValue = JSON.stringify(tempEditValue);
     const editTask = JSON.parse(editTaskValue);
-    console.log('editTask', editTask);
     const projectList = this.props.projectList.projectList;
     const envList = this.props.envList.envList;
     for (let i = 0; i < projectList.length; i++) {
@@ -129,20 +110,31 @@ class EditModal extends React.Component<any, any> {
         editTask.env = envList[i].id;
       }
     }
-
+    const args = [
+      {
+        case_list: {
+          case: this.state.caseArray,
+        },
+        env: editTask.env,
+        report_name: editTask.name,
+        description: this.state.tempEditValue.description,
+        receivers: [''],
+      },
+    ];
+    const json_args = JSON.stringify(args);
     const requestData = {
       name: editTask?.name,
-      args: `[{\"case_list\":{\"case\":\[${this.state.caseArray}]\,\"env\":${editTask.env},\"report_name\":\"aaa\",\"description\":\"aaaaa\",\"receivers\":[\"\"]}]`,
+      args: json_args,
       description: editTask?.description,
       enabled: editTask?.enabled,
       email_list: editTask?.emailList,
       project: editTask?.project,
-      crontab: editTask.crontab && {
-        minute: editTask.crontab.charAt(0),
-        hour: editTask.crontab.charAt(1),
-        day_of_week: editTask.crontab.charAt(2),
-        day_of_month: editTask.crontab.charAt(3),
-        month_of_year: editTask.crontab.charAt(4),
+      crontab: {
+        minute: this.state.Minutes,
+        hour: this.state.Hours,
+        day_of_week: this.state.Day_of_week,
+        day_of_month: this.state.Day_of_month,
+        month_of_year: this.state.Month,
       },
     };
     this.props.dispatch({
@@ -151,8 +143,9 @@ class EditModal extends React.Component<any, any> {
         ...requestData,
         id: this.props.tempValue.id,
       },
-      callback: () => {
+      callback: (res) => {
         this.props.childrenPageChange();
+        message.success(res.message);
       },
     });
     this.onReset();
@@ -172,10 +165,13 @@ class EditModal extends React.Component<any, any> {
   };
 
   handleProjectChange = (project: any) => {
-    const projectList = this.state.projectList;
+    const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (projectList && projectList[i].project_name === project) {
         const payload = { page: 'None', project: projectList[i].id };
+        this.setState({
+          checked_projectListId: projectList[i].id,
+        });
         this.getModuleList(payload);
       }
     }
@@ -196,18 +192,44 @@ class EditModal extends React.Component<any, any> {
     });
   };
 
+  handlecrontab_M = (number: any) => {
+    this.setState({
+      Minutes: number,
+    });
+  };
+  handlecrontab_H = (number: any) => {
+    this.setState({
+      Hours: number,
+    });
+  };
+  handlecrontab_DM = (number: any) => {
+    this.setState({
+      Day_of_month: number,
+    });
+  };
+  handlecrontab_Mon = (number: any) => {
+    this.setState({
+      Month: number,
+    });
+  };
+  handlecrontab_DW = (number: any) => {
+    this.setState({
+      Day_of_week: number,
+    });
+  };
+
   render() {
-    const { editVisible, tempValue } = this.props;
+    const { editVisible, tempValue, envName } = this.props;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
-    const treeData = [...this.state.treeData];
     const { caseNumber, checked } = this.state;
+    const treeData = [...this.state.treeData];
     return (
       <div>
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改任务信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}
@@ -252,7 +274,6 @@ class EditModal extends React.Component<any, any> {
                 <Switch
                   checkedChildren="启用"
                   unCheckedChildren="禁用"
-                  // defaultChecked={tempValue.enabled}
                   onChange={(checked, record) => {
                     this.onEditSwitchChange(checked, record);
                   }}
@@ -266,14 +287,65 @@ class EditModal extends React.Component<any, any> {
                   initialValue={tempValue.crontab_time}
                   key="crontab"
                 >
-                  <Input addonAfter="计划 (m/h/d/dM/MY)" />
+                  <div>
+                    <InputNumber
+                      min={0}
+                      max={59}
+                      defaultValue={parseInt(tempValue.crontab_time[0])}
+                      bordered
+                      onChange={(num) => this.handlecrontab_M(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} M`}
+                      parser={(value) => value?.replace(' M', '')}
+                    />
+                    <InputNumber
+                      min={0}
+                      max={23}
+                      defaultValue={parseInt(tempValue.crontab_time[2])}
+                      bordered
+                      onChange={(num) => this.handlecrontab_H(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} H`}
+                      parser={(value) => value?.replace(' H', '')}
+                    />
+                    <InputNumber
+                      min={1}
+                      max={31}
+                      defaultValue={parseInt(tempValue.crontab_time[4])}
+                      bordered
+                      onChange={(num) => this.handlecrontab_DM(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} dM`}
+                      parser={(value) => value?.replace(' dM', '')}
+                    />
+                    <InputNumber
+                      min={1}
+                      max={12}
+                      defaultValue={parseInt(tempValue.crontab_time[6])}
+                      bordered
+                      onChange={(num) => this.handlecrontab_Mon(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} MY`}
+                      parser={(value) => value?.replace(' MY', '')}
+                    />
+                    <InputNumber
+                      min={0}
+                      max={6}
+                      defaultValue={parseInt(tempValue.crontab_time[8])}
+                      bordered
+                      onChange={(num) => this.handlecrontab_DW(num)}
+                      style={{ width: '100px' }}
+                      formatter={(value) => `${value} d`}
+                      parser={(value) => value?.replace(' d', '')}
+                    />
+                  </div>
                 </Form.Item>
               )}
               <Form.Item
                 label="运行环境"
                 name="env"
                 rules={[{ required: true, message: '请选择运行环境' }]}
-                initialValue={tempValue.env}
+                initialValue={envName}
                 key="env"
               >
                 {
@@ -343,15 +415,17 @@ class EditModal extends React.Component<any, any> {
                 rules={[{ required: false }]}
                 key="cassNumber"
               >
-                <TreeNode
+                <TreeNode_Edit
                   treeData={[...treeData]}
                   caseNumber={this.caseNumber}
+                  caseArray={this.props.caseArray}
+                  checked_projectListId={this.state.checked_projectListId}
                 />
               </Form.Item>
               <Form.Item
                 label="邮件列表"
                 name="emailList"
-                rules={[{ required: false }]}
+                rules={[{ required: true }]}
                 initialValue={tempValue.task_extend.email_list}
               >
                 <Select

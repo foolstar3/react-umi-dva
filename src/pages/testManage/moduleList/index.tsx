@@ -10,6 +10,7 @@ import { connect } from 'umi';
 import './index.less';
 import '/src/styles/global.less';
 import SearchModal from './Search';
+import { DateFormat } from '@/utils/common';
 import AddModal from './addModal';
 import EditModal from './editModal';
 
@@ -23,6 +24,12 @@ class ModuleList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
       currentPage: 1,
+      module_name: '',
+      test_user: '',
+      description: '',
+      project: '',
+      update_time_after: '',
+      update_time_before: '',
     };
   }
 
@@ -47,7 +54,16 @@ class ModuleList extends React.Component<any, any> {
   };
 
   onPageChange = (page: any) => {
-    this.getModuleList({ page });
+    const payload = {
+      page: page,
+      module_name: this.state.module_name,
+      test_user: this.state.test_user,
+      description: this.state.description,
+      project: this.state.project,
+      update_time_after: this.state.update_time_after,
+      update_time_before: this.state.update_time_before,
+    };
+    this.getModuleList(payload);
     this.setState({
       currentPage: page,
     });
@@ -99,6 +115,16 @@ class ModuleList extends React.Component<any, any> {
       callback: () => {
         this.childrenPageChange();
       },
+    });
+  };
+  handleChildrenSearch = (payload: any) => {
+    this.setState({
+      module_name: payload.module_name,
+      test_user: payload.test_user,
+      description: payload.description,
+      project: payload.project,
+      update_time_after: payload.update_time_after,
+      update_time_before: payload.update_time_before,
     });
   };
 
@@ -161,13 +187,22 @@ class ModuleList extends React.Component<any, any> {
         dataIndex: 'create_time',
         key: 'create_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
+
       {
         title: '操作',
         dataIndex: 'relateAction',
@@ -211,13 +246,17 @@ class ModuleList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal getModuleList={this.getModuleList} />
+          <SearchModal
+            getModuleList={this.getModuleList}
+            handleChildrenSearch={this.handleChildrenSearch}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.handleAddModule}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
               新增
             </Button>

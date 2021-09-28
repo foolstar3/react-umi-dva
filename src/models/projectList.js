@@ -33,7 +33,7 @@ export default {
     *editProjectList({ payload, callback }, { call, put }) {
       const res = yield call(updateProjectList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *deleteProjectList({ payload, callback }, { call, put }) {

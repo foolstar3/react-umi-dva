@@ -18,15 +18,22 @@ const { RangePicker } = DatePicker;
 
 const SearchModel = (props: any) => {
   const [form] = Form.useForm();
+  const projectList = props?.projectList?.projectList;
 
   const onReset = () => {
     form.resetFields();
   };
 
   const handleSearch = (value: any) => {
+    for (let i = 0; i < projectList.length; i++) {
+      if (value.project && value.project == projectList[i].project_name) {
+        value.project = projectList[i].id;
+      }
+    }
     if (value.enable_status == '启用') {
       const payload = {
         page: 1,
+        project: value.project,
         name: value.task_name,
         update_time_after:
           value.updateDateTime && value.updateDateTime[0].format('YYYY-MM-DD'),
@@ -36,9 +43,11 @@ const SearchModel = (props: any) => {
         enabled: true,
       };
       props.getTaskList(payload);
-    } else if (value.enable_status == '禁止') {
+      props.handleSearchChildren(payload);
+    } else if (value.enable_status == '禁用') {
       const payload = {
         page: 1,
+        project: value.project,
         name: value.task_name,
         update_time_after:
           value.updateDateTime && value.updateDateTime[0].format('YYYY-MM-DD'),
@@ -48,9 +57,11 @@ const SearchModel = (props: any) => {
         enabled: false,
       };
       props.getTaskList(payload);
+      props.handleSearchChildren(payload);
     } else {
       const payload = {
         page: 1,
+        project: value.project,
         name: value.task_name,
         update_time_after:
           value.updateDateTime && value.updateDateTime[0].format('YYYY-MM-DD'),
@@ -79,12 +90,44 @@ const SearchModel = (props: any) => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="启用状态" name="enable_status">
-                <Select defaultValue="全部">
+              <Form.Item
+                initialValue="全部"
+                label="启用状态"
+                name="enable_status"
+              >
+                <Select>
                   <Option value="全部"> 全部 </Option>
                   <Option value="启用"> 启用 </Option>
-                  <Option value="禁止"> 禁止 </Option>
+                  <Option value="禁用"> 禁用 </Option>
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="项目名称" name="project">
+                {
+                  <Select
+                    style={{ width: 269 }}
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {projectList &&
+                      Array.isArray(projectList) &&
+                      projectList.length &&
+                      projectList.map((item) => {
+                        return (
+                          <Option value={item.project_name} key={item.id}>
+                            {item.project_name}
+                          </Option>
+                        );
+                      })}
+                  </Select>
+                }
               </Form.Item>
             </Col>
           </Row>
@@ -106,6 +149,7 @@ const SearchModel = (props: any) => {
                     onClick={onReset}
                     icon={<RedoOutlined />}
                     shape="round"
+                    size="small"
                   >
                     重置
                   </Button>
@@ -114,6 +158,7 @@ const SearchModel = (props: any) => {
                     htmlType="submit"
                     icon={<EditOutlined />}
                     shape="round"
+                    size="small"
                   >
                     搜索
                   </Button>
@@ -127,6 +172,7 @@ const SearchModel = (props: any) => {
   );
 };
 
-export default connect(({ taskList }) => ({
+export default connect(({ taskList, projectList }) => ({
   taskList,
+  projectList,
 }))(SearchModel);

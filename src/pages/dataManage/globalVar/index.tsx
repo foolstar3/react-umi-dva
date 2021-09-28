@@ -9,6 +9,7 @@ import {
 import { connect } from 'umi';
 import AddModal from './addModal';
 import EditModal from './editModal';
+import { DateFormat } from '@/utils/common';
 import SearchModal from './Search';
 //获取接口参数
 class GlobalVarList extends React.Component<any, any> {
@@ -21,11 +22,16 @@ class GlobalVarList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
       currentPage: 1,
+      var_name: '',
+      var_value: '',
+      description: '',
+      project: '',
     };
   }
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.getGlobalVarList({ page: 1 });
+    this.getProjectList({ page: 'None' });
   }
 
   getGlobalVarList = (payload: any) => {
@@ -40,10 +46,34 @@ class GlobalVarList extends React.Component<any, any> {
       },
     });
   };
+
+  getProjectList = (payload: any) => {
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: (res) => {},
+    });
+  };
+
   onPageChange = (page: any) => {
-    this.getGlobalVarList({ page });
+    const payload = {
+      page: page,
+      project: this.state.project,
+      var_name: this.state.var_name,
+      var_value: this.state.var_value,
+      description: this.state.description,
+    };
+    this.getGlobalVarList(payload);
     this.setState({
       currentPage: page,
+    });
+  };
+  handleSearchChildren = (var_name, var_value, description, project) => {
+    this.setState({
+      var_name: var_name,
+      description: description,
+      var_value: var_value,
+      project: project,
     });
   };
   childrenPageChange = () => {
@@ -70,7 +100,6 @@ class GlobalVarList extends React.Component<any, any> {
       addVisible: childModalState,
     });
   };
-
   showEditModal = (record: any) => {
     this.setState({
       editVisible: true,
@@ -113,9 +142,15 @@ class GlobalVarList extends React.Component<any, any> {
     };
     const columns = [
       {
-        title: '#',
+        title: '编号',
         dataIndex: 'id',
         key: 'id',
+        align: 'center',
+      },
+      {
+        title: '项目名称',
+        dataIndex: 'project_name',
+        key: 'project_name',
         align: 'center',
       },
       {
@@ -141,18 +176,27 @@ class GlobalVarList extends React.Component<any, any> {
         dataIndex: 'create_time',
         key: 'create_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '相关操作',
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
+        width: '100px',
         render: (_: any, record: any) => {
           return (
             <div>
@@ -192,15 +236,19 @@ class GlobalVarList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal getGlobalVarList={this.getGlobalVarList} />
+          <SearchModal
+            getGlobalVarList={this.getGlobalVarList}
+            handleSearchChildren={this.handleSearchChildren}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.handleAddGlobalVar}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
-              添加全局
+              新增
             </Button>
           </div>
           <Table

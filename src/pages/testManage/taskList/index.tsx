@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Card, Table, Button, Popconfirm } from 'antd';
+import { message, Switch, Card, Table, Button, Popconfirm } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -12,6 +12,7 @@ import './index.less';
 import SearchModal from './Search';
 import AddModal from './addModal';
 import EditModal from './editModal';
+import { DateFormat } from '@/utils/common';
 import '/src/styles/global.less';
 //获取接口参数
 class TaskList extends React.Component<any, any> {
@@ -25,6 +26,16 @@ class TaskList extends React.Component<any, any> {
       total: 0,
       projectList: [],
       currentPage: 1,
+      envName: '',
+      name: '',
+      update_time_after: '',
+      update_time_before: '',
+      description: '',
+      enabled: '',
+      caseNumber: '',
+      projectId: 0,
+      caseArray: [],
+      project: '',
     };
   }
 
@@ -32,6 +43,9 @@ class TaskList extends React.Component<any, any> {
     this.getTaskList({ page: 1 });
     this.getProjectList({ page: 'None' });
   }
+  onRef = (ref) => {
+    this.EditModal = ref;
+  };
 
   getTaskList = (payload) => {
     this.setState({
@@ -71,15 +85,34 @@ class TaskList extends React.Component<any, any> {
         ...changeStatus,
       },
       callback: (res) => {
-        this.getTaskList({ page: 1 });
+        message.success(res.message);
       },
     });
   };
 
   onPageChange = (page: any) => {
-    this.getTaskList({ page });
+    const payload = {
+      page: 1,
+      project: this.state.project,
+      name: this.state.name,
+      update_time_after: this.state.update_time_after,
+      update_time_before: this.state.update_time_before,
+      description: this.state.description,
+      enabled: this.state.enabled,
+    };
+    this.getTaskList(payload);
     this.setState({
       currentPage: page,
+    });
+  };
+  handleSearchChildren = (payload) => {
+    this.setState({
+      name: payload.name,
+      project: payload.project,
+      update_time_after: payload.update_time_after,
+      update_time_before: payload.update_time_before,
+      description: payload.description,
+      enabled: payload.enabled,
     });
   };
   childrenPageChange = () => {
@@ -110,12 +143,24 @@ class TaskList extends React.Component<any, any> {
     const strRecord = JSON.stringify(record);
     const recordTempValue = JSON.parse(strRecord);
     const projectListId = recordTempValue?.task_extend?.project;
-
-    // const record_args = JSON.parse(record.args)
-    // const envListId = record_args.env
-    // console.log('envListId',envListId)
+    const record_args = JSON.parse(record.args);
+    const envListId = record_args[0].env;
+    const caseNumber = record_args[0].case_list?.case?.length;
+    this.setState({
+      caseNumber: caseNumber,
+      caseArray: record_args[0].case_list?.case,
+    });
+    const envList = this.props?.envList?.envList;
+    envList.map((envItem) => {
+      if (envListId == envItem.id) {
+        this.setState({
+          envName: envItem.env_name,
+        });
+      }
+    });
     this.state.projectList.map((projectItem) => {
       if (projectItem.id == projectListId) {
+        this.EditModal.handleProjectChange(projectItem.project_name);
         recordTempValue.task_extend.project = projectItem.project_name;
         this.setState({
           editVisible: true,
@@ -123,14 +168,6 @@ class TaskList extends React.Component<any, any> {
         });
       }
     });
-    // this.props.envList?.envList?.map((envItem)=>{
-    //   if(envItem.id == envListId){
-    //     recordTempValue.env = envItem.env_name
-    //     this.setState({
-    //       tempValue: recordTempValue,
-    //     })
-    //   }
-    // })
   };
 
   handleDelete = (record: any) => {
@@ -176,6 +213,12 @@ class TaskList extends React.Component<any, any> {
         align: 'center',
       },
       {
+        title: '项目名称',
+        dataIndex: 'project_name',
+        key: 'project_name',
+        align: 'center',
+      },
+      {
         title: '定时状态',
         dataIndex: 'enabled',
         key: 'enabled',
@@ -213,6 +256,10 @@ class TaskList extends React.Component<any, any> {
         dataIndex: 'date_changed',
         key: 'date_changed',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '相关操作',
@@ -269,13 +316,17 @@ class TaskList extends React.Component<any, any> {
     return (
       <div>
         <Card>
-          <SearchModal getTaskList={this.getTaskList} />
+          <SearchModal
+            getTaskList={this.getTaskList}
+            handleSearchChildren={this.handleSearchChildren}
+          />
           <div className="ant-btn-add">
             <Button
               type="primary"
               onClick={this.handleAddTask}
               icon={<PlusCircleOutlined />}
               shape="round"
+              size="small"
             >
               新增
             </Button>
@@ -302,14 +353,19 @@ class TaskList extends React.Component<any, any> {
           tempValue={this.state.tempValue}
           onSwitchChange={this.onSwitchChange}
           childrenPageChange={this.childrenPageChange}
+          envName={this.state.envName}
+          caseNumber={this.state.caseNumber}
+          onRef={this.onRef}
+          caseArray={this.state.caseArray}
         />
       </div>
     );
   }
 }
 
-export default connect(({ taskList, userList, projectList }) => ({
+export default connect(({ taskList, userList, projectList, envList }) => ({
   taskList,
   userList,
   projectList,
+  envList,
 }))(TaskList);

@@ -26,7 +26,7 @@ export default {
     *addTaskList({ payload, callback }, { call, put }) {
       const res = yield call(addTaskList, { ...payload });
       if (callback) {
-        callback();
+        callback(res);
       }
     },
     *editSubmit({ payload, callback }, { call, put }) {

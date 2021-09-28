@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  message,
   InputNumber,
   Switch,
   Select,
@@ -7,12 +8,11 @@ import {
   Input,
   Modal,
   FormInstance,
-  Popover,
 } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
-import TreeNode from './treeNode';
+import TreeNode_Add from './treeNode_add';
 import './index.less';
+import Message from '@/pages/examples/message';
 const { Option } = Select;
 class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
@@ -22,39 +22,24 @@ class AddModal extends React.Component<any, any> {
       caseNumber: 0,
       moduleList: [],
       caseList: [],
-      treeData: [],
+      treeData_moduleList: [],
       caseArray: [],
-      projectList: [],
       checked: false,
       Minutes: 1,
       Hours: 1,
       Day_of_month: 1,
       Month: 1,
       Day_of_week: 1,
+      checked_projectListId: 0,
     };
   }
 
   formRef = React.createRef<FormInstance>();
 
   UNSAFE_componentWillMount() {
-    this.getProjectList();
     this.getEnvList();
     this.getCaseList({ page: 'None' });
   }
-
-  getProjectList = () => {
-    this.props.dispatch({
-      type: 'projectList/getProjectList',
-      payload: {
-        page: 'None',
-      },
-      callback: (res, rescount) => {
-        this.setState({
-          projectList: res,
-        });
-      },
-    });
-  };
   getEnvList = () => {
     this.props.dispatch({
       type: 'envList/getEnvList',
@@ -85,27 +70,17 @@ class AddModal extends React.Component<any, any> {
   };
 
   getTreeNode = (moduleListChange: any) => {
-    const caseList = this.props.testCase.caseList;
     const moduleList = moduleListChange;
-    const treeData = [];
+    const treeData_moduleList = [];
     moduleList &&
       moduleList.forEach((moduleItem) => {
-        const children = [];
-        caseList.forEach((caseItem) => {
-          caseItem.module_name === moduleItem.module_name &&
-            children.push({
-              title: caseItem.name,
-              key: caseItem.id,
-            });
-        });
-        treeData.push({
+        treeData_moduleList.push({
           title: moduleItem.module_name,
-          key: moduleItem.create_time,
-          children: children,
+          key: moduleItem.id,
         });
       });
     this.setState({
-      treeData: treeData,
+      treeData_moduleList: treeData_moduleList,
     });
   };
 
@@ -123,29 +98,31 @@ class AddModal extends React.Component<any, any> {
         addTask.env = envList[i].id;
       }
     }
-    const args = {
-      case_list: {
-        case: this.state.caseArray,
+    const args = [
+      {
+        case_list: {
+          case: this.state.caseArray,
+        },
+        env: addTask.env,
+        report_name: addTask.name,
+        description: this.state.tempAddValue.description,
+        receivers: [''],
       },
-      env: addTask.env,
-      report_name: addTask.name,
-      description: this.state.tempAddValue.description,
-      receivers: [''],
-    };
+    ];
     const json_args = JSON.stringify(args);
     const requestData = {
       name: addTask.name,
       args: json_args,
       description: addTask.description,
       enabled: this.state.checked,
-      email_list: addTask.emailList,
+      email_list: addTask.emailList || [],
       project: addTask.project,
       crontab: {
         minute: this.state.Minutes,
         hour: this.state.Hours,
-        day_of_week: this.state.Day_of_month,
-        day_of_month: this.state.Month,
-        month_of_year: this.state.Day_of_week,
+        day_of_week: this.state.Day_of_week,
+        day_of_month: this.state.Day_of_month,
+        month_of_year: this.state.Month,
       },
     };
 
@@ -157,11 +134,17 @@ class AddModal extends React.Component<any, any> {
         payload: {
           ...requestData,
         },
-        callback: () => {
+        callback: (res) => {
           this.props.childrenPageChange();
+          message.success(res.message);
         },
       });
     this.props.showAddModal(false);
+    this.setState({
+      caseNumber: 0,
+      treeData: [],
+      checked: false,
+    });
     this.onReset();
   };
 
@@ -173,10 +156,13 @@ class AddModal extends React.Component<any, any> {
   };
 
   handleProjectChange = (project: any) => {
-    const projectList = this.state.projectList;
+    const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (project && projectList[i].project_name === project) {
         const payload = { page: 'None', project: projectList[i].id };
+        this.setState({
+          checked_projectListId: projectList[i].id,
+        });
         this.getModuleList(payload);
       }
     }
@@ -185,6 +171,11 @@ class AddModal extends React.Component<any, any> {
   handleCancel = () => {
     this.props.showAddModal(false);
     this.onReset();
+    this.setState({
+      caseNumber: 0,
+      treeData: [],
+      checked: false,
+    });
   };
 
   caseNumber = (caseArray: any, checkedNumber: any) => {
@@ -233,20 +224,11 @@ class AddModal extends React.Component<any, any> {
     const addVisible = this.props.addVisible;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
-    const treeData = [...this.state.treeData];
-    const content = (
-      <div>
-        <p>M:分钟</p>
-        <p>H:小时</p>
-        <p>D:天</p>
-        <p>Mon:月</p>
-        <p>DW: 周几</p>
-      </div>
-    );
+    const treeData_moduleList = [...this.state.treeData_moduleList];
     return (
       <Modal
         visible={addVisible}
-        title="新增任务"
+        title="新增"
         closable={true}
         maskClosable={false}
         onOk={this.handleSubmit}
@@ -277,7 +259,7 @@ class AddModal extends React.Component<any, any> {
             <Switch
               checkedChildren="启用"
               unCheckedChildren="禁用"
-              defaultChecked={this.state.checked}
+              defaultChecked={false}
               onChange={(checked) => {
                 this.onSwitchChange(checked);
               }}
@@ -296,6 +278,9 @@ class AddModal extends React.Component<any, any> {
                 defaultValue={1}
                 bordered
                 onChange={(num) => this.handlecrontab_M(num)}
+                style={{ width: '100px' }}
+                formatter={(value) => `${value} M`}
+                parser={(value) => value?.replace(' M', '')}
               />
               <InputNumber
                 min={0}
@@ -303,6 +288,9 @@ class AddModal extends React.Component<any, any> {
                 defaultValue={1}
                 bordered
                 onChange={(num) => this.handlecrontab_H(num)}
+                style={{ width: '100px' }}
+                formatter={(value) => `${value} H`}
+                parser={(value) => value?.replace(' H', '')}
               />
               <InputNumber
                 min={1}
@@ -310,6 +298,9 @@ class AddModal extends React.Component<any, any> {
                 defaultValue={1}
                 bordered
                 onChange={(num) => this.handlecrontab_DM(num)}
+                style={{ width: '100px' }}
+                formatter={(value) => `${value} dM`}
+                parser={(value) => value?.replace(' dM', '')}
               />
               <InputNumber
                 min={1}
@@ -317,6 +308,9 @@ class AddModal extends React.Component<any, any> {
                 defaultValue={1}
                 bordered
                 onChange={(num) => this.handlecrontab_Mon(num)}
+                style={{ width: '100px' }}
+                formatter={(value) => `${value} MY`}
+                parser={(value) => value?.replace(' MY', '')}
               />
               <InputNumber
                 min={0}
@@ -324,6 +318,9 @@ class AddModal extends React.Component<any, any> {
                 defaultValue={1}
                 bordered
                 onChange={(num) => this.handlecrontab_DW(num)}
+                style={{ width: '100px' }}
+                formatter={(value) => `${value} d`}
+                parser={(value) => value?.replace(' d', '')}
               />
               {/* <Popover content={content}>
                 {<QuestionCircleOutlined style={{color:'orange'}}/>}
@@ -394,13 +391,17 @@ class AddModal extends React.Component<any, any> {
             name="cassNumber"
             rules={[{ required: false }]}
           >
-            <TreeNode treeData={[...treeData]} caseNumber={this.caseNumber} />
+            <TreeNode_Add
+              treeData_moduleList={[...treeData_moduleList]}
+              caseNumber={this.caseNumber}
+              checked_projectListId={this.state.checked_projectListId}
+            />
           </Form.Item>
 
           <Form.Item
             label="邮件列表"
             name="emailList"
-            rules={[{ required: false }]}
+            rules={[{ required: true }]}
           >
             <Select
               mode="tags"

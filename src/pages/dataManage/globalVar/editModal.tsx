@@ -1,6 +1,17 @@
 import React from 'react';
-import { Card, Select, Form, Input, Modal, Table, Button, Space } from 'antd';
+import {
+  message,
+  Card,
+  Select,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Button,
+  Space,
+} from 'antd';
 const { TextArea } = Input;
+const { Option } = Select;
 import { connect } from 'umi';
 
 class EditModal extends React.Component<any, any> {
@@ -20,8 +31,9 @@ class EditModal extends React.Component<any, any> {
         ...editGlobalVar,
         id: EditId,
       },
-      callback: () => {
+      callback: (res) => {
         this.props.childrenPageChange();
+        message.success(res.message);
       },
     });
     this.props.showEditModal(false);
@@ -39,12 +51,14 @@ class EditModal extends React.Component<any, any> {
 
   render() {
     const { editVisible, tempValue } = this.props;
+    const projectList = this.props?.projectList?.projectList;
+    console.log('projectList', projectList);
     return (
       <div>
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改全局信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}
@@ -59,6 +73,36 @@ class EditModal extends React.Component<any, any> {
               wrapperCol={{ span: 16 }}
               onValuesChange={this.handleEditValueChange}
             >
+              <Form.Item
+                label="项目名称"
+                name="project"
+                rules={[{ required: true, message: '请输入项目名称' }]}
+                initialValue={tempValue.project_name}
+              >
+                {
+                  <Select
+                    style={{ width: 314 }}
+                    placeholder="请选择"
+                    allowClear
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {projectList &&
+                      Array.isArray(projectList) &&
+                      projectList.length &&
+                      projectList.map((item) => {
+                        return (
+                          <Option value={item.id}>{item.project_name}</Option>
+                        );
+                      })}
+                  </Select>
+                }
+              </Form.Item>
               <Form.Item
                 label="参数名称"
                 name="var_name"
@@ -91,6 +135,7 @@ class EditModal extends React.Component<any, any> {
   }
 }
 
-export default connect(({ globalVarList }) => ({
+export default connect(({ globalVarList, projectList }) => ({
   globalVarList,
+  projectList,
 }))(EditModal);

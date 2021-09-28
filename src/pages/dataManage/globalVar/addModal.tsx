@@ -1,6 +1,7 @@
 import React from 'react';
-import { message, Form, FormInstance, Input, Modal } from 'antd';
+import { message, Form, FormInstance, Input, Modal, Select } from 'antd';
 const { TextArea } = Input;
+const { Option } = Select;
 import { connect } from 'umi';
 
 class AddModal extends React.Component<any, any> {
@@ -21,11 +22,8 @@ class AddModal extends React.Component<any, any> {
         ...addGlobalVar,
       },
       callback: (res) => {
-        if (res.message == '保存成功') {
-          this.props.handleTotalNumber();
-        } else {
-          message.error('添加失败');
-        }
+        this.props.handleTotalNumber();
+        message.success(res.message);
         this.props.childrenPageChange();
       },
     });
@@ -34,6 +32,7 @@ class AddModal extends React.Component<any, any> {
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
+    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -50,10 +49,11 @@ class AddModal extends React.Component<any, any> {
 
   render() {
     const addVisible = this.props?.addVisible;
+    const projectList = this.props?.projectList?.projectList;
     return (
       <Modal
         visible={addVisible}
-        title="全局信息"
+        title="新增"
         closable={true}
         maskClosable={false}
         onOk={this.handleSubmit}
@@ -70,6 +70,32 @@ class AddModal extends React.Component<any, any> {
           onValuesChange={this.handleAddValueChange}
           ref={this.formRef}
         >
+          <Form.Item
+            label="项目名称"
+            name="project"
+            rules={[{ required: true, message: '请输入项目名称' }]}
+          >
+            {
+              <Select
+                style={{ width: 314 }}
+                placeholder="请选择"
+                allowClear
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
+                {projectList &&
+                  Array.isArray(projectList) &&
+                  projectList.length &&
+                  projectList.map((item) => {
+                    return <Option value={item.id}>{item.project_name}</Option>;
+                  })}
+              </Select>
+            }
+          </Form.Item>
           <Form.Item
             label="参数名称"
             name="var_name"
@@ -97,6 +123,7 @@ class AddModal extends React.Component<any, any> {
   }
 }
 
-export default connect(({ globalVarList }) => ({
+export default connect(({ globalVarList, projectList }) => ({
   globalVarList,
+  projectList,
 }))(AddModal);

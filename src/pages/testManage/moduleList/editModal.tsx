@@ -1,39 +1,16 @@
 import React from 'react';
-import { Select, Form, Input, Modal } from 'antd';
+import { message, Select, Form, Input, Modal } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
+import Message from '@/pages/examples/message';
 
 class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
       tempEditValue: '',
-      testUserList: [],
-      projectList: [],
     };
-  }
-
-  componentDidMount() {
-    this.props.dispatch({
-      type: 'userList/getUserList',
-      callback: (res) => {
-        this.setState({
-          testUserList: res,
-        });
-      },
-    });
-    this.props.dispatch({
-      type: 'projectList/getProjectList',
-      payload: {
-        page: 'None',
-      },
-      callback: (res) => {
-        this.setState({
-          projectList: res,
-        });
-      },
-    });
   }
 
   editSubmit = () => {
@@ -45,8 +22,9 @@ class EditModal extends React.Component<any, any> {
         ...editModule,
         id: EditId,
       },
-      callback: () => {
+      callback: (res) => {
         this.props.childrenPageChange();
+        message.success(res.message);
       },
     });
     this.props.showEditModal(false);
@@ -57,7 +35,10 @@ class EditModal extends React.Component<any, any> {
   };
 
   handleEditValueChange = (singleValueChange, ValueChange) => {
-    const { projectList, testUserList } = this.state;
+    // const { projectList, testUserList } = this.props;
+    console.log('this.props', this.props);
+    const projectList = this.props.projectList.projectList;
+    const testUserList = this.props.userList.userList;
     for (let i = 0; i < testUserList.length; i++) {
       if (
         ValueChange.test_user &&
@@ -81,13 +62,14 @@ class EditModal extends React.Component<any, any> {
 
   render() {
     const { editVisible, tempValue } = this.props;
-    const { projectList, testUserList } = this.state;
+    const projectList = this.props.projectList.projectList;
+    const testUserList = this.props.userList.userList;
     return (
       <div>
         {editVisible && (
           <Modal
             visible={editVisible}
-            title="修改模块信息"
+            title="编辑"
             closable={true}
             maskClosable={false}
             onOk={this.editSubmit}
