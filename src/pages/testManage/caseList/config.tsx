@@ -27,7 +27,7 @@ const tableColumns = [
   },
   {
     title: '测试人员',
-    dataIndex: 'author',
+    dataIndex: 'author_name',
     key: 'author',
     align: 'center',
   },

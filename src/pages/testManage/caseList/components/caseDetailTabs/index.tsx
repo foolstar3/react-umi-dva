@@ -33,16 +33,21 @@ const CaseDetailTabs = ({
   const editorRef = useRef(null);
   const messageRef = useRef(null);
   const debugCase = (payload) => {
-    console.log(payload);
     dispatch({
       type: 'testCase/debugCase',
       payload,
       callback: (res) => {
-        if (res.case_metas.length > 10) {
-          message.error('单次最多运行10个用例');
+        if (res.code && res.code === 'U000400') {
+          message.error(res.message);
+        } else {
+          if (res.case_metas.length > 10) {
+            message.info('单次最多运行10个用例');
+          }
+          setDebugResponseVisible(true);
         }
       },
     });
+    message.success('调试请求已发送');
   };
 
   const updateCase = (payload) => {
@@ -143,7 +148,6 @@ const CaseDetailTabs = ({
     console.log(payload);
     debugCase(payload);
     setModalVisible(false);
-    setDebugResponseVisible(true);
   };
 
   const onDebugCancel = () => {

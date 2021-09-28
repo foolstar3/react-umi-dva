@@ -88,9 +88,12 @@ const RequestTab = (props, ref) => {
     return data;
   });
   // 子组件的jsonCode
-  const [jsonCode, setJsonCode] = useState(
-    request.json ? JSON.stringify(request.json) : '',
-  );
+  let initJsonCode = '';
+  const [jsonCode, setJsonCode] = useState(() => {
+    initJsonCode = request.json ? JSON.stringify(request.json) : '';
+    return initJsonCode;
+  });
+
   const lineAdd = (table) => {
     if (table === 'headers') {
       setHeaderData((prev = []) => {
@@ -381,11 +384,7 @@ const RequestTab = (props, ref) => {
       <div className={styles.dataContent}>
         {dataType === 'json' && (
           <div className={styles.editor}>
-            <Editor
-              getEditorContent={getDataCode}
-              content={jsonCode}
-              ref={ref}
-            />
+            <Editor getEditorContent={getDataCode} content={initJsonCode} />
           </div>
         )}
         {dataType === 'data' && (
