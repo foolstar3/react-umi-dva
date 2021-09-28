@@ -46,14 +46,14 @@ const EditableCell = ({
       return (
         <Select
           showSearch
-          optionFilterProp="children"
+          // optionFilterProp="children"
           onChange={change}
           onSearch={search}
           onBlur={search}
           value={optionRecord}
-          filterOption={(input, option) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
+          // filterOption={(input, option) =>
+          //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          // }
         >
           {restProps.funcs.map((item) => (
             <Option value={item} key={item}>

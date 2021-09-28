@@ -244,7 +244,11 @@ class EnvList extends Component<any, any> {
         判断是否成功返回数据
         成功则提示切换状态成功
         失败则提示切换状态失败 */
-        message.success(res.message);
+        if (res.code && res.code === 'U000000') {
+          message.success(res.message);
+        } else {
+          message.error(res.message);
+        }
       },
     });
   };
@@ -481,11 +485,13 @@ class EnvList extends Component<any, any> {
         {!envInfoModalVisiable && (
           <Card bordered={false}>
             <SearchBox projectOptions={projectList} onSearch={this.onSearch} />
-            <div className="btn-postion">
+            <div className="ant-btn-add">
               <Button
                 type="primary"
                 icon={<PlusCircleOutlined />}
                 onClick={this.showAddEnvModal}
+                shape="round"
+                size="small"
               >
                 新增
               </Button>
@@ -558,7 +564,7 @@ class EnvList extends Component<any, any> {
         {/* 编辑对话框 */}
         {editModalVisiable && (
           <Modal
-            title="修改环境信息"
+            title="编辑"
             visible={editModalVisiable}
             onOk={() => {
               this.handleEditOk();

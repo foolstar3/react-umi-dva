@@ -458,11 +458,13 @@ class ParamsFile extends Component<any, any> {
           {!editModalVisiable && (
             <div>
               {/* <SearchBox /> */}
-              <div className="btn-postion">
+              <div className="ant-btn-add">
                 <Button
                   type="primary"
                   icon={<PlusCircleOutlined />}
                   onClick={this.handleAddFile}
+                  size="small"
+                  shape="round"
                 >
                   新增
                 </Button>
