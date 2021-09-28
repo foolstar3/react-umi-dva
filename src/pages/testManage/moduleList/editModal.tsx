@@ -1,8 +1,9 @@
 import React from 'react';
-import { Select, Form, Input, Modal } from 'antd';
+import { message, Select, Form, Input, Modal } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
+import Message from '@/pages/examples/message';
 
 class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
@@ -21,8 +22,9 @@ class EditModal extends React.Component<any, any> {
         ...editModule,
         id: EditId,
       },
-      callback: () => {
+      callback: (res) => {
         this.props.childrenPageChange();
+        message.success(res.message);
       },
     });
     this.props.showEditModal(false);

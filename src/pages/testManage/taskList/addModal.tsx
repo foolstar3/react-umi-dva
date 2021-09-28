@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  message,
   InputNumber,
   Switch,
   Select,
@@ -11,6 +12,7 @@ import {
 import { connect } from 'umi';
 import TreeNode_Add from './treeNode_add';
 import './index.less';
+import Message from '@/pages/examples/message';
 const { Option } = Select;
 class AddModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
@@ -132,8 +134,9 @@ class AddModal extends React.Component<any, any> {
         payload: {
           ...requestData,
         },
-        callback: () => {
+        callback: (res) => {
           this.props.childrenPageChange();
+          message.success(res.message);
         },
       });
     this.props.showAddModal(false);

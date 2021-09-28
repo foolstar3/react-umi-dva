@@ -10,6 +10,7 @@ import { connect } from 'umi';
 import './index.less';
 import '/src/styles/global.less';
 import SearchModal from './Search';
+import { DateFormat } from '@/utils/common';
 import AddModal from './addModal';
 import EditModal from './editModal';
 
@@ -186,13 +187,22 @@ class ModuleList extends React.Component<any, any> {
         dataIndex: 'create_time',
         key: 'create_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
       {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
         align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
+        },
       },
+
       {
         title: '操作',
         dataIndex: 'relateAction',

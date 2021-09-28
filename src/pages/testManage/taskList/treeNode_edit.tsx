@@ -23,10 +23,10 @@ const TreeNode_Edit: React.FC<{}> = (props: any) => {
   return (
     <div>
       <Collapse>
-        <Panel header="请选择用例" key="caseNumber" forceRender>
+        <Panel header="请选择用例" key="caseNumber" forceRender={false}>
           <Tree
             treeData={props.treeData}
-            checkable={true}
+            checkable
             onCheck={onCheckCase}
             checkedKeys={checkedKeys}
           />
