@@ -35,6 +35,8 @@ const errorHandler = (error) => {
     if (status === 401) {
       delete localStorage.qc_token;
       delete localStorage.qc_user;
+      delete localStorage.openKey;
+      delete localStorage.selectedKey;
       history.push('/login');
     } else {
     }

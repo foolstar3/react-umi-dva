@@ -141,6 +141,8 @@ class MySider extends Component<any, any> {
           style={{ height: '100vh', borderRight: 0 }}
           openKeys={openKey}
           selectedKeys={menuKey}
+          // defaultOpenKeys={openKey}
+          // defaultSelectedKeys={menuKey}
         >
           {navMenu.children.map((item) => {
             const icon = React.createElement(Icon[item.icon], {

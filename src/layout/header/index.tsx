@@ -31,6 +31,8 @@ class MyHeader extends Component<any, any> {
           message.info('登出成功');
           localStorage.removeItem('qc_user');
           localStorage.removeItem('token');
+          localStorage.removeItem('openKey');
+          localStorage.removeItem('selectedKey');
         }
         this.setState({
           isModalVisible: false,

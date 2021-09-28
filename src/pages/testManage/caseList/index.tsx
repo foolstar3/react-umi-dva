@@ -104,6 +104,12 @@ class CaseList extends Component<any, any> {
     });
   };
 
+  removeCalls = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'testCase/removeCalls',
+    });
+  };
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
   };
@@ -133,11 +139,9 @@ class CaseList extends Component<any, any> {
   };
 
   showCaseDetail = (record) => {
-    /**
-     * 获取函数hooks
-     */
+    // 获取函数hooks
     this.getFuncs({ project_id: record.project });
-    this.getCalls(record.id);
+    Object.keys(record).length ? this.getCalls(record.id) : this.removeCalls();
     const { caseList } = this.props;
     caseList.result?.filter((item) =>
       record

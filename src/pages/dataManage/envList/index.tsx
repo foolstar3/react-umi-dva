@@ -10,6 +10,7 @@ import {
   Input,
   Popconfirm,
   message,
+  Select,
 } from 'antd';
 import {
   EditOutlined,
@@ -19,12 +20,14 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
+import SearchBox from './searchBox';
 import { DateFormat } from '@/utils/common';
 
 import './index.less';
 import { connect } from 'umi';
 import { Row } from 'antd/lib/grid';
 
+const { Option } = Select;
 const formItemLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
@@ -71,6 +74,13 @@ class EnvList extends Component<any, any> {
           align: 'center',
         },
         {
+          title: '项目名称',
+          dataIndex: 'project_name',
+          key: 'project_name',
+          // width: 200,
+          align: 'center',
+        },
+        {
           title: '简要描述',
           dataIndex: 'description',
           key: 'description',
@@ -100,9 +110,9 @@ class EnvList extends Component<any, any> {
           },
         },
         {
-          title: '创建时间',
-          dataIndex: 'create_time',
-          key: 'create_time',
+          title: '更新时间',
+          dataIndex: 'update_time',
+          key: 'update_time',
           width: 200,
           align: 'center',
           render: (text) => {
@@ -168,7 +178,23 @@ class EnvList extends Component<any, any> {
 
   componentDidMount() {
     this.getEnvList({ page: 1 });
+    this.getProjectList({ page: 'None' });
   }
+
+  //获取项目名称列表
+  getProjectList = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: () => {},
+    });
+  };
+
+  onSearch = (payload) => {
+    console.log(payload);
+    this.getEnvList({ page: 1, ...payload });
+  };
   /* ============table功能============== */
 
   // 监听table选中的列发生变化的函数
@@ -415,8 +441,8 @@ class EnvList extends Component<any, any> {
       total,
       currentPage,
     } = this.state;
-    const { envList, tableLoading } = this.props;
-    if (envList !== undefined) {
+    const { envList, tableLoading, projectList } = this.props;
+    if (envList !== undefined && envList.length) {
       // 为envList数组中的每个元素添加一个key属性
       envList.map((item) => {
         item.key = item.id;
@@ -443,6 +469,7 @@ class EnvList extends Component<any, any> {
       <>
         {!envInfoModalVisiable && (
           <Card bordered={false}>
+            <SearchBox projectOptions={projectList} onSearch={this.onSearch} />
             <div className="btn-postion">
               <Button
                 type="primary"
@@ -496,6 +523,17 @@ class EnvList extends Component<any, any> {
               <Input />
             </Form.Item>
 
+            <Form.Item name="project" label="项目名称">
+              <Select>
+                {projectList.length &&
+                  projectList.map((item) => (
+                    <Option key={item.id} value={item.id}>
+                      {item.project_name}
+                    </Option>
+                  ))}
+              </Select>
+            </Form.Item>
+
             <Form.Item name="is_valid" label="状态" valuePropName="checked">
               <Switch
                 checkedChildren="启用"
@@ -544,6 +582,17 @@ class EnvList extends Component<any, any> {
                 <Input />
               </Form.Item>
 
+              <Form.Item name="project" label="项目名称">
+                <Select>
+                  {projectList.length &&
+                    projectList.map((item) => (
+                      <Option key={item.id} value={item.id}>
+                        {item.project_name}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+
               <Form.Item name="is_valid" label="状态" valuePropName="checked">
                 <Switch
                   checkedChildren="启用"
@@ -580,7 +629,8 @@ class EnvList extends Component<any, any> {
   }
 }
 
-export default connect(({ envList, loading }) => ({
+export default connect(({ envList, loading, projectList }) => ({
   envList: envList.envList,
+  projectList: projectList.projectList,
   tableLoading: loading.effects['envList/getEnvList'],
 }))(EnvList);

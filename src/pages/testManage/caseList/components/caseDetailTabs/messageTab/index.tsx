@@ -47,7 +47,6 @@ const MessageTab = (props) => {
     onProjectChange,
     onModuleChange,
     caseList,
-    getMessageData,
     callCase,
   } = props;
   const [form] = Form.useForm();
@@ -149,7 +148,7 @@ const MessageTab = (props) => {
       );
       if (tableData.length) {
         const data = [];
-        let index = prev.length + 1;
+        let index = prev[prev.length - 1] ? prev[prev.length - 1].index + 1 : 1;
         tableData.forEach((item) => {
           data.push({
             id: item.id,
@@ -173,7 +172,7 @@ const MessageTab = (props) => {
       );
       if (tableData.length) {
         const data = [];
-        let index = prev.length;
+        let index = prev[prev.length - 1] ? prev[prev.length - 1].index + 1 : 1;
         tableData.forEach((item) => {
           data.push({
             id: item.id,
@@ -193,14 +192,12 @@ const MessageTab = (props) => {
   const deleteCall = (record, table) => {
     if (table === 'before') {
       setBeforeTableData((prev) => {
-        const next = JSON.parse(JSON.stringify(prev));
-        next.splice(record.index - 1, 1);
+        const next = prev.filter((item) => item.index !== record.index);
         return next;
       });
     } else if (table === 'after') {
       setAfterTableData((prev) => {
-        const next = JSON.parse(JSON.stringify(prev));
-        next.splice(record.index - 1, 1);
+        const next = prev.filter((item) => item.index !== record.index);
         return next;
       });
     }

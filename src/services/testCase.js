@@ -15,6 +15,7 @@ export async function deleteCase(data) {
 }
 
 export async function debugCase(data) {
+  console.log(data);
   return requestUap(`/debug/`, {
     method: 'POST',
     data,
@@ -36,10 +37,15 @@ export async function getCalls(data) {
 
 export async function updateCase(data) {
   const id = data.id;
-  delete data.id;
   return requestUap(`/testcase/${id}/`, {
     method: 'PUT',
+    data: data.payload,
+  });
+}
+
+export async function createCase(data) {
+  return requestUap(`/testcase/`, {
+    method: 'POST',
     data,
-    requestType: 'form',
   });
 }

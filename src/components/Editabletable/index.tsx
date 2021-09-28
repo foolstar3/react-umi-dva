@@ -13,6 +13,22 @@ const EditableCell = ({
   children,
   ...restProps
 }) => {
+  const [optionRecord, setRecord] = useState('');
+  const change = (val, opt) => {
+    console.log(val, opt);
+  };
+
+  const search = (val) => {
+    console.log(val);
+    if (!!val) {
+      setRecord(val);
+    }
+  };
+  // const blur = () => {
+  //   if (!!optionRecord) {
+  //     change(optionRecord)
+  //   }
+  // }
   const inputNode = () => {
     if (cellType === 'typeSelect') {
       return (
@@ -28,6 +44,9 @@ const EditableCell = ({
         <Select
           showSearch
           optionFilterProp="children"
+          onChange={change}
+          onSearch={search}
+          // onBlur={blur}
           filterOption={(input, option) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }

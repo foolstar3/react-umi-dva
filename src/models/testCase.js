@@ -5,6 +5,7 @@ import {
   getFuncs,
   getCalls,
   updateCase,
+  createCase,
 } from '@/services/testCase';
 
 export default {
@@ -28,6 +29,12 @@ export default {
       return {
         ...state,
         ...payload,
+      };
+    },
+    removeCalls(state) {
+      return {
+        ...state,
+        callCase: {},
       };
     },
   },
@@ -75,8 +82,15 @@ export default {
         payload: { callCase: res },
       });
     },
-    *updateCase({ payload, callback }, { call, put }) {
+    *updateCase({ payload, callback }, { call }) {
       const res = yield call(updateCase, payload);
+      if (callback) {
+        callback(res);
+      }
+    },
+    *createCase({ payload, callback }, { call }) {
+      console.log(payload);
+      const res = yield call(createCase, payload);
       if (callback) {
         callback(res);
       }
