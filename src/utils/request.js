@@ -30,7 +30,7 @@ const codeMessage = {
 const errorHandler = (error) => {
   const { response } = error;
   if (response && response.status) {
-    // const errorText = codeMessage[response.status] || response.statusText;
+    const errorText = codeMessage[response.status] || response.statusText;
     const { status } = response;
     if (status === 401) {
       delete localStorage.qc_token;
@@ -40,6 +40,8 @@ const errorHandler = (error) => {
       history.push('/login');
     } else if (status === 403) {
       message.error('您没有执行该操作的权限');
+    } else if (status === 400) {
+      message.error(errorText);
     }
   } else if (!response) {
     message.error('您的网络发生异常，无法连接服务器');

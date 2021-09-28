@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Card, Table, Button, Popconfirm } from 'antd';
+import {
+  Card,
+  Table,
+  Button,
+  Popconfirm,
+  Modal,
+  Form,
+  Input,
+  message,
+} from 'antd';
 import {
   PlayCircleOutlined,
   EditOutlined,
@@ -20,8 +29,10 @@ class CaseList extends Component<any, any> {
     total: 0,
     showDetailTabs: false,
     currentCase: {},
+    isCopyModalVisible: false,
   };
 
+  copyForm = React.createRef();
   componentDidMount() {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
@@ -110,6 +121,25 @@ class CaseList extends Component<any, any> {
       type: 'testCase/removeCalls',
     });
   };
+
+  copyCase = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'testCase/copyCase',
+      payload,
+      callback: (res) => {
+        if (res.message) {
+          message.success(res.message);
+          this.getCaseList({ page: 1 });
+        } else {
+          message.error(res.message);
+        }
+        this.setState({
+          isCopyModalVisible: false,
+        });
+      },
+    });
+  };
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
   };
@@ -127,8 +157,23 @@ class CaseList extends Component<any, any> {
     this.deleteCase(record.id);
   };
 
-  copyCase = (record) => {};
-
+  showCopyModal = (record) => {
+    this.setState({
+      isCopyModalVisible: true,
+      currentCase: record,
+    });
+  };
+  cancelCopy = () => {
+    this.setState({ isCopyModalVisible: false });
+  };
+  handleCopyOk = () => {
+    const { currentCase } = this.state;
+    const payload = {
+      name: this.copyForm.current.getFieldsValue().name,
+      id: currentCase.id,
+    };
+    this.copyCase(payload);
+  };
   onProjectChange = (payload, flag = true) => {
     this.getModuleList({ page: 'None', project: payload });
     flag ? this.getCaseList({ page: 'None', project: payload }) : '';
@@ -209,7 +254,7 @@ class CaseList extends Component<any, any> {
             title="复制"
             size="small"
             shape="round"
-            onClick={this.copyCase}
+            onClick={() => this.showCopyModal(record)}
           >
             <CopyOutlined />
           </Button>
@@ -234,10 +279,10 @@ class CaseList extends Component<any, any> {
       ),
     };
     const tableConfig: any = [...tableColumns, actionColumn];
-    // const rowSelection = {
-    //   selectedRowKeys,
-    //   onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
-    // };
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
+    };
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
@@ -247,9 +292,11 @@ class CaseList extends Component<any, any> {
       showTotal: () => `共 ${total} 条`,
     };
 
-    caseList.results?.map((item) => {
-      item.key = item.id;
-    });
+    if (caseList.results) {
+      caseList.results?.map((item) => {
+        item.key = item.id;
+      });
+    }
 
     return (
       <>
@@ -280,7 +327,7 @@ class CaseList extends Component<any, any> {
         </div>
         <div className={styles.tableWrapper}>
           <Table
-            // rowSelection={rowSelection}
+            rowSelection={rowSelection}
             columns={tableConfig}
             loading={tableLoading}
             dataSource={caseList.results || []}
@@ -292,8 +339,31 @@ class CaseList extends Component<any, any> {
     );
   };
 
+  renderCopyModal = () => {
+    const { currentCase, isCopyModalVisible } = this.state;
+    return (
+      <Modal
+        visible={isCopyModalVisible}
+        title="输入新的用例名称"
+        onOk={this.handleCopyOk}
+        onCancel={this.cancelCopy}
+        okButtonProps={{ shape: 'round' }}
+        cancelButtonProps={{ shape: 'round' }}
+      >
+        <Form ref={this.copyForm} initialValues={currentCase}>
+          <Form.Item
+            name="name"
+            label="用例名称"
+            rules={[{ required: true, message: '请输入用例名称!' }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    );
+  };
   render() {
-    const { showDetailTabs, currentCase } = this.state;
+    const { showDetailTabs, currentCase, isCopyModalVisible } = this.state;
     const { projectData, moduleData, caseList, envList, funcs } = this.props;
 
     return (
@@ -314,6 +384,7 @@ class CaseList extends Component<any, any> {
           ) : (
             this.renderCaseListTable()
           )}
+          {isCopyModalVisible && this.renderCopyModal()}
         </Card>
       </>
     );

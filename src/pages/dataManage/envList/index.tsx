@@ -564,7 +564,7 @@ class EnvList extends Component<any, any> {
         {/* 编辑对话框 */}
         {editModalVisiable && (
           <Modal
-            title="修改环境信息"
+            title="编辑"
             visible={editModalVisiable}
             onOk={() => {
               this.handleEditOk();

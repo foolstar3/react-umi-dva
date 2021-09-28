@@ -49,3 +49,10 @@ export async function createCase(data) {
     data,
   });
 }
+
+export async function copyCase(data) {
+  return requestUap(`/copy-testcase/`, {
+    method: 'POST',
+    data,
+  });
+}

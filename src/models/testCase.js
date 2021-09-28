@@ -6,6 +6,7 @@ import {
   getCalls,
   updateCase,
   createCase,
+  copyCase,
 } from '@/services/testCase';
 
 export default {
@@ -89,8 +90,13 @@ export default {
       }
     },
     *createCase({ payload, callback }, { call }) {
-      console.log(payload);
       const res = yield call(createCase, payload);
+      if (callback) {
+        callback(res);
+      }
+    },
+    *copyCase({ payload, callback }, { call }) {
+      const res = yield call(copyCase, payload);
       if (callback) {
         callback(res);
       }
