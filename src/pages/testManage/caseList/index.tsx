@@ -259,15 +259,22 @@ class CaseList extends Component<any, any> {
           onSearch={this.onSearch}
           onProjectChange={this.onProjectChange}
         />
-        <div className={styles.btnPosition}>
+        <div className="ant-btn-add">
           <Button
             type="primary"
             icon={<PlusCircleOutlined />}
             onClick={() => this.showCaseDetail({})}
+            size="small"
+            shape="round"
           >
             新增
           </Button>
-          <Button type="primary" icon={<PlayCircleOutlined />}>
+          <Button
+            type="primary"
+            icon={<PlayCircleOutlined />}
+            size="small"
+            shape="round"
+          >
             运行
           </Button>
         </div>
