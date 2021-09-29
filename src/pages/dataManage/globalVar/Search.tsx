@@ -20,6 +20,7 @@ const SearchModel = (props: any) => {
   const [form] = Form.useForm();
   const onReset = () => {
     form.resetFields();
+    props.onResetPage();
   };
 
   const handleSearch = (value: any) => {

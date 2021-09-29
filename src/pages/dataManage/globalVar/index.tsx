@@ -76,6 +76,11 @@ class GlobalVarList extends React.Component<any, any> {
       project: project,
     });
   };
+  onResetPage = () => {
+    this.setState({
+      currentPage: 1,
+    });
+  };
   childrenPageChange = () => {
     this.getGlobalVarList({ page: 1 });
     this.setState({
@@ -239,6 +244,7 @@ class GlobalVarList extends React.Component<any, any> {
           <SearchModal
             getGlobalVarList={this.getGlobalVarList}
             handleSearchChildren={this.handleSearchChildren}
+            onResetPage={this.onResetPage}
           />
           <div className="ant-btn-add">
             <Button

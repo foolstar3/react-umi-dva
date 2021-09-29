@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  message,
-  Card,
-  Select,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Button,
-  Space,
-} from 'antd';
+import { message, Card, Select, Form, Input, Modal } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
@@ -24,6 +14,7 @@ class EditModal extends React.Component<any, any> {
 
   editSubmit = (value: any) => {
     const editGlobalVar = this.state.tempEditValue;
+    console.log('editGlobalVar', editGlobalVar);
     const EditId = this.props.tempValue.id;
     this.props.dispatch({
       type: 'globalVarList/editGlobalVarList',
@@ -44,6 +35,15 @@ class EditModal extends React.Component<any, any> {
   };
 
   handleEditValueChange = (singleValueChange, ValueChange) => {
+    const projectList = this.props.projectList.projectList;
+    for (let i = 0; i < projectList.length; i++) {
+      if (
+        ValueChange.project &&
+        projectList[i].project_name === ValueChange.project
+      ) {
+        ValueChange.project = projectList[i].id;
+      }
+    }
     this.setState({
       tempEditValue: ValueChange,
     });

@@ -40,8 +40,20 @@ class TaskList extends React.Component<any, any> {
   }
 
   UNSAFE_componentWillMount() {
-    this.getTaskList({ page: 1 });
     this.getProjectList({ page: 'None' });
+
+    // this.props.dispatch({
+    //   type: 'taskList/getTaskList',
+    //   payload:{
+    //     page:'None'
+    //   },
+    //   callback: (res, taskCount) => {
+    //     this.setState({
+    //       allTaskList: res
+    //     });
+    //   },
+    // });
+    this.getTaskList({ page: 1 });
   }
   onRef = (ref) => {
     this.EditModal = ref;
@@ -86,13 +98,14 @@ class TaskList extends React.Component<any, any> {
       },
       callback: (res) => {
         message.success(res.message);
+        this.getTaskList({ page: this.state.currentPage });
       },
     });
   };
 
   onPageChange = (page: any) => {
     const payload = {
-      page: 1,
+      page: page,
       project: this.state.project,
       name: this.state.name,
       update_time_after: this.state.update_time_after,
@@ -103,6 +116,11 @@ class TaskList extends React.Component<any, any> {
     this.getTaskList(payload);
     this.setState({
       currentPage: page,
+    });
+  };
+  onResetPage = () => {
+    this.setState({
+      currentPage: 1,
     });
   };
   handleSearchChildren = (payload) => {
@@ -187,8 +205,10 @@ class TaskList extends React.Component<any, any> {
     const { taskList } = this.props?.taskList;
     taskList &&
       taskList.map((item) => {
-        item.key = item.id;
+        item.key = item.date_changed;
+        item.project_name = item.task_extend?.project_name;
       });
+
     const paginationProps = {
       current: currentPage,
       showSizeChanger: false,
@@ -226,15 +246,16 @@ class TaskList extends React.Component<any, any> {
         align: 'center',
         render: (text, record, index) => {
           return (
-            <Switch
-              checkedChildren="启用"
-              unCheckedChildren="禁用"
-              defaultChecked={text}
-              onChange={(checked) => {
-                this.onSwitchChange(checked, text, record);
-              }}
-              key={index}
-            />
+            <div key={`${record.id}${index}${text}`}>
+              <Switch
+                checkedChildren="启用"
+                unCheckedChildren="禁用"
+                defaultChecked={text}
+                onChange={(checked) => {
+                  this.onSwitchChange(checked, text, record);
+                }}
+              />
+            </div>
           );
         },
       },
@@ -319,6 +340,7 @@ class TaskList extends React.Component<any, any> {
           <SearchModal
             getTaskList={this.getTaskList}
             handleSearchChildren={this.handleSearchChildren}
+            onResetPage={this.onResetPage}
           />
           <div className="ant-btn-add">
             <Button

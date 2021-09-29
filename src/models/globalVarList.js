@@ -31,7 +31,7 @@ export default {
     },
     *editGlobalVarList({ payload, callback }, { call, put }) {
       const res = yield call(updateGlobalVarList, { ...payload });
-      if (callback) {
+      if (res.code === 'U000000') {
         callback(res);
       }
     },

@@ -8,6 +8,7 @@ const SearchProject = (props: any) => {
 
   const onReset = () => {
     form.resetFields();
+    props.onResetPage();
   };
 
   const handleSearch = (value: any) => {

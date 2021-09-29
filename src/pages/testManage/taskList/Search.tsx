@@ -22,6 +22,7 @@ const SearchModel = (props: any) => {
 
   const onReset = () => {
     form.resetFields();
+    props.onResetPage();
   };
 
   const handleSearch = (value: any) => {
@@ -92,7 +93,7 @@ const SearchModel = (props: any) => {
             <Col span={8}>
               <Form.Item
                 initialValue="全部"
-                label="启用状态"
+                label="定时状态"
                 name="enable_status"
               >
                 <Select>

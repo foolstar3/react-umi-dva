@@ -130,11 +130,13 @@ class EditModal extends React.Component<any, any> {
       email_list: editTask?.emailList,
       project: editTask?.project,
       crontab: {
-        minute: this.state.Minutes,
-        hour: this.state.Hours,
-        day_of_week: this.state.Day_of_week,
-        day_of_month: this.state.Day_of_month,
-        month_of_year: this.state.Month,
+        minute: this.state.Minutes == null ? 1 : this.state.Minutes,
+        hour: this.state.Hours == null ? 1 : this.state.Hours,
+        day_of_week:
+          this.state.Day_of_week == null ? 1 : this.state.Day_of_week,
+        day_of_month:
+          this.state.Day_of_month == null ? 1 : this.state.Day_of_month,
+        month_of_year: this.state.Month == null ? 1 : this.state.Month,
       },
     };
     this.props.dispatch({
@@ -268,7 +270,6 @@ class EditModal extends React.Component<any, any> {
                 name="enabled"
                 rules={[{ required: true }]}
                 valuePropName="checked"
-                key="enabled"
                 initialValue={tempValue.enabled}
               >
                 <Switch

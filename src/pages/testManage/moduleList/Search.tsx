@@ -19,17 +19,16 @@ const { Option } = Select;
 const SearchModel = (props: any) => {
   const [form] = Form.useForm();
   const projectList = props?.projectList?.projectList || [];
-  const testUserList = props?.userList?.userList || [];
 
   const onReset = () => {
     form.resetFields();
+    props.onResetPage();
   };
 
   const handleSearch = (value: any) => {
-    c;
-    for (let i = 0; i < testUserList.length; i++) {
-      if (value.test_user && value.test_user == testUserList[i].username) {
-        value.test_user = testUserList[i].id;
+    for (let i = 0; i < projectList.length; i++) {
+      if (value.project && value.project == projectList[i].project_name) {
+        value.project = projectList[i].id;
       }
     }
     const payload = {

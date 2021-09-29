@@ -52,6 +52,12 @@ class ModuleList extends React.Component<any, any> {
       },
     });
   };
+  // getProjectList = (payload: any) =>{
+  //   this.props.dispatch({
+  //     type: 'projectList/getProjectList',
+  //     payload
+  //   });
+  // }
 
   onPageChange = (page: any) => {
     const payload = {
@@ -70,6 +76,12 @@ class ModuleList extends React.Component<any, any> {
   };
   childrenPageChange = () => {
     this.getModuleList({ page: 1 });
+    this.setState({
+      currentPage: 1,
+    });
+  };
+
+  onResetPage = () => {
     this.setState({
       currentPage: 1,
     });
@@ -249,6 +261,7 @@ class ModuleList extends React.Component<any, any> {
           <SearchModal
             getModuleList={this.getModuleList}
             handleChildrenSearch={this.handleChildrenSearch}
+            onResetPage={this.onResetPage}
           />
           <div className="ant-btn-add">
             <Button

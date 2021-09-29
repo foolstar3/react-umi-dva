@@ -34,7 +34,7 @@ export default {
 
     *editModuleList({ payload, callback }, { call, put }) {
       const res = yield call(updateModuleList, { ...payload });
-      if (callback) {
+      if (res.code === 'U000000') {
         callback(res);
       }
     },
