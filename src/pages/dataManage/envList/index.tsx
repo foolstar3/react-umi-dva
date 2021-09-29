@@ -90,7 +90,7 @@ class EnvList extends Component<any, any> {
           align: 'center',
         },
         {
-          title: '状态',
+          title: '环境状态',
           dataIndex: 'is_valid',
           key: 'is_valid',
           width: 100,
@@ -186,7 +186,7 @@ class EnvList extends Component<any, any> {
       currentPage: 1,
     };
   }
-
+  formRef = React.createRef();
   componentDidMount() {
     this.getEnvList({ page: 1 });
     this.getProjectList({ page: 'None' });
@@ -204,6 +204,9 @@ class EnvList extends Component<any, any> {
 
   onSearch = (payload) => {
     this.getEnvList({ page: 1, ...payload });
+    this.setState({
+      currentPage: 1,
+    });
   };
   /* ============table功能============== */
 
@@ -236,6 +239,7 @@ class EnvList extends Component<any, any> {
   // 调用接口切换switch状态
   toggleSwitch = (record) => {
     const { dispatch } = this.props;
+    const { currentPage } = this.state;
     dispatch({
       type: 'envList/toggleSwitch',
       payload: record,
@@ -245,6 +249,7 @@ class EnvList extends Component<any, any> {
         成功则提示切换状态成功
         失败则提示切换状态失败 */
         if (res.code && res.code === 'U000000') {
+          this.getEnvList({ page: currentPage });
           message.success(res.message);
         } else {
           message.error(res.message);
@@ -302,6 +307,7 @@ class EnvList extends Component<any, any> {
       callback: (res) => {
         if (res.code && res.code !== 'U000400') {
           // 添加成功
+          this.formRef.current.resetFields();
           message.success(res.message);
           this.getEnvList({ page: 1 });
           this.setState({
@@ -519,6 +525,7 @@ class EnvList extends Component<any, any> {
             onValuesChange={(cv, av) => {
               this.handleAddFormValueChange(av);
             }}
+            ref={this.formRef}
           >
             <Form.Item
               name="env_name"
@@ -540,7 +547,11 @@ class EnvList extends Component<any, any> {
               <Input />
             </Form.Item>
 
-            <Form.Item name="project" label="项目名称">
+            <Form.Item
+              name="project"
+              label="项目名称"
+              rules={[{ required: true, message: '请选择项目名称!' }]}
+            >
               <Select>
                 {projectList.length &&
                   projectList.map((item) => (
@@ -599,7 +610,11 @@ class EnvList extends Component<any, any> {
                 <Input />
               </Form.Item>
 
-              <Form.Item name="project" label="项目名称">
+              <Form.Item
+                name="project"
+                label="项目名称"
+                rules={[{ required: true, message: '请选择项目名称!' }]}
+              >
                 <Select>
                   {projectList.length &&
                     projectList.map((item) => (

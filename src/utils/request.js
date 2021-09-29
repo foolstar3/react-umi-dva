@@ -13,7 +13,7 @@ const codeMessage = {
   202: '一个请求已经进入后台排队（异步任务）。',
   204: '删除数据成功。',
   400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  403: '用户得到授权，但是访问是被禁止的。',
+  403: '您没有执行该操作的权限',
   404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
   406: '请求的格式不可得。',
   410: '请求的资源被永久删除，且不会再得到的。',
@@ -38,9 +38,9 @@ const errorHandler = (error) => {
       delete localStorage.openKey;
       delete localStorage.selectedKey;
       history.push('/login');
-    } else if (status === 403) {
-      message.error('您没有执行该操作的权限');
-    } else if (status === 400) {
+    } else if (status === 204) {
+      message.success(errorText);
+    } else if (status === 403 || status === 400) {
       message.error(errorText);
     }
   } else if (!response) {

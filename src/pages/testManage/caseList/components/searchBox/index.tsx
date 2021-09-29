@@ -31,9 +31,9 @@ const SearchBox = (props) => {
     // 修改时间格式
     payload.update_time?.map((item, index) => {
       if (index === 0) {
-        payload.update_time_before = DateFormat(item._d);
+        payload.update_time_after = item.format('YYYY-MM-DD');
       } else if (index === 1) {
-        payload.update_time_after = DateFormat(item._d);
+        payload.update_time_before = item.format('YYYY-MM-DD');
       }
     });
     delete payload.update_time;
@@ -146,6 +146,8 @@ const SearchBox = (props) => {
                   // type="primary"
                   icon={<RedoOutlined />}
                   onClick={onReset}
+                  size="small"
+                  shape="round"
                 >
                   重置
                 </Button>
@@ -153,6 +155,8 @@ const SearchBox = (props) => {
                   type="primary"
                   icon={<SearchOutlined />}
                   onClick={onSearch}
+                  size="small"
+                  shape="round"
                 >
                   搜索
                 </Button>

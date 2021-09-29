@@ -15,7 +15,6 @@ export async function deleteCase(data) {
 }
 
 export async function debugCase(data) {
-  console.log(data);
   return requestUap(`/debug/`, {
     method: 'POST',
     data,

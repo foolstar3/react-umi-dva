@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditableTable from '@/components/Editabletable';
 import { Form, Select, Button, message } from 'antd';
 
 import styles from './index.less';
 
 const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
+  const hooks = {
+    setup: setupHooks,
+    teardown: teardownHooks,
+  };
+  const setData = (table) => {
+    const hook = [];
+    hooks[table].map((item, index) => {
+      hook.push({
+        funcName: item,
+        id: index + 1,
+        key: index + 1,
+      });
+    });
+    return hook;
+  };
+  useEffect(() => {
+    setSetupData(setData('setup'));
+  }, [setupHooks]);
+
+  useEffect(() => {
+    setTeardownData(setData('teardown'));
+  }, [teardownHooks]);
+
   const [setupData, setSetupData] = useState(() => {
     const setup = [];
     setupHooks.map((item, index) => {
@@ -102,29 +125,21 @@ const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
 
   const lineSave = (line, table) => {
     if (table === 'setup') {
-      setSetupData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].funcName = line.funcName;
-          next = prev;
-        }
-        save(next, table);
-        return next;
-      });
+      const prev = JSON.parse(JSON.stringify(setupData));
+      const index = prev.findIndex((item) => item.key === line.key);
+      // key有重复后的保存
+      if (index > -1) {
+        prev[index].funcName = line.funcName;
+      }
+      save(prev, table);
     } else if (table === 'teardown') {
-      setTeardownData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].funcName = line.funcName;
-          next = prev;
-        }
-        save(next, table);
-        return next;
-      });
+      const prev = JSON.parse(JSON.stringify(setupData));
+      const index = prev.findIndex((item) => item.key === line.key);
+      // key有重复后的保存
+      if (index > -1) {
+        prev[index].funcName = line.funcName;
+      }
+      save(prev, table);
     }
   };
   const [form] = Form.useForm();

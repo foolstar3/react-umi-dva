@@ -9,6 +9,7 @@ import {
   copyCase,
 } from '@/services/testCase';
 
+import { parseResponse } from '../utils/common';
 export default {
   namespace: 'testCase',
   state: {
@@ -41,16 +42,16 @@ export default {
   },
   effects: {
     *getCaseList({ payload, callback }, { call, put }) {
-      const res = yield call(getCaseList, payload);
-      yield put({
-        type: 'updateCaseList',
-        payload: res,
-      });
-      if (callback) {
-        callback(res);
+      const { success, data } = parseResponse(yield call(getCaseList, payload));
+      if (success) {
+        yield put({
+          type: 'updateCaseList',
+          payload: data,
+        });
+        callback(data);
       }
     },
-    *deleteCase({ payload, callback }, { call, put }) {
+    *deleteCase({ payload, callback }, { call }) {
       const res = yield call(deleteCase, payload);
       if (callback) {
         callback();

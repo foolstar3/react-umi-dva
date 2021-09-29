@@ -15,3 +15,21 @@ export const DataType = (data) => {
   }
   return type;
 };
+
+export const parseResponse = (response) => {
+  if (response && response.code) {
+    let success = true;
+    const { code, message } = response;
+    if (code !== 'U000000') {
+      success = false;
+      message.error(message);
+    } else {
+      message.success(message);
+    }
+    const result = { success, code, message };
+    return result;
+  } else if (response && Object.keys(response).indexOf('code') === -1) {
+    return { success: true, data: response };
+  }
+  return { success: false };
+};
