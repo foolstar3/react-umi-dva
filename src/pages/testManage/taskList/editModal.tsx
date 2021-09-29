@@ -18,7 +18,7 @@ class EditModal extends React.Component<any, any> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
-      tempEditValue: {},
+      tempEditValue: 0,
       caseNumber: 0,
       moduleList: [],
       treeData: [],
@@ -93,63 +93,118 @@ class EditModal extends React.Component<any, any> {
 
   editSubmit = () => {
     const tempEditValue = this.state.tempEditValue;
-    const editTaskValue = JSON.stringify(tempEditValue);
-    const editTask = JSON.parse(editTaskValue);
-    const projectList = this.props.projectList.projectList;
-    const envList = this.props.envList.envList;
-    for (let i = 0; i < projectList.length; i++) {
-      if (
-        editTask.project &&
-        projectList[i].project_name === editTask.project
-      ) {
-        editTask.project = projectList[i].id;
+    console.log('adsasdas', tempEditValue);
+    if (tempEditValue != 0) {
+      const editTaskValue = JSON.stringify(tempEditValue);
+      const editTask = JSON.parse(editTaskValue);
+      const projectList = this.props.projectList.projectList;
+      const envList = this.props.envList.envList;
+      for (let i = 0; i < projectList.length; i++) {
+        if (
+          editTask.project &&
+          projectList[i].project_name === editTask.project
+        ) {
+          editTask.project = projectList[i].id;
+        }
       }
-    }
-    for (let i = 0; i < envList.length; i++) {
-      if (editTask.env && envList[i].env_name === editTask.env) {
-        editTask.env = envList[i].id;
+      for (let i = 0; i < envList.length; i++) {
+        if (editTask.env && envList[i].env_name === editTask.env) {
+          editTask.env = envList[i].id;
+        }
       }
-    }
-    const args = [
-      {
-        case_list: {
-          case: this.state.caseArray,
+      const args = [
+        {
+          case_list: {
+            case: this.state.caseArray,
+          },
+          env: editTask.env,
+          report_name: editTask.name,
+          description: this.state.tempEditValue.description,
+          receivers: [''],
         },
-        env: editTask.env,
-        report_name: editTask.name,
-        description: this.state.tempEditValue.description,
-        receivers: [''],
-      },
-    ];
-    const json_args = JSON.stringify(args);
-    const requestData = {
-      name: editTask?.name,
-      args: json_args,
-      description: editTask?.description,
-      enabled: editTask?.enabled,
-      email_list: editTask?.emailList,
-      project: editTask?.project,
-      crontab: {
-        minute: this.state.Minutes == null ? 1 : this.state.Minutes,
-        hour: this.state.Hours == null ? 1 : this.state.Hours,
-        day_of_week:
-          this.state.Day_of_week == null ? 1 : this.state.Day_of_week,
-        day_of_month:
-          this.state.Day_of_month == null ? 1 : this.state.Day_of_month,
-        month_of_year: this.state.Month == null ? 1 : this.state.Month,
-      },
-    };
-    this.props.dispatch({
-      type: 'taskList/editSubmit',
-      payload: {
-        ...requestData,
-        id: this.props.tempValue.id,
-      },
-      callback: (res) => {
-        this.props.childrenPageChange();
-        message.success(res.message);
-      },
-    });
+      ];
+      const json_args = JSON.stringify(args);
+      const requestData = {
+        name: editTask?.name,
+        args: json_args,
+        description: editTask?.description,
+        enabled: editTask?.enabled,
+        email_list: editTask?.emailList || [],
+        project: editTask?.project,
+        crontab: {
+          minute: this.state.Minutes == null ? 1 : this.state.Minutes,
+          hour: this.state.Hours == null ? 1 : this.state.Hours,
+          day_of_week:
+            this.state.Day_of_week == null ? 1 : this.state.Day_of_week,
+          day_of_month:
+            this.state.Day_of_month == null ? 1 : this.state.Day_of_month,
+          month_of_year: this.state.Month == null ? 1 : this.state.Month,
+        },
+      };
+      this.props.dispatch({
+        type: 'taskList/editSubmit',
+        payload: {
+          ...requestData,
+          id: this.props.tempValue.id,
+        },
+        callback: (res) => {
+          this.props.childrenPageChange();
+          message.success(res.message);
+        },
+      });
+    } else {
+      const tempValue = this.props.tempValue;
+      const projectList = this.props.projectList.projectList;
+      for (let i = 0; i < projectList.length; i++) {
+        if (
+          tempValue.task_extend.project &&
+          projectList[i].project_name === tempValue.task_extend.project
+        ) {
+          tempValue.task_extend.project = projectList[i].id;
+        }
+      }
+      const env = JSON.parse(tempValue.args);
+      const args = [
+        {
+          case_list: {
+            case: this.state.caseArray,
+          },
+          env: env[0].env,
+          report_name: tempValue.name,
+          description: tempValue.description,
+          receivers: [''],
+        },
+      ];
+      const json_args = JSON.stringify(args);
+      const requestData = {
+        name: tempValue?.name,
+        args: json_args,
+        description: tempValue?.description,
+        enabled: tempValue?.enabled,
+        email_list: tempValue?.task_extend?.email_List || [],
+        project: tempValue?.task_extend?.project,
+        crontab: {
+          minute: this.state.Minutes == null ? 1 : this.state.Minutes,
+          hour: this.state.Hours == null ? 1 : this.state.Hours,
+          day_of_week:
+            this.state.Day_of_week == null ? 1 : this.state.Day_of_week,
+          day_of_month:
+            this.state.Day_of_month == null ? 1 : this.state.Day_of_month,
+          month_of_year: this.state.Month == null ? 1 : this.state.Month,
+        },
+      };
+      this.props.dispatch({
+        type: 'taskList/editSubmit',
+        payload: {
+          ...requestData,
+          id: this.props.tempValue.id,
+        },
+        callback: (res) => {
+          this.props.childrenPageChange();
+          message.success(res.message);
+        },
+      });
+    }
     this.onReset();
     this.props.showEditModal(false);
   };
