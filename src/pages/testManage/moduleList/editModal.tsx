@@ -36,7 +36,6 @@ class EditModal extends React.Component<any, any> {
 
   handleEditValueChange = (singleValueChange, ValueChange) => {
     // const { projectList, testUserList } = this.props;
-    console.log('this.props', this.props);
     const projectList = this.props.projectList.projectList;
     const testUserList = this.props.userList.userList;
     for (let i = 0; i < testUserList.length; i++) {

@@ -90,6 +90,11 @@ class ProjectList extends React.Component<any, any> {
       description: description,
     });
   };
+  onResetPage = () => {
+    this.setState({
+      currentPage: 1,
+    });
+  };
 
   showAddModal = () => {
     this.setState({
@@ -312,6 +317,7 @@ class ProjectList extends React.Component<any, any> {
           <SearchProject
             getProjectList={this.getProjectList}
             handleSearchChildren={this.handleSearchChildren}
+            onResetPage={this.onResetPage}
           />
           <div className="ant-btn-add">
             <Button
