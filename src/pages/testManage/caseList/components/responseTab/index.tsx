@@ -8,19 +8,21 @@ const { Panel } = Collapse;
 const ResponseTab = ({ treeData, checkable, validators, onCheckedChange }) => {
   const [validateVisiable, setValidateVisiable] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState([]);
-  const addKeyToTree = (node, key, index) => {
+  const addKeyToTree = (node, key, index, checkable) => {
     node.key = `${key}-${index}`;
+    node.checkable = checkable;
     if (node.children) {
       node.children.map((childNode, childIndex) =>
-        addKeyToTree(childNode, node.key, childIndex),
+        addKeyToTree(childNode, node.key, childIndex, node.checkable),
       );
     }
   };
   treeData.map((node, index) => {
     node.key = `${index}`;
+    index === 0 ? (node.checkable = false) : '';
     if (node.children) {
       node.children.map((childNode, childIndex) =>
-        addKeyToTree(childNode, node.key, childIndex),
+        addKeyToTree(childNode, node.key, childIndex, node.checkable),
       );
     }
   });
@@ -30,13 +32,18 @@ const ResponseTab = ({ treeData, checkable, validators, onCheckedChange }) => {
       return checkedKeysValue;
     });
   };
-  const responseTree = [];
+
   return (
     <>
       <div className={styles.topBtn}>
-        <Button className={styles.cancelBtn}>TraceBack</Button>
+        <Button className={classnames(styles.cancelBtn, styles.hidden)}>
+          TraceBack
+        </Button>
         <Button
-          className={styles.basicBtn}
+          className={classnames(
+            styles.basicBtn,
+            validators.length ? '' : styles.hidden,
+          )}
           onClick={() => setValidateVisiable(!validateVisiable)}
         >
           Validate

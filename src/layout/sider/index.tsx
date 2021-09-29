@@ -99,37 +99,28 @@ const navMenu = {
 class MySider extends Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = {
-      menuKey: [],
-      openKey: [],
+    this.menuState = {
+      selectedKeys: localStorage.getItem('selectedKeys'),
+      openKeys: localStorage.getItem('openKeys'),
     };
   }
 
   componentDidMount() {
-    this.setState({
-      menuKey: localStorage.getItem('selectedKey'),
-      openKey: localStorage.getItem('openKey'),
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('selectedKeys', this.menuState.selectedKeys);
+      localStorage.setItem('openKeys', this.menuState.openKeys);
     });
   }
-
   setMenuItem = (item) => {
-    localStorage.setItem('selectedKey', item.key);
-    localStorage.setItem('openKey', item.keyPath[item.keyPath.length - 1]);
-    this.setState({
-      menuKey: [localStorage.getItem('selectedKey')],
-      openKey: [localStorage.getItem('openKey')],
-    });
+    this.menuState = {
+      selectedKeys: item.key,
+      openKeys: [item.keyPath[item.keyPath.length - 1]],
+    };
   };
 
-  setSubMenu = (item) => {
-    localStorage.setItem('openKey', item.key);
-    this.setState({
-      openKey: [localStorage.getItem('openKey')],
-    });
-  };
   render() {
-    let MenuList = () => {};
-    const { menuKey, openKey } = this.state;
+    const openKeys: any = [localStorage.getItem('openKeys')];
+    const selectedKeys: any = localStorage.getItem('selectedKeys');
     return (
       <div
         style={{ width: 250, height: 870 }}
@@ -139,22 +130,15 @@ class MySider extends Component<any, any> {
           mode="inline"
           theme="dark"
           style={{ height: '100vh', borderRight: 0 }}
-          openKeys={openKey}
-          selectedKeys={menuKey}
-          // defaultOpenKeys={openKey}
-          // defaultSelectedKeys={menuKey}
+          defaultOpenKeys={openKeys}
+          defaultSelectedKeys={selectedKeys}
         >
           {navMenu.children.map((item) => {
             const icon = React.createElement(Icon[item.icon], {
               style: { fontSize: '16px' },
             });
             return (
-              <SubMenu
-                key={item.key}
-                title={item.title}
-                icon={icon}
-                onTitleClick={this.setSubMenu}
-              >
+              <SubMenu key={item.key} title={item.title} icon={icon}>
                 {item.children.map((i) => {
                   const itemIcon = React.createElement(Icon[i.icon], {
                     style: { fontSize: '16px' },

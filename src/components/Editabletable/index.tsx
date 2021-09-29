@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Table, Select, Input, Button } from 'antd';
+import { Form, Table, Select, Input, Button, AutoComplete } from 'antd';
 import styles from './index.less';
+import { comparators } from '@/constant/caseList';
 const { Option } = Select;
 
 const EditableCell = ({
@@ -13,50 +14,37 @@ const EditableCell = ({
   children,
   ...restProps
 }) => {
-  const [optionRecord, setRecord] = useState('');
-  const change = (val, opt) => {
-    console.log(val, opt);
-    restProps.updateFuncs(opt.key, val);
-    setRecord(val);
-  };
-
-  const search = (val) => {
-    console.log(val);
-    if (!!val) {
-      setRecord(val);
-    }
-  };
-  // const blur = () => {
-  //   if (!!optionRecord) {
-  //     change(optionRecord)
-  //   }
-  // }
-
   const inputNode = () => {
     if (cellType === 'typeSelect') {
       return (
         <Select>
-          <Option value="string">String</Option>
-          <Option value="number">Int</Option>
-          <Option value="number">Float</Option>
-          <Option value="boolean">Boolean</Option>
+          <Option value="String">String</Option>
+          <Option value="Iumber">Int</Option>
+          <Option value="Fumber">Float</Option>
+          <Option value="Boolean">Boolean</Option>
         </Select>
       );
     } else if (cellType === 'funcSelect') {
+      const renderOption = (title) => ({
+        value: title,
+        label: <span>{title}</span>,
+      });
+      const options = restProps.funcs.map((item) => renderOption(item));
       return (
-        <Select
-          showSearch
-          // optionFilterProp="children"
-          onChange={change}
-          onSearch={search}
-          onBlur={search}
-          value={optionRecord}
-          // filterOption={(input, option) =>
-          //   option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          // }
+        <AutoComplete
+          options={options}
+          filterOption={(inputValue, option) =>
+            option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+          }
         >
-          {restProps.funcs.map((item) => (
-            <Option value={item} key={item}>
+          <Input placeholder="请输入" />
+        </AutoComplete>
+      );
+    } else if (cellType === 'comparator') {
+      return (
+        <Select>
+          {comparators.map((item) => (
+            <Option key={item} value={item}>
               {item}
             </Option>
           ))}
@@ -78,7 +66,7 @@ const EditableCell = ({
           rules={[
             {
               required: true,
-              message: `Please Input ${title}!`,
+              message: `请输入${title}!`,
             },
           ]}
         >
@@ -164,14 +152,6 @@ const EditableTable = ({
     if (!col.editable) {
       return col;
     }
-    const updateFuncs = (key, val) => {
-      funcs.map((item) => {
-        console.log(item);
-        if (item === key) {
-          item = val;
-        }
-      });
-    };
     return {
       ...col,
       onCell: (record) => {
@@ -183,15 +163,15 @@ const EditableTable = ({
           case 'funcName':
             type = 'funcSelect';
             break;
+          case 'comparator':
+            type = 'comparator';
+            break;
           default:
             type = 'text';
             break;
         }
         return {
           funcs,
-          updateFuncs: (key, val) => {
-            updateFuncs(key, val);
-          },
           record,
           cellType: type,
           dataIndex: col.dataIndex,

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DateFormat } from '@/utils/common';
 import {
   Collapse,
   Form,
@@ -17,6 +16,11 @@ const { Option } = Select;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 const env_status = [
+  {
+    key: '全部',
+    value: '',
+    children: '全部',
+  },
   {
     key: '启用',
     value: true,
@@ -42,11 +46,10 @@ const SearchBox = (props) => {
     });
     // 修改时间格式
     payload.update_time?.map((item, index) => {
-      console.log(item);
       if (index === 0) {
-        payload.update_time_before = DateFormat(item._d);
+        payload.update_time_after = item.format('YYYY-MM-DD');
       } else if (index === 1) {
-        payload.update_time_after = DateFormat(item._d);
+        payload.update_time_before = item.format('YYYY-MM-DD');
       }
     });
     delete payload.update_time;
@@ -57,11 +60,6 @@ const SearchBox = (props) => {
     });
     delete payload.project_name;
     onSearch(payload);
-  };
-
-  const onProjectChange = (val) => {
-    // const { onProjectChange } = props;
-    // onProjectChange(val, false);
   };
 
   return (
@@ -80,7 +78,6 @@ const SearchBox = (props) => {
                 <Select
                   allowClear
                   showSearch
-                  onChange={onProjectChange}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     option.children
@@ -99,7 +96,7 @@ const SearchBox = (props) => {
             </Col>
 
             <Col span={8}>
-              <Form.Item label="状态" name="is_valid">
+              <Form.Item label="环境状态" name="is_valid">
                 <Select>
                   {env_status.map((item) => (
                     <Option key={item.key} value={item.value}>
@@ -145,6 +142,8 @@ const SearchBox = (props) => {
                   // type="primary"
                   icon={<RedoOutlined />}
                   onClick={onReset}
+                  size="small"
+                  shape="round"
                 >
                   重置
                 </Button>
@@ -152,6 +151,8 @@ const SearchBox = (props) => {
                   type="primary"
                   icon={<SearchOutlined />}
                   onClick={onSearch}
+                  size="small"
+                  shape="round"
                 >
                   搜索
                 </Button>

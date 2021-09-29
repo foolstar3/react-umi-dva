@@ -30,6 +30,7 @@ class CaseList extends Component<any, any> {
     showDetailTabs: false,
     currentCase: {},
     isCopyModalVisible: false,
+    currentPage: 1,
   };
 
   copyForm = React.createRef();
@@ -149,7 +150,7 @@ class CaseList extends Component<any, any> {
       ...payload,
       page: 1,
     };
-
+    this.setState({ currentPage: 1 });
     this.getCaseList(payload);
   };
 

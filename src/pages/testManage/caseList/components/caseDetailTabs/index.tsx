@@ -32,6 +32,9 @@ const CaseDetailTabs = ({
   const [form] = Form.useForm();
   const editorRef = useRef(null);
   const messageRef = useRef(null);
+  /**
+   * 请求函数
+   */
   const debugCase = (payload) => {
     dispatch({
       type: 'testCase/debugCase',
@@ -79,7 +82,17 @@ const CaseDetailTabs = ({
       },
     });
   };
+  const clearResult = () => {
+    dispatch({
+      type: 'testCase/updateDebugResponse',
+      payload: { debugResponse: {} },
+    });
+    setDebugResponseVisible(false);
+  };
 
+  /**
+   * 初始化状态
+   */
   const [debugResponseVisible, setDebugResponseVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const tabDatas = Object.keys(caseDetail).length
@@ -102,6 +115,10 @@ const CaseDetailTabs = ({
   const [validate, setValidate] = useState(tabDatas.validate ?? []);
 
   const [checkedData, setCheckedData] = useState({ extract: {}, validate: [] });
+
+  /**
+   * 逻辑函数
+   */
   const showDebugModal = () => {
     setModalVisible(true);
   };
@@ -145,7 +162,6 @@ const CaseDetailTabs = ({
       : delete payload.teststeps[0].variables;
     payload.base_url = base_url;
     delete payload.request;
-    console.log(payload);
     debugCase(payload);
     setModalVisible(false);
   };
@@ -343,26 +359,19 @@ const CaseDetailTabs = ({
     });
     setValidate((prev = []) => {
       const { validate } = checkedData;
+      let next = JSON.parse(JSON.stringify(prev));
       validate.forEach((item) => {
-        prev = prev.filter((child) => {
-          // 判断是否和已有数据重复
+        const index = next.findIndex((child) => {
           if (child.equal) {
-            return child.equal[0] !== item.equal[0];
+            return child.equal[0] === item.equal[0];
           }
-          return true;
         });
+        index === -1 ? (next = next.concat(item)) : next.splice(index, 1, item);
       });
-      const next = prev.concat(validate);
       return next;
     });
   };
-  const clearResult = () => {
-    dispatch({
-      type: 'testCase/updateDebugResponse',
-      payload: { debugResponse: {} },
-    });
-    setDebugResponseVisible(false);
-  };
+
   return (
     <>
       <div className={styles.tabBody}>
