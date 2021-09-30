@@ -101,6 +101,7 @@ class EnvList extends Component<any, any> {
                 checkedChildren="启用"
                 unCheckedChildren="禁用"
                 defaultChecked={text}
+                checked={text}
                 onChange={(checked) => {
                   this.onSwitchChange(checked, text, record);
                 }}
