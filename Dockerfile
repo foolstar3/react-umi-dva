@@ -1,15 +1,9 @@
-FROM registry-dev.uihcloud.cn/tc-team/react:1.1 AS nodebuilder
+FROM registry-dev.uihcloud.cn/tc-team/react:1.1
 
 WORKDIR /mnt
 
-COPY . /mnt/
+COPY package*.json /mnt/
 
 RUN yarn config set registry https://nexus.uihcloud.cn/repository/npm-group/ \
-  && yarn build-dev
-
-
-FROM registry-dev.uihcloud.cn/com.uih.uplus.base/nginx:1.20.1-alpine
-
-COPY --from=nodebuilder /mnt/dist/  /usr/share/nginx/html/
-COPY --from=nodebuilder /mnt/default.conf  /etc/nginx/conf.d/
+  && yarn install
 
