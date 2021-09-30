@@ -1,0 +1,36 @@
+.reportDetailCollapse {
+  :global {
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding-bottom: 16px;
+    }
+  }
+}
+.reportSummary {
+  display: flex;
+  .chart {
+    flex: 1;
+    margin-right: 10px;
+    transition: box-shadow 0.2s ease;
+    &:hover {
+      box-shadow: 5px 5px 5px 5px rgb(124, 109, 109, 0.5);
+    }
+  }
+  .stat {
+    flex: 1;
+    transition: box-shadow 0.2s ease;
+    &:hover {
+      box-shadow: 5px 5px 5px 5px rgb(124, 109, 109, 0.5);
+    }
+    :global {
+      .ant-list-item {
+        padding-left: 10px;
+      }
+    }
+    .title {
+      flex: 1;
+    }
+    .value {
+      flex: 7;
+    }
+  }
+}

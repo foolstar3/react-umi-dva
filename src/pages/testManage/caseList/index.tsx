@@ -31,6 +31,7 @@ class CaseList extends Component<any, any> {
     currentCase: {},
     isCopyModalVisible: false,
     currentPage: 1,
+    searchWords: {},
   };
 
   copyForm = React.createRef();
@@ -146,12 +147,14 @@ class CaseList extends Component<any, any> {
   };
 
   onSearch = (payload) => {
-    payload = {
-      ...payload,
-      page: 1,
-    };
-    this.setState({ currentPage: 1 });
-    this.getCaseList(payload);
+    this.setState({ currentPage: 1, searchWords: payload });
+    this.getCaseList({ page: 1, ...this.state.searchWords });
+  };
+
+  onReset = () => {
+    this.setState({
+      searchWords: {},
+    });
   };
 
   handleDeleteOk = (record) => {
@@ -213,7 +216,7 @@ class CaseList extends Component<any, any> {
   };
 
   renderCaseListTable = () => {
-    const { selectedRowKeys, total } = this.state;
+    const { selectedRowKeys, total, searchWords } = this.state;
     const { caseList, projectData, moduleData, tableLoading } = this.props;
 
     const actionColumn = {
@@ -287,7 +290,7 @@ class CaseList extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
-      onChange: (page) => this.getCaseList({ page }),
+      onChange: (page) => this.getCaseList({ page, ...searchWords }),
       total: total,
       pageSize: 10,
       showTotal: () => `共 ${total} 条`,
@@ -305,6 +308,7 @@ class CaseList extends Component<any, any> {
           projectOptions={projectData}
           moduleOptions={moduleData}
           onSearch={this.onSearch}
+          onReset={this.onReset}
           onProjectChange={this.onProjectChange}
         />
         <div className="ant-btn-add">

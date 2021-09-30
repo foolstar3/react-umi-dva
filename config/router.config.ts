@@ -80,6 +80,10 @@ const routes = [
             path: '/reportManage/viewReport',
             component: '@/pages/reportManage',
           },
+          {
+            path: '/reportManage/reportDetail',
+            component: '@/pages/reportManage/reportDetail',
+          },
         ],
       },
     ],

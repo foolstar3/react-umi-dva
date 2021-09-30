@@ -36,6 +36,8 @@ const SearchBox = (props) => {
   const { projectOptions } = props;
   const [form] = Form.useForm();
   const onReset = () => {
+    const { onReset } = props;
+    onReset();
     form.resetFields();
   };
   const onSearch = () => {

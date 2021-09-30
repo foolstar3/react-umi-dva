@@ -8,9 +8,15 @@ export async function getReportList(data) {
 }
 
 export async function deleteReport(data) {
-  // console.log(data);
   return requestUap(`/report/${data}`, {
     method: 'DELETE',
     requestType: 'form',
+  });
+}
+
+export async function getReportDetail(data) {
+  return requestUap(`/check/`, {
+    method: 'GET',
+    params: data,
   });
 }

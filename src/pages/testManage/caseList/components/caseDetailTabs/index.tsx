@@ -77,7 +77,7 @@ const CaseDetailTabs = ({
           message.success(res.message);
           hideCaseDetail();
         } else {
-          message.error('保存失败!');
+          message.error(res.message);
         }
       },
     });
@@ -88,6 +88,16 @@ const CaseDetailTabs = ({
       payload: { debugResponse: {} },
     });
     setDebugResponseVisible(false);
+  };
+
+  const getEnvList = (payload) => {
+    dispatch({
+      type: 'envList/getEnvList',
+      payload,
+      callback: () => {
+        // const { envList } = props;
+      },
+    });
   };
 
   /**
@@ -120,9 +130,52 @@ const CaseDetailTabs = ({
    * 逻辑函数
    */
   const showDebugModal = () => {
+    const { project } = messageRef.current.getMessageData();
+    getEnvList({ page: 'None', project, is_valid: true });
     setModalVisible(true);
   };
 
+  const inputValidator = (payload) => {
+    let success = false;
+    if (
+      Object.keys(payload.request.teststeps[0].request).indexOf('method') == -1
+    ) {
+      message.info('请求方法method不能为空，请在request中填写');
+      return success;
+    }
+    if (
+      Object.keys(payload.request.teststeps[0].request).indexOf('url') === -1 ||
+      payload.request.teststeps[0].request.url === ''
+    ) {
+      message.info('请求方法url不能为空，请在request中填写');
+      return success;
+    }
+    if (
+      Object.keys(payload).indexOf('name') === -1 ||
+      payload.name === '' ||
+      payload.name == undefined
+    ) {
+      message.info('用例名称不能为空');
+      return success;
+    }
+    if (
+      Object.keys(payload).indexOf('project') === -1 ||
+      payload.project === '' ||
+      payload.project == undefined
+    ) {
+      message.info('项目名称不能为空');
+      return success;
+    }
+    if (
+      Object.keys(payload).indexOf('module') === -1 ||
+      payload.module === '' ||
+      payload.module == undefined
+    ) {
+      message.info('模块名称不能为空');
+      return success;
+    }
+    return (success = true);
+  };
   const onDebugOk = () => {
     // 验证是否已选择运行环境
     let base_url = '';
@@ -135,17 +188,8 @@ const CaseDetailTabs = ({
     }
     const payload = getPayload();
     // 验证是否存在未填的必需项
-    if (
-      Object.keys(payload.request.teststeps[0].request).indexOf('method') == -1
-    ) {
-      return message.info('请求方法method不能为空，请在request中填写');
-    }
-    if (
-      Object.keys(payload.request.teststeps[0].request).indexOf('url') === -1 ||
-      payload.request.teststeps[0].request.url === ''
-    ) {
-      return message.info('请求方法url不能为空，请在request中填写');
-    }
+    if (!inputValidator(payload)) return;
+    // 修改参数的数据格式
     payload.export = payload.request.export;
     payload.teststeps = payload.request.teststeps;
     payload.teststeps[0].setup_hooks.length
@@ -277,6 +321,7 @@ const CaseDetailTabs = ({
 
   const onSave = () => {
     const payload = getPayload();
+    if (!inputValidator(payload)) return;
     caseDetail.id == undefined
       ? createCase(payload)
       : updateCase({ id: caseDetail.id, payload });
@@ -309,7 +354,7 @@ const CaseDetailTabs = ({
       ...messageData,
       type: 1,
       request: {
-        export: [],
+        export: messageData.export,
         teststeps: [
           {
             name: messageData.name,
@@ -330,8 +375,10 @@ const CaseDetailTabs = ({
       delete newRequest.data;
       payload.request.teststeps[0].request = newRequest;
     }
+    delete payload.export;
     return payload;
   };
+
   const checkedChange = (val) => {
     setCheckedData(() => {
       const obj = {

@@ -1,4 +1,9 @@
-import { getReportList, deleteReport } from '@/services/report';
+import {
+  getReportList,
+  deleteReport,
+  getReportDetail,
+} from '@/services/report';
+import { parseResponse } from '@/utils/common';
 
 export default {
   namespace: 'report',
@@ -18,7 +23,6 @@ export default {
   effects: {
     *getReportList({ payload, callback }, { call, put }) {
       const res = yield call(getReportList, payload);
-      // console.log(res);
       yield put({
         type: 'reportList',
         payload: res,
@@ -27,8 +31,7 @@ export default {
         callback();
       }
     },
-    *deleteReport({ payload, callback }, { call, put }) {
-      // console.log(payload);
+    *deleteReport({ payload, callback }, { call }) {
       const res = yield call(deleteReport, payload);
       // yield put({
       //   type: 'delete',
@@ -36,6 +39,14 @@ export default {
       // })
       if (callback) {
         callback();
+      }
+    },
+    *getReportDetail({ payload, callback }, { call, put }) {
+      const { success, data } = parseResponse(
+        yield call(getReportDetail, payload),
+      );
+      if (success) {
+        callback(data);
       }
     },
   },
