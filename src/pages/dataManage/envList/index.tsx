@@ -184,6 +184,7 @@ class EnvList extends Component<any, any> {
       editorCode: '',
       total: 0,
       currentPage: 1,
+      searchWords: {},
     };
   }
   formRef = React.createRef();
@@ -206,6 +207,13 @@ class EnvList extends Component<any, any> {
     this.getEnvList({ page: 1, ...payload });
     this.setState({
       currentPage: 1,
+      searchWords: payload,
+    });
+  };
+
+  onReset = () => {
+    this.setState({
+      searchWords: {},
     });
   };
   /* ============table功能============== */
@@ -477,7 +485,7 @@ class EnvList extends Component<any, any> {
         this.setState({
           currentPage: page,
         });
-        this.getEnvList({ page });
+        this.getEnvList({ page, ...this.state.searchWords });
       },
       total: total,
       showTotal: () => `共 ${total} 条`,
@@ -490,7 +498,11 @@ class EnvList extends Component<any, any> {
       <>
         {!envInfoModalVisiable && (
           <Card bordered={false}>
-            <SearchBox projectOptions={projectList} onSearch={this.onSearch} />
+            <SearchBox
+              projectOptions={projectList}
+              onSearch={this.onSearch}
+              onReset={this.onReset}
+            />
             <div className="ant-btn-add">
               <Button
                 type="primary"
@@ -552,7 +564,14 @@ class EnvList extends Component<any, any> {
               label="项目名称"
               rules={[{ required: true, message: '请选择项目名称!' }]}
             >
-              <Select>
+              <Select
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
                 {projectList.length &&
                   projectList.map((item) => (
                     <Option key={item.id} value={item.id}>

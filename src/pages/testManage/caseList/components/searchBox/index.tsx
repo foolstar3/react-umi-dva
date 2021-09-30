@@ -20,6 +20,8 @@ const SearchBox = (props) => {
   const { projectOptions, moduleOptions } = props;
   const [form] = Form.useForm();
   const onReset = () => {
+    const { onReset } = props;
+    onReset();
     form.resetFields();
   };
   const onSearch = () => {
@@ -47,6 +49,7 @@ const SearchBox = (props) => {
     });
     delete payload.project_name;
     delete payload.module_name;
+    delete payload.case_name;
     onSearch(payload);
   };
 

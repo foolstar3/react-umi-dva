@@ -33,6 +33,7 @@
     "array-move": "^4.0.0",
     "codemirror": "^5.62.2",
     "echarts": "^5.1.2",
+    "echarts-for-react": "^3.0.1",
     "http-server": "^13.0.1",
     "react": "^16.13.0",
     "react-codemirror2": "^7.2.1",

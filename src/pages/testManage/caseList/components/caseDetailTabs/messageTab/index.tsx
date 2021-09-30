@@ -36,6 +36,7 @@ const MessageTab = (props) => {
           name: form.getFieldValue('name'),
           before,
           after,
+          export: form.getFieldValue('export'),
         };
       },
     };
@@ -50,7 +51,6 @@ const MessageTab = (props) => {
     callCase,
   } = props;
   const [form] = Form.useForm();
-  const [curBefore, setCurBefore] = useState(caseDetail.before);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [beforeTableData, setBeforeTableData] = useState([]);
   const [afterTableData, setAfterTableData] = useState([]);
@@ -100,8 +100,7 @@ const MessageTab = (props) => {
     });
     children.push(...caseList);
   }
-
-  const exportChildren = [];
+  const exportChildren = caseDetail.id ? caseDetail.request.export : [];
   const treeData = curModuleName
     ? [
         {
@@ -244,14 +243,21 @@ const MessageTab = (props) => {
       <div className={styles.content}>
         <div className={styles.left}>
           <Col span={24}>
-            <Form.Item label="用例名称" name="name">
+            <Form.Item
+              label="用例名称"
+              name="name"
+              rules={[{ required: true, message: '请输入用例名称' }]}
+            >
               <Input onChange={(e) => formChange(e.target.value, 'name')} />
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="项目名称" name="project_name">
+            <Form.Item
+              label="项目名称"
+              name="project_name"
+              rules={[{ required: true, message: '请选择项目名称' }]}
+            >
               <Select
-                allowClear
                 showSearch
                 optionFilterProp="children"
                 onChange={(val, opt) => onProjectNameChange(val, opt)}
@@ -275,9 +281,12 @@ const MessageTab = (props) => {
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="模块名称" name="module_name">
+            <Form.Item
+              label="模块名称"
+              name="module_name"
+              rules={[{ required: true, message: '请选择模块名称' }]}
+            >
               <Select
-                allowClear
                 showSearch
                 optionFilterProp="children"
                 onChange={(val, opt) =>
@@ -299,9 +308,17 @@ const MessageTab = (props) => {
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item label="export" name="export">
-              <Select mode="tags" tokenSeparators={[',']}>
-                {exportChildren}
+            <Form.Item
+              label="export"
+              name="export"
+              initialValue={exportChildren}
+            >
+              <Select
+                mode="tags"
+                tokenSeparators={[',']}
+                onChange={(val) => formChange(val, 'export')}
+              >
+                {/* {exportChildren} */}
               </Select>
             </Form.Item>
           </Col>

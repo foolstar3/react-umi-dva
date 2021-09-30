@@ -6,6 +6,14 @@ export const DateFormat = (date) => {
   }
 };
 
+export const DateStringToNumber = (date) => {
+  return date
+    .replace(/-/g, '')
+    .replace(/T/g, '')
+    .replace(/:/g, '')
+    .substring(0, 21);
+};
+
 export const DataType = (data) => {
   let type = Object.prototype.toString.call(data);
   if (type.substring(8, type.length - 1) == 'Number') {
