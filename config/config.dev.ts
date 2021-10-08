@@ -9,11 +9,11 @@ export default defineConfig({
   define: {
     // dev 环境变量
     'process.env.var': 'dev',
-    'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
+    'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
   },
   devServer: {
-    port: 9999,
-    host: '10.5.65.24',
+    port: 9001,
+    host: '10.6.209.209',
   },
   history: {
     type: 'hash',
