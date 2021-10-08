@@ -60,7 +60,7 @@ const routes = [
 const Breadcrumbs = ({ breadcrumbs }) => (
   <>
     <Breadcrumb className="breadcrumb" separator=">">
-      {breadcrumbs.map((breadcrumb: any) => {
+      {breadcrumbs.map((breadcrumb) => {
         if (breadcrumb.key === '/') {
           return <Breadcrumb.Item key="home"></Breadcrumb.Item>;
         }

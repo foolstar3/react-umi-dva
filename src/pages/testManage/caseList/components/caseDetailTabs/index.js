@@ -10,9 +10,9 @@ import VariablesTab from './variablesTab';
  */
 // import ParametersTab from './parametersTab';
 import ResponseTab from '../responseTab';
-import HooksTab from './hooksTab/index.jsx';
+import HooksTab from './hooksTab';
 import RequestTab from './requestTab';
-import ExtractTab from './extractTab/index.jsx';
+import ExtractTab from './extractTab';
 const { TabPane } = Tabs;
 const { Option } = Select;
 

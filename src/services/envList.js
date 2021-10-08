@@ -36,8 +36,6 @@ export async function updateEnv(data) {
   return requestUap(`/env/${data.id}/`, {
     method: 'PUT',
     data,
-    // 对于Headers里Content-Type=application/x-www-form-urlencoded
-    // umi-request设置requestType: 'form'即可
     requestType: 'form',
   });
 }

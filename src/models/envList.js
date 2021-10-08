@@ -24,11 +24,13 @@ export default {
   effects: {
     *getEnvList({ payload, callback }, { call, put }) {
       const res = yield call(getEnvList, payload);
-      yield put({
-        type: 'update',
-        payload: res.results ?? res,
-      });
-      if (callback) {
+      if (res.status && res.status !== 200) {
+        console.log(res);
+      } else {
+        yield put({
+          type: 'update',
+          payload: res.results ?? res,
+        });
         callback(res);
       }
     },

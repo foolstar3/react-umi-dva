@@ -11,7 +11,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 
 const { Content } = Layout;
 
-export default function IndexPage(props: any) {
+export default function IndexPage(props) {
   if (localStorage.getItem('qc_token') && localStorage.getItem('qc_user')) {
     return (
       <ConfigProvider locale={zhCN}>

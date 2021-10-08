@@ -13,29 +13,6 @@ const fontColors = {
   error: '#ED4014',
   skipped: '#2DB7F5',
 };
-const failTableColumns = [
-  {
-    title: '编号',
-    key: 'index',
-    render: ({ index }) => index,
-  },
-  {
-    title: '错误名',
-    dataIndex: 'name',
-  },
-  {
-    title: '用例数',
-    dataIndex: 'sum',
-  },
-  {
-    title: '错误用例占比',
-    dataIndex: 'rate',
-  },
-  {
-    title: '错误详情',
-    dataIndex: 'detail',
-  },
-];
 class ReportDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -47,6 +24,7 @@ class ReportDetail extends React.Component {
         },
         tooltip: {
           trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)',
         },
         legend: {
           orient: 'vertical',
@@ -69,9 +47,87 @@ class ReportDetail extends React.Component {
         ],
       },
       stat: [],
+      caseList: [],
     };
   }
 
+  pageLayout = [
+    {
+      title: '报告汇总',
+      renderContent: () => this.renderReportConclusion(),
+    },
+    {
+      title: '用例详细',
+      renderContent: () => this.renderCaseDetail(),
+    },
+  ];
+
+  caseListColumn = [
+    {
+      dataIndex: 'name',
+      title: '用例名称',
+      align: 'center',
+      render: (_, record) => (
+        <>
+          <div className={styles.caseTitle}>{record.name}</div>
+          <div className={styles.caseUrl}>base_url:{record.base_url}</div>
+        </>
+      ),
+    },
+    {
+      dataIndex: 'result',
+      align: 'center',
+      filters: [
+        {
+          text: 'Pass',
+          value: true,
+        },
+        {
+          text: 'Fail',
+          value: false,
+        },
+      ],
+      // specify the condition of filtering result
+      // here is that finding the name started with `value`
+      onFilter: (value, record) => record.success === value,
+      render: (_, record) =>
+        record.success ? (
+          <span className={styles.success}>Pass</span>
+        ) : (
+          <span className={styles.fail}>Fail</span>
+        ),
+    },
+  ];
+
+  caseDetailColumn = [
+    {
+      dataIndex: 'check',
+      title: 'check',
+      align: 'center',
+    },
+    {
+      dataIndex: 'comparator',
+      title: 'comparator',
+      align: 'center',
+    },
+    {
+      dataIndex: 'check_value',
+      title: 'check_value',
+      align: 'center',
+      render: (_, record) => `${record.check_value}(实际值)`,
+    },
+    {
+      dataIndex: 'expect',
+      title: 'expect',
+      align: 'center',
+      render: (_, record) => `${record.expect}(期望值)`,
+    },
+    {
+      dataIndex: 'check_result',
+      title: 'check_result',
+      align: 'center',
+    },
+  ];
   componentDidMount() {
     this.getReportDetail({ task_id: this.props.location.query.id });
   }
@@ -501,64 +557,9 @@ class ReportDetail extends React.Component {
           task_id: '1a9e80ae-fb70-427f-8ae0-dc619e0818ff',
         };
         const { result } = summary;
-        const { count, time, base_url } = result;
-        this.setState({
-          stat: [
-            {
-              name: '测试环境',
-              value: base_url,
-              fontColor: fontColors.default,
-            },
-            {
-              name: '用例总数',
-              value:
-                count.successes + count.failures + count.errors + count.skipped,
-              fontColor: fontColors.summary,
-            },
-            {
-              name: '用例成功',
-              value: count.successes,
-              fontColor: fontColors.success,
-            },
-            {
-              name: '用例失败',
-              value: count.failures,
-              fontColor: fontColors.failure,
-            },
-            {
-              name: '用例错误',
-              value: count.errors,
-              fontColor: fontColors.error,
-            },
-            {
-              name: '用例跳过',
-              value: count.skipped,
-              fontColor: fontColors.skipped,
-            },
-            {
-              name: '开始时间',
-              value: time.start_at_iso_format,
-              fontColor: fontColors.default,
-            },
-            {
-              name: '运行时长',
-              value: time.duration,
-              fontColor: fontColors.default,
-            },
-            {
-              name: '用例成功率',
-              value: parseFloat(
-                (count.successes * 100) /
-                  (count.successes +
-                    count.failures +
-                    count.errors +
-                    count.skipped),
-              ).toFixed(2),
-              fontColor: fontColors.default,
-            },
-          ],
-        });
+        const { count, time, base_url, name, success, step_datas } = result;
         this.setState(() => {
+          // 报告汇总图表数据
           const next = JSON.parse(JSON.stringify(this.state.chartOptions));
           next.series[0].data = [
             { value: count.errors, name: '错误' },
@@ -566,7 +567,78 @@ class ReportDetail extends React.Component {
             { value: count.skipped, name: '跳过' },
             { value: count.successes, name: '成功' },
           ];
-          return { chartOptions: next };
+          // 用例详情数据
+          const caseListDataSource = [
+            {
+              name,
+              success,
+              base_url,
+              step_datas,
+              key: name,
+              time,
+            },
+          ];
+          return {
+            chartOptions: next,
+            caseList: caseListDataSource,
+            stat: [
+              {
+                name: '测试环境',
+                value: base_url,
+                fontColor: fontColors.default,
+              },
+              {
+                name: '用例总数',
+                value:
+                  count.successes +
+                  count.failures +
+                  count.errors +
+                  count.skipped,
+                fontColor: fontColors.summary,
+              },
+              {
+                name: '用例成功',
+                value: count.successes,
+                fontColor: fontColors.success,
+              },
+              {
+                name: '用例失败',
+                value: count.failures,
+                fontColor: fontColors.failure,
+              },
+              {
+                name: '用例错误',
+                value: count.errors,
+                fontColor: fontColors.error,
+              },
+              {
+                name: '用例跳过',
+                value: count.skipped,
+                fontColor: fontColors.skipped,
+              },
+              {
+                name: '开始时间',
+                value: time.start_at_iso_format,
+                fontColor: fontColors.default,
+              },
+              {
+                name: '运行时长',
+                value: `${time.duration}s`,
+                fontColor: fontColors.default,
+              },
+              {
+                name: '用例成功率',
+                value: `${parseFloat(
+                  (count.successes * 100) /
+                    (count.successes +
+                      count.failures +
+                      count.errors +
+                      count.skipped),
+                ).toFixed(2)}%`,
+                fontColor: fontColors.default,
+              },
+            ],
+          };
         });
       },
     });
@@ -603,27 +675,165 @@ class ReportDetail extends React.Component {
   };
 
   renderCaseDetail = () => {
-    return <>用例详细</>;
+    const { caseList } = this.state;
+    if (!caseList.length) return;
+    const { step_datas } = caseList[0];
+    const renderDetail = step_datas && step_datas.length;
+    return (
+      <div className={styles.caseDetail}>
+        <Card className={styles.list}>
+          <Table
+            dataSource={caseList}
+            columns={this.caseListColumn}
+            onRow={(record) => ({
+              onClick: () => {
+                this.setState({
+                  caseDetail: record,
+                });
+              },
+            })}
+          />
+        </Card>
+        <Card className={styles.detail} title={this.renderTitle(caseList)}>
+          <Collapse>
+            {renderDetail &&
+              step_datas.map((item, index) => {
+                return (
+                  <Panel
+                    header={
+                      <>
+                        <span className={styles.left}>
+                          接口{index} : {item.name}
+                        </span>
+                        <span className={styles.right}>
+                          结果:{' '}
+                          {item.success ? (
+                            <span style={{ color: fontColors.success }}>
+                              success
+                            </span>
+                          ) : (
+                            <span style={{ color: fontColors.failure }}>
+                              failure
+                            </span>
+                          )}
+                        </span>
+                      </>
+                    }
+                    key={`${item.name}-${item.index}`}
+                  >
+                    {this.renderDetailPanel(item)}
+                  </Panel>
+                );
+              })}
+          </Collapse>
+        </Card>
+      </div>
+    );
   };
 
-  renderFailTable = () => {
-    return <Table bordered dataSource={[]} columns={failTableColumns} />;
+  renderDetailPanel = (detail) => {
+    if (!Object.keys(detail).length) return;
+    const { data } = detail;
+    const { req_resps, validators } = data;
+    const panelDetail = [
+      {
+        name: 'request',
+        content: req_resps[0].request,
+      },
+      {
+        name: 'response',
+        content: req_resps[0].response,
+      },
+      {
+        name: 'validators',
+        content: validators,
+      },
+    ];
+    return (
+      <Collapse>
+        {panelDetail.map((item) => {
+          console.log(item);
+          if (item.name === 'validators') {
+            const { validate_extractor } = item.content;
+            const tableData = validate_extractor.map((item) => {
+              item.key = `${item.check}-${item.comparator}-${item.check_value}-${item.check_result}`;
+              return item;
+            });
+            return (
+              <Panel header={item.name} key={item.name}>
+                <Table dataSource={tableData} columns={this.caseDetailColumn} />
+              </Panel>
+            );
+          }
+          const listData = [];
+          Object.keys(item.content).forEach((child) => {
+            const value =
+              typeof item.content[child] === 'object'
+                ? JSON.stringify(item.content[child])
+                : item.content[child];
+            const listItem = {
+              name: child,
+              value,
+            };
+            listData.push(listItem);
+          });
+          return (
+            <Panel header={item.name} key={item.name}>
+              <List
+                dataSource={listData}
+                className={styles.detailList}
+                renderItem={(item) => (
+                  <List.Item className={styles.listItem}>
+                    <div className={styles.title}>
+                      <span>{item.name}:</span>
+                    </div>
+                    <div className={styles.value}>
+                      <p>{item.value}</p>
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </Panel>
+          );
+        })}
+      </Collapse>
+    );
   };
-
-  pageLayout = [
-    {
-      title: '报告汇总',
-      renderContent: () => this.renderReportConclusion(),
-    },
-    {
-      title: '用例详细',
-      renderContent: () => this.renderCaseDetail(),
-    },
-    {
-      title: 'top 10 错误表',
-      renderContent: () => this.renderFailTable(),
-    },
-  ];
+  renderTitle = (caseList) => {
+    const { name, time } = caseList[0];
+    return (
+      <>
+        <div className={styles.title}>{name}</div>
+        <div className={styles.subtitle}>
+          <div>
+            <span>
+              成功接口: <span style={{ color: fontColors.success }}>0</span>
+            </span>
+            <span>
+              失败接口: <span style={{ color: fontColors.failure }}>0</span>
+            </span>
+            <span>
+              错误接口: <span style={{ color: fontColors.error }}>0</span>
+            </span>
+            <span>
+              跳过接口: <span style={{ color: fontColors.skipped }}>0</span>
+            </span>
+          </div>
+          <div>
+            <span>运行时长: {time.duration}s</span>
+            <span>
+              用例结果:{' '}
+              {caseList.success ? (
+                <span style={{ color: fontColors.success }}>Success</span>
+              ) : (
+                <span style={{ color: fontColors.failure }}>Fail</span>
+              )}
+            </span>
+          </div>
+        </div>
+      </>
+    );
+  };
 
   render() {
     return (

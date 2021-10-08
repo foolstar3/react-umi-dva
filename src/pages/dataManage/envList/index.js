@@ -33,7 +33,7 @@ const formItemLayout = {
   wrapperCol: { span: 20 },
 };
 
-class EnvList extends Component<any, any> {
+class EnvList extends Component {
   constructor(props) {
     super(props);
     this.state = {

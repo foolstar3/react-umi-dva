@@ -8,7 +8,6 @@ const ParametersTab = ({ onSwitchChange, parameters }) => {
   const [dataSource, setDataSource] = useState(() => {
     parameters.map((item, index) => {
       for (const [key, value] of Object.entries(item)) {
-        // console.log(`${key}: ${value}`);
         item.name = key;
         item.value = JSON.stringify(value);
       }
@@ -23,7 +22,7 @@ const ParametersTab = ({ onSwitchChange, parameters }) => {
     message.info('功能开发中');
   };
 
-  const tableColumns: any = [
+  const tableColumns = [
     {
       title: '编号',
       dataIndex: 'id',
