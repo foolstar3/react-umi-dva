@@ -9,6 +9,7 @@ import {
   Form,
   Input,
   message,
+  Select,
 } from 'antd';
 import {
   PlayCircleOutlined,
@@ -23,7 +24,22 @@ import CaseDetailTabs from './components/caseDetailTabs';
 import styles from './index.less';
 import tableColumns from './config';
 
-class CaseList extends Component<any, any> {
+const { Option } = Select;
+const runType = [
+  {
+    name: '同步',
+    value: 'sync',
+  },
+  {
+    name: '异步',
+    value: 'async',
+  },
+];
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
+};
+class CaseList extends Component {
   state = {
     selectedRowKeys: [],
     total: 0,
@@ -32,8 +48,11 @@ class CaseList extends Component<any, any> {
     isCopyModalVisible: false,
     currentPage: 1,
     searchWords: {},
+    isRunModalVisible: false,
+    curRunType: 'sync',
   };
-
+  runModal = 'single';
+  runForm = React.createRef();
   copyForm = React.createRef();
   componentDidMount() {
     this.getCaseList({ page: 1 });
@@ -79,12 +98,14 @@ class CaseList extends Component<any, any> {
   };
 
   getEnvList = (payload) => {
+    console.log(payload);
     const { dispatch } = this.props;
     dispatch({
       type: 'envList/getEnvList',
       payload,
       callback: () => {
-        // const { envList } = props;
+        const { envList } = this.props;
+        console.log(envList);
       },
     });
   };
@@ -147,8 +168,9 @@ class CaseList extends Component<any, any> {
   };
 
   onSearch = (payload) => {
-    this.setState({ currentPage: 1, searchWords: payload });
-    this.getCaseList({ page: 1, ...this.state.searchWords });
+    this.setState({ currentPage: 1, searchWords: payload }, () =>
+      this.getCaseList({ page: 1, ...this.state.searchWords }),
+    );
   };
 
   onReset = () => {
@@ -215,8 +237,50 @@ class CaseList extends Component<any, any> {
     );
   };
 
+  showRunModal = (record) => {
+    // this.runModal = record === '' ? 'multiple' : 'single';
+    this.runModal = 'single';
+    this.setState({
+      curRunType: 'sync',
+    });
+    if (record !== '') {
+      this.getEnvList({
+        page: 'None',
+        project: record.project,
+        is_valid: true,
+      });
+    } else {
+      const { selectedRowKeys } = this.state;
+      if (selectedRowKeys.length) {
+        // todo 发起请求获取所选用例可用的环境列表
+      } else {
+        return message.info('请选择需要运行的用例');
+      }
+    }
+    this.setState({
+      isRunModalVisible: true,
+    });
+  };
+
+  handleRunOk = () => {
+    console.log('handleRunOk');
+    this.setState({
+      isRunModalVisible: false,
+    });
+  };
+
+  cancelRun = () => {
+    this.setState({
+      isRunModalVisible: false,
+    });
+  };
+  runTypeChange = (val) => {
+    this.setState({
+      curRunType: val,
+    });
+  };
   renderCaseListTable = () => {
-    const { selectedRowKeys, total, searchWords } = this.state;
+    const { selectedRowKeys, total, searchWords, currentPage } = this.state;
     const { caseList, projectData, moduleData, tableLoading } = this.props;
 
     const actionColumn = {
@@ -227,23 +291,16 @@ class CaseList extends Component<any, any> {
       align: 'center',
       render: (text, record) => (
         <div key={record.id} className={styles.actionColumn}>
-          <Popconfirm
-            okText="Yes"
-            cancelText="No"
-            title="确定运行?"
-            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-            // onConfirm={() => this.handleDeleteOk(record)}
+          <Button
+            type="primary"
+            title="运行"
+            size="small"
+            shape="round"
+            className={styles.buttonRun}
+            onClick={() => this.showRunModal(record)}
           >
-            <Button
-              type="primary"
-              title="运行"
-              size="small"
-              shape="round"
-              className={styles.buttonRun}
-            >
-              <PlayCircleOutlined />
-            </Button>
-          </Popconfirm>
+            <PlayCircleOutlined />
+          </Button>
           <Button
             type="primary"
             title="编辑"
@@ -282,7 +339,7 @@ class CaseList extends Component<any, any> {
         </div>
       ),
     };
-    const tableConfig: any = [...tableColumns, actionColumn];
+    const tableConfig = [...tableColumns, actionColumn];
     const rowSelection = {
       selectedRowKeys,
       onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
@@ -290,9 +347,15 @@ class CaseList extends Component<any, any> {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
-      onChange: (page) => this.getCaseList({ page, ...searchWords }),
+      onChange: (page) => {
+        this.getCaseList({ page, ...searchWords });
+        this.setState({
+          currentPage: page,
+        });
+      },
       total: total,
       pageSize: 10,
+      current: currentPage,
       showTotal: () => `共 ${total} 条`,
     };
 
@@ -326,6 +389,7 @@ class CaseList extends Component<any, any> {
             icon={<PlayCircleOutlined />}
             size="small"
             shape="round"
+            onClick={() => this.showRunModal('')}
           >
             运行
           </Button>
@@ -343,7 +407,63 @@ class CaseList extends Component<any, any> {
       </>
     );
   };
+  renderRunModal = () => {
+    const { isRunModalVisible, curRunType } = this.state;
+    const { envList } = this.props;
+    return (
+      <Modal
+        visible={isRunModalVisible}
+        title="选择运行环境"
+        onOk={this.handleRunOk}
+        onCancel={this.cancelRun}
+        okButtonProps={{ shape: 'round' }}
+        cancelButtonProps={{ shape: 'round' }}
+      >
+        <Form ref={this.runForm} {...formItemLayout}>
+          <Form.Item
+            name="env_name"
+            label="运行环境"
+            rules={[{ required: true, message: '请选择运行环境!' }]}
+          >
+            <Select>
+              {envList.map((item) => (
+                <Option value={item.id} key={item.id}>
+                  {item.env_name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          {this.runModal === 'multiple' && (
+            <Form.Item
+              name="run_type"
+              label="运行方式"
+              rules={[{ required: true, message: '请选择运行方式!' }]}
+              initialValue={'sync'}
+            >
+              <Select onChange={(val) => this.runTypeChange(val)}>
+                {runType.map((item) => (
+                  <Option value={item.value} key={item.value}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
+          {curRunType === 'async' && (
+            <>
+              <Form.Item name="report_name" label="报告名称">
+                <Input placeholder="选填，默认带时间后缀" />
+              </Form.Item>
 
+              <Form.Item name="report_desc" label="报告描述">
+                <Input placeholder="选填" />
+              </Form.Item>
+            </>
+          )}
+        </Form>
+      </Modal>
+    );
+  };
   renderCopyModal = () => {
     const { currentCase, isCopyModalVisible } = this.state;
     return (
@@ -368,7 +488,12 @@ class CaseList extends Component<any, any> {
     );
   };
   render() {
-    const { showDetailTabs, currentCase, isCopyModalVisible } = this.state;
+    const {
+      showDetailTabs,
+      currentCase,
+      isCopyModalVisible,
+      isRunModalVisible,
+    } = this.state;
     const { projectData, moduleData, caseList, envList, funcs } = this.props;
 
     return (
@@ -390,6 +515,7 @@ class CaseList extends Component<any, any> {
             this.renderCaseListTable()
           )}
           {isCopyModalVisible && this.renderCopyModal()}
+          {isRunModalVisible && this.renderRunModal()}
         </Card>
       </>
     );

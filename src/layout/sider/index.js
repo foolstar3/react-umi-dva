@@ -3,9 +3,6 @@ import { Menu } from 'antd';
 import { Link } from 'umi';
 import * as Icon from '@ant-design/icons';
 import './index.less';
-interface Icon {
-  text: 'text';
-}
 
 const { SubMenu } = Menu;
 
@@ -96,8 +93,8 @@ const navMenu = {
   ],
 };
 
-class MySider extends Component<any, any> {
-  constructor(props: any) {
+class MySider extends Component {
+  constructor(props) {
     super(props);
     this.menuState = {
       selectedKeys: localStorage.getItem('selectedKeys'),
@@ -119,8 +116,8 @@ class MySider extends Component<any, any> {
   };
 
   render() {
-    const openKeys: any = [localStorage.getItem('openKeys')];
-    const selectedKeys: any = localStorage.getItem('selectedKeys');
+    const openKeys = [localStorage.getItem('openKeys')];
+    const selectedKeys = localStorage.getItem('selectedKeys');
     return (
       <div
         style={{ width: 250, height: 870 }}

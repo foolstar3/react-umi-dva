@@ -15,7 +15,7 @@ const DragHandle = SortableHandle(() => (
 const SortableItem = SortableElement((props) => <tr {...props} />);
 const CusSortableContainer = SortableContainer((props) => <tbody {...props} />);
 
-class SortableTable extends React.Component<any, any> {
+class SortableTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,13 +59,16 @@ class SortableTable extends React.Component<any, any> {
   }
   onSortEnd = ({ oldIndex, newIndex }) => {
     const { dataSource } = this.state;
+    const { onSortEnd } = this.props;
     if (oldIndex !== newIndex) {
+      dataSource[oldIndex].index = newIndex + 1;
+      dataSource[newIndex].index = oldIndex + 1;
       const newData = arrayMoveImmutable(
         [].concat(dataSource),
         oldIndex,
         newIndex,
       ).filter((el) => !!el);
-      this.setState({ dataSource: newData });
+      onSortEnd(newData);
     }
   };
 

@@ -9,12 +9,11 @@ import config from './config';
 import { connect } from 'dva';
 import styles from './index.less';
 
-const myconnect: Function = connect;
-@myconnect(({ report }) => ({
+@connect(({ report }) => ({
   reportList: report.reportList,
 }))
-class ViewReport extends Component<any, any> {
-  constructor(props: any) {
+class ViewReport extends Component {
+  constructor(props) {
     super(props);
     this.state = {
       currentReport: {},
@@ -30,7 +29,7 @@ class ViewReport extends Component<any, any> {
   /**
    * 请求后端接口函数
    */
-  getReportList = (payload: any) => {
+  getReportList = (payload) => {
     this.setState({
       tableLoading: true,
     });
@@ -51,7 +50,7 @@ class ViewReport extends Component<any, any> {
     });
   };
 
-  deleteReport = (payload: any) => {
+  deleteReport = (payload) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'report/deleteReport',
@@ -70,7 +69,7 @@ class ViewReport extends Component<any, any> {
    * 删除功能
    */
 
-  handleDeleteOk = (record: any) => {
+  handleDeleteOk = (record) => {
     this.deleteReport(record.id);
     this.getReportList({ page: 1 });
   };
@@ -123,7 +122,7 @@ class ViewReport extends Component<any, any> {
         </div>
       ),
     };
-    const columnsConfig: any = [...config, actionConfig];
+    const columnsConfig = [...config, actionConfig];
     reportList.results?.map((item) => {
       item.key = item.id;
     });

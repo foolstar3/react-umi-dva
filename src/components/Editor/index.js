@@ -25,7 +25,7 @@ import 'codemirror/addon/edit/closebrackets';
 import styles from './index.less';
 // 参考https://blog.csdn.net/JLU_Lei/article/details/80259697
 
-export default class Editor extends Component<any, any> {
+export default class Editor extends Component {
   constructor(props) {
     super(props);
   }
@@ -35,7 +35,7 @@ export default class Editor extends Component<any, any> {
    *
    */
   // 输入变化时获取编辑器中的code,向debugtalk这个父组件传值，父组件接收后，点击提交按钮，进行dispatch。LSQ编写
-  getEditorCode(contentValue: any) {
+  getEditorCode(contentValue) {
     this.props.getEditorContent(contentValue);
   }
 

@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Form, Table, Select, Input, Button, AutoComplete } from 'antd';
+import {
+  Form,
+  Table,
+  Select,
+  Input,
+  Button,
+  AutoComplete,
+  message,
+} from 'antd';
 import styles from './index.less';
 import { comparators } from '@/constant/caseList';
 const { Option } = Select;
@@ -144,7 +152,7 @@ const EditableTable = ({
         : '';
       setEditingKey(-1);
     } catch (errInfo) {
-      console.log('校验失败:', errInfo);
+      message.error(`校验失败:${errInfo}`);
     }
   };
 

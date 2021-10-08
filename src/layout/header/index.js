@@ -7,8 +7,8 @@ import { DownOutlined } from '@ant-design/icons';
 import { Modal, Layout, Dropdown, Menu, message } from 'antd';
 const { Header } = Layout;
 
-class MyHeader extends Component<any, any> {
-  constructor(props: any) {
+class MyHeader extends Component {
+  constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);
     this.handleCancel = this.handleCancel.bind(this);

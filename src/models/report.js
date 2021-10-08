@@ -33,10 +33,6 @@ export default {
     },
     *deleteReport({ payload, callback }, { call }) {
       const res = yield call(deleteReport, payload);
-      // yield put({
-      //   type: 'delete',
-      //   payload: res,
-      // })
       if (callback) {
         callback();
       }

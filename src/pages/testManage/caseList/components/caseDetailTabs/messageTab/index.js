@@ -152,7 +152,7 @@ const MessageTab = (props) => {
           data.push({
             id: item.id,
             name: item.name,
-            key: item.name,
+            key: `${item.name}${index}`,
             index,
           });
           index++;
@@ -176,7 +176,7 @@ const MessageTab = (props) => {
           data.push({
             id: item.id,
             name: item.name,
-            key: item.name,
+            key: `${item.name}${index}`,
             index,
           });
           index++;
@@ -201,6 +201,13 @@ const MessageTab = (props) => {
       });
     }
   };
+  const onSortEnd = (record, table) => {
+    if (table === 'before') {
+      setBeforeTableData(record);
+    } else if (table === 'after') {
+      setAfterTableData(record);
+    }
+  };
   const renderBeforeTable = () => {
     return (
       <div
@@ -212,6 +219,7 @@ const MessageTab = (props) => {
         <DragableTable
           tableData={beforeTableData}
           deleteCall={(record) => deleteCall(record, 'before')}
+          onSortEnd={(record) => onSortEnd(record, 'before')}
         />
       </div>
     );
@@ -227,6 +235,7 @@ const MessageTab = (props) => {
         <DragableTable
           tableData={afterTableData}
           deleteCall={(record) => deleteCall(record, 'after')}
+          onSortEnd={(record) => onSortEnd(record, 'after')}
         />
       </div>
     );

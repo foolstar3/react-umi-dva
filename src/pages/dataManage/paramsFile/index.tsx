@@ -234,7 +234,6 @@ class ParamsFile extends Component<any, any> {
 
   updateParamsFileCode = (payload) => {
     const { dispatch } = this.props;
-    console.log(payload, dispatch);
     dispatch({
       type: 'paramsFile/updateParamsFileCode',
       payload,

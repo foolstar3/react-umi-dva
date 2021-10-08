@@ -5,6 +5,7 @@
     }
   }
 }
+
 .reportSummary {
   display: flex;
   .chart {
@@ -12,14 +13,14 @@
     margin-right: 10px;
     transition: box-shadow 0.2s ease;
     &:hover {
-      box-shadow: 5px 5px 5px 5px rgb(124, 109, 109, 0.5);
+      box-shadow: 5px 5px 5px 5px #f5eaea;
     }
   }
   .stat {
     flex: 1;
     transition: box-shadow 0.2s ease;
     &:hover {
-      box-shadow: 5px 5px 5px 5px rgb(124, 109, 109, 0.5);
+      box-shadow: 5px 5px 5px 5px #f5eaea;
     }
     :global {
       .ant-list-item {
@@ -31,6 +32,66 @@
     }
     .value {
       flex: 7;
+    }
+  }
+}
+
+.caseDetail {
+  display: flex;
+  .list {
+    flex: 3;
+    margin-right: 10px;
+    .caseTitle {
+      font-weight: bold;
+      font-size: 20px;
+      text-align: left;
+    }
+    .caseUrl {
+      font-size: 12px;
+    }
+  }
+  .detail {
+    flex: 7;
+    min-width: 1050px;
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .subtitle {
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      span {
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
+    .left {
+      margin-left: 5px;
+    }
+    .right {
+      float: right;
+    }
+    .detailList {
+      .title {
+        font-size: 14px;
+        font-weight: normal;
+      }
+      .listItem {
+        display: flex;
+        justify-content: space-between;
+      }
+      .value {
+        p {
+          max-width: 880px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 0;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
     }
   }
 }
