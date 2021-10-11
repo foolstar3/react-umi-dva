@@ -4,35 +4,42 @@ const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
 
-class AddModal extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class AddModal extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       tempAddValue: '',
     };
   }
 
-  formRef = React.createRef<FormInstance>();
+  formRef = React.createRef();
 
   handleSubmit = () => {
     const addGlobalVar = this.state.tempAddValue;
-    this.props.dispatch({
-      type: 'globalVarList/addGlobalVarList',
-      payload: {
-        ...addGlobalVar,
-      },
-      callback: (res) => {
-        this.props.handleTotalNumber();
-        message.success(res.message);
-        this.props.childrenPageChange();
-      },
-    });
-    this.props.showAddModal(false);
-    this.onReset();
+    if (
+      addGlobalVar.project &&
+      addGlobalVar.var_name &&
+      addGlobalVar.var_value
+    ) {
+      this.props.dispatch({
+        type: 'globalVarList/addGlobalVarList',
+        payload: {
+          ...addGlobalVar,
+        },
+        callback: (res) => {
+          this.props.handleTotalNumber();
+          message.success(res.message);
+          this.props.childrenPageChange();
+        },
+      });
+      this.props.showAddModal(false);
+      this.onReset();
+    } else {
+      message.warn('请输入必填字段！');
+    }
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
-    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
@@ -44,9 +51,10 @@ class AddModal extends React.Component<any, any> {
   };
 
   onReset = () => {
-    this.formRef.current!.resetFields();
+    this.formRef.current == null
+      ? this.formRef.current.resetFields()
+      : this.formRef.current.resetFields();
   };
-
   render() {
     const addVisible = this.props?.addVisible;
     const projectList = this.props?.projectList?.projectList;

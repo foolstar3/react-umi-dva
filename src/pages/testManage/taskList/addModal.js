@@ -12,10 +12,10 @@ import {
 import { connect } from 'umi';
 import TreeNode_Add from './treeNode_add';
 import './index.less';
-import Message from '@/pages/examples/message';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
 const { Option } = Select;
-class AddModal extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class AddModal extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       tempAddValue: '',
@@ -34,30 +34,31 @@ class AddModal extends React.Component<any, any> {
     };
   }
 
-  formRef = React.createRef<FormInstance>();
+  formRef = React.createRef();
 
   UNSAFE_componentWillMount() {
-    this.getEnvList();
+    this.getEnvList({ page: 'None' });
     this.getCaseList({ page: 'None' });
   }
-  getEnvList = () => {
+  getEnvList = (payload) => {
     this.props.dispatch({
       type: 'envList/getEnvList',
-      payload: {
-        page: 'None',
+      payload,
+      callback: (res) => {
+        // 必须添加
       },
     });
   };
-  getModuleList = (payload: any) => {
+  getModuleList = (payload) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload,
-      callback: (res, rescount) => {
+      callback: (res) => {
         this.getTreeNode(res);
       },
     });
   };
-  getCaseList = (payload: any) => {
+  getCaseList = (payload) => {
     this.props.dispatch({
       type: 'testCase/getCaseList',
       payload,
@@ -69,7 +70,7 @@ class AddModal extends React.Component<any, any> {
     });
   };
 
-  getTreeNode = (moduleListChange: any) => {
+  getTreeNode = (moduleListChange) => {
     const moduleList = moduleListChange;
     const treeData_moduleList = [];
     moduleList &&
@@ -127,10 +128,7 @@ class AddModal extends React.Component<any, any> {
         month_of_year: this.state.Month == null ? 1 : this.state.Month,
       },
     };
-
-    addTask.name &&
-      addTask.env &&
-      addTask.project &&
+    if (addTask.name && addTask.env && addTask.project) {
       this.props.dispatch({
         type: 'taskList/addTaskList',
         payload: {
@@ -141,23 +139,29 @@ class AddModal extends React.Component<any, any> {
           message.success(res.message);
         },
       });
-    this.props.showAddModal(false);
+      this.props.showAddModal(false);
+      this.setState({
+        caseNumber: 0,
+        treeData: [],
+        checked: false,
+      });
+      this.onReset();
+    } else {
+      message.warn('请输入必填字段！');
+    }
+
     this.setState({
-      caseNumber: 0,
-      treeData: [],
-      checked: false,
+      treeData_moduleList: [],
     });
-    this.onReset();
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
-    console.log('ValueChange', ValueChange);
     this.setState({
       tempAddValue: ValueChange,
     });
   };
 
-  handleProjectChange = (project: any) => {
+  handleProjectChange = (project) => {
     const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (project && projectList[i].project_name === project) {
@@ -175,12 +179,12 @@ class AddModal extends React.Component<any, any> {
     this.onReset();
     this.setState({
       caseNumber: 0,
-      treeData: [],
+      treeData_moduleList: [],
       checked: false,
     });
   };
 
-  caseNumber = (caseArray: any, checkedNumber: any) => {
+  caseNumber = (caseArray, checkedNumber) => {
     this.setState({
       caseNumber: checkedNumber,
       caseArray: caseArray,
@@ -188,36 +192,38 @@ class AddModal extends React.Component<any, any> {
   };
 
   onReset = () => {
-    this.formRef.current!.resetFields();
+    this.formRef.current == null
+      ? this.formRef.current.resetFields()
+      : this.formRef.current.resetFields();
   };
   onSwitchChange = (checked) => {
     this.setState({
       checked: checked,
     });
   };
-  handlecrontab_M = (number: any) => {
+  handlecrontab_M = (number) => {
     this.setState({
-      Minutes: number,
+      Minutes: number.target.value,
     });
   };
-  handlecrontab_H = (number: any) => {
+  handlecrontab_H = (number) => {
     this.setState({
-      Hours: number,
+      Hours: number.target.value,
     });
   };
-  handlecrontab_DM = (number: any) => {
+  handlecrontab_DM = (number) => {
     this.setState({
-      Day_of_month: number,
+      Day_of_month: number.target.value,
     });
   };
-  handlecrontab_Mon = (number: any) => {
+  handlecrontab_Mon = (number) => {
     this.setState({
-      Month: number,
+      Month: number.target.value,
     });
   };
-  handlecrontab_DW = (number: any) => {
+  handlecrontab_DW = (number) => {
     this.setState({
-      Day_of_week: number,
+      Day_of_week: number.target.value,
     });
   };
 
@@ -238,11 +244,12 @@ class AddModal extends React.Component<any, any> {
         okText="确认"
         okButtonProps={{ shape: 'round' }}
         cancelButtonProps={{ shape: 'round' }}
+        width={1200}
       >
         <Form
           name="basic_taskList"
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 16 }}
+          labelCol={{ span: 2 }}
+          wrapperCol={{ span: 25 }}
           initialValues={{ remember: false }}
           onValuesChange={this.handleAddValueChange}
           ref={this.formRef}
@@ -257,7 +264,7 @@ class AddModal extends React.Component<any, any> {
           <Form.Item label="简要描述" name="description">
             <Input />
           </Form.Item>
-          <Form.Item label="状态" name="enabled" valuePropName="checked">
+          <Form.Item label="定时状态" name="enabled" valuePropName="checked">
             <Switch
               checkedChildren="启用"
               unCheckedChildren="禁用"
@@ -269,64 +276,45 @@ class AddModal extends React.Component<any, any> {
           </Form.Item>
           {checked && (
             <Form.Item
-              label="定时计划"
+              label="定时状态"
               name="crontab"
-              rules={[{ required: true }]}
               id="basic_taskList_crontab"
             >
-              <InputNumber
-                min={0}
-                max={59}
-                defaultValue={1}
-                bordered
-                onChange={(num) => this.handlecrontab_M(num)}
-                style={{ width: '100px' }}
-                formatter={(value) => `${value} M`}
-                parser={(value) => value?.replace(' M', '')}
+              <Input
+                style={{ width: 211 }}
+                addonAfter="m"
+                onChange={(e) => {
+                  this.handlecrontab_M(e);
+                }}
               />
-              <InputNumber
-                min={0}
-                max={23}
-                defaultValue={1}
-                bordered
-                onChange={(num) => this.handlecrontab_H(num)}
-                style={{ width: '100px' }}
-                formatter={(value) => `${value} H`}
-                parser={(value) => value?.replace(' H', '')}
+              <Input
+                style={{ width: 211 }}
+                addonAfter="h"
+                onChange={(e) => {
+                  this.handlecrontab_H(e);
+                }}
               />
-              <InputNumber
-                min={1}
-                max={31}
-                defaultValue={1}
-                bordered
-                onChange={(num) => this.handlecrontab_DM(num)}
-                style={{ width: '100px' }}
-                formatter={(value) => `${value} dM`}
-                parser={(value) => value?.replace(' dM', '')}
+              <Input
+                style={{ width: 211 }}
+                addonAfter="dM"
+                onChange={(e) => {
+                  this.handlecrontab_DM(e);
+                }}
               />
-              <InputNumber
-                min={1}
-                max={12}
-                defaultValue={1}
-                bordered
-                onChange={(num) => this.handlecrontab_Mon(num)}
-                style={{ width: '100px' }}
-                formatter={(value) => `${value} MY`}
-                parser={(value) => value?.replace(' MY', '')}
+              <Input
+                style={{ width: 211 }}
+                addonAfter="MY"
+                onChange={(e) => {
+                  this.handlecrontab_Mon(e);
+                }}
               />
-              <InputNumber
-                min={0}
-                max={6}
-                defaultValue={1}
-                bordered
-                onChange={(num) => this.handlecrontab_DW(num)}
-                style={{ width: '100px' }}
-                formatter={(value) => `${value} d`}
-                parser={(value) => value?.replace(' d', '')}
+              <Input
+                style={{ width: 211 }}
+                addonAfter="d"
+                onChange={(e) => {
+                  this.handlecrontab_DW(e);
+                }}
               />
-              {/* <Popover content={content}>
-                {<QuestionCircleOutlined style={{color:'orange'}}/>}
-              </Popover> */}
             </Form.Item>
           )}
           <Form.Item
@@ -343,7 +331,6 @@ class AddModal extends React.Component<any, any> {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
-                style={{ width: 314 }}
               >
                 {envList &&
                   Array.isArray(envList) &&
@@ -365,7 +352,6 @@ class AddModal extends React.Component<any, any> {
           >
             {
               <Select
-                style={{ width: 314 }}
                 showSearch
                 allowClear
                 optionFilterProp="children"
@@ -400,11 +386,7 @@ class AddModal extends React.Component<any, any> {
             />
           </Form.Item>
 
-          <Form.Item
-            label="邮件列表"
-            name="emailList"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="邮件列表" name="emailList">
             <Select
               mode="tags"
               placeholder="请输入邮箱"

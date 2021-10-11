@@ -4,30 +4,37 @@ const { TextArea } = Input;
 const { Option } = Select;
 import { connect } from 'umi';
 
-class EditModal extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class EditModal extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       tempEditValue: '',
     };
   }
 
-  editSubmit = (value: any) => {
+  editSubmit = (value) => {
     const editGlobalVar = this.state.tempEditValue;
-    console.log('editGlobalVar', editGlobalVar);
     const EditId = this.props.tempValue.id;
-    this.props.dispatch({
-      type: 'globalVarList/editGlobalVarList',
-      payload: {
-        ...editGlobalVar,
-        id: EditId,
-      },
-      callback: (res) => {
-        this.props.childrenPageChange();
-        message.success(res.message);
-      },
-    });
-    this.props.showEditModal(false);
+    if (
+      editGlobalVar.project &&
+      editGlobalVar.var_name &&
+      editGlobalVar.var_value
+    ) {
+      this.props.dispatch({
+        type: 'globalVarList/editGlobalVarList',
+        payload: {
+          ...editGlobalVar,
+          id: EditId,
+        },
+        callback: (res) => {
+          this.props.childrenPageChange();
+          message.success(res.message);
+        },
+      });
+      this.props.showEditModal(false);
+    } else {
+      message.warn('请输入必填字段！');
+    }
   };
 
   editCancel = () => {
@@ -52,7 +59,6 @@ class EditModal extends React.Component<any, any> {
   render() {
     const { editVisible, tempValue } = this.props;
     const projectList = this.props?.projectList?.projectList;
-    console.log('projectList', projectList);
     return (
       <div>
         {editVisible && (

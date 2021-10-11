@@ -24,8 +24,8 @@ import '/src/styles/global.less';
 import SearchProject from './search';
 import { DateFormat } from '@/utils/common';
 
-class ProjectList extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class ProjectList extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       addVisible: false,
@@ -43,7 +43,7 @@ class ProjectList extends React.Component<any, any> {
     };
   }
 
-  formRef = React.createRef<FormInstance>();
+  formRef = React.createRef();
 
   UNSAFE_componentWillMount() {
     this.props.dispatch({
@@ -72,7 +72,7 @@ class ProjectList extends React.Component<any, any> {
       },
     });
   };
-  onPageChange = (page: any) => {
+  onPageChange = (page) => {
     const payload = {
       page: page,
       project_name: this.state.project_name,
@@ -109,7 +109,9 @@ class ProjectList extends React.Component<any, any> {
     });
   };
   onReset() {
-    this.formRef.current!.resetFields();
+    this.formRef.current == null
+      ? this.formRef.current.resetFields()
+      : this.formRef.current.resetFields();
   }
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
@@ -127,26 +129,29 @@ class ProjectList extends React.Component<any, any> {
   handleSubmit = () => {
     const addProject = this.state.tempAddValue;
     const total = this.state.total;
-    this.setState({
-      addVisible: false,
-    });
-    this.props.dispatch({
-      type: 'projectList/addProjectList',
-      payload: {
-        ...addProject,
-      },
-      callback: (res) => {
-        if (res.id !== undefined) {
+
+    if (addProject.project_name && addProject.leader) {
+      this.props.dispatch({
+        type: 'projectList/addProjectList',
+        payload: {
+          ...addProject,
+        },
+        callback: (res) => {
           this.setState({
             total: total + 1,
             currentPage: 1,
           });
-        }
-        message.success(res.message);
-        this.getProjectList({ page: 1 });
-      },
-    });
-    this.onReset();
+          message.success(res.message);
+          this.getProjectList({ page: 1 });
+        },
+      });
+      this.setState({
+        addVisible: false,
+      });
+      this.onReset();
+    } else {
+      message.warn('请输入必填字段！');
+    }
   };
 
   showEditModal = (_, record) => {
@@ -174,25 +179,29 @@ class ProjectList extends React.Component<any, any> {
     });
   };
 
-  editSubmit = (value: any) => {
+  editSubmit = (value) => {
     const { tempEditValue, currentValue } = this.state;
     const payload = { ...tempEditValue, id: currentValue.id };
-    this.setState({
-      editVisible: false,
-    });
-    this.props.dispatch({
-      type: 'projectList/editProjectList',
-      payload,
-      callback: () => {
-        this.getProjectList({ page: 1 });
-        this.setState({
-          currentPage: 1,
-        });
-      },
-    });
+    if (tempEditValue.project_name && tempEditValue.leader) {
+      this.props.dispatch({
+        type: 'projectList/editProjectList',
+        payload,
+        callback: () => {
+          this.getProjectList({ page: 1 });
+          this.setState({
+            currentPage: 1,
+          });
+        },
+      });
+      this.setState({
+        editVisible: false,
+      });
+    } else {
+      message.warn('请输入必填字段！');
+    }
   };
 
-  handleDelete = (record: any) => {
+  handleDelete = (record) => {
     this.props.dispatch({
       type: 'projectList/deleteProjectList',
       payload: {
@@ -209,6 +218,9 @@ class ProjectList extends React.Component<any, any> {
 
   render() {
     const { projectList } = this.props?.projectList || [];
+    projectList.map((projectItem) => {
+      projectItem.key = projectItem.id;
+    });
     const { leaderList, currentPage } = this.state;
     const { addVisible, editVisible, currentValue, tableLoading, total } =
       this.state;
@@ -224,7 +236,7 @@ class ProjectList extends React.Component<any, any> {
       showTotal: () => `共${total}条`,
     };
 
-    const columns: any = [
+    const columns = [
       {
         title: '编号',
         dataIndex: 'id',
@@ -277,7 +289,7 @@ class ProjectList extends React.Component<any, any> {
         key: 'relateAction',
         align: 'center',
         width: '100px',
-        render: (text, record: any) => {
+        render: (text, record) => {
           return (
             <div className="action_button">
               <Button

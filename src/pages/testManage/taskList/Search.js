@@ -16,7 +16,7 @@ const { Panel } = Collapse;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const SearchModel = (props: any) => {
+const SearchModel = (props) => {
   const [form] = Form.useForm();
   const projectList = props?.projectList?.projectList;
 
@@ -25,7 +25,7 @@ const SearchModel = (props: any) => {
     props.onResetPage();
   };
 
-  const handleSearch = (value: any) => {
+  const handleSearch = (value) => {
     for (let i = 0; i < projectList.length; i++) {
       if (value.project && value.project == projectList[i].project_name) {
         value.project = projectList[i].id;

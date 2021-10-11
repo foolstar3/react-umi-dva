@@ -30,3 +30,11 @@ export async function updateTaskList(data) {
     requestType: 'json',
   });
 }
+
+export async function runTask(data) {
+  return requestUap(`/run-periodictask/`, {
+    method: 'POST',
+    data,
+    requestType: 'form',
+  });
+}
