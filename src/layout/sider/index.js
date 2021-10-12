@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Menu } from 'antd';
-import { Link } from 'umi';
+import { Link, history } from 'umi';
 import * as Icon from '@ant-design/icons';
 import './index.less';
 
@@ -106,6 +106,13 @@ class MySider extends Component {
     window.addEventListener('beforeunload', () => {
       localStorage.setItem('selectedKeys', this.menuState.selectedKeys);
       localStorage.setItem('openKeys', this.menuState.openKeys);
+    });
+    history.listen((location) => {
+      if (location.pathname === '/') {
+        this.menuState = {
+          selectedKeys: '',
+        };
+      }
     });
   }
   setMenuItem = (item) => {

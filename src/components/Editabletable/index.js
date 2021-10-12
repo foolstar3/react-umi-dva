@@ -52,7 +52,7 @@ const EditableCell = ({
       return (
         <Select>
           {comparators.map((item) => (
-            <Option key={item} value={item}>
+            <Option key={item} value={item.slice(0, item.indexOf(':'))}>
               {item}
             </Option>
           ))}
@@ -152,7 +152,6 @@ const EditableTable = ({
         : '';
       setEditingKey(-1);
     } catch (errInfo) {
-      console.log(errInfo);
       message.error(`校验失败:${errInfo.errorFields[0].errors[0]}`);
     }
   };

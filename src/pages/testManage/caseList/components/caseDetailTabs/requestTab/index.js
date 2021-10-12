@@ -154,9 +154,11 @@ const RequestTab = (props, ref) => {
   });
   // 子组件的jsonCode
   const [initJsonCode, setInitJsonCode] = useState(
-    request.json ? request.json : '',
+    request.json ? JSON.stringify(request.json) : '',
   );
-  const [jsonCode, setJsonCode] = useState(request.json ? request.json : '');
+  const [jsonCode, setJsonCode] = useState(
+    request.json ? JSON.stringify(request.json) : '',
+  );
 
   const lineAdd = (table) => {
     if (table === 'headers') {
