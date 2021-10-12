@@ -182,12 +182,11 @@ class CaseList extends Component {
           duration: 1,
           key: 'runCase',
         });
-        history.push({
-          pathname: '/reportManage/reportDetail',
-          state: {
-            reportDetail: res,
-          },
+        dispatch({
+          type: 'report/update',
+          payload: { reportDetail: res },
         });
+        history.push('/reportManage/reportDetail');
       },
       failCB: (res) => {
         message.error({
@@ -234,7 +233,7 @@ class CaseList extends Component {
       name: this.copyForm.current.getFieldsValue().name,
       id: currentCase.id,
     };
-    this.copyCase(payload);
+    payload.name ? this.copyCase(payload) : message.error('请填写用例名称');
   };
   onProjectChange = (payload, flag = true) => {
     this.getModuleList({ page: 'None', project: payload });

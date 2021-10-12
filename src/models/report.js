@@ -48,12 +48,18 @@ export default {
         callback();
       }
     },
-    *getReportDetail({ payload, callback }, { call, put }) {
-      const { success, data } = parseResponse(
+    *getReportDetail({ payload, callback, failCB }, { call, put }) {
+      const { success, data, message } = parseResponse(
         yield call(getReportDetail, payload),
       );
       if (success) {
+        yield put({
+          type: 'update',
+          payload: { reportDetail: { summary: data } },
+        });
         callback(data);
+      } else {
+        failCB(message);
       }
     },
   },

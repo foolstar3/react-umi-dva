@@ -189,7 +189,8 @@ const CaseDetailTabs = ({
     }
     const payload = getPayload();
     // 验证是否存在未填的必需项
-    if (!inputValidator(payload)) return;
+    if (payload === undefined) return setModalVisible(false);
+    if (!inputValidator(payload)) return setModalVisible(false);
     // 修改参数的数据格式
     payload.export = payload.request.export;
     payload.teststeps = payload.request.teststeps;
@@ -344,8 +345,7 @@ const CaseDetailTabs = ({
     }
     if (dataType === 'json') {
       try {
-        JSON.parse(editorRef.current.sendCode().jsonCode);
-        request.json = editorRef.current.sendCode().jsonCode;
+        request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
       } catch (err) {
         message.info('请检查JSON数据格式');
         return;
