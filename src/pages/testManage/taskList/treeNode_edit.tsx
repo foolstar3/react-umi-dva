@@ -6,7 +6,6 @@ import './index.less';
 
 const TreeNode_Edit: React.FC<{}> = (props: any) => {
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(props.caseArray);
-
   const onCheckCase = (checkedKeysValue: React.Key[]) => {
     setCheckedKeys(checkedKeysValue);
     const new_CheckedListString = [];

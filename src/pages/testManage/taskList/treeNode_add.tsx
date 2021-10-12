@@ -50,10 +50,11 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
 
   const onLoadData = ({ key, children }: any) =>
     new Promise<void>((resolve) => {
-      if (children) {
-        resolve();
-        return;
-      }
+      // if (children) {
+      //   resolve();
+      //   return;
+      // }
+      console.log('onLoad');
       const payload = {
         page: 'None',
         project: props.checked_projectListId,
@@ -84,10 +85,11 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
       });
     });
 
+  console.log('treeData', treeData);
   return (
     <div>
       <Collapse>
-        <Panel header="请选择用例" key="caseNumber" forceRender>
+        <Panel header="请选择用例" key="caseNumber">
           <Tree
             treeData={treeData}
             loadData={onLoadData}

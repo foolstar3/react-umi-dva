@@ -146,6 +146,7 @@ class TaskList extends React.Component {
   };
 
   showEditModal = (record) => {
+    console.log('record', record);
     const strRecord = JSON.stringify(record);
     const recordTempValue = JSON.parse(strRecord);
     const projectListId = recordTempValue?.task_extend?.project;

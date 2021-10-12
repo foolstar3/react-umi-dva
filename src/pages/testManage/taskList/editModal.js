@@ -344,7 +344,6 @@ class EditModal extends React.Component {
                   label="定时计划"
                   name="crontab"
                   rules={[{ required: true }]}
-                  initialValue={tempValue.crontab_time}
                   key="crontab"
                 >
                   <div>
@@ -352,6 +351,7 @@ class EditModal extends React.Component {
                       onChange={(num) => this.handlecrontab_M(num)}
                       style={{ width: 211 }}
                       addonAfter="m"
+                      defaultValue={'ffffff'}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_H(num)}

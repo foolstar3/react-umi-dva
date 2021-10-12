@@ -78,6 +78,7 @@ class AddModal extends React.Component {
         treeData_moduleList.push({
           title: moduleItem.module_name,
           key: moduleItem.id,
+          isLeaf: false,
         });
       });
     this.setState({
@@ -86,6 +87,7 @@ class AddModal extends React.Component {
   };
 
   handleSubmit = () => {
+    console.log('this.state', this.state.caseNumber);
     const addTask = this.state.tempAddValue;
     const projectList = this.props.projectList.projectList;
     const envList = this.props.envList.envList;
@@ -129,23 +131,27 @@ class AddModal extends React.Component {
       },
     };
     if (addTask.name && addTask.env && addTask.project) {
-      this.props.dispatch({
-        type: 'taskList/addTaskList',
-        payload: {
-          ...requestData,
-        },
-        callback: (res) => {
-          this.props.childrenPageChange();
-          message.success(res.message);
-        },
-      });
-      this.props.showAddModal(false);
-      this.setState({
-        caseNumber: 0,
-        treeData: [],
-        checked: false,
-      });
-      this.onReset();
+      if (this.state.caseNumber !== 0) {
+        this.props.dispatch({
+          type: 'taskList/addTaskList',
+          payload: {
+            ...requestData,
+          },
+          callback: (res) => {
+            this.props.childrenPageChange();
+            message.success(res.message);
+          },
+        });
+        this.props.showAddModal(false);
+        this.setState({
+          caseNumber: 0,
+          treeData: [],
+          checked: false,
+        });
+        this.onReset();
+      } else {
+        message.warn('请选择至少一个用例');
+      }
     } else {
       message.warn('请输入必填字段！');
     }
@@ -275,11 +281,7 @@ class AddModal extends React.Component {
             />
           </Form.Item>
           {checked && (
-            <Form.Item
-              label="定时状态"
-              name="crontab"
-              id="basic_taskList_crontab"
-            >
+            <Form.Item label="定时状态" id="basic_taskList_crontab">
               <Input
                 style={{ width: 211 }}
                 addonAfter="m"
