@@ -3,6 +3,7 @@ import {
   addTaskList,
   deleteTaskList,
   updateTaskList,
+  runTask,
 } from '@/services/getTaskList';
 import { onSwitchTask } from '@/services/serviceAll';
 export default {
@@ -21,6 +22,12 @@ export default {
       });
       if (callback) {
         callback(res.results ?? res, res.count);
+      }
+    },
+    *runTask({ payload, callback }, { call, put }) {
+      const res = yield call(runTask, { ...payload });
+      if (callback) {
+        callback(res);
       }
     },
     *addTaskList({ payload, callback }, { call, put }) {

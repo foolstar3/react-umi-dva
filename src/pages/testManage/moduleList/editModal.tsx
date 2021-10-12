@@ -16,18 +16,22 @@ class EditModal extends React.Component<any, any> {
   editSubmit = () => {
     const editModule = this.state.tempEditValue;
     const EditId = this.props.tempValue.id;
-    this.props.dispatch({
-      type: 'moduleList/editModuleList',
-      payload: {
-        ...editModule,
-        id: EditId,
-      },
-      callback: (res) => {
-        this.props.childrenPageChange();
-        message.success(res.message);
-      },
-    });
-    this.props.showEditModal(false);
+    if (editModule.module_name && editModule.project && editModule.test_user) {
+      this.props.dispatch({
+        type: 'moduleList/editModuleList',
+        payload: {
+          ...editModule,
+          id: EditId,
+        },
+        callback: (res) => {
+          this.props.childrenPageChange();
+          message.success(res.message);
+        },
+      });
+      this.props.showEditModal(false);
+    } else {
+      message.warn('请输入必填字段！');
+    }
   };
 
   editCancel = () => {
@@ -35,7 +39,6 @@ class EditModal extends React.Component<any, any> {
   };
 
   handleEditValueChange = (singleValueChange, ValueChange) => {
-    // const { projectList, testUserList } = this.props;
     const projectList = this.props.projectList.projectList;
     const testUserList = this.props.userList.userList;
     for (let i = 0; i < testUserList.length; i++) {

@@ -3,7 +3,7 @@ import { EditOutlined, RedoOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 const { Panel } = Collapse;
 
-const SearchProject = (props: any) => {
+const SearchProject = (props) => {
   const [form] = Form.useForm();
 
   const onReset = () => {
@@ -11,7 +11,7 @@ const SearchProject = (props: any) => {
     props.onResetPage();
   };
 
-  const handleSearch = (value: any) => {
+  const handleSearch = (value) => {
     const payload = {
       page: 1,
       project_name: value.project_name,

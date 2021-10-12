@@ -6,8 +6,8 @@ import './index.less';
 import { DateFormat } from '@/utils/common';
 import Editor from '@/components/Editor';
 
-class DebugTalkList extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class DebugTalkList extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       editVisible: false,
@@ -39,7 +39,7 @@ class DebugTalkList extends React.Component<any, any> {
       },
     });
   };
-  onPageChange = (page: any) => {
+  onPageChange = (page) => {
     this.getDebugTalkList({ page });
     this.setState({
       currentPage: page,
@@ -66,7 +66,7 @@ class DebugTalkList extends React.Component<any, any> {
     this.showEditModalCancel();
   };
 
-  showPythonModal = (record: any) => {
+  showPythonModal = (record) => {
     this.setState({
       editVisible: true,
       debugTalkId: record.id,
@@ -74,7 +74,7 @@ class DebugTalkList extends React.Component<any, any> {
     });
   };
 
-  getEditorContent = (editContent: any) => {
+  getEditorContent = (editContent) => {
     this.setState({
       debugTalkContent: editContent,
     });
@@ -104,7 +104,7 @@ class DebugTalkList extends React.Component<any, any> {
       showTotal: () => `共 ${total} 条`,
     };
 
-    const columns: any = [
+    const columns = [
       {
         title: '编号',
         dataIndex: 'id',
@@ -152,7 +152,7 @@ class DebugTalkList extends React.Component<any, any> {
         key: 'relateAction',
         align: 'center',
         width: '100px',
-        render: (text: any, record: any) => {
+        render: (text, record) => {
           return (
             <div>
               <Space size="middle">

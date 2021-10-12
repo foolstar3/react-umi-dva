@@ -15,8 +15,8 @@ import EditModal from './editModal';
 import { DateFormat } from '@/utils/common';
 import '/src/styles/global.less';
 //获取接口参数
-class TaskList extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class TaskList extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       addVisible: false,
@@ -41,18 +41,6 @@ class TaskList extends React.Component<any, any> {
 
   UNSAFE_componentWillMount() {
     this.getProjectList({ page: 'None' });
-
-    // this.props.dispatch({
-    //   type: 'taskList/getTaskList',
-    //   payload:{
-    //     page:'None'
-    //   },
-    //   callback: (res, taskCount) => {
-    //     this.setState({
-    //       allTaskList: res
-    //     });
-    //   },
-    // });
     this.getTaskList({ page: 1 });
   }
   onRef = (ref) => {
@@ -74,7 +62,7 @@ class TaskList extends React.Component<any, any> {
       },
     });
   };
-  getProjectList = (payload: any) => {
+  getProjectList = (payload) => {
     this.props.dispatch({
       type: 'projectList/getProjectList',
       payload,
@@ -103,7 +91,7 @@ class TaskList extends React.Component<any, any> {
     });
   };
 
-  onPageChange = (page: any) => {
+  onPageChange = (page) => {
     const payload = {
       page: page,
       project: this.state.project,
@@ -145,19 +133,19 @@ class TaskList extends React.Component<any, any> {
     });
   };
 
-  handleAddTask = (childModalState: any) => {
+  handleAddTask = (childModalState) => {
     this.setState({
       addVisible: childModalState,
     });
   };
 
-  handleEditModal = (childModalState: any) => {
+  handleEditModal = (childModalState) => {
     this.setState({
       editVisible: childModalState,
     });
   };
 
-  showEditModal = (record: any) => {
+  showEditModal = (record) => {
     const strRecord = JSON.stringify(record);
     const recordTempValue = JSON.parse(strRecord);
     const projectListId = recordTempValue?.task_extend?.project;
@@ -188,7 +176,7 @@ class TaskList extends React.Component<any, any> {
     });
   };
 
-  handleDelete = (record: any) => {
+  handleDelete = (record) => {
     this.props.dispatch({
       type: 'taskList/deleteTaskList',
       payload: {
@@ -196,6 +184,17 @@ class TaskList extends React.Component<any, any> {
       },
       callback: () => {
         this.childrenPageChange();
+      },
+    });
+  };
+  handleRunTask = (record) => {
+    this.props.dispatch({
+      type: 'taskList/runTask',
+      payload: {
+        task_id: record.id,
+      },
+      callback: (res) => {
+        message.info(res.message);
       },
     });
   };
@@ -219,7 +218,7 @@ class TaskList extends React.Component<any, any> {
         this.onPageChange(page);
       },
     };
-    const columns: any = [
+    const columns = [
       {
         title: '编号',
         dataIndex: 'id',
@@ -288,10 +287,15 @@ class TaskList extends React.Component<any, any> {
         key: 'relateAction',
         align: 'center',
         width: '120px',
-        render: (_: any, record: any) => {
+        render: (_, record) => {
           return (
             <div className="action_button">
-              <Popconfirm title="确认运行？" okText="Yes" cancelText="No">
+              <Popconfirm
+                title="确认运行？"
+                okText="Yes"
+                cancelText="No"
+                onConfirm={() => this.handleRunTask(record)}
+              >
                 <Button
                   className="button_run"
                   type="primary"

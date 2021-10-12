@@ -14,12 +14,12 @@ import TreeNode_Edit from './treeNode_edit';
 import { FormInstance } from '@ant-design/pro-form';
 const { Panel } = Collapse;
 const { Option } = Select;
-class EditModal extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+class EditModal extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       tempEditValue: 0,
-      caseNumber: 0,
+      caseNumber: -1,
       moduleList: [],
       treeData: [],
       caseArray: [],
@@ -33,20 +33,22 @@ class EditModal extends React.Component<any, any> {
       checked_projectListId: 0,
     };
   }
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.props.onRef(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      caseNumber: nextProps.caseNumber,
-      caseArray: nextProps.caseArray,
-      checked: nextProps.tempValue.enabled,
-    });
+    if (this.props !== nextProps) {
+      this.setState({
+        caseNumber: nextProps.caseNumber,
+        caseArray: nextProps.caseArray,
+        checked: nextProps.tempValue.enabled,
+      });
+    }
   }
-  formRef = React.createRef<FormInstance>();
+  formRef = React.createRef();
 
-  getModuleList = (payload: any) => {
+  getModuleList = (payload) => {
     this.props.dispatch({
       type: 'moduleList/getModuleList',
       payload,
@@ -56,7 +58,7 @@ class EditModal extends React.Component<any, any> {
     });
   };
 
-  getTreeNode = (moduleListChange: any) => {
+  getTreeNode = (moduleListChange) => {
     const moduleList = moduleListChange;
     const treeData = [];
     moduleList &&
@@ -93,7 +95,6 @@ class EditModal extends React.Component<any, any> {
 
   editSubmit = () => {
     const tempEditValue = this.state.tempEditValue;
-    console.log('adsasdas', tempEditValue);
     if (tempEditValue != 0) {
       const editTaskValue = JSON.stringify(tempEditValue);
       const editTask = JSON.parse(editTaskValue);
@@ -141,17 +142,22 @@ class EditModal extends React.Component<any, any> {
           month_of_year: this.state.Month == null ? 1 : this.state.Month,
         },
       };
-      this.props.dispatch({
-        type: 'taskList/editSubmit',
-        payload: {
-          ...requestData,
-          id: this.props.tempValue.id,
-        },
-        callback: (res) => {
-          this.props.childrenPageChange();
-          message.success(res.message);
-        },
-      });
+      if (editTask.name && editTask.env && editTask.project) {
+        this.props.dispatch({
+          type: 'taskList/editSubmit',
+          payload: {
+            ...requestData,
+            id: this.props.tempValue.id,
+          },
+          callback: (res) => {
+            this.props.childrenPageChange();
+            message.success(res.message);
+          },
+        });
+        this.props.showEditModal(false);
+      } else {
+        message.warn('请输入必填字段！');
+      }
     } else {
       const tempValue = this.props.tempValue;
       const projectList = this.props.projectList.projectList;
@@ -204,24 +210,21 @@ class EditModal extends React.Component<any, any> {
           message.success(res.message);
         },
       });
+      this.props.showEditModal(false);
     }
-    this.onReset();
-    this.props.showEditModal(false);
   };
 
   editCancel = () => {
     this.props.showEditModal(false);
-    this.onReset();
   };
 
   handleEditValueChange = (singleValueChange, ValueChange) => {
-    console.log('ValueChange', ValueChange);
     this.setState({
       tempEditValue: ValueChange,
     });
   };
 
-  handleProjectChange = (project: any) => {
+  handleProjectChange = (project) => {
     const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (projectList && projectList[i].project_name === project) {
@@ -232,46 +235,47 @@ class EditModal extends React.Component<any, any> {
         this.getModuleList(payload);
       }
     }
+    this.setState({
+      caseNumber: 0,
+    });
   };
 
-  caseNumber = (caseArray: any, checkedNumber: any) => {
+  caseNumber = (caseArray, checkedNumber) => {
     this.setState({
       caseNumber: checkedNumber,
       caseArray: caseArray,
     });
   };
-  onReset = () => {
-    this.formRef.current!.resetFields();
-  };
+
   onEditSwitchChange = (checked, record) => {
     this.setState({
       checked: checked,
     });
   };
 
-  handlecrontab_M = (number: any) => {
+  handlecrontab_M = (number) => {
     this.setState({
-      Minutes: number,
+      Minutes: number.target.value,
     });
   };
-  handlecrontab_H = (number: any) => {
+  handlecrontab_H = (number) => {
     this.setState({
-      Hours: number,
+      Hours: number.target.value,
     });
   };
-  handlecrontab_DM = (number: any) => {
+  handlecrontab_DM = (number) => {
     this.setState({
-      Day_of_month: number,
+      Day_of_month: number.target.value,
     });
   };
-  handlecrontab_Mon = (number: any) => {
+  handlecrontab_Mon = (number) => {
     this.setState({
-      Month: number,
+      Month: number.target.value,
     });
   };
-  handlecrontab_DW = (number: any) => {
+  handlecrontab_DW = (number) => {
     this.setState({
-      Day_of_week: number,
+      Day_of_week: number.target.value,
     });
   };
 
@@ -294,11 +298,12 @@ class EditModal extends React.Component<any, any> {
             okText="确认"
             okButtonProps={{ shape: 'round' }}
             cancelButtonProps={{ shape: 'round' }}
+            width={1200}
           >
             <Form
               name="basic"
-              labelCol={{ span: 5 }}
-              wrapperCol={{ span: 16 }}
+              labelCol={{ span: 2 }}
+              wrapperCol={{ span: 25 }}
               initialValues={{ remember: true }}
               onValuesChange={this.handleEditValueChange}
               ref={this.formRef}
@@ -321,9 +326,8 @@ class EditModal extends React.Component<any, any> {
                 <Input />
               </Form.Item>
               <Form.Item
-                label="状态"
+                label="定时状态"
                 name="enabled"
-                rules={[{ required: true }]}
                 valuePropName="checked"
                 initialValue={tempValue.enabled}
               >
@@ -344,55 +348,30 @@ class EditModal extends React.Component<any, any> {
                   key="crontab"
                 >
                   <div>
-                    <InputNumber
-                      min={0}
-                      max={59}
-                      defaultValue={parseInt(tempValue.crontab_time[0])}
-                      bordered
+                    <Input
                       onChange={(num) => this.handlecrontab_M(num)}
-                      style={{ width: '100px' }}
-                      formatter={(value) => `${value} M`}
-                      parser={(value) => value?.replace(' M', '')}
+                      style={{ width: 211 }}
+                      addonAfter="m"
                     />
-                    <InputNumber
-                      min={0}
-                      max={23}
-                      defaultValue={parseInt(tempValue.crontab_time[2])}
-                      bordered
+                    <Input
                       onChange={(num) => this.handlecrontab_H(num)}
-                      style={{ width: '100px' }}
-                      formatter={(value) => `${value} H`}
-                      parser={(value) => value?.replace(' H', '')}
+                      style={{ width: 211 }}
+                      addonAfter="h"
                     />
-                    <InputNumber
-                      min={1}
-                      max={31}
-                      defaultValue={parseInt(tempValue.crontab_time[4])}
-                      bordered
+                    <Input
                       onChange={(num) => this.handlecrontab_DM(num)}
-                      style={{ width: '100px' }}
-                      formatter={(value) => `${value} dM`}
-                      parser={(value) => value?.replace(' dM', '')}
+                      style={{ width: 211 }}
+                      addonAfter="dM"
                     />
-                    <InputNumber
-                      min={1}
-                      max={12}
-                      defaultValue={parseInt(tempValue.crontab_time[6])}
-                      bordered
+                    <Input
                       onChange={(num) => this.handlecrontab_Mon(num)}
-                      style={{ width: '100px' }}
-                      formatter={(value) => `${value} MY`}
-                      parser={(value) => value?.replace(' MY', '')}
+                      style={{ width: 211 }}
+                      addonAfter="MY"
                     />
-                    <InputNumber
-                      min={0}
-                      max={6}
-                      defaultValue={parseInt(tempValue.crontab_time[8])}
-                      bordered
+                    <Input
                       onChange={(num) => this.handlecrontab_DW(num)}
-                      style={{ width: '100px' }}
-                      formatter={(value) => `${value} d`}
-                      parser={(value) => value?.replace(' d', '')}
+                      style={{ width: 211 }}
+                      addonAfter="d"
                     />
                   </div>
                 </Form.Item>
@@ -414,7 +393,6 @@ class EditModal extends React.Component<any, any> {
                         .toLowerCase()
                         .indexOf(input.toLowerCase()) >= 0
                     }
-                    style={{ width: 314 }}
                   >
                     {envList &&
                       Array.isArray(envList) &&
@@ -438,7 +416,6 @@ class EditModal extends React.Component<any, any> {
               >
                 {
                   <Select
-                    style={{ width: 314 }}
                     showSearch
                     allowClear
                     optionFilterProp="children"
@@ -481,13 +458,13 @@ class EditModal extends React.Component<any, any> {
               <Form.Item
                 label="邮件列表"
                 name="emailList"
-                rules={[{ required: true }]}
                 initialValue={tempValue.task_extend.email_list}
               >
                 <Select
                   mode="tags"
                   placeholder="请输入邮箱"
                   style={{ width: '100%' }}
+                  listHeight={256}
                 />
               </Form.Item>
             </Form>

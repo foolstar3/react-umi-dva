@@ -1,55 +1,157 @@
 import React, { Component } from 'react';
-import * as echarts from 'echarts';
 import { connect } from 'umi';
-
-@connect(({ chart }) => ({
-  option: chart.option,
-  option2: chart.option2,
-  option3: chart.option3,
-}))
-export default class Chart extends Component {
+import { Card, Row, Col } from 'antd';
+import ReactECharts from 'echarts-for-react';
+import { isMethodSignature } from 'typescript';
+class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      option: {},
-      option2: {},
-      option3: {},
+      project_num: 0,
+      module_num: 0,
+      testcase_num: 0,
+      new_testcase_num: 0,
+      run_case_sum: 0,
+      run_case_pass: 0,
+      series: {},
     };
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'chart/getData',
-      callback: () => {
-        // console.log('callback');
+  }
+
+  componentDidMount() {
+    this.getDashboardInfo();
+  }
+  getDashboardInfo = () => {
+    this.props.dispatch({
+      type: 'dashboard/get_dashboard_info',
+      callback: (res) => {
+        this.setState({
+          project_num: res.project_num,
+          module_num: res.module_num,
+          run_case_sum: res.run_case_sum,
+          new_testcase_num: res.new_testcase_num,
+          run_case_pass: res.run_case_pass,
+          series: res.series,
+          testcase_num: res.testcase_num,
+        });
       },
     });
-  }
-
-  // DOM挂载后才能获取到对应元素
-  componentDidMount() {}
-
-  componentDidUpdate(prevProps, prevState) {
-    const chartDom = document.getElementById('main');
-    const myChart = echarts.init(chartDom);
-    const chartDom2 = document.getElementById('pie');
-    const myChart2 = echarts.init(chartDom2);
-    const chartDom3 = document.getElementById('gauge');
-    const myChart3 = echarts.init(chartDom3);
-    const { option, option2, option3 } = this.props;
-
-    myChart3.setOption(option3);
-    myChart2.setOption(option2);
-    myChart.setOption(option);
-  }
+  };
 
   render() {
+    const option = {
+      title: {
+        text: '近30天用例执行情况',
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          label: {
+            backgroundColor: '#6a7985',
+          },
+        },
+      },
+      legend: {
+        data: ['成功', '失败', '错误', '跳过'],
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {},
+        },
+      },
+      grid: {
+        left: '5%',
+        right: '5%',
+        bottom: '5%',
+        containLabel: true,
+      },
+      xAxis: [
+        {
+          type: 'category',
+          boundaryGap: false,
+          data: this.state.series.date,
+        },
+      ],
+      yAxis: [
+        {
+          type: 'value',
+        },
+      ],
+      series: [
+        {
+          name: '成功',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series',
+          },
+          data: this.state.series.successes,
+        },
+        {
+          name: '失败',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series',
+          },
+          data: this.state.series.failures,
+        },
+        {
+          name: '错误',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series',
+          },
+          data: this.state.series.errors,
+        },
+        {
+          name: '跳过',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series',
+          },
+          data: this.state.series.skipped,
+        },
+      ],
+    };
     return (
-      <>
-        <div style={{ display: 'flex' }}>
-          <div id="main" style={{ width: 700, height: 400 }}></div>
-          <div id="pie" style={{ width: 700, height: 400 }}></div>
+      <Card>
+        <div className="site-card-wrapper">
+          <Row gutter={16} style={{ marginBottom: 50 }}>
+            <Col span={6}>
+              <Card title="项目数" bordered hoverable>
+                {this.state.project_num} 个
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card title="模块数" bordered hoverable>
+                {this.state.module_num} 个
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card title="用例数" bordered hoverable>
+                {this.state.testcase_num} 条
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card title="用例累计执行" bordered hoverable>
+                {this.state.run_case_sum} 数
+              </Card>
+            </Col>
+          </Row>
         </div>
-        <div id="gauge" style={{ width: 700, height: 350 }}></div>
-      </>
+        <ReactECharts option={option}></ReactECharts>
+      </Card>
     );
   }
 }
+
+export default connect(({ dashboard }) => ({
+  dashboard,
+}))(Index);

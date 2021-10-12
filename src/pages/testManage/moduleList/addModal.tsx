@@ -39,19 +39,23 @@ class AddModal extends React.Component<any, any> {
 
   handleSubmit = () => {
     const addModule = this.state.tempAddValue;
-    this.props.dispatch({
-      type: 'moduleList/addModuleList',
-      payload: {
-        ...addModule,
-      },
-      callback: (res) => {
-        this.props.handleTotalNumber();
-        this.props.childrenPageChange();
-        message.success(res.message);
-      },
-    });
-    this.props.showAddModal(false);
-    this.onReset();
+    if (addModule.module_name && addModule.project && addModule.test_user) {
+      this.props.dispatch({
+        type: 'moduleList/addModuleList',
+        payload: {
+          ...addModule,
+        },
+        callback: (res) => {
+          this.props.handleTotalNumber();
+          this.props.childrenPageChange();
+          message.success(res.message);
+        },
+      });
+      this.props.showAddModal(false);
+      this.onReset();
+    } else {
+      message.warn('请输入必填字段');
+    }
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
@@ -163,7 +167,9 @@ class AddModal extends React.Component<any, any> {
                   testUserList.length &&
                   testUserList.map((item) => {
                     return (
-                      <Option value={item.username}>{item.username}</Option>
+                      <Option key={item.username} value={item.username}>
+                        {item.username}
+                      </Option>
                     );
                   })}
               </Select>

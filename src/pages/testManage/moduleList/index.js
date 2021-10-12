@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Button, Space, Popconfirm } from 'antd';
+import { Card, Table, Button, Popconfirm } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -7,13 +7,15 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { connect } from 'umi';
+import './index.less';
+import '/src/styles/global.less';
+import SearchModal from './Search';
+import { DateFormat } from '@/utils/common';
 import AddModal from './addModal';
 import EditModal from './editModal';
-import { DateFormat } from '@/utils/common';
-import SearchModal from './Search';
-//获取接口参数
-class GlobalVarList extends React.Component<any, any> {
-  constructor(props: {} | Readonly<{}>) {
+
+class ModuleList extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       addVisible: false,
@@ -22,71 +24,80 @@ class GlobalVarList extends React.Component<any, any> {
       tableLoading: true,
       total: 0,
       currentPage: 1,
-      var_name: '',
-      var_value: '',
+      module_name: '',
+      test_user: '',
       description: '',
       project: '',
+      update_time_after: '',
+      update_time_before: '',
     };
   }
 
-  UNSAFE_componentWillMount() {
-    this.getGlobalVarList({ page: 1 });
-    this.getProjectList({ page: 'None' });
+  componentDidMount() {
+    this.setState({
+      tableLoading: true,
+    });
+    this.getModuleList({ page: 1 });
   }
 
-  getGlobalVarList = (payload: any) => {
+  getModuleList = (payload) => {
     this.props.dispatch({
-      type: 'globalVarList/getGlobalVarList',
+      type: 'moduleList/getModuleList',
       payload,
-      callback: (res) => {
+      callback: (res, resCount) => {
         this.setState({
           tableLoading: false,
-          total: res.count,
+          total: resCount,
         });
       },
     });
   };
+  // getProjectList = (payload: any) =>{
+  //   this.props.dispatch({
+  //     type: 'projectList/getProjectList',
+  //     payload
+  //   });
+  // }
 
-  getProjectList = (payload: any) => {
-    this.props.dispatch({
-      type: 'projectList/getProjectList',
-      payload,
-      callback: (res) => {},
-    });
-  };
-
-  onPageChange = (page: any) => {
+  onPageChange = (page) => {
     const payload = {
       page: page,
-      project: this.state.project,
-      var_name: this.state.var_name,
-      var_value: this.state.var_value,
+      module_name: this.state.module_name,
+      test_user: this.state.test_user,
       description: this.state.description,
+      project: this.state.project,
+      update_time_after: this.state.update_time_after,
+      update_time_before: this.state.update_time_before,
     };
-    this.getGlobalVarList(payload);
+    this.getModuleList(payload);
     this.setState({
       currentPage: page,
     });
   };
-  handleSearchChildren = (var_name, var_value, description, project) => {
+  childrenPageChange = () => {
+    this.getModuleList({ page: 1 });
     this.setState({
-      var_name: var_name,
-      description: description,
-      var_value: var_value,
-      project: project,
+      currentPage: 1,
     });
   };
+
   onResetPage = () => {
     this.setState({
       currentPage: 1,
     });
   };
-  childrenPageChange = () => {
-    this.getGlobalVarList({ page: 1 });
+  showAddModal = () => {
     this.setState({
-      currentPage: 1,
+      addVisible: true,
     });
   };
+
+  handleAddModule = (childModalState) => {
+    this.setState({
+      addVisible: childModalState,
+    });
+  };
+
   handleTotalNumber = () => {
     const total = this.state.total;
     this.setState({
@@ -94,32 +105,22 @@ class GlobalVarList extends React.Component<any, any> {
     });
   };
 
-  showAddModal = () => {
-    this.setState({
-      addVisible: true,
-    });
-  };
-
-  handleAddGlobalVar = (childModalState: any) => {
-    this.setState({
-      addVisible: childModalState,
-    });
-  };
-  showEditModal = (record: any) => {
+  showEditModal = (record) => {
     this.setState({
       editVisible: true,
       tempValue: record,
     });
   };
-  handleEditModal = (childModalState: any) => {
+
+  handleEditModal = (childModalState) => {
     this.setState({
       editVisible: childModalState,
     });
   };
 
-  handleDelete = (record: any) => {
+  handleDelete = (record) => {
     this.props.dispatch({
-      type: 'globalVarList/deleteGlobalVarList',
+      type: 'moduleList/deleteModuleList',
       payload: {
         id: record.id,
       },
@@ -128,13 +129,24 @@ class GlobalVarList extends React.Component<any, any> {
       },
     });
   };
+  handleChildrenSearch = (payload) => {
+    this.setState({
+      module_name: payload.module_name,
+      test_user: payload.test_user,
+      description: payload.description,
+      project: payload.project,
+      update_time_after: payload.update_time_after,
+      update_time_before: payload.update_time_before,
+    });
+  };
 
   render() {
     const { tableLoading, total, currentPage } = this.state;
-    const { globalVarList } = this.props?.globalVarList;
-    globalVarList.map((item) => {
-      item.key = item.id;
-    });
+    const { moduleList } = this.props.moduleList;
+    moduleList &&
+      moduleList.map((item) => {
+        item.key = item.id;
+      });
     const paginationProps = {
       current: currentPage,
       showSizeChanger: false,
@@ -153,21 +165,27 @@ class GlobalVarList extends React.Component<any, any> {
         align: 'center',
       },
       {
+        title: '模块名称',
+        dataIndex: 'module_name',
+        key: 'module_name',
+        align: 'center',
+      },
+      {
         title: '项目名称',
         dataIndex: 'project_name',
         key: 'project_name',
         align: 'center',
       },
       {
-        title: '参数名称',
-        dataIndex: 'var_name',
-        key: 'var_name',
+        title: '测试数',
+        dataIndex: 'testcase_count',
+        key: 'testcase_count',
         align: 'center',
       },
       {
-        title: '参数值',
-        dataIndex: 'var_value',
-        key: 'test_user',
+        title: '测试人员',
+        dataIndex: 'test_user_name',
+        key: 'test_user_name',
         align: 'center',
       },
       {
@@ -196,43 +214,42 @@ class GlobalVarList extends React.Component<any, any> {
           return <span>{time}</span>;
         },
       },
+
       {
-        title: '相关操作',
+        title: '操作',
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '100px',
-        render: (_: any, record: any) => {
+        width: '150px',
+        render: (_, record) => {
           return (
-            <div>
-              <Space size="small">
+            <div className="action_button">
+              <Button
+                type="primary"
+                onClick={() => this.showEditModal(record)}
+                icon={<EditOutlined />}
+                shape="round"
+                size="small"
+              >
+                编辑
+              </Button>
+              <Popconfirm
+                okText="Yes"
+                cancelText="No"
+                title="确定删除？"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={() => this.handleDelete(record)}
+              >
                 <Button
                   type="primary"
-                  onClick={() => this.showEditModal(record)}
-                  icon={<EditOutlined />}
+                  danger
+                  icon={<DeleteOutlined />}
                   shape="round"
                   size="small"
                 >
-                  编辑
+                  删除
                 </Button>
-                <Popconfirm
-                  okText="Yes"
-                  cancelText="No"
-                  title="确定删除？"
-                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                  onConfirm={() => this.handleDelete(record)}
-                >
-                  <Button
-                    type="primary"
-                    danger
-                    icon={<DeleteOutlined />}
-                    shape="round"
-                    size="small"
-                  >
-                    删除
-                  </Button>
-                </Popconfirm>
-              </Space>
+              </Popconfirm>
             </div>
           );
         },
@@ -242,14 +259,14 @@ class GlobalVarList extends React.Component<any, any> {
       <div>
         <Card>
           <SearchModal
-            getGlobalVarList={this.getGlobalVarList}
-            handleSearchChildren={this.handleSearchChildren}
+            getModuleList={this.getModuleList}
+            handleChildrenSearch={this.handleChildrenSearch}
             onResetPage={this.onResetPage}
           />
           <div className="ant-btn-add">
             <Button
               type="primary"
-              onClick={this.handleAddGlobalVar}
+              onClick={this.handleAddModule}
               icon={<PlusCircleOutlined />}
               shape="round"
               size="small"
@@ -260,7 +277,7 @@ class GlobalVarList extends React.Component<any, any> {
           <Table
             className="components-table-demo-nested"
             columns={columns}
-            dataSource={[...globalVarList]}
+            dataSource={[...moduleList]}
             loading={tableLoading}
             pagination={paginationProps}
             bordered
@@ -268,7 +285,7 @@ class GlobalVarList extends React.Component<any, any> {
         </Card>
 
         <AddModal
-          showAddModal={this.handleAddGlobalVar}
+          showAddModal={this.handleAddModule}
           addVisible={this.state.addVisible}
           handleTotalNumber={this.handleTotalNumber}
           childrenPageChange={this.childrenPageChange}
@@ -284,6 +301,6 @@ class GlobalVarList extends React.Component<any, any> {
   }
 }
 
-export default connect(({ globalVarList }) => ({
-  globalVarList,
-}))(GlobalVarList);
+export default connect(({ moduleList }) => ({
+  moduleList,
+}))(ModuleList);
