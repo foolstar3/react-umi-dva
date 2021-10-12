@@ -92,9 +92,9 @@ class ReportDetail extends React.Component {
       onFilter: (value, record) => record.success === value,
       render: (_, record) =>
         record.success ? (
-          <span className={styles.success}>Pass</span>
+          <span style={{ color: fontColors.success }}>Pass</span>
         ) : (
-          <span className={styles.fail}>Fail</span>
+          <span style={{ color: fontColors.failure }}>Fail</span>
         ),
     },
   ];
@@ -129,8 +129,99 @@ class ReportDetail extends React.Component {
     },
   ];
   componentDidMount() {
-    this.getReportDetail({ task_id: this.props.location.query.id });
+    // this.getReportDetail({ task_id: this.props.location.query.id });
+    const { reportDetail } = this.props.location.state;
+    Object.keys(reportDetail).length
+      ? this.setState({
+          reportDetail: reportDetail,
+        })
+      : '';
+    const { summary } = reportDetail;
+    this.dealDatas(summary);
   }
+
+  dealDatas = (summary) => {
+    const { count, time, base_url, name, success, step_datas } = summary;
+    this.setState(() => {
+      // 报告汇总图表数据
+      const next = JSON.parse(JSON.stringify(this.state.chartOptions));
+      next.series[0].data = [
+        { value: count.errors, name: '错误' },
+        { value: count.failures, name: '失败' },
+        { value: count.skipped, name: '跳过' },
+        { value: count.successes, name: '成功' },
+      ];
+      // 用例详情数据
+      const caseListDataSource = [
+        {
+          name,
+          success,
+          base_url,
+          step_datas,
+          key: name,
+          time,
+        },
+      ];
+      return {
+        chartOptions: next,
+        caseList: caseListDataSource,
+        stat: [
+          {
+            name: '测试环境',
+            value: base_url,
+            fontColor: fontColors.default,
+          },
+          {
+            name: '用例总数',
+            value:
+              count.successes + count.failures + count.errors + count.skipped,
+            fontColor: fontColors.summary,
+          },
+          {
+            name: '用例成功',
+            value: count.successes,
+            fontColor: fontColors.success,
+          },
+          {
+            name: '用例失败',
+            value: count.failures,
+            fontColor: fontColors.failure,
+          },
+          {
+            name: '用例错误',
+            value: count.errors,
+            fontColor: fontColors.error,
+          },
+          {
+            name: '用例跳过',
+            value: count.skipped,
+            fontColor: fontColors.skipped,
+          },
+          {
+            name: '开始时间',
+            value: time.start_at_iso_format,
+            fontColor: fontColors.default,
+          },
+          {
+            name: '运行时长',
+            value: `${time.duration}s`,
+            fontColor: fontColors.default,
+          },
+          {
+            name: '用例成功率',
+            value: `${parseFloat(
+              (count.successes * 100) /
+                (count.successes +
+                  count.failures +
+                  count.errors +
+                  count.skipped),
+            ).toFixed(2)}%`,
+            fontColor: fontColors.default,
+          },
+        ],
+      };
+    });
+  };
 
   getReportDetail = (payload) => {
     const { dispatch } = this.props;
@@ -556,90 +647,7 @@ class ReportDetail extends React.Component {
           date_done: '2021-09-26T03:14:32.905467',
           task_id: '1a9e80ae-fb70-427f-8ae0-dc619e0818ff',
         };
-        const { result } = summary;
-        const { count, time, base_url, name, success, step_datas } = result;
-        this.setState(() => {
-          // 报告汇总图表数据
-          const next = JSON.parse(JSON.stringify(this.state.chartOptions));
-          next.series[0].data = [
-            { value: count.errors, name: '错误' },
-            { value: count.failures, name: '失败' },
-            { value: count.skipped, name: '跳过' },
-            { value: count.successes, name: '成功' },
-          ];
-          // 用例详情数据
-          const caseListDataSource = [
-            {
-              name,
-              success,
-              base_url,
-              step_datas,
-              key: name,
-              time,
-            },
-          ];
-          return {
-            chartOptions: next,
-            caseList: caseListDataSource,
-            stat: [
-              {
-                name: '测试环境',
-                value: base_url,
-                fontColor: fontColors.default,
-              },
-              {
-                name: '用例总数',
-                value:
-                  count.successes +
-                  count.failures +
-                  count.errors +
-                  count.skipped,
-                fontColor: fontColors.summary,
-              },
-              {
-                name: '用例成功',
-                value: count.successes,
-                fontColor: fontColors.success,
-              },
-              {
-                name: '用例失败',
-                value: count.failures,
-                fontColor: fontColors.failure,
-              },
-              {
-                name: '用例错误',
-                value: count.errors,
-                fontColor: fontColors.error,
-              },
-              {
-                name: '用例跳过',
-                value: count.skipped,
-                fontColor: fontColors.skipped,
-              },
-              {
-                name: '开始时间',
-                value: time.start_at_iso_format,
-                fontColor: fontColors.default,
-              },
-              {
-                name: '运行时长',
-                value: `${time.duration}s`,
-                fontColor: fontColors.default,
-              },
-              {
-                name: '用例成功率',
-                value: `${parseFloat(
-                  (count.successes * 100) /
-                    (count.successes +
-                      count.failures +
-                      count.errors +
-                      count.skipped),
-                ).toFixed(2)}%`,
-                fontColor: fontColors.default,
-              },
-            ],
-          };
-        });
+        this.dealDatas(summary);
       },
     });
   };
@@ -752,18 +760,22 @@ class ReportDetail extends React.Component {
     return (
       <Collapse>
         {panelDetail.map((item) => {
-          console.log(item);
           if (item.name === 'validators') {
             const { validate_extractor } = item.content;
-            const tableData = validate_extractor.map((item) => {
-              item.key = `${item.check}-${item.comparator}-${item.check_value}-${item.check_result}`;
-              return item;
-            });
-            return (
-              <Panel header={item.name} key={item.name}>
-                <Table dataSource={tableData} columns={this.caseDetailColumn} />
-              </Panel>
-            );
+            if (Object.keys(validators).length) {
+              const tableData = validate_extractor.map((item) => {
+                item.key = `${item.check}-${item.comparator}-${item.check_value}-${item.check_result}`;
+                return item;
+              });
+              return (
+                <Panel header={item.name} key={item.name}>
+                  <Table
+                    dataSource={tableData}
+                    columns={this.caseDetailColumn}
+                  />
+                </Panel>
+              );
+            }
           }
           const listData = [];
           Object.keys(item.content).forEach((child) => {
@@ -805,7 +817,7 @@ class ReportDetail extends React.Component {
       <>
         <div className={styles.title}>{name}</div>
         <div className={styles.subtitle}>
-          <div>
+          {/* <div>
             <span>
               成功接口: <span style={{ color: fontColors.success }}>0</span>
             </span>
@@ -818,7 +830,7 @@ class ReportDetail extends React.Component {
             <span>
               跳过接口: <span style={{ color: fontColors.skipped }}>0</span>
             </span>
-          </div>
+          </div> */}
           <div>
             <span>运行时长: {time.duration}s</span>
             <span>
@@ -853,4 +865,6 @@ class ReportDetail extends React.Component {
   }
 }
 
-export default connect(() => ({}))(ReportDetail);
+export default connect((report) => ({
+  reportDetail: report.reportDetail,
+}))(ReportDetail);

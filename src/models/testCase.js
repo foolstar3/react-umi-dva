@@ -7,6 +7,7 @@ import {
   updateCase,
   createCase,
   copyCase,
+  runCase,
 } from '@/services/testCase';
 
 import { parseResponse } from '../utils/common';
@@ -100,6 +101,16 @@ export default {
       const res = yield call(copyCase, payload);
       if (callback) {
         callback(res);
+      }
+    },
+    *runCase({ payload, callback, failCB }, { call, put }) {
+      const { success, data, message } = parseResponse(
+        yield call(runCase, payload),
+      );
+      if (success) {
+        callback(data);
+      } else {
+        failCB(message);
       }
     },
   },

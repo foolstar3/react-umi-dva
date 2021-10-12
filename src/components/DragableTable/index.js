@@ -7,6 +7,7 @@ import {
 } from 'react-sortable-hoc';
 import { MenuOutlined, DeleteOutlined } from '@ant-design/icons';
 import { arrayMoveImmutable } from 'array-move';
+import styles from './index.less';
 
 const DragHandle = SortableHandle(() => (
   <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />
@@ -107,6 +108,7 @@ class SortableTable extends React.Component {
           pagination={false}
           dataSource={dataSource}
           columns={columns}
+          className={styles.dragTable}
           rowKey="index"
           components={{
             body: {

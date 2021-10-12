@@ -9,6 +9,7 @@ export default {
   namespace: 'report',
   state: {
     reportList: {},
+    reportDetail: {},
   },
   reducers: {
     reportList(state, { payload }) {
@@ -17,6 +18,16 @@ export default {
       return {
         ...state,
         ...newState,
+      };
+    },
+    update(state, { payload }) {
+      console.log({
+        ...state,
+        ...payload,
+      });
+      return {
+        ...state,
+        ...payload,
       };
     },
   },

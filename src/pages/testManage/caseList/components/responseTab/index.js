@@ -8,6 +8,7 @@ const { Panel } = Collapse;
 const ResponseTab = ({ treeData, checkable, validators, onCheckedChange }) => {
   const [validateVisiable, setValidateVisiable] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState([]);
+  const defaultExpanded = [];
   const addKeyToTree = (node, key, index, checkable) => {
     node.key = `${key}-${index}`;
     node.checkable = checkable;
@@ -19,13 +20,20 @@ const ResponseTab = ({ treeData, checkable, validators, onCheckedChange }) => {
   };
   treeData.map((node, index) => {
     node.key = `${index}`;
+    node.expanded = true;
+    defaultExpanded.push(node);
     index === 0 ? (node.checkable = false) : '';
     if (node.children) {
-      node.children.map((childNode, childIndex) =>
-        addKeyToTree(childNode, node.key, childIndex, node.checkable),
-      );
+      node.children.map((childNode, childIndex) => {
+        childNode.expanded = true;
+        defaultExpanded.push(childNode);
+        return addKeyToTree(childNode, node.key, childIndex, node.checkable);
+      });
     }
   });
+  const expandedKeys = defaultExpanded
+    .filter((item) => item.expanded)
+    .map((item) => item.key);
   const onCheck = (checkedKeysValue, e) => {
     setCheckedKeys(() => {
       onCheckedChange(e.checkedNodes);
@@ -85,6 +93,7 @@ const ResponseTab = ({ treeData, checkable, validators, onCheckedChange }) => {
         <Tree
           treeData={treeData}
           checkable={checkable}
+          defaultExpandedKeys={expandedKeys}
           onCheck={onCheck}
           checkedKeys={checkedKeys}
         />

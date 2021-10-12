@@ -20,6 +20,9 @@ const ExtractTab = ({ extract, validate, save }) => {
       }
       return extractArr;
     });
+  }, [extract]);
+
+  useEffect(() => {
     setValidateData(() => {
       const validArr = [];
       validate.map((item, index) => {
@@ -36,7 +39,8 @@ const ExtractTab = ({ extract, validate, save }) => {
       });
       return validArr;
     });
-  }, [extract, validate]);
+  }, [validate]);
+
   const [extractData, setExtractData] = useState(() => {
     const extractArr = [];
     let index = 1;
@@ -117,43 +121,29 @@ const ExtractTab = ({ extract, validate, save }) => {
 
   const lineSave = (line, table) => {
     if (table === 'extract') {
-      setExtractData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].name = line.name;
-          prev[index].path = line.path;
-          next = prev;
-        }
-        save(next, 'extract');
-        return next;
-      });
+      const index = extractData.findIndex((item) => item.key === line.key);
+      let next = JSON.parse(JSON.stringify(extractData));
+      // key有重复后的保存
+      if (index > -1) {
+        next[index].name = line.name;
+        next[index].path = line.path;
+      }
+      save(next, table);
     } else if (table === 'validate') {
-      setValidateData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].check = line.check;
-          prev[index].comparator = line.comparator;
-          prev[index].type = line.type;
-          prev[index].expected = line.expected;
-          next = prev;
-        }
-        save(next, 'validate');
-        return next;
-      });
+      const index = validateData.findIndex((item) => item.key === line.key);
+      let next = JSON.parse(JSON.stringify(validateData));
+      // key有重复后的保存
+      if (index > -1) {
+        next[index].check = line.check;
+        next[index].comparator = line.comparator;
+        next[index].type = line.type;
+        next[index].expected = line.expected;
+      }
+      save(next, table);
     }
   };
 
   const extractTableColumns = [
-    {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
     {
       title: '提取名',
       dataIndex: 'name',
@@ -170,12 +160,6 @@ const ExtractTab = ({ extract, validate, save }) => {
 
   const validateTableColumns = [
     {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
-    {
       title: 'Check',
       dataIndex: 'check',
       editable: true,
@@ -186,12 +170,14 @@ const ExtractTab = ({ extract, validate, save }) => {
       dataIndex: 'comparator',
       editable: true,
       align: 'center',
+      width: 400,
     },
     {
       title: 'Type',
       dataIndex: 'type',
       editable: true,
       align: 'center',
+      width: 100,
     },
     {
       title: 'Expected',

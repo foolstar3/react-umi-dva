@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Tabs, Button, Modal, Form, Select, message } from 'antd';
 import styles from './index.less';
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 import { connect } from 'dva';
 import MessageTab from './messageTab';
 import VariablesTab from './variablesTab';
@@ -321,6 +322,7 @@ const CaseDetailTabs = ({
 
   const onSave = () => {
     const payload = getPayload();
+    if (payload === undefined) return;
     if (!inputValidator(payload)) return;
     caseDetail.id == undefined
       ? createCase(payload)
@@ -342,9 +344,11 @@ const CaseDetailTabs = ({
     }
     if (dataType === 'json') {
       try {
-        request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
+        JSON.parse(editorRef.current.sendCode().jsonCode);
+        request.json = editorRef.current.sendCode().jsonCode;
       } catch (err) {
         message.info('请检查JSON数据格式');
+        return;
       }
     }
     const newRequest = JSON.parse(JSON.stringify(request));
@@ -385,7 +389,6 @@ const CaseDetailTabs = ({
         extract: {},
         validate: [],
       };
-      const record = [];
       val.forEach((item) => {
         const child = {};
         obj.extract[item.name] = item.path;
@@ -407,7 +410,11 @@ const CaseDetailTabs = ({
     setValidate((prev = []) => {
       const { validate } = checkedData;
       let next = JSON.parse(JSON.stringify(prev));
-      validate.forEach((item) => {
+      const addOnValid = validate.map((item) => {
+        item.equal[0][0] === '$' ? '' : (item.equal[0] = `$${item.equal[0]}`);
+        return item;
+      });
+      addOnValid.forEach((item) => {
         const index = next.findIndex((child) => {
           if (child.equal) {
             return child.equal[0] === item.equal[0];
@@ -491,10 +498,21 @@ const CaseDetailTabs = ({
           <Tabs defaultActiveKey="1" type="card">
             {debugResponse.case_metas
               ? debugResponse.case_metas.map((item, index) => {
+                  const tabIcon = item.flag ? (
+                    <span style={{ color: 'green' }}>
+                      <CheckCircleFilled style={{ fontSize: '12px' }} />
+                      {item.name}
+                    </span>
+                  ) : (
+                    <span style={{ color: 'red' }}>
+                      <CloseCircleFilled style={{ fontSize: '12px' }} />
+                      {item.name}
+                    </span>
+                  );
                   return (
-                    <TabPane tab={item.name} key={`${item.name}${item.index}`}>
+                    <TabPane tab={tabIcon} key={`${item.name}${item.index}`}>
                       <ResponseTab
-                        treeData={debugResponse.tree[index]}
+                        treeData={item.tree}
                         checkable={true}
                         validators={item.validators.validate_extractor || []}
                         onCheckedChange={checkedChange}

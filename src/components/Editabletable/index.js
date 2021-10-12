@@ -152,7 +152,8 @@ const EditableTable = ({
         : '';
       setEditingKey(-1);
     } catch (errInfo) {
-      message.error(`校验失败:${errInfo}`);
+      console.log(errInfo);
+      message.error(`校验失败:${errInfo.errorFields[0].errors[0]}`);
     }
   };
 

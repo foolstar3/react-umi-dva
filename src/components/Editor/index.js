@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-
+import classnames from 'classnames';
 import 'codemirror/lib/codemirror.js';
 // 引入样式文件
 import 'codemirror/lib/codemirror.css';
@@ -40,11 +40,12 @@ export default class Editor extends Component {
   }
 
   render() {
-    const { content } = this.props;
+    const { content, height } = this.props;
     return (
       <CodeMirror
         ref="editor"
-        className={styles.codemirror}
+        className={classnames(styles.codemirror, height ? styles.custom : '')}
+        style={{ height: height }}
         value={content}
         options={{
           mode: {

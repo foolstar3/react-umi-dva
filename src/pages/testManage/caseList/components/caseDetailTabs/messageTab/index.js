@@ -333,7 +333,7 @@ const MessageTab = (props) => {
           </Col>
           <Col span={24} offset={4}>
             <Form.Item wrapperCol={{ span: 19 }}>
-              <Collapse>
+              <Collapse defaultActiveKey={['selection']}>
                 <Panel header="前后置步骤（可选）" key="selection">
                   <div className={styles.selectionContent}>
                     <div className={styles.topBtn}>
@@ -356,7 +356,7 @@ const MessageTab = (props) => {
         <div className={styles.right}>
           <Col span={24}>
             <Form.Item name="before">
-              <Collapse>
+              <Collapse defaultActiveKey={['selected_before']}>
                 <Panel header="前置步骤（选中）" key="selected_before">
                   {renderBeforeTable()}
                 </Panel>
@@ -365,7 +365,7 @@ const MessageTab = (props) => {
           </Col>
           <Col span={24}>
             <Form.Item name="after">
-              <Collapse>
+              <Collapse defaultActiveKey={['selected_after']}>
                 <Panel header="后置步骤（选中）" key="selected_after">
                   {renderAfterTable()}
                 </Panel>
