@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 export const DateFormat = (date) => {
   if (date instanceof Date) {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -30,9 +32,9 @@ export const parseResponse = (response) => {
     const { code, message } = response;
     if (code !== 'U000000') {
       success = false;
-      message.error(message);
+      // message.error(message);
     } else {
-      message.success(message);
+      // message.success(message);
     }
     const result = { success, code, message };
     return result;

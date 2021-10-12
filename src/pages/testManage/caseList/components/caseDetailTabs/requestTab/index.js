@@ -1,4 +1,9 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+} from 'react';
 import EditableTable from '@/components/Editabletable';
 import { DataType } from '@/utils/common';
 import { Form, Select, Button, message, Input, Row, Col } from 'antd';
@@ -8,6 +13,66 @@ import styles from './index.less';
 
 const RequestTab = (props, ref) => {
   const { request, save } = props;
+  useEffect(() => {
+    setHeaderData(() => {
+      const header = [];
+      let index = 1;
+      if (request.headers) {
+        for (const [key, value] of Object.entries(request.headers)) {
+          header.push({
+            name: key,
+            value: value,
+            id: index,
+            key: index,
+            type: DataType(value),
+          });
+          index++;
+        }
+      }
+      return header;
+    });
+  }, [request.headers]);
+
+  useEffect(() => {
+    setParamsData(() => {
+      const params = [];
+      let index = 1;
+      if (request.params) {
+        for (const [key, value] of Object.entries(request.params)) {
+          params.push({
+            name: key,
+            value: value,
+            id: index,
+            key: index,
+            type: DataType(value),
+          });
+          index++;
+        }
+      }
+      return params;
+    });
+  }, [request.params]);
+
+  useEffect(() => {
+    setData(() => {
+      const data = [];
+      let index = 1;
+      if (request.data) {
+        for (const [key, value] of Object.entries(request.data)) {
+          data.push({
+            name: key,
+            value: value,
+            id: index,
+            key: index,
+            type: DataType(value),
+          });
+          index++;
+        }
+      }
+      return data;
+    });
+  }, [request.data]);
+
   useImperativeHandle(ref, () => {
     return {
       sendCode() {
@@ -88,11 +153,10 @@ const RequestTab = (props, ref) => {
     return data;
   });
   // 子组件的jsonCode
-  let initJsonCode = '';
-  const [jsonCode, setJsonCode] = useState(() => {
-    initJsonCode = request.json ? JSON.stringify(request.json) : '';
-    return initJsonCode;
-  });
+  const [initJsonCode, setInitJsonCode] = useState(
+    request.json ? request.json : '',
+  );
+  const [jsonCode, setJsonCode] = useState(request.json ? request.json : '');
 
   const lineAdd = (table) => {
     if (table === 'headers') {
@@ -159,55 +223,37 @@ const RequestTab = (props, ref) => {
 
   const lineSave = (line, table) => {
     if (table === 'headers') {
-      setHeaderData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].name = line.name;
-          prev[index].value = line.value;
-          next = prev;
-        }
-        save(next, table);
-        return next;
-      });
+      const index = headerData.findIndex((item) => item.key === line.key);
+      let next = JSON.parse(JSON.stringify(headerData));
+      // key有重复后的保存
+      if (index > -1) {
+        next[index].name = line.name;
+        next[index].value = line.value;
+      }
+      save(next, table);
     } else if (table === 'params') {
-      setParamsData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].name = line.name;
-          prev[index].value = line.value;
-          next = prev;
-        }
-        save(next, table);
-        return next;
-      });
+      const index = paramsData.findIndex((item) => item.key === line.key);
+      let next = JSON.parse(JSON.stringify(paramsData));
+      // key有重复后的保存
+      if (index > -1) {
+        next[index].name = line.name;
+        next[index].value = line.value;
+      }
+      save(next, table);
     } else if (table === 'data') {
-      setData((prev) => {
-        const index = prev.findIndex((item) => item.key === line.key);
-        let next = [];
-        // key有重复后的保存
-        if (index > -1) {
-          prev[index].name = line.name;
-          prev[index].value = line.value;
-          prev[index].type = line.type;
-          next = prev;
-        }
-        save(next, table);
-        return next;
-      });
+      const index = requestData.findIndex((item) => item.key === line.key);
+      let next = JSON.parse(JSON.stringify(requestData));
+      // key有重复后的保存
+      if (index > -1) {
+        next[index].name = line.name;
+        next[index].value = line.value;
+        next[index].type = line.type;
+      }
+      save(next, table);
     }
   };
 
   const headerTableColumns = [
-    {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
     {
       title: 'header名',
       dataIndex: 'name',
@@ -224,12 +270,6 @@ const RequestTab = (props, ref) => {
 
   const paramsTableColumns = [
     {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
-    {
       title: 'params名',
       dataIndex: 'name',
       editable: true,
@@ -244,12 +284,6 @@ const RequestTab = (props, ref) => {
   ];
 
   const dataTableColumns = [
-    {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
     {
       title: 'data名',
       dataIndex: 'name',
@@ -271,7 +305,6 @@ const RequestTab = (props, ref) => {
   ];
 
   const getDataCode = (val) => {
-    // setJsonData(val)
     setJsonCode(val);
   };
 
@@ -307,8 +340,9 @@ const RequestTab = (props, ref) => {
               <Form.Item
                 label="URL"
                 name="url"
-                labelCol={{ span: 1 }}
-                wrapperCol={{ span: 22 }}
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
+                rules={[{ required: true, message: '请输入url' }]}
               >
                 <Input
                   onChange={(e) => requestTypeChange(e.target.value, 'url')}
@@ -320,8 +354,8 @@ const RequestTab = (props, ref) => {
               <Form.Item
                 label="请求方法"
                 name="method"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 18 }}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 16 }}
               >
                 <Select onChange={(val) => requestTypeChange(val, 'method')}>
                   {method.map((item) => (
@@ -384,7 +418,11 @@ const RequestTab = (props, ref) => {
       <div className={styles.dataContent}>
         {dataType === 'json' && (
           <div className={styles.editor}>
-            <Editor getEditorContent={getDataCode} content={initJsonCode} />
+            <Editor
+              getEditorContent={getDataCode}
+              content={initJsonCode}
+              height={'300px'}
+            />
           </div>
         )}
         {dataType === 'data' && (

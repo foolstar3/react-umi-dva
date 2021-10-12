@@ -1,4 +1,4 @@
-import { requestUap } from '@/utils/request';
+import { requestUap, requestUmi } from '@/utils/request';
 
 export async function getCaseList(data) {
   return requestUap('/testcase/', {
@@ -8,7 +8,7 @@ export async function getCaseList(data) {
 }
 
 export async function deleteCase(data) {
-  return requestUap(`/testcase/${data}`, {
+  return requestUap(`/testcase/${data}/`, {
     method: 'DELETE',
     requestType: 'form',
   });
@@ -19,6 +19,10 @@ export async function debugCase(data) {
     method: 'POST',
     data,
   });
+  // return requestUmi(`http://10.6.209.209:40001/mock/24/debug/`, {
+  //   method: 'POST',
+  //   data,
+  // })
 }
 
 export async function getFuncs(data) {
@@ -29,7 +33,7 @@ export async function getFuncs(data) {
 }
 
 export async function getCalls(data) {
-  return requestUap(`/get_call_case/${data}`, {
+  return requestUap(`/get_call_case/${data}/`, {
     method: 'GET',
   });
 }
@@ -51,6 +55,13 @@ export async function createCase(data) {
 
 export async function copyCase(data) {
   return requestUap(`/copy-testcase/`, {
+    method: 'POST',
+    data,
+  });
+}
+
+export async function runCase(data) {
+  return requestUap(`/test/`, {
     method: 'POST',
     data,
   });

@@ -53,12 +53,6 @@ const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
   });
   const setupTableColumns = [
     {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
-    {
       title: '函数名',
       dataIndex: 'funcName',
       editable: true,
@@ -67,12 +61,6 @@ const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
   ];
 
   const teardownTableColumns = [
-    {
-      title: '编号',
-      dataIndex: 'id',
-      width: 80,
-      align: 'center',
-    },
     {
       title: '函数名',
       dataIndex: 'funcName',

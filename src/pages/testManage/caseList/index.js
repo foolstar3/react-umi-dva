@@ -19,6 +19,8 @@ import {
   DeleteOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
+
+import { history } from 'umi';
 import SearchBox from './components/searchBox';
 import CaseDetailTabs from './components/caseDetailTabs';
 import styles from './index.less';
@@ -50,6 +52,7 @@ class CaseList extends Component {
     searchWords: {},
     isRunModalVisible: false,
     curRunType: 'sync',
+    runCaseId: [],
   };
   runModal = 'single';
   runForm = React.createRef();
@@ -59,6 +62,11 @@ class CaseList extends Component {
     this.getProjectList({ page: 'None' });
     this.getModuleList({ page: 'None' });
     this.getEnvList({ page: 'None', is_valid: true });
+    history.listen((location) => {
+      if (location.pathname === '/testManage/caseList') {
+        this.hideCaseDetail();
+      }
+    });
   }
   /**
    *
@@ -98,14 +106,12 @@ class CaseList extends Component {
   };
 
   getEnvList = (payload) => {
-    console.log(payload);
     const { dispatch } = this.props;
     dispatch({
       type: 'envList/getEnvList',
       payload,
       callback: () => {
         const { envList } = this.props;
-        console.log(envList);
       },
     });
   };
@@ -163,6 +169,36 @@ class CaseList extends Component {
       },
     });
   };
+
+  runCase = (payload) => {
+    const { dispatch } = this.props;
+    message.loading({ content: '用例运行中', duration: 0, key: 'runCase' });
+    dispatch({
+      type: 'testCase/runCase',
+      payload,
+      callback: (res) => {
+        message.success({
+          content: '用例运行完成',
+          duration: 1,
+          key: 'runCase',
+        });
+        history.push({
+          pathname: '/reportManage/reportDetail',
+          state: {
+            reportDetail: res,
+          },
+        });
+      },
+      failCB: (res) => {
+        message.error({
+          content: `用例运行失败，${res}`,
+          duration: 1,
+          key: 'runCase',
+        });
+      },
+    });
+  };
+
   onSelectChange = (selectedRowKeys) => {
     this.setState({ selectedRowKeys });
   };
@@ -244,6 +280,9 @@ class CaseList extends Component {
       curRunType: 'sync',
     });
     if (record !== '') {
+      this.setState({
+        runCaseId: [record.id],
+      });
       this.getEnvList({
         page: 'None',
         project: record.project,
@@ -263,7 +302,19 @@ class CaseList extends Component {
   };
 
   handleRunOk = () => {
-    console.log('handleRunOk');
+    console.log(
+      'handleRunOk',
+      this.state.runCaseId,
+      this.runForm.current.getFieldValue('env_name'),
+    );
+    const payload = {
+      case_list: {
+        case: this.state.runCaseId,
+      },
+      env: this.runForm.current.getFieldValue('env_name'),
+      run_type: 'sync',
+    };
+    this.runCase(payload);
     this.setState({
       isRunModalVisible: false,
     });
@@ -523,12 +574,13 @@ class CaseList extends Component {
 }
 
 export default connect(
-  ({ testCase, projectList, moduleList, envList, loading }) => ({
+  ({ testCase, projectList, moduleList, envList, report, loading }) => ({
     caseList: testCase.caseList,
     envList: envList.envList,
     projectData: projectList.projectList,
     moduleData: moduleList.moduleList,
     funcs: testCase.funcsName,
     tableLoading: loading.effects['testCase/getCaseList'],
+    reportDetail: report.reportDetail,
   }),
 )(CaseList);
