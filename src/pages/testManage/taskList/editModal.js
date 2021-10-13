@@ -280,11 +280,14 @@ class EditModal extends React.Component {
   };
 
   render() {
+    console.log(this.props.caseArray);
     const { editVisible, tempValue, envName } = this.props;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
     const { caseNumber, checked } = this.state;
     const treeData = [...this.state.treeData];
+    const crontab_time = this.props.crontab_time;
+    const crontab = crontab_time.split(' ');
     return (
       <div>
         {editVisible && (
@@ -351,27 +354,31 @@ class EditModal extends React.Component {
                       onChange={(num) => this.handlecrontab_M(num)}
                       style={{ width: 211 }}
                       addonAfter="m"
-                      defaultValue={'ffffff'}
+                      defaultValue={crontab[0]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_H(num)}
                       style={{ width: 211 }}
                       addonAfter="h"
+                      defaultValue={crontab[1]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_DM(num)}
                       style={{ width: 211 }}
                       addonAfter="dM"
+                      defaultValue={crontab[2]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_Mon(num)}
                       style={{ width: 211 }}
                       addonAfter="MY"
+                      defaultValue={crontab[3]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_DW(num)}
                       style={{ width: 211 }}
                       addonAfter="d"
+                      defaultValue={crontab[4]}
                     />
                   </div>
                 </Form.Item>

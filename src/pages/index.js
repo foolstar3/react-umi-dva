@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import { Card, Row, Col } from 'antd';
 import ReactECharts from 'echarts-for-react';
-import { isMethodSignature } from 'typescript';
+import './index.css';
+const { Meta } = Card;
 class Index extends Component {
   constructor(props) {
     super(props);
@@ -125,8 +126,8 @@ class Index extends Component {
         <div className="site-card-wrapper">
           <Row gutter={16} style={{ marginBottom: 50 }}>
             <Col span={6}>
-              <Card title="项目数" bordered hoverable>
-                {this.state.project_num} 个
+              <Card title="项目数" bordered hoverable icon>
+                <Meta title={`${this.state.project_num}个`} />
               </Card>
             </Col>
             <Col span={6}>

@@ -7,8 +7,14 @@ import {
   Form,
   Input,
   Modal,
-  FormInstance,
+  Popconfirm,
 } from 'antd';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusCircleOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import { connect } from 'umi';
 import TreeNode_Add from './treeNode_add';
 import './index.less';
@@ -87,7 +93,6 @@ class AddModal extends React.Component {
   };
 
   handleSubmit = () => {
-    console.log('this.state', this.state.caseNumber);
     const addTask = this.state.tempAddValue;
     const projectList = this.props.projectList.projectList;
     const envList = this.props.envList.envList;
@@ -282,6 +287,11 @@ class AddModal extends React.Component {
           </Form.Item>
           {checked && (
             <Form.Item label="定时状态" id="basic_taskList_crontab">
+              {/* <Popconfirm
+                title = '1'
+              >
+                {<QuestionCircleOutlined />}
+              </Popconfirm> */}
               <Input
                 style={{ width: 211 }}
                 addonAfter="m"

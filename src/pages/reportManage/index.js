@@ -6,7 +6,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import config from './config';
-import { connect } from 'dva';
+import { connect, history } from 'umi';
 import styles from './index.less';
 
 @connect(({ report }) => ({
@@ -65,6 +65,19 @@ class ViewReport extends Component {
     });
   };
 
+  getReportDetail = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'report/getReportDetail',
+      payload,
+      callback: () => {
+        history.push('/reportManage/reportDetail');
+      },
+      failCB: (res) => {
+        message.error(res);
+      },
+    });
+  };
   /**
    * 删除功能
    */
@@ -77,8 +90,8 @@ class ViewReport extends Component {
   /**
    *待开发功能
    */
-  showDetailModal = () => {
-    message.info('功能开发中');
+  showDetail = (record) => {
+    this.getReportDetail({ task_id: record.task_id });
   };
 
   render() {
@@ -95,7 +108,7 @@ class ViewReport extends Component {
           <Button
             type="primary"
             icon={<ProfileOutlined />}
-            onClick={this.showDetailModal}
+            onClick={() => this.showDetail(record)}
             size="small"
             shape="round"
           >

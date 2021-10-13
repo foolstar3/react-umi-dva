@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Collapse, List, Table } from 'antd';
-import { connect } from 'umi';
+import { connect, history } from 'umi';
 import ReactECharts from 'echarts-for-react';
 import styles from './index.less';
 
@@ -130,14 +130,23 @@ class ReportDetail extends React.Component {
   ];
   componentDidMount() {
     // this.getReportDetail({ task_id: this.props.location.query.id });
-    const { reportDetail } = this.props.location.state;
-    Object.keys(reportDetail).length
-      ? this.setState({
-          reportDetail: reportDetail,
-        })
-      : '';
-    const { summary } = reportDetail;
-    this.dealDatas(summary);
+    console.log(this.props);
+    if (Object.keys(this.props.reportDetail).length) {
+      // 由其他页面跳转进来页面初始化，通过props传入summary
+      const { reportDetail } = this.props;
+      localStorage.setItem('reportDetail', JSON.stringify(reportDetail));
+      const { summary } = reportDetail;
+      this.dealDatas(summary);
+    } else {
+      // 刷新报告页面时，如果本地有结果数据，则显示，否则跳转回到前一页
+      if (localStorage.getItem('reportDetail') === null) {
+        history.goBack();
+      } else {
+        const reportDetail = JSON.parse(localStorage.getItem('reportDetail'));
+        const { summary } = reportDetail;
+        this.dealDatas(summary);
+      }
+    }
   }
 
   dealDatas = (summary) => {
@@ -865,6 +874,6 @@ class ReportDetail extends React.Component {
   }
 }
 
-export default connect((report) => ({
+export default connect(({ report }) => ({
   reportDetail: report.reportDetail,
 }))(ReportDetail);

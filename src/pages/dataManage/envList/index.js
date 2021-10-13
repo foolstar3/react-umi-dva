@@ -189,6 +189,32 @@ class EnvList extends Component {
     };
   }
   formRef = React.createRef();
+
+  validate = (formValues) => {
+    console.log(formValues);
+    if (
+      Object.keys(formValues).indexOf('env_name') === -1 ||
+      formValues.env_name === ''
+    ) {
+      message.info('环境名称不能为空');
+      return false;
+    }
+    if (
+      Object.keys(formValues).indexOf('base_url') === -1 ||
+      formValues.base_url === ''
+    ) {
+      message.info('环境地址不能为空');
+      return false;
+    }
+    if (
+      Object.keys(formValues).indexOf('project_name') === -1 ||
+      formValues.project_name === ''
+    ) {
+      message.info('项目名称不能为空');
+      return false;
+    }
+    return true;
+  };
   componentDidMount() {
     this.getEnvList({ page: 1 });
     this.getProjectList({ page: 'None' });
@@ -293,11 +319,13 @@ class EnvList extends Component {
       ...addEnvListData,
       is_valid: addEnvListData.is_valid == false ? false : true,
     };
-    // 发送请求
-    this.addEnvListData(payload);
-    this.setState({
-      addModalVisiable: false,
-    });
+    if (this.validate(payload)) {
+      // 发送请求
+      this.addEnvListData(payload);
+      this.setState({
+        addModalVisiable: false,
+      });
+    }
   };
 
   handleAddFormValueChange = (av) => {
@@ -410,10 +438,12 @@ class EnvList extends Component {
       ...editEnvListData,
       id: currentEnvInfo.id,
     };
-    this.updateEnv(payload);
-    this.setState({
-      editModalVisiable: false,
-    });
+    if (this.validate(payload)) {
+      this.updateEnv(payload);
+      this.setState({
+        editModalVisiable: false,
+      });
+    }
   };
 
   // 取消编辑
