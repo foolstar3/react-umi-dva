@@ -77,7 +77,6 @@ request.interceptors.request.use((url, options) => {
 // response拦截器, 处理response
 request.interceptors.response.use(async (response) => {
   // let data = null;
-  // console.log(response,'response-interceptors', options, 'options');
   if (response.url.includes('faq')) {
     return response;
   }
@@ -87,7 +86,6 @@ request.interceptors.response.use(async (response) => {
   //   data = formatToken(jwt);
   //   return data;
   // }
-  // console.log(response);
   return response;
 });
 

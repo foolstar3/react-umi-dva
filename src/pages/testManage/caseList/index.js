@@ -291,6 +291,9 @@ class CaseList extends Component {
       const { selectedRowKeys } = this.state;
       if (selectedRowKeys.length) {
         // todo 发起请求获取所选用例可用的环境列表
+        this.setState({
+          runCaseId: selectedRowKeys,
+        });
       } else {
         return message.info('请选择需要运行的用例');
       }
@@ -301,11 +304,6 @@ class CaseList extends Component {
   };
 
   handleRunOk = () => {
-    console.log(
-      'handleRunOk',
-      this.state.runCaseId,
-      this.runForm.current.getFieldValue('env_name'),
-    );
     const payload = {
       case_list: {
         case: this.state.runCaseId,
