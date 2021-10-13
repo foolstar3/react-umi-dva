@@ -103,6 +103,7 @@ class ViewReport extends Component {
       dataIndex: 'action',
       key: 'action',
       width: 180,
+      align: 'center',
       render: (text, record) => (
         <div key={record.id} className={styles.actionColumn}>
           <Button

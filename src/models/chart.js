@@ -9,7 +9,6 @@ export default {
   },
   reducers: {
     getFormData(state, { payload }) {
-      // console.log(payload);
       return {
         ...state,
         ...payload,
@@ -18,7 +17,6 @@ export default {
   },
   effects: {
     *getData({ payload, callback }, { call, put }) {
-      // console.log({payload,callback});
       const data = yield call(getFormData);
       yield put({ type: 'getFormData', payload: data });
     },

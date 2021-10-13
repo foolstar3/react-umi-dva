@@ -21,10 +21,6 @@ export default {
       };
     },
     update(state, { payload }) {
-      console.log({
-        ...state,
-        ...payload,
-      });
       return {
         ...state,
         ...payload,

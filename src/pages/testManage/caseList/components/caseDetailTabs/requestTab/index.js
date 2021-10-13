@@ -358,6 +358,7 @@ const RequestTab = (props, ref) => {
                 name="method"
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 16 }}
+                rules={[{ required: true, message: '请选择请求方法' }]}
               >
                 <Select onChange={(val) => requestTypeChange(val, 'method')}>
                   {method.map((item) => (
