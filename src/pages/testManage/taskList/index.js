@@ -36,6 +36,7 @@ class TaskList extends React.Component {
       projectId: 0,
       caseArray: [],
       project: '',
+      crontab_time: '',
     };
   }
 
@@ -146,6 +147,10 @@ class TaskList extends React.Component {
   };
 
   showEditModal = (record) => {
+    console.log('recordcheckcase', record);
+    this.setState({
+      crontab_time: record.crontab_time,
+    });
     const strRecord = JSON.stringify(record);
     const recordTempValue = JSON.parse(strRecord);
     const projectListId = recordTempValue?.task_extend?.project;
@@ -383,6 +388,7 @@ class TaskList extends React.Component {
           caseNumber={this.state.caseNumber}
           onRef={this.onRef}
           caseArray={this.state.caseArray}
+          crontab_time={this.state.crontab_time}
         />
       </div>
     );

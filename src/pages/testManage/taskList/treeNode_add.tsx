@@ -25,6 +25,7 @@ function updateTreeData(
 
 const TreeNode_Add: React.FC<{}> = (props: any) => {
   const initTreeData: any = props.treeData_moduleList;
+
   const [treeData, setTreeData] = useState(initTreeData);
   useEffect(() => {
     setTreeData(initTreeData);
@@ -44,16 +45,11 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
       new_CheckedListString.map((checkedItem) => {
         new_CheckedListNumber.push(parseInt(checkedItem));
       });
-
     props.caseNumber(new_CheckedListNumber, new_CheckedListNumber.length);
   };
 
   const onLoadData = ({ key, children }: any) =>
     new Promise<void>((resolve) => {
-      if (children) {
-        resolve();
-        return;
-      }
       const payload = {
         page: 'None',
         project: props.checked_projectListId,
@@ -83,11 +79,10 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
         },
       });
     });
-
   return (
     <div>
       <Collapse>
-        <Panel header="请选择用例" key="caseNumber" forceRender>
+        <Panel header="请选择用例" key="caseNumber">
           <Tree
             treeData={treeData}
             loadData={onLoadData}
