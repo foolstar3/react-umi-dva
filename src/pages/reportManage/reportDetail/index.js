@@ -129,8 +129,6 @@ class ReportDetail extends React.Component {
     },
   ];
   componentDidMount() {
-    // this.getReportDetail({ task_id: this.props.location.query.id });
-    console.log(this.props);
     if (Object.keys(this.props.reportDetail).length) {
       // 由其他页面跳转进来页面初始化，通过props传入summary
       const { reportDetail } = this.props;
@@ -770,20 +768,24 @@ class ReportDetail extends React.Component {
       <Collapse>
         {panelDetail.map((item) => {
           if (item.name === 'validators') {
-            const { validate_extractor } = item.content;
-            if (Object.keys(validators).length) {
-              const tableData = validate_extractor.map((item) => {
-                item.key = `${item.check}-${item.comparator}-${item.check_value}-${item.check_result}`;
-                return item;
-              });
-              return (
-                <Panel header={item.name} key={item.name}>
-                  <Table
-                    dataSource={tableData}
-                    columns={this.caseDetailColumn}
-                  />
-                </Panel>
-              );
+            if (item.content !== undefined) {
+              const { validate_extractor } = item.content;
+              if (Object.keys(validators).length) {
+                const tableData = validate_extractor.map((item) => {
+                  item.key = `${item.check}-${item.comparator}-${item.check_value}-${item.check_result}`;
+                  return item;
+                });
+                return (
+                  <Panel header={item.name} key={item.name}>
+                    <Table
+                      dataSource={tableData}
+                      columns={this.caseDetailColumn}
+                    />
+                  </Panel>
+                );
+              }
+            } else {
+              return null;
             }
           }
           const listData = [];

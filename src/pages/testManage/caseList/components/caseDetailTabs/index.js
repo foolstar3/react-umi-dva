@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Tabs, Button, Modal, Form, Select, message } from 'antd';
+import { Tabs, Button, Modal, Form, Select, message, Alert } from 'antd';
 import styles from './index.less';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 import { connect } from 'dva';
@@ -392,7 +392,7 @@ const CaseDetailTabs = ({
       val.forEach((item) => {
         const child = {};
         obj.extract[item.name] = item.path;
-        child['equal'] = [item.name, item.expect];
+        child['equals'] = [item.name, item.expect];
         obj.validate.push(child);
       });
       return obj;
@@ -411,13 +411,15 @@ const CaseDetailTabs = ({
       const { validate } = checkedData;
       let next = JSON.parse(JSON.stringify(prev));
       const addOnValid = validate.map((item) => {
-        item.equal[0][0] === '$' ? '' : (item.equal[0] = `$${item.equal[0]}`);
+        item.equals[0][0] === '$'
+          ? ''
+          : (item.equals[0] = `$${item.equals[0]}`);
         return item;
       });
       addOnValid.forEach((item) => {
         const index = next.findIndex((child) => {
-          if (child.equal) {
-            return child.equal[0] === item.equal[0];
+          if (child.equals) {
+            return child.equals[0] === item.equals[0];
           }
         });
         index === -1 ? (next = next.concat(item)) : next.splice(index, 1, item);
@@ -490,13 +492,59 @@ const CaseDetailTabs = ({
           <Button className={styles.basicBtn} onClick={clearResult}>
             清空结果
           </Button>
-          <Button className={styles.basicBtn} onClick={extractData}>
+          <Button
+            className={styles.basicBtn}
+            onClick={extractData}
+            style={{
+              visibility:
+                debugResponse.case_metas && debugResponse.case_metas.length
+                  ? ''
+                  : 'hidden',
+            }}
+          >
             提取数据
           </Button>
         </div>
-        <div className={styles.responseTabs}>
+        {debugResponse.case_metas && !debugResponse.case_metas.length ? (
+          <Alert
+            message="traceback"
+            description={debugResponse.summary.traceback}
+            type="error"
+          />
+        ) : (
+          <div className={styles.responseTabs}>
+            <Tabs defaultActiveKey="1" type="card">
+              {debugResponse.case_metas
+                ? debugResponse.case_metas.map((item, index) => {
+                    const tabIcon = item.flag ? (
+                      <span style={{ color: 'green' }}>
+                        <CheckCircleFilled style={{ fontSize: '12px' }} />
+                        {item.name}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'red' }}>
+                        <CloseCircleFilled style={{ fontSize: '12px' }} />
+                        {item.name}
+                      </span>
+                    );
+                    return (
+                      <TabPane tab={tabIcon} key={`${item.name}${item.index}`}>
+                        <ResponseTab
+                          treeData={item.tree}
+                          checkable={true}
+                          validators={item.validators.validate_extractor || []}
+                          onCheckedChange={checkedChange}
+                        />
+                      </TabPane>
+                    );
+                  })
+                : ''}
+            </Tabs>
+          </div>
+        )}
+        {/* <div className={styles.responseTabs}>
           <Tabs defaultActiveKey="1" type="card">
-            {debugResponse.case_metas
+            {debugResponse.case_metas && debugResponse.case_metas.length
               ? debugResponse.case_metas.map((item, index) => {
                   const tabIcon = item.flag ? (
                     <span style={{ color: 'green' }}>
@@ -522,7 +570,7 @@ const CaseDetailTabs = ({
                 })
               : ''}
           </Tabs>
-        </div>
+        </div> */}
       </div>
       <Modal
         title="选择运行环境"

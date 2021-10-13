@@ -194,21 +194,24 @@ class EnvList extends Component {
     console.log(formValues);
     if (
       Object.keys(formValues).indexOf('env_name') === -1 ||
-      formValues.env_name === ''
+      formValues.env_name === '' ||
+      formValues.env_name === undefined
     ) {
       message.info('环境名称不能为空');
       return false;
     }
     if (
       Object.keys(formValues).indexOf('base_url') === -1 ||
-      formValues.base_url === ''
+      formValues.base_url === '' ||
+      formValues.base_url === undefined
     ) {
       message.info('环境地址不能为空');
       return false;
     }
     if (
-      Object.keys(formValues).indexOf('project_name') === -1 ||
-      formValues.project_name === ''
+      Object.keys(formValues).indexOf('project') === -1 ||
+      formValues.project === '' ||
+      formValues.project === undefined
     ) {
       message.info('项目名称不能为空');
       return false;
