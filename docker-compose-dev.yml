@@ -1,8 +1,11 @@
-version: '3'
+version: '3.8'
 
 services:
   front:
-    image: registry-dev.uihcloud.cn/tc-team/qc-front-dev:latest
+    build:
+      context: .
+      dockerfile: dockerfile-dev
+    image: qc-front-dev:debug
     ports:
       - "9001:9001"
     networks:

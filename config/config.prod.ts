@@ -8,7 +8,7 @@ export default defineConfig({
   favicon: './images/favicon.png',
   define: {
     'process.env.var': 'prod',
-    'process.env.qcFrontUrl': 'http://10.6.209.209:9999',
+    'process.env.qcFrontUrl': 'http://10.6.209.209:9998',
   },
   devServer: {
     port: 9003,
@@ -20,5 +20,5 @@ export default defineConfig({
   publicPath: './',
   routes,
   fastRefresh: {},
-  title: `千策-API测试平台`,
+  title: `千策`,
 });
