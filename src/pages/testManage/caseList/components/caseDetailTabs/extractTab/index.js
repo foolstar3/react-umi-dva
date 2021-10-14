@@ -33,7 +33,7 @@ const ExtractTab = ({ extract, validate, save }) => {
           el.comparator = key;
           el.check = value[0];
           el.expected = value[1];
-          el.type = DataType(value[1]);
+          el.type = value[2] ?? DataType(value[1]);
         }
         validArr.push(el);
       });
@@ -66,7 +66,7 @@ const ExtractTab = ({ extract, validate, save }) => {
         el.comparator = key;
         el.check = value[0];
         el.expected = value[1];
-        el.type = DataType(value[1]);
+        el.type = value[2] ?? DataType(value[1]);
       }
       validArr.push(el);
     });
@@ -130,6 +130,7 @@ const ExtractTab = ({ extract, validate, save }) => {
       }
       save(next, table);
     } else if (table === 'validate') {
+      console.log(line);
       const index = validateData.findIndex((item) => item.key === line.key);
       let next = JSON.parse(JSON.stringify(validateData));
       // key有重复后的保存

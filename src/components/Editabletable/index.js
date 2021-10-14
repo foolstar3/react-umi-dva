@@ -27,23 +27,35 @@ const EditableCell = ({
       return (
         <Select>
           <Option value="String">String</Option>
-          <Option value="Iumber">Int</Option>
-          <Option value="Fumber">Float</Option>
+          <Option value="Int">Int</Option>
+          <Option value="Float">Float</Option>
           <Option value="Boolean">Boolean</Option>
         </Select>
       );
     } else if (cellType === 'funcSelect') {
-      const renderOption = (title) => ({
-        value: title,
-        label: <span>{title}</span>,
+      const renderTitle = (title) => (
+        <span style={{ fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+          所属项目：{title}
+        </span>
+      );
+      const renderItem = (content) => {
+        const option = content.map((item) => ({
+          value: item,
+          label: item,
+        }));
+        return option;
+      };
+      // const options = restProps.funcs.map((item) => renderOption(item));
+      const options = Object.keys(restProps.funcs).map((key) => {
+        return {
+          label: renderTitle(key),
+          options: renderItem(restProps.funcs[key]),
+        };
       });
-      const options = restProps.funcs.map((item) => renderOption(item));
       return (
         <AutoComplete
           options={options}
-          filterOption={(inputValue, option) =>
-            option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-          }
+          // filterOption={(inputValue, option) => option.options.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
         >
           <Input placeholder="请输入" />
         </AutoComplete>

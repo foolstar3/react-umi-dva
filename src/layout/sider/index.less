@@ -1,7 +1,22 @@
-.site-layout-background {
-  position: fixed;
+.siteLayoutBackground {
+  position: relative;
   top: 50px;
   height: 100vh;
   z-index: 1;
-  width: 250px !important;
+  &.folded {
+    :global {
+      .ant-menu.ant-menu-root.ant-menu-vertical.ant-menu-dark.ant-menu-inline-collapsed {
+        position: fixed;
+      }
+    }
+  }
+  &.unfolded {
+    :global {
+      .ant-menu.ant-menu-root.ant-menu-inline.ant-menu-dark {
+        position: fixed;
+        width: 200px;
+      }
+    }
+  }
+  // width: 250px !important;
 }

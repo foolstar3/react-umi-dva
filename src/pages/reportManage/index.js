@@ -5,12 +5,14 @@ import {
   ProfileOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
+import SearchBox from './searchBox';
 import config from './config';
 import { connect, history } from 'umi';
 import styles from './index.less';
 
-@connect(({ report }) => ({
+@connect(({ report, projectList }) => ({
   reportList: report.reportList,
+  projectList: projectList.projectList,
 }))
 class ViewReport extends Component {
   constructor(props) {
@@ -19,16 +21,29 @@ class ViewReport extends Component {
       currentReport: {},
       tableLoading: true,
       total: 0,
+      currentPage: 1,
+      searchWords: {},
     };
   }
 
   componentDidMount() {
     this.getReportList({ page: 1 });
+    this.getProjectList({ page: 'None' });
   }
 
   /**
    * 请求后端接口函数
    */
+  //获取项目名称列表
+  getProjectList = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+      callback: () => {},
+    });
+  };
+
   getReportList = (payload) => {
     this.setState({
       tableLoading: true,
@@ -56,6 +71,7 @@ class ViewReport extends Component {
       type: 'report/deleteReport',
       payload,
       callback: () => {
+        this.getReportList({ page: 1 });
         /**
          * todo
          * 删除成功
@@ -84,19 +100,29 @@ class ViewReport extends Component {
 
   handleDeleteOk = (record) => {
     this.deleteReport(record.id);
-    this.getReportList({ page: 1 });
   };
 
-  /**
-   *待开发功能
-   */
   showDetail = (record) => {
     this.getReportDetail({ task_id: record.task_id });
   };
 
+  onSearch = (payload) => {
+    this.getReportList({ page: 1, ...payload });
+    this.setState({
+      searchWords: payload,
+      currentPage: 1,
+    });
+  };
+
+  onReset = () => {
+    this.setState({
+      searchWords: {},
+    });
+  };
+
   render() {
-    const { currentReport, tableLoading, total } = this.state;
-    const { reportList } = this.props;
+    const { currentReport, tableLoading, total, currentPage } = this.state;
+    const { reportList, projectList } = this.props;
 
     const actionConfig = {
       title: '操作',
@@ -112,6 +138,7 @@ class ViewReport extends Component {
             onClick={() => this.showDetail(record)}
             size="small"
             shape="round"
+            disabled={record.result === 'running'}
           >
             {' '}
             详情
@@ -129,6 +156,7 @@ class ViewReport extends Component {
               danger
               size="small"
               shape="round"
+              disabled={record.result === 'running'}
             >
               删除
             </Button>
@@ -143,7 +171,13 @@ class ViewReport extends Component {
     const paginationProps = {
       showSizeChanger: false,
       showQuickJumper: true,
-      onChange: (page) => this.getReportList({ page }),
+      current: currentPage,
+      onChange: (page) => {
+        this.setState({
+          currentPage: page,
+        });
+        this.getReportList({ page, ...this.state.searchWords });
+      },
       total: total,
       showTotal: () => `共 ${total} 条`,
     };
@@ -152,13 +186,20 @@ class ViewReport extends Component {
       return (
         <>
           <Card>
-            <Table
-              columns={columnsConfig}
-              dataSource={reportList.results}
-              pagination={paginationProps}
-              loading={tableLoading}
-              bordered
-            ></Table>
+            <SearchBox
+              projectOptions={projectList}
+              onSearch={this.onSearch}
+              onReset={this.onReset}
+            />
+            <div className={styles.tableContainer}>
+              <Table
+                columns={columnsConfig}
+                dataSource={reportList.results}
+                pagination={paginationProps}
+                loading={tableLoading}
+                bordered
+              />
+            </div>
           </Card>
         </>
       );

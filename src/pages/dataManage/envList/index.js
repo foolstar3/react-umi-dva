@@ -354,7 +354,7 @@ class EnvList extends Component {
             currentPage: 1,
           });
         } else {
-          message.error(res.message);
+          res.message ? message.error(res.message) : '';
         }
       },
     });

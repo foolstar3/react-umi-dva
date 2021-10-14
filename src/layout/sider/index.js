@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import { Link, history } from 'umi';
+import classnames from 'classnames';
 import * as Icon from '@ant-design/icons';
-import './index.less';
+import styles from './index.less';
 
 const { SubMenu } = Menu;
-
+const { Sider } = Layout;
 // const MenuList = () => {
 
 // }
@@ -96,6 +97,9 @@ const navMenu = {
 class MySider extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      collapsed: false,
+    };
     this.menuState = {
       selectedKeys: localStorage.getItem('selectedKeys'),
       openKeys: localStorage.getItem('openKeys'),
@@ -115,6 +119,11 @@ class MySider extends Component {
       }
     });
   }
+
+  onCollapse = (collapsed) => {
+    this.setState({ collapsed });
+  };
+
   setMenuItem = (item) => {
     this.menuState = {
       selectedKeys: item.key,
@@ -125,43 +134,49 @@ class MySider extends Component {
   render() {
     const openKeys = [localStorage.getItem('openKeys')];
     const selectedKeys = localStorage.getItem('selectedKeys');
+    const { collapsed } = this.state;
     return (
-      <div
-        style={{ width: 250, height: 870 }}
-        className="site-layout-background"
-      >
-        <Menu
-          mode="inline"
-          theme="dark"
-          style={{ height: '100vh', borderRight: 0 }}
-          defaultOpenKeys={openKeys}
-          defaultSelectedKeys={selectedKeys}
+      <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
+        <div
+          // style={{ width: 250, height: 870 }}
+          className={classnames(
+            styles.siteLayoutBackground,
+            collapsed ? styles.folded : styles.unfolded,
+          )}
         >
-          {navMenu.children.map((item) => {
-            const icon = React.createElement(Icon[item.icon], {
-              style: { fontSize: '16px' },
-            });
-            return (
-              <SubMenu key={item.key} title={item.title} icon={icon}>
-                {item.children.map((i) => {
-                  const itemIcon = React.createElement(Icon[i.icon], {
-                    style: { fontSize: '16px' },
-                  });
-                  return (
-                    <Menu.Item
-                      key={i.key}
-                      icon={itemIcon}
-                      onClick={this.setMenuItem}
-                    >
-                      <Link to={i.route}>{i.value}</Link>
-                    </Menu.Item>
-                  );
-                })}
-              </SubMenu>
-            );
-          })}
-        </Menu>
-      </div>
+          <Menu
+            mode="inline"
+            theme="dark"
+            style={{ height: '100vh', borderRight: 0 }}
+            defaultOpenKeys={openKeys}
+            defaultSelectedKeys={selectedKeys}
+          >
+            {navMenu.children.map((item) => {
+              const icon = React.createElement(Icon[item.icon], {
+                style: { fontSize: '16px' },
+              });
+              return (
+                <SubMenu key={item.key} title={item.title} icon={icon}>
+                  {item.children.map((i) => {
+                    const itemIcon = React.createElement(Icon[i.icon], {
+                      style: { fontSize: '16px' },
+                    });
+                    return (
+                      <Menu.Item
+                        key={i.key}
+                        icon={itemIcon}
+                        onClick={this.setMenuItem}
+                      >
+                        <Link to={i.route}>{i.value}</Link>
+                      </Menu.Item>
+                    );
+                  })}
+                </SubMenu>
+              );
+            })}
+          </Menu>
+        </div>
+      </Sider>
     );
   }
 }

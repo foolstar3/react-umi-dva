@@ -64,7 +64,7 @@ class CaseList extends Component {
     this.getEnvList({ page: 'None', is_valid: true });
     history.listen((location) => {
       if (location.pathname === '/testManage/caseList') {
-        this.hideCaseDetail();
+        this.setState({ showDetailTabs: false });
       }
     });
   }
@@ -188,9 +188,9 @@ class CaseList extends Component {
         });
         history.push('/reportManage/reportDetail');
       },
-      failCB: (res) => {
+      failCB: () => {
         message.error({
-          content: `用例运行失败，${res}`,
+          content: `用例运行失败`,
           duration: 1,
           key: 'runCase',
         });
@@ -304,17 +304,21 @@ class CaseList extends Component {
   };
 
   handleRunOk = () => {
-    const payload = {
-      case_list: {
-        case: this.state.runCaseId,
-      },
-      env: this.runForm.current.getFieldValue('env_name'),
-      run_type: 'sync',
-    };
-    this.runCase(payload);
-    this.setState({
-      isRunModalVisible: false,
-    });
+    if (this.runForm.current.getFieldValue('env_name')) {
+      const payload = {
+        case_list: {
+          case: this.state.runCaseId,
+        },
+        env: this.runForm.current.getFieldValue('env_name'),
+        run_type: 'sync',
+      };
+      this.runCase(payload);
+      this.setState({
+        isRunModalVisible: false,
+      });
+    } else {
+      message.info('请选择运行环境');
+    }
   };
 
   cancelRun = () => {
@@ -543,6 +547,7 @@ class CaseList extends Component {
       isRunModalVisible,
     } = this.state;
     const { projectData, moduleData, caseList, envList, funcs } = this.props;
+    console.log(funcs);
 
     return (
       <>
