@@ -102,18 +102,13 @@ class MySider extends Component {
     };
   }
 
-  componentDidMount() {
-    window.addEventListener('beforeunload', () => {
-      localStorage.setItem('selectedKeys', this.menuState.selectedKeys);
-      localStorage.setItem('openKeys', this.menuState.openKeys);
-    });
-    history.listen((location) => {
-      if (location.pathname === '/') {
-        this.menuState = {
-          selectedKeys: '',
-        };
-      }
-    });
+  UNSAFE_componentWillUpdate() {
+    if (location.hash == '#/') {
+      this.menuState = {
+        selectedKeys: '',
+      };
+    }
+    localStorage.setItem('openKeys', this.menuState.openKeys);
   }
   setMenuItem = (item) => {
     this.menuState = {
@@ -124,7 +119,7 @@ class MySider extends Component {
 
   render() {
     const openKeys = [localStorage.getItem('openKeys')];
-    const selectedKeys = localStorage.getItem('selectedKeys');
+    const selectedKeys = this.menuState.selectedKeys;
     return (
       <div
         style={{ width: 250, height: 870 }}
@@ -135,7 +130,7 @@ class MySider extends Component {
           theme="dark"
           style={{ height: '100vh', borderRight: 0 }}
           defaultOpenKeys={openKeys}
-          defaultSelectedKeys={selectedKeys}
+          selectedKeys={selectedKeys}
         >
           {navMenu.children.map((item) => {
             const icon = React.createElement(Icon[item.icon], {

@@ -68,7 +68,9 @@ class MyHeader extends Component {
         <div className="header_left">
           <div className="header_left_content">
             <div className="header_logo">
-              <img src={ImagesUrl.Logo} alt="" width="80" height="40" />
+              <Link to="/">
+                <img src={ImagesUrl.Logo} alt="" width="80" height="40" />
+              </Link>
             </div>
           </div>
         </div>

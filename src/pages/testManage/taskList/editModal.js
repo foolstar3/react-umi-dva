@@ -19,7 +19,7 @@ class EditModal extends React.Component {
     super(props);
     this.state = {
       tempEditValue: 0,
-      caseNumber: -1,
+      caseNumber: 0,
       moduleList: [],
       treeData: [],
       caseArray: [],
@@ -143,18 +143,22 @@ class EditModal extends React.Component {
         },
       };
       if (editTask.name && editTask.env && editTask.project) {
-        this.props.dispatch({
-          type: 'taskList/editSubmit',
-          payload: {
-            ...requestData,
-            id: this.props.tempValue.id,
-          },
-          callback: (res) => {
-            this.props.childrenPageChange();
-            message.success(res.message);
-          },
-        });
-        this.props.showEditModal(false);
+        if (this.state.caseNumber !== 0) {
+          this.props.dispatch({
+            type: 'taskList/editSubmit',
+            payload: {
+              ...requestData,
+              id: this.props.tempValue.id,
+            },
+            callback: (res) => {
+              this.props.childrenPageChange();
+              message.success(res.message);
+            },
+          });
+          this.props.showEditModal(false);
+        } else {
+          message.warn('请选择至少一个用例');
+        }
       } else {
         message.warn('请输入必填字段！');
       }
@@ -199,18 +203,22 @@ class EditModal extends React.Component {
           month_of_year: this.state.Month == null ? 1 : this.state.Month,
         },
       };
-      this.props.dispatch({
-        type: 'taskList/editSubmit',
-        payload: {
-          ...requestData,
-          id: this.props.tempValue.id,
-        },
-        callback: (res) => {
-          this.props.childrenPageChange();
-          message.success(res.message);
-        },
-      });
-      this.props.showEditModal(false);
+      if (this.state.caseNumber !== 0) {
+        this.props.dispatch({
+          type: 'taskList/editSubmit',
+          payload: {
+            ...requestData,
+            id: this.props.tempValue.id,
+          },
+          callback: (res) => {
+            this.props.childrenPageChange();
+            message.success(res.message);
+          },
+        });
+        this.props.showEditModal(false);
+      } else {
+        message.warn('请选择至少一个用例');
+      }
     }
   };
 
@@ -280,7 +288,6 @@ class EditModal extends React.Component {
   };
 
   render() {
-    console.log(this.props.caseArray);
     const { editVisible, tempValue, envName } = this.props;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
