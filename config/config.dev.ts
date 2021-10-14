@@ -21,5 +21,5 @@ export default defineConfig({
   publicPath: './',
   routes,
   fastRefresh: {},
-  title: `千策-API测试平台-dev`,
+  title: `千策-dev`,
 });

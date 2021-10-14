@@ -111,6 +111,7 @@ class MySider extends Component {
     localStorage.setItem('openKeys', this.menuState.openKeys);
   }
   setMenuItem = (item) => {
+    localStorage.setItem('selectedKeys', item.key);
     this.menuState = {
       selectedKeys: item.key,
       openKeys: [item.keyPath[item.keyPath.length - 1]],

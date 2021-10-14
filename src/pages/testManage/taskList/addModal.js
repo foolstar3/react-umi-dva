@@ -40,7 +40,6 @@ class AddModal extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getEnvList({ page: 'None' });
-    this.getCaseList({ page: 'None' });
   }
   getEnvList = (payload) => {
     this.props.dispatch({
@@ -145,6 +144,9 @@ class AddModal extends React.Component {
         });
         this.props.showAddModal(false);
         this.setState({
+          treeData_moduleList: [],
+        });
+        this.setState({
           caseNumber: 0,
           treeData: [],
           checked: false,
@@ -156,10 +158,6 @@ class AddModal extends React.Component {
     } else {
       message.warn('请输入必填字段！');
     }
-
-    this.setState({
-      treeData_moduleList: [],
-    });
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
@@ -240,11 +238,34 @@ class AddModal extends React.Component {
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
     const treeData_moduleList = [...this.state.treeData_moduleList];
-    const text = `minute: 0-59, minute='*/15' (for every quarter) or minute='1,13,30-45,50-59/2'
-      hour: 0-23, hour='*/3' (for every three hours) or hour='0,8-17/2'
-      day_of_month: 1-31
-      month_of_year: 1-12
-      day_of_week: 0-6, Sunday = 0 and Saturday = 6`;
+    const text = (
+      <div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>minute:</span> 0-59,
+          minute='*/15' (for every quarter) or minute='1,13,30-45,50-59/2'
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>hour:</span> 0-23, hour='*/3'
+          (for every three hours) or hour='0,8-17/2'
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>day_of_month:</span> 1-31{' '}
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>month_of_year:</span> 1-12
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>day_of_week:</span> 0-6, Sunday =
+          0 and Saturday = 6
+        </div>
+      </div>
+    );
+
     return (
       <Modal
         visible={addVisible}
@@ -289,7 +310,11 @@ class AddModal extends React.Component {
           {checked && (
             <Form.Item label="定时状态" id="basic_taskList_crontab">
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Tooltip title={text}>
+                <Tooltip
+                  title={text}
+                  overlayStyle={{ maxWidth: 600 }}
+                  placement="topLeft"
+                >
                   {<QuestionCircleTwoTone />}
                   &nbsp;&nbsp;&nbsp;
                 </Tooltip>
