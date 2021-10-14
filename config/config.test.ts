@@ -25,5 +25,5 @@ export default defineConfig({
   },
   hash: true,
 
-  title: `千策-API测试平台`,
+  title: `千策-test`,
 });
