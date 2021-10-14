@@ -229,11 +229,12 @@ const CaseDetailTabs = ({
         });
         break;
       case 'validate':
+        console.log(data);
         setValidate(() => {
           const obj = [];
           data.forEach((item) => {
             const child = {};
-            child[item.comparator] = [item.check, item.expected];
+            child[item.comparator] = [item.check, item.expected, item.type];
             obj.push(child);
           });
           return obj;
@@ -507,7 +508,7 @@ const CaseDetailTabs = ({
         </div>
         {debugResponse.case_metas && !debugResponse.case_metas.length ? (
           <Alert
-            message="traceback"
+            message={<span className={styles.tracebackTitle}>traceback</span>}
             description={debugResponse.summary.traceback}
             type="error"
           />

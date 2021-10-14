@@ -130,7 +130,8 @@ const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
       save(prev, table);
     }
   };
-  const [form] = Form.useForm();
+  const [setupForm] = Form.useForm();
+  const [teardownForm] = Form.useForm();
 
   return (
     <>
@@ -141,7 +142,7 @@ const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
           </Button>
         </div>
         <EditableTable
-          form={form}
+          form={setupForm}
           dataSource={setupData}
           columns={setupTableColumns}
           funcs={funcs}
@@ -156,7 +157,7 @@ const HooksTab = ({ setupHooks, teardownHooks, funcs, save }) => {
           </Button>
         </div>
         <EditableTable
-          form={form}
+          form={teardownForm}
           dataSource={teardownData}
           columns={teardownTableColumns}
           funcs={funcs}
