@@ -4,9 +4,9 @@ services:
   front:
     build:
       context: .
-      dockerfile: dockerfile-dev
+      dockerfile: dockerfile-prod
     ports:
-      - "9001:9001"
+      - "9003:9003"
     networks:
       - webnet
 
