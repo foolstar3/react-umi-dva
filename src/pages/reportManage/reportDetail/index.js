@@ -109,30 +109,40 @@ class ReportDetail extends React.Component {
   caseDetailColumn = [
     {
       dataIndex: 'check',
-      title: 'check',
+      title: '变量',
       align: 'center',
-    },
-    {
-      dataIndex: 'comparator',
-      title: 'comparator',
-      align: 'center',
+      // render: (_, record) => `${JSON.stringify(record.check)}`,
     },
     {
       dataIndex: 'check_value',
-      title: 'check_value',
+      title: '实际值',
       align: 'center',
-      render: (_, record) => `${record.check_value}(实际值)`,
+      // render: (_, record) => `${JSON.stringify(record.check_value)}`,
+    },
+    {
+      dataIndex: 'comparator',
+      title: '比较器',
+      align: 'center',
     },
     {
       dataIndex: 'expect',
-      title: 'expect',
+      title: '期望值',
       align: 'center',
-      render: (_, record) => `${record.expect}(期望值)`,
+      render: (_, record) => `${record.expect}`,
     },
     {
       dataIndex: 'check_result',
-      title: 'check_result',
+      title: '检查结果',
       align: 'center',
+      render: (text) => (
+        <span
+          style={{
+            color: text === 'fail' ? fontColors.failure : fontColors.success,
+          }}
+        >
+          {text}
+        </span>
+      ),
     },
   ];
   componentDidMount() {
@@ -363,6 +373,7 @@ class ReportDetail extends React.Component {
                     <Table
                       dataSource={tableData}
                       columns={this.caseDetailColumn}
+                      pagination={false}
                     />
                   </Panel>
                 );
@@ -377,9 +388,9 @@ class ReportDetail extends React.Component {
               return (
                 <Panel header={item.name} key={item.name}>
                   <Alert
-                    message={
-                      <span className={styles.tracebackTitle}>{item.name}</span>
-                    }
+                    // message={
+                    //   // <span className={styles.tracebackTitle}>{item.name}</span>
+                    // }
                     description={item.content}
                     type="error"
                   />
@@ -428,7 +439,7 @@ class ReportDetail extends React.Component {
   renderTitle = (caseDetail) => {
     const { name, data, status } = caseDetail;
     return (
-      <>
+      <div className={styles.cardHeader}>
         <div className={styles.title}>{name}</div>
         <div className={styles.subtitle}>
           <span>
@@ -437,11 +448,11 @@ class ReportDetail extends React.Component {
                 运行时长: {(data.stat.elapsed_ms / 1000).toFixed(3) || 0}s
               </span>
             )}
-            用例结果:{' '}
-            <span style={{ color: fontColors[status] }}>{status}</span>
+            {/* 用例结果:{' '}
+            <span style={{ color: fontColors[status] }}>{status}</span> */}
           </span>
         </div>
-      </>
+      </div>
     );
   };
 

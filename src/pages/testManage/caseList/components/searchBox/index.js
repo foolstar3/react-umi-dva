@@ -54,6 +54,9 @@ const SearchBox = (props) => {
 
   const onProjectChange = (val) => {
     const { onProjectChange } = props;
+    form.setFieldsValue({
+      module_name: undefined,
+    });
     onProjectChange(val, false);
   };
 
@@ -102,6 +105,7 @@ const SearchBox = (props) => {
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
+                  placeholder="请先选择项目名称"
                 >
                   {moduleOptions.length &&
                     moduleOptions.map((item) => (

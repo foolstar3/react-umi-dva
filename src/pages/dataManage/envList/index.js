@@ -191,7 +191,6 @@ class EnvList extends Component {
   formRef = React.createRef();
 
   validate = (formValues) => {
-    console.log(formValues);
     if (
       Object.keys(formValues).indexOf('env_name') === -1 ||
       formValues.env_name === '' ||
@@ -412,6 +411,13 @@ class EnvList extends Component {
         this.getEnvList({ page: 1 });
         this.setState({
           currentPage: 1,
+          editEnvListData: {},
+        });
+      },
+      failCB: (res) => {
+        message.error(res.message);
+        this.setState({
+          editEnvListData: {},
         });
       },
     });
@@ -441,6 +447,12 @@ class EnvList extends Component {
       ...editEnvListData,
       id: currentEnvInfo.id,
     };
+    // 用户没有进行修改
+    if (!Object.keys(editEnvListData).length) {
+      return this.setState({
+        editModalVisiable: false,
+      });
+    }
     if (this.validate(payload)) {
       this.updateEnv(payload);
       this.setState({

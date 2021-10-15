@@ -53,7 +53,7 @@ export default class Editor extends Component {
             name: 'text/javascript',
             json: true,
             // python编辑器模式
-            // name: 'python'
+            name: 'python',
           },
           extraKeys: { Ctrl: 'autocomplete' },
           theme: 'monokai',

@@ -15,7 +15,7 @@ export default function IndexPage(props) {
   if (localStorage.getItem('qc_token') && localStorage.getItem('qc_user')) {
     return (
       <ConfigProvider locale={zhCN}>
-        <Layout>
+        <Layout style={{ paddingBottom: '24px' }}>
           <MyHeader></MyHeader>
           <Layout className="layout">
             <MySider></MySider>
