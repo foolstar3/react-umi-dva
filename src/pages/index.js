@@ -141,7 +141,9 @@ class Index extends Component {
                 style={{ marginTop: 2 }}
                 type="inner"
               >
-                <div style={{ fontSize: 40, color: 'blue' }}>
+                <div
+                  style={{ fontSize: 40, color: 'blue', fontWeight: 'bold' }}
+                >
                   {this.state.project_num}个
                 </div>
               </Card>
@@ -155,7 +157,9 @@ class Index extends Component {
                 style={{ marginTop: 2 }}
                 type="inner"
               >
-                <div style={{ fontSize: 40, color: 'orange' }}>
+                <div
+                  style={{ fontSize: 40, color: 'orange', fontWeight: 'bold' }}
+                >
                   {this.state.module_num} 个
                 </div>
               </Card>
@@ -169,7 +173,9 @@ class Index extends Component {
                 style={{ marginTop: 2 }}
                 type="inner"
               >
-                <span style={{ fontSize: 40, color: 'red' }}>
+                <span
+                  style={{ fontSize: 40, color: 'red', fontWeight: 'bold' }}
+                >
                   {this.state.testcase_num} 条
                 </span>
                 <span>
@@ -189,7 +195,9 @@ class Index extends Component {
                 style={{ marginTop: 2 }}
                 type="inner"
               >
-                <span style={{ fontSize: 40, color: 'green' }}>
+                <span
+                  style={{ fontSize: 40, color: 'green', fontWeight: 'bold' }}
+                >
                   {this.state.run_case_sum} 次
                 </span>
 

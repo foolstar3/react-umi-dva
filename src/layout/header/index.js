@@ -3,8 +3,12 @@ import { history, Link } from 'umi';
 import { connect } from 'dva';
 import ImagesUrl from '@/constant/imagesUrl';
 import './index.less';
-import { DownOutlined } from '@ant-design/icons';
-import { Modal, Layout, Dropdown, Menu, message } from 'antd';
+import {
+  DownOutlined,
+  QuestionCircleOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import { Modal, Layout, Dropdown, Menu, message, Button } from 'antd';
 const { Header } = Layout;
 
 class MyHeader extends Component {
@@ -41,25 +45,42 @@ class MyHeader extends Component {
     });
   };
 
-  dropdownMenu = (
-    <Menu>
-      {/* <Menu.Item key="0" onClick={() => message.info('功能开发中')}>
-        <span>修改密码</span>
-      </Menu.Item> */}
-      <Menu.Item key="1" onClick={() => this.showModal()}>
-        <span>注销</span>
-      </Menu.Item>
-    </Menu>
-  );
-
-  showModal = () => {
+  showModal() {
     this.setState({ isModalVisible: true });
+  }
+
+  handleCancel() {
+    this.setState({ isModalVisible: false });
+  }
+  passwordInfo = () => {
+    Modal.info({
+      title: '提示信息',
+      content: (
+        <div>
+          <p>账号为：qc</p>
+          <p>密码为：qiance</p>
+        </div>
+      ),
+      onOk() {
+        window.open('http://10.6.209.209:4999/web/#/5/23');
+      },
+    });
   };
 
-  handleCancel = () => {
-    this.setState({ isModalVisible: false });
-  };
   render() {
+    const dropdownMenu = (
+      <Menu>
+        {/* <Menu.Item key="0" onClick={() => message.info('功能开发中')}>
+          <span><EditOutlined />&nbsp;&nbsp;修改密码</span>
+        </Menu.Item> */}
+        <Menu.Item key="1" onClick={this.showModal}>
+          <span>
+            <LogoutOutlined />
+            &nbsp;&nbsp;注销
+          </span>
+        </Menu.Item>
+      </Menu>
+    );
     return (
       <Header className="header">
         <div className="header_left">
@@ -80,7 +101,12 @@ class MyHeader extends Component {
                 style={{ width: 30, height: 30, borderRadius: '15px' }}
               ></img>
             </div>
-            <Dropdown overlay={this.dropdownMenu} trigger={['click']}>
+            <div>
+              <Button onClick={this.passwordInfo} type="text" style={{}}>
+                <QuestionCircleOutlined style={{ fontSize: '30px' }} />
+              </Button>
+            </div>
+            <Dropdown overlay={dropdownMenu} trigger={['click']}>
               <div className="user_profile">
                 <div className="user_profile_content">
                   <span>
@@ -91,13 +117,6 @@ class MyHeader extends Component {
                 </div>
               </div>
             </Dropdown>
-            {/* <div className="user_home">
-              <div className="user_home_content" onClick={this.showModal}>
-                <a className="">
-                  <img src={ImagesUrl.Logout} width="38"></img>
-                </a>
-              </div>
-            </div> */}
           </div>
         </div>
         <Modal
