@@ -130,7 +130,6 @@ const ExtractTab = ({ extract, validate, save }) => {
       }
       save(next, table);
     } else if (table === 'validate') {
-      console.log(line);
       const index = validateData.findIndex((item) => item.key === line.key);
       let next = JSON.parse(JSON.stringify(validateData));
       // key有重复后的保存
@@ -138,7 +137,14 @@ const ExtractTab = ({ extract, validate, save }) => {
         next[index].check = line.check;
         next[index].comparator = line.comparator;
         next[index].type = line.type;
-        next[index].expected = line.expected;
+        if (line.type === 'String') {
+          next[index].expected =
+            typeof line.expected === 'string'
+              ? line.expected
+              : JSON.stringify(line.expected);
+        } else {
+          next[index].expected = JSON.parse(line.expected);
+        }
       }
       save(next, table);
     }
@@ -185,6 +191,9 @@ const ExtractTab = ({ extract, validate, save }) => {
       dataIndex: 'expected',
       editable: true,
       align: 'center',
+      render: (text) => (
+        <span>{typeof text === 'boolean' ? JSON.stringify(text) : text}</span>
+      ),
     },
   ];
   const [form] = Form.useForm();

@@ -60,7 +60,7 @@ class CaseList extends Component {
   componentDidMount() {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
-    this.getModuleList({ page: 'None' });
+    // this.getModuleList({ page: 'None' });
     this.getEnvList({ page: 'None', is_valid: true });
     history.listen((location) => {
       if (location.pathname === '/testManage/caseList') {
@@ -157,7 +157,7 @@ class CaseList extends Component {
       type: 'testCase/copyCase',
       payload,
       callback: (res) => {
-        if (res.message) {
+        if (res.code === 'U000000') {
           message.success(res.message);
           this.getCaseList({ page: 1 });
         } else {
@@ -236,7 +236,16 @@ class CaseList extends Component {
     payload.name ? this.copyCase(payload) : message.error('请填写用例名称');
   };
   onProjectChange = (payload, flag = true) => {
-    this.getModuleList({ page: 'None', project: payload });
+    // console.log(payload);
+    if (payload) {
+      this.getModuleList({ page: 'None', project: payload });
+    } else {
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'moduleList/updateModuleList',
+        payload: { moduleList: {} },
+      });
+    }
     flag ? this.getCaseList({ page: 'None', project: payload }) : '';
   };
 
@@ -247,7 +256,12 @@ class CaseList extends Component {
   showCaseDetail = (record) => {
     // 获取函数hooks
     this.getFuncs({ project_id: record.project });
-    Object.keys(record).length ? this.getCalls(record.id) : this.removeCalls();
+    if (Object.keys(record).length) {
+      this.getCalls(record.id);
+      this.getModuleList({ page: 'None', project: record.project });
+    } else {
+      this.removeCalls();
+    }
     const { caseList } = this.props;
     caseList.result?.filter((item) =>
       record
@@ -267,7 +281,7 @@ class CaseList extends Component {
         showDetailTabs: false,
       },
       () => {
-        this.getCaseList({ page: 1 });
+        this.getCaseList({ page: this.state.currentPage });
       },
     );
   };
@@ -547,7 +561,6 @@ class CaseList extends Component {
       isRunModalVisible,
     } = this.state;
     const { projectData, moduleData, caseList, envList, funcs } = this.props;
-    console.log(funcs);
 
     return (
       <>

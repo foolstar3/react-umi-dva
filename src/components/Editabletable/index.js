@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import styles from './index.less';
 import { comparators } from '@/constant/caseList';
+import { DataType } from '@/utils/common';
 const { Option } = Select;
 
 const EditableCell = ({
@@ -154,15 +155,41 @@ const EditableTable = ({
     setEditingKey(record.key);
   };
 
+  const validateType = (item) => {
+    const typeValidator = (checkType, type) => {
+      const typeArr = ['Int', 'Float', 'Boolean', 'String'];
+      let success = true;
+      typeArr.forEach((i) => {
+        if (checkType === i) {
+          if (type !== i && type !== 'String') {
+            message.info('Expected与Type不匹配，请检查');
+            success = false;
+          }
+        }
+      });
+      return success;
+    };
+    let checkType = '';
+    try {
+      checkType = item.expected
+        ? DataType(JSON.parse(item.expected))
+        : DataType(JSON.parse(item.value));
+    } catch (err) {
+      checkType = 'String';
+    }
+    return typeValidator(checkType, item.type);
+  };
   const save = async (key) => {
     try {
       const row = await form.validateFields();
       const line = { ...row, key };
-      lineSave(line);
-      Object.keys(columns.find((item) => item.dataIndex === 'action')).length
-        ? columns.pop()
-        : '';
-      setEditingKey(-1);
+      if (Object.keys(line).indexOf('type') === -1 || validateType(line)) {
+        lineSave(line);
+        Object.keys(columns.find((item) => item.dataIndex === 'action')).length
+          ? columns.pop()
+          : '';
+        setEditingKey(-1);
+      }
     } catch (errInfo) {
       message.error(`校验失败:${errInfo.errorFields[0].errors[0]}`);
     }

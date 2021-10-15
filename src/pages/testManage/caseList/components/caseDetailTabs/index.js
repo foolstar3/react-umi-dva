@@ -229,12 +229,11 @@ const CaseDetailTabs = ({
         });
         break;
       case 'validate':
-        console.log(data);
         setValidate(() => {
           const obj = [];
           data.forEach((item) => {
             const child = {};
-            child[item.comparator] = [item.check, item.expected, item.type];
+            child[item.comparator] = [item.check, item.expected];
             obj.push(child);
           });
           return obj;
