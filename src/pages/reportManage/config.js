@@ -69,7 +69,7 @@ const config = [
         case 'pass':
           return <span style={{ color: 'green' }}>{text}</span>;
         case 'running':
-          return <span style={{ color: '#1868cb' }}>{text}...</span>;
+          return <span style={{ color: '#1868cb' }}>{text}</span>;
       }
     },
   },

@@ -107,7 +107,6 @@ export default {
       const { success, data, message } = parseResponse(
         yield call(runCase, payload),
       );
-      console.log(success, data, message);
       if (success) {
         callback(data);
       } else {

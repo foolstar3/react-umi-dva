@@ -67,6 +67,9 @@ const VariablesTab = ({ variables, save }) => {
       textWrap: 'word-break',
       ellipsis: true,
       editable: true,
+      render: (text) => (
+        <span>{typeof text === 'boolean' ? JSON.stringify(text) : text}</span>
+      ),
     },
   ];
 
@@ -99,23 +102,17 @@ const VariablesTab = ({ variables, save }) => {
     // key有重复后的保存
     if (index > -1) {
       next[index].name = line.name;
-      next[index].value = line.value;
       next[index].type = line.type;
+      if (line.type === 'String') {
+        next[index].value =
+          typeof line.value === 'string'
+            ? line.value
+            : JSON.stringify(line.value);
+      } else {
+        next[index].value = JSON.parse(line.value);
+      }
     }
     save(next, table);
-    // setVariablesData((prev = []) => {
-    //   const index = prev.findIndex((item) => item.key === line.key);
-    //   let next = [];
-    //   // key有重复后的保存
-    //   if (index > -1) {
-    //     prev[index].name = line.name;
-    //     prev[index].value = line.value;
-    //     prev[index].type = line.type;
-    //     next = prev;
-    //   }
-    //   save(next, table);
-    //   return next;
-    // });
   };
 
   return (

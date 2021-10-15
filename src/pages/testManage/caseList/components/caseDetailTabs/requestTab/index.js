@@ -250,6 +250,14 @@ const RequestTab = (props, ref) => {
         next[index].name = line.name;
         next[index].value = line.value;
         next[index].type = line.type;
+        if (line.type === 'String') {
+          next[index].value =
+            typeof line.value === 'string'
+              ? line.value
+              : JSON.stringify(line.value);
+        } else {
+          next[index].value = JSON.parse(line.value);
+        }
       }
       save(next, table);
     }
@@ -303,6 +311,9 @@ const RequestTab = (props, ref) => {
       dataIndex: 'value',
       editable: true,
       align: 'center',
+      render: (text) => (
+        <span>{typeof text === 'boolean' ? JSON.stringify(text) : text}</span>
+      ),
     },
   ];
 
@@ -310,7 +321,9 @@ const RequestTab = (props, ref) => {
     setJsonCode(val);
   };
 
-  const [form] = Form.useForm();
+  const [headerForm] = Form.useForm();
+  const [paramsForm] = Form.useForm();
+  const [dataForm] = Form.useForm();
 
   const requestTypeChange = (val, type) => {
     if (type === 'url') {
@@ -397,7 +410,7 @@ const RequestTab = (props, ref) => {
           </Button>
         </div>
         <EditableTable
-          form={form}
+          form={headerForm}
           dataSource={headerData}
           columns={headerTableColumns}
           lineDelete={(record) => lineDelete(record, 'headers')}
@@ -411,7 +424,7 @@ const RequestTab = (props, ref) => {
           </Button>
         </div>
         <EditableTable
-          form={form}
+          form={paramsForm}
           dataSource={paramsData}
           columns={paramsTableColumns}
           lineDelete={(record) => lineDelete(record, 'params')}
@@ -436,7 +449,7 @@ const RequestTab = (props, ref) => {
               </Button>
             </div>
             <EditableTable
-              form={form}
+              form={dataForm}
               dataSource={requestData}
               columns={dataTableColumns}
               lineDelete={(record) => lineDelete(record, 'data')}

@@ -53,17 +53,23 @@
       font-weight: bold;
       font-size: 16px;
     }
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 12px;
+    .cardHeader {
       display: flex;
       justify-content: space-between;
-      span {
-        display: inline-block;
-        margin-right: 5px;
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .subtitle {
+        font-size: 12px;
+        display: flex;
+        position: relative;
+        top: 10px;
+        justify-content: space-between;
+        span {
+          display: inline-block;
+          margin-right: 5px;
+        }
       }
     }
     .left {

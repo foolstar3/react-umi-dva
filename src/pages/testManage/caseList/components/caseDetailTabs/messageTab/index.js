@@ -305,8 +305,9 @@ const MessageTab = (props) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
+                placeholder="请先选择项目名称"
               >
-                {moduleData
+                {moduleData && moduleData.length
                   ? moduleData.map((item) => (
                       <Option key={item.id} value={item.id}>
                         {item.module_name}

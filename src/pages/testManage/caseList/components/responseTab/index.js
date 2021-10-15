@@ -76,10 +76,9 @@ const ResponseTab = ({ treeData, checkable, validators, onCheckedChange }) => {
                   【变量】：<span>{item.check}</span>
                 </p>
                 <p>
-                  【检查内容】: <span>{item.expect}</span>(期望值|
-                  {DataType(item.expect)}) <span>{item.comparator}</span>{' '}
-                  <span>{item.check_value}</span>(实际值|
-                  {DataType(item.check_value)})
+                  【检查内容】: <span>{item.check_value}</span>(实际值|
+                  {DataType(item.check_value)}) <span>{item.comparator}</span>{' '}
+                  <span>{item.expect}</span>(期望值|{DataType(item.expect)})
                 </p>
                 <p>
                   【检查结果】: <span>{item.check_result}</span>

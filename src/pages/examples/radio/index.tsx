@@ -4,8 +4,7 @@ import React from 'react';
 const radio = () => {
   const [value, setValue] = React.useState(1);
 
-  const onChange = e => {
-    console.log('radio checked', e.target.value);
+  const onChange = (e) => {
     setValue(e.target.value);
   };
 
@@ -19,4 +18,4 @@ const radio = () => {
   );
 };
 
-export default radio
+export default radio;

@@ -25,7 +25,6 @@ export default {
     *getEnvList({ payload, callback }, { call, put }) {
       const res = yield call(getEnvList, payload);
       if (res.status && res.status !== 200) {
-        console.log(res);
       } else {
         yield put({
           type: 'update',
@@ -34,26 +33,28 @@ export default {
         callback(res);
       }
     },
-    *toggleSwitch({ payload, callback }, { call, put }) {
+    *toggleSwitch({ payload, callback }, { call }) {
       const res = yield call(toggleSwitch, payload);
       if (callback) {
         callback(res);
       }
     },
-    *addEnvList({ payload, callback }, { call, put }) {
+    *addEnvList({ payload, callback }, { call }) {
       const res = yield call(addEnvList, payload);
       if (callback) {
         callback(res);
       }
     },
-    *deleteEnvList({ payload, callback }, { call, put }) {
+    *deleteEnvList({ payload, callback }, { call }) {
       const res = yield call(deleteEnvList, payload);
       callback(res);
     },
-    *updateEnv({ payload, callback }, { call, put }) {
+    *updateEnv({ payload, callback, failCB }, { call }) {
       const res = yield call(updateEnv, payload);
       if (res.code === 'U000000') {
         callback(res);
+      } else {
+        failCB(res);
       }
     },
   },

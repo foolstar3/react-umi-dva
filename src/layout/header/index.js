@@ -43,25 +43,22 @@ class MyHeader extends Component {
 
   dropdownMenu = (
     <Menu>
-      <Menu.Item key="0" onClick={() => message.info('功能开发中')}>
+      {/* <Menu.Item key="0" onClick={() => message.info('功能开发中')}>
         <span>修改密码</span>
-      </Menu.Item>
-      <Menu.Item
-        key="1"
-        onClick={() => this.logout(localStorage.getItem('qc_user'))}
-      >
+      </Menu.Item> */}
+      <Menu.Item key="1" onClick={() => this.showModal()}>
         <span>注销</span>
       </Menu.Item>
     </Menu>
   );
 
-  showModal() {
+  showModal = () => {
     this.setState({ isModalVisible: true });
-  }
+  };
 
-  handleCancel() {
+  handleCancel = () => {
     this.setState({ isModalVisible: false });
-  }
+  };
   render() {
     return (
       <Header className="header">
@@ -81,24 +78,24 @@ class MyHeader extends Component {
                 style={{ width: 30, height: 30, borderRadius: '15px' }}
               ></img>
             </div>
-            {/* <Dropdown overlay={this.dropdownMenu} trigger={['click']}> */}
-            <div className="user_profile">
-              <div className="user_profile_content">
-                <span>
-                  {/* <img src={ImagesUrl.Logout} width="38"></img> */}
-                  {localStorage.getItem('qc_user')}
-                </span>
-                <DownOutlined className="icon" />
+            <Dropdown overlay={this.dropdownMenu} trigger={['click']}>
+              <div className="user_profile">
+                <div className="user_profile_content">
+                  <span>
+                    {/* <img src={ImagesUrl.Logout} width="38"></img> */}
+                    {localStorage.getItem('qc_user')}
+                  </span>
+                  <DownOutlined className="icon" />
+                </div>
               </div>
-            </div>
-            {/* </Dropdown> */}
-            <div className="user_home">
+            </Dropdown>
+            {/* <div className="user_home">
               <div className="user_home_content" onClick={this.showModal}>
                 <a className="">
                   <img src={ImagesUrl.Logout} width="38"></img>
                 </a>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <Modal
