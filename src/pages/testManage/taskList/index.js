@@ -147,7 +147,6 @@ class TaskList extends React.Component {
   };
 
   showEditModal = (record) => {
-    console.log('recordcheckcase', record);
     this.setState({
       crontab_time: record.crontab_time,
     });

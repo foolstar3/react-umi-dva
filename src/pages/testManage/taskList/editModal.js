@@ -7,19 +7,18 @@ import {
   Form,
   Input,
   Modal,
-  InputNumber,
+  Tooltip,
 } from 'antd';
 import { connect } from 'umi';
 import TreeNode_Edit from './treeNode_edit';
-import { FormInstance } from '@ant-design/pro-form';
-const { Panel } = Collapse;
+import { QuestionCircleTwoTone } from '@ant-design/icons';
 const { Option } = Select;
 class EditModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tempEditValue: 0,
-      caseNumber: -1,
+      caseNumber: 0,
       moduleList: [],
       treeData: [],
       caseArray: [],
@@ -143,18 +142,22 @@ class EditModal extends React.Component {
         },
       };
       if (editTask.name && editTask.env && editTask.project) {
-        this.props.dispatch({
-          type: 'taskList/editSubmit',
-          payload: {
-            ...requestData,
-            id: this.props.tempValue.id,
-          },
-          callback: (res) => {
-            this.props.childrenPageChange();
-            message.success(res.message);
-          },
-        });
-        this.props.showEditModal(false);
+        if (this.state.caseNumber !== 0) {
+          this.props.dispatch({
+            type: 'taskList/editSubmit',
+            payload: {
+              ...requestData,
+              id: this.props.tempValue.id,
+            },
+            callback: (res) => {
+              this.props.childrenPageChange();
+              message.success(res.message);
+            },
+          });
+          this.props.showEditModal(false);
+        } else {
+          message.warn('请选择至少一个用例');
+        }
       } else {
         message.warn('请输入必填字段！');
       }
@@ -199,18 +202,22 @@ class EditModal extends React.Component {
           month_of_year: this.state.Month == null ? 1 : this.state.Month,
         },
       };
-      this.props.dispatch({
-        type: 'taskList/editSubmit',
-        payload: {
-          ...requestData,
-          id: this.props.tempValue.id,
-        },
-        callback: (res) => {
-          this.props.childrenPageChange();
-          message.success(res.message);
-        },
-      });
-      this.props.showEditModal(false);
+      if (this.state.caseNumber !== 0) {
+        this.props.dispatch({
+          type: 'taskList/editSubmit',
+          payload: {
+            ...requestData,
+            id: this.props.tempValue.id,
+          },
+          callback: (res) => {
+            this.props.childrenPageChange();
+            message.success(res.message);
+          },
+        });
+        this.props.showEditModal(false);
+      } else {
+        message.warn('请选择至少一个用例');
+      }
     }
   };
 
@@ -280,7 +287,6 @@ class EditModal extends React.Component {
   };
 
   render() {
-    console.log(this.props.caseArray);
     const { editVisible, tempValue, envName } = this.props;
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
@@ -288,6 +294,33 @@ class EditModal extends React.Component {
     const treeData = [...this.state.treeData];
     const crontab_time = this.props.crontab_time;
     const crontab = crontab_time.split(' ');
+    const text = (
+      <div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>minute:</span> 0-59,
+          minute='*/15' (for every quarter) or minute='1,13,30-45,50-59/2'
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>hour:</span> 0-23, hour='*/3'
+          (for every three hours) or hour='0,8-17/2'
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>day_of_month:</span> 1-31{' '}
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>month_of_year:</span> 1-12
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>day_of_week:</span> 0-6, Sunday =
+          0 and Saturday = 6
+        </div>
+      </div>
+    );
     return (
       <div>
         {editVisible && (
@@ -349,34 +382,42 @@ class EditModal extends React.Component {
                   rules={[{ required: true }]}
                   key="crontab"
                 >
-                  <div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Tooltip
+                      title={text}
+                      overlayStyle={{ maxWidth: 600 }}
+                      placement="topLeft"
+                    >
+                      {<QuestionCircleTwoTone />}
+                      &nbsp;&nbsp;&nbsp;
+                    </Tooltip>
                     <Input
                       onChange={(num) => this.handlecrontab_M(num)}
-                      style={{ width: 211 }}
+                      style={{ width: 205 }}
                       addonAfter="m"
                       defaultValue={crontab[0]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_H(num)}
-                      style={{ width: 211 }}
+                      style={{ width: 205 }}
                       addonAfter="h"
                       defaultValue={crontab[1]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_DM(num)}
-                      style={{ width: 211 }}
+                      style={{ width: 205 }}
                       addonAfter="dM"
                       defaultValue={crontab[2]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_Mon(num)}
-                      style={{ width: 211 }}
+                      style={{ width: 205 }}
                       addonAfter="MY"
                       defaultValue={crontab[3]}
                     />
                     <Input
                       onChange={(num) => this.handlecrontab_DW(num)}
-                      style={{ width: 211 }}
+                      style={{ width: 205 }}
                       addonAfter="d"
                       defaultValue={crontab[4]}
                     />

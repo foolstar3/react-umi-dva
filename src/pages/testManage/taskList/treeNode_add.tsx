@@ -65,7 +65,7 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
               if (caseItem.module === key) {
                 children.push({
                   title: caseItem.name,
-                  key: `${caseItem.id}`,
+                  key: `${caseItem.id}+${caseItem.name}`,
                   isLeaf: true,
                 });
               }
@@ -75,14 +75,14 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
               updateTreeData(origin, key, children);
             });
             resolve();
-          }, 1000);
+          }, 1);
         },
       });
     });
   return (
     <div>
       <Collapse>
-        <Panel header="请选择用例" key="caseNumber">
+        <Panel header="请选择用例" key="caseNumber" forceRender={true}>
           <Tree
             treeData={treeData}
             loadData={onLoadData}

@@ -7,18 +7,14 @@ import {
   Form,
   Input,
   Modal,
-  Popconfirm,
+  Tooltip,
 } from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusCircleOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { QuestionCircleTwoTone } from '@ant-design/icons';
 import { connect } from 'umi';
 import TreeNode_Add from './treeNode_add';
 import './index.less';
 import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import { Flex } from 'antd-mobile';
 const { Option } = Select;
 class AddModal extends React.Component {
   constructor(props) {
@@ -44,7 +40,6 @@ class AddModal extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getEnvList({ page: 'None' });
-    this.getCaseList({ page: 'None' });
   }
   getEnvList = (payload) => {
     this.props.dispatch({
@@ -149,6 +144,9 @@ class AddModal extends React.Component {
         });
         this.props.showAddModal(false);
         this.setState({
+          treeData_moduleList: [],
+        });
+        this.setState({
           caseNumber: 0,
           treeData: [],
           checked: false,
@@ -160,10 +158,6 @@ class AddModal extends React.Component {
     } else {
       message.warn('请输入必填字段！');
     }
-
-    this.setState({
-      treeData_moduleList: [],
-    });
   };
 
   handleAddValueChange = (singleValueChange, ValueChange) => {
@@ -244,6 +238,34 @@ class AddModal extends React.Component {
     const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
     const treeData_moduleList = [...this.state.treeData_moduleList];
+    const text = (
+      <div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>minute:</span> 0-59,
+          minute='*/15' (for every quarter) or minute='1,13,30-45,50-59/2'
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>hour:</span> 0-23, hour='*/3'
+          (for every three hours) or hour='0,8-17/2'
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>day_of_month:</span> 1-31{' '}
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>month_of_year:</span> 1-12
+        </div>
+        <div>
+          {' '}
+          <span style={{ fontWeight: 'bold' }}>day_of_week:</span> 0-6, Sunday =
+          0 and Saturday = 6
+        </div>
+      </div>
+    );
+
     return (
       <Modal
         visible={addVisible}
@@ -287,46 +309,51 @@ class AddModal extends React.Component {
           </Form.Item>
           {checked && (
             <Form.Item label="定时状态" id="basic_taskList_crontab">
-              {/* <Popconfirm
-                title = '1'
-              >
-                {<QuestionCircleOutlined />}
-              </Popconfirm> */}
-              <Input
-                style={{ width: 211 }}
-                addonAfter="m"
-                onChange={(e) => {
-                  this.handlecrontab_M(e);
-                }}
-              />
-              <Input
-                style={{ width: 211 }}
-                addonAfter="h"
-                onChange={(e) => {
-                  this.handlecrontab_H(e);
-                }}
-              />
-              <Input
-                style={{ width: 211 }}
-                addonAfter="dM"
-                onChange={(e) => {
-                  this.handlecrontab_DM(e);
-                }}
-              />
-              <Input
-                style={{ width: 211 }}
-                addonAfter="MY"
-                onChange={(e) => {
-                  this.handlecrontab_Mon(e);
-                }}
-              />
-              <Input
-                style={{ width: 211 }}
-                addonAfter="d"
-                onChange={(e) => {
-                  this.handlecrontab_DW(e);
-                }}
-              />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Tooltip
+                  title={text}
+                  overlayStyle={{ maxWidth: 600 }}
+                  placement="topLeft"
+                >
+                  {<QuestionCircleTwoTone />}
+                  &nbsp;&nbsp;&nbsp;
+                </Tooltip>
+                <Input
+                  style={{ width: 205 }}
+                  addonAfter="m"
+                  onChange={(e) => {
+                    this.handlecrontab_M(e);
+                  }}
+                />
+                <Input
+                  style={{ width: 205 }}
+                  addonAfter="h"
+                  onChange={(e) => {
+                    this.handlecrontab_H(e);
+                  }}
+                />
+                <Input
+                  style={{ width: 205 }}
+                  addonAfter="dM"
+                  onChange={(e) => {
+                    this.handlecrontab_DM(e);
+                  }}
+                />
+                <Input
+                  style={{ width: 205 }}
+                  addonAfter="MY"
+                  onChange={(e) => {
+                    this.handlecrontab_Mon(e);
+                  }}
+                />
+                <Input
+                  style={{ width: 205 }}
+                  addonAfter="d"
+                  onChange={(e) => {
+                    this.handlecrontab_DW(e);
+                  }}
+                />
+              </div>
             </Form.Item>
           )}
           <Form.Item

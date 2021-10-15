@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import { Card, Row, Col } from 'antd';
 import ReactECharts from 'echarts-for-react';
+import {
+  ProjectOutlined,
+  PartitionOutlined,
+  CalendarOutlined,
+  CaretRightOutlined,
+} from '@ant-design/icons';
 import './index.css';
 const { Meta } = Card;
 class Index extends Component {
@@ -52,6 +58,7 @@ class Index extends Component {
           },
         },
       },
+      color: ['#19BE6B', '#FF9900', '#ED4014', '#2DB7F5'],
       legend: {
         data: ['成功', '失败', '错误', '跳过'],
       },
@@ -124,25 +131,78 @@ class Index extends Component {
     return (
       <Card>
         <div className="site-card-wrapper">
-          <Row gutter={16} style={{ marginBottom: 50 }}>
+          <Row gutter={16} style={{ marginBottom: 40 }}>
             <Col span={6}>
-              <Card title="项目数" bordered hoverable icon>
-                <Meta title={`${this.state.project_num}个`} />
+              <Card
+                title="项目数"
+                extra={<ProjectOutlined />}
+                bordered
+                hoverable
+                style={{ marginTop: 2 }}
+                type="inner"
+              >
+                <div style={{ fontSize: 40, color: 'blue' }}>
+                  {this.state.project_num}个
+                </div>
               </Card>
             </Col>
             <Col span={6}>
-              <Card title="模块数" bordered hoverable>
-                {this.state.module_num} 个
+              <Card
+                title="模块数"
+                extra={<PartitionOutlined />}
+                bordered
+                hoverable
+                style={{ marginTop: 2 }}
+                type="inner"
+              >
+                <div style={{ fontSize: 40, color: 'orange' }}>
+                  {this.state.module_num} 个
+                </div>
               </Card>
             </Col>
             <Col span={6}>
-              <Card title="用例数" bordered hoverable>
-                {this.state.testcase_num} 条
+              <Card
+                title="用例数"
+                extra={<CalendarOutlined />}
+                bordered
+                hoverable
+                style={{ marginTop: 2 }}
+                type="inner"
+              >
+                <span style={{ fontSize: 40, color: 'red' }}>
+                  {this.state.testcase_num} 条
+                </span>
+                <span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 30天新增用例数：
+                  {this.state.new_testcase_num}
+                </span>
               </Card>
             </Col>
             <Col span={6}>
-              <Card title="用例累计执行" bordered hoverable>
-                {this.state.run_case_sum} 数
+              <Card
+                title="用例累计执行"
+                extra={<CaretRightOutlined />}
+                bordered
+                hoverable
+                style={{ marginTop: 2 }}
+                type="inner"
+              >
+                <span style={{ fontSize: 40, color: 'green' }}>
+                  {this.state.run_case_sum} 次
+                </span>
+
+                <span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 成功率：
+                  {Number(
+                    (this.state.run_case_pass / this.state.run_case_sum) * 100,
+                  ).toFixed(2)}
+                  %
+                </span>
               </Card>
             </Col>
           </Row>

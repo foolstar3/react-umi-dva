@@ -106,18 +106,13 @@ class MySider extends Component {
     };
   }
 
-  componentDidMount() {
-    window.addEventListener('beforeunload', () => {
-      localStorage.setItem('selectedKeys', this.menuState.selectedKeys);
-      localStorage.setItem('openKeys', this.menuState.openKeys);
-    });
-    history.listen((location) => {
-      if (location.pathname === '/') {
-        this.menuState = {
-          selectedKeys: '',
-        };
-      }
-    });
+  UNSAFE_componentWillUpdate() {
+    if (location.hash == '#/') {
+      this.menuState = {
+        selectedKeys: '',
+      };
+    }
+    localStorage.setItem('openKeys', this.menuState.openKeys);
   }
 
   onCollapse = (collapsed) => {
@@ -125,6 +120,7 @@ class MySider extends Component {
   };
 
   setMenuItem = (item) => {
+    localStorage.setItem('selectedKeys', item.key);
     this.menuState = {
       selectedKeys: item.key,
       openKeys: [item.keyPath[item.keyPath.length - 1]],
@@ -133,8 +129,8 @@ class MySider extends Component {
 
   render() {
     const openKeys = [localStorage.getItem('openKeys')];
-    const selectedKeys = localStorage.getItem('selectedKeys');
     const { collapsed } = this.state;
+    const selectedKeys = this.menuState.selectedKeys;
     return (
       <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
         <div
@@ -149,7 +145,7 @@ class MySider extends Component {
             theme="dark"
             style={{ height: '100vh', borderRight: 0 }}
             defaultOpenKeys={openKeys}
-            defaultSelectedKeys={selectedKeys}
+            selectedKeys={selectedKeys}
           >
             {navMenu.children.map((item) => {
               const icon = React.createElement(Icon[item.icon], {

@@ -99,7 +99,11 @@ class AddModal extends React.Component {
                   Array.isArray(projectList) &&
                   projectList.length &&
                   projectList.map((item) => {
-                    return <Option value={item.id}>{item.project_name}</Option>;
+                    return (
+                      <Option value={item.id} key={item.id}>
+                        {item.project_name}
+                      </Option>
+                    );
                   })}
               </Select>
             }
