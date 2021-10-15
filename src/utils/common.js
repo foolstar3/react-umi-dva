@@ -38,6 +38,12 @@ export const parseResponse = (response) => {
     }
     const result = { success, code, message };
     return result;
+  } else if (
+    response.status !== 200 &&
+    response.statusText &&
+    response.ok === false
+  ) {
+    return { success: false, data: response };
   } else if (response && Object.keys(response).indexOf('code') === -1) {
     return { success: true, data: response };
   }

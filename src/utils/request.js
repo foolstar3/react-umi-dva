@@ -40,7 +40,7 @@ const errorHandler = (error) => {
       history.push('/login');
     } else if (status === 204) {
       message.success(errorText);
-    } else if (status === 403 || status === 400) {
+    } else if (status === 403) {
       message.error(errorText);
     }
   } else if (!response) {

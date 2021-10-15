@@ -70,11 +70,11 @@ export default {
     },
     *getFuncs({ payload, callback }, { call, put }) {
       const res = yield call(getFuncs, payload);
-      let funcs = [];
-      Object.keys(res).forEach((key) => (funcs = res[key].concat(funcs)));
+      // let funcs = [];
+      // Object.keys(res).forEach((key) => (funcs = res[key].concat(funcs)));
       yield put({
         type: 'updateDebugResponse',
-        payload: { funcsName: funcs },
+        payload: { funcsName: res },
       });
       callback();
     },
@@ -107,10 +107,11 @@ export default {
       const { success, data, message } = parseResponse(
         yield call(runCase, payload),
       );
+      console.log(success, data, message);
       if (success) {
         callback(data);
       } else {
-        failCB(message);
+        failCB();
       }
     },
   },
