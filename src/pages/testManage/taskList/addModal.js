@@ -39,7 +39,10 @@ class AddModal extends React.Component {
   formRef = React.createRef();
 
   UNSAFE_componentWillMount() {
-    this.getEnvList({ page: 'None' });
+    this.getEnvList({
+      page: 'None',
+      is_valid: true,
+    });
   }
   getEnvList = (payload) => {
     this.props.dispatch({
