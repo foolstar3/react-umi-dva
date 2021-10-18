@@ -3,11 +3,7 @@ import { history, Link } from 'umi';
 import { connect } from 'dva';
 import ImagesUrl from '@/constant/imagesUrl';
 import './index.less';
-import {
-  DownOutlined,
-  QuestionCircleOutlined,
-  LogoutOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Modal, Layout, Dropdown, Menu, message, Button } from 'antd';
 const { Header } = Layout;
 
@@ -52,20 +48,6 @@ class MyHeader extends Component {
   handleCancel() {
     this.setState({ isModalVisible: false });
   }
-  passwordInfo = () => {
-    Modal.info({
-      title: '提示信息',
-      content: (
-        <div>
-          <p>账号为：qc</p>
-          <p>密码为：qiance</p>
-        </div>
-      ),
-      onOk() {
-        window.open('http://10.6.209.209:4999/web/#/5/23');
-      },
-    });
-  };
 
   render() {
     const dropdownMenu = (
@@ -98,14 +80,20 @@ class MyHeader extends Component {
             <div className="user_icon">
               <img
                 src={ImagesUrl.UserIcon}
-                style={{ width: 30, height: 30, borderRadius: '15px' }}
+                style={{ width: 30, height: 30 }}
               ></img>
             </div>
-            <div>
-              <Button onClick={this.passwordInfo} type="text" style={{}}>
-                <QuestionCircleOutlined style={{ fontSize: '30px' }} />
-              </Button>
+            <div className="user_icon">
+              <a href="http://10.6.209.209:4999/web/#/5/23" target="_blank">
+                <img
+                  src={ImagesUrl.HelpIcon}
+                  style={{ width: 30, height: 30 }}
+                ></img>
+              </a>
             </div>
+            {/* <div>
+
+            </div> */}
             <Dropdown overlay={dropdownMenu} trigger={['click']}>
               <div className="user_profile">
                 <div className="user_profile_content">
