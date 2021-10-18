@@ -18,7 +18,7 @@ const navMenu = {
     {
       key: '测试管理',
       title: '测试管理',
-      icon: 'UserOutlined',
+      icon: 'ReconciliationOutlined',
       redirect: '/testManage/projectList',
       children: [
         {

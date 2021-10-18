@@ -182,7 +182,9 @@ class Index extends Component {
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 30天新增用例数：
-                  {this.state.new_testcase_num}
+                  <span style={{ color: 'red', fontWeight: 'bolder' }}>
+                    {this.state.new_testcase_num}
+                  </span>
                 </span>
               </Card>
             </Col>
@@ -206,10 +208,13 @@ class Index extends Component {
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 成功率：
-                  {Number(
-                    (this.state.run_case_pass / this.state.run_case_sum) * 100,
-                  ).toFixed(2)}
-                  %
+                  <span style={{ color: 'green', fontWeight: 'bolder' }}>
+                    {Number(
+                      (this.state.run_case_pass / this.state.run_case_sum) *
+                        100,
+                    ).toFixed(2)}
+                    %
+                  </span>
                 </span>
               </Card>
             </Col>
