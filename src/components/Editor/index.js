@@ -28,6 +28,10 @@ import styles from './index.less';
 export default class Editor extends Component {
   constructor(props) {
     super(props);
+    this.mode =
+      this.props.mode === 'json'
+        ? { name: 'text/javascript', json: true }
+        : { name: 'python' };
   }
   /*
    *
@@ -48,13 +52,7 @@ export default class Editor extends Component {
         style={{ height: height }}
         value={content}
         options={{
-          mode: {
-            // json编辑器模式
-            name: 'text/javascript',
-            json: true,
-            // python编辑器模式
-            name: 'python',
-          },
+          mode: this.mode,
           extraKeys: { Ctrl: 'autocomplete' },
           theme: 'monokai',
           lineNumbers: true,

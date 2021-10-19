@@ -22,6 +22,7 @@ import {
 import Editor from '@/components/Editor';
 import SearchBox from './searchBox';
 import { DateFormat } from '@/utils/common';
+import { rolePattern } from '@/constant/roleLevel';
 
 import './index.less';
 import { connect } from 'umi';
@@ -36,6 +37,9 @@ const formItemLayout = {
 class EnvList extends Component {
   constructor(props) {
     super(props);
+    this.hasPermission = JSON.parse(
+      localStorage.getItem('qc_permissions'),
+    ).env.length;
     this.state = {
       selectedRowKeys: [],
       // 新增对话框显隐
@@ -136,6 +140,7 @@ class EnvList extends Component {
           title: '操作',
           key: 'action',
           width: 300,
+          // className: this.hasPermission ? '' : 'hidden',
           align: 'center',
           render: (text, record) => (
             <div className="actionColumn">
@@ -220,6 +225,7 @@ class EnvList extends Component {
   componentDidMount() {
     this.getEnvList({ page: 1 });
     this.getProjectList({ page: 'None' });
+    console.log(JSON.parse(localStorage.getItem('qc_permissions')));
   }
 
   //获取项目名称列表
@@ -506,7 +512,6 @@ class EnvList extends Component {
 
   render() {
     const {
-      selectedRowKeys,
       columns,
       addModalVisiable,
       currentEnvInfo,
@@ -726,7 +731,7 @@ class EnvList extends Component {
   }
 }
 
-export default connect(({ envList, loading, projectList }) => ({
+export default connect(({ envList, loading, projectList, login }) => ({
   envList: envList.envList,
   projectList: projectList.projectList,
   tableLoading: loading.effects['envList/getEnvList'],

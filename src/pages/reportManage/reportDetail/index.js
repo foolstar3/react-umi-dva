@@ -100,7 +100,11 @@ class ReportDetail extends React.Component {
       onFilter: (value, record) => record.status === value,
       render: (_, record) => (
         <span style={{ color: fontColors[record.status] }}>
-          {record.status}
+          {record.status === 'success'
+            ? '成功'
+            : record.status === 'failure'
+            ? '失败'
+            : '错误'}
         </span>
       ),
     },
@@ -121,7 +125,7 @@ class ReportDetail extends React.Component {
     },
     {
       dataIndex: 'comparator',
-      title: '比较器',
+      title: '运算符',
       align: 'center',
     },
     {
@@ -318,7 +322,11 @@ class ReportDetail extends React.Component {
                     结果:{' '}
                     {
                       <span style={{ color: fontColors[caseDetail.status] }}>
-                        {caseDetail.status}
+                        {caseDetail.status === 'success'
+                          ? '成功'
+                          : caseDetail.status === 'failure'
+                          ? '失败'
+                          : '错误'}
                       </span>
                     }
                   </span>

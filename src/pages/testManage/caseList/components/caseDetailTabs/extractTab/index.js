@@ -167,27 +167,27 @@ const ExtractTab = ({ extract, validate, save }) => {
 
   const validateTableColumns = [
     {
-      title: 'Check',
+      title: '变量名',
       dataIndex: 'check',
       editable: true,
       align: 'center',
     },
     {
-      title: 'Comparator',
+      title: '运算符',
       dataIndex: 'comparator',
       editable: true,
       align: 'center',
       width: 400,
     },
     {
-      title: 'Type',
+      title: '变量类型',
       dataIndex: 'type',
       editable: true,
       align: 'center',
       width: 100,
     },
     {
-      title: 'Expected',
+      title: '期望值',
       dataIndex: 'expected',
       editable: true,
       align: 'center',

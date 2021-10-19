@@ -13,6 +13,11 @@ const config = [
     align: 'center',
   },
   {
+    title: '项目名称',
+    dataIndex: 'project_name',
+    align: 'center',
+  },
+  {
     title: '简要描述',
     dataIndex: 'description',
     key: 'description',
@@ -65,11 +70,11 @@ const config = [
     render: (text) => {
       switch (text) {
         case 'failure':
-          return <span style={{ color: 'red' }}>{text}</span>;
+          return <span style={{ color: 'red' }}>失败</span>;
         case 'pass':
-          return <span style={{ color: 'green' }}>{text}</span>;
+          return <span style={{ color: 'green' }}>通过</span>;
         case 'running':
-          return <span style={{ color: '#1868cb' }}>{text}</span>;
+          return <span style={{ color: '#1868cb' }}>运行中</span>;
       }
     },
   },
