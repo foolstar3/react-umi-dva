@@ -154,7 +154,7 @@ const RequestTab = (props, ref) => {
   });
   // 子组件的jsonCode
   const [initJsonCode, setInitJsonCode] = useState(
-    request.json ? JSON.stringify(request.json) : '',
+    request.json ? JSON.stringify(request.json, null, '\t') : '',
   );
   const [jsonCode, setJsonCode] = useState(
     request.json ? JSON.stringify(request.json) : '',
@@ -260,6 +260,24 @@ const RequestTab = (props, ref) => {
         }
       }
       save(next, table);
+    }
+  };
+
+  const formatJSON = () => {
+    try {
+      JSON.parse(jsonCode);
+      if (JSON.stringify(JSON.parse(jsonCode), null, '\t') === initJsonCode) {
+        // 当内容只做了空格、换行操作，实际json没有变化时
+        // 先清空然后设置
+        setInitJsonCode('');
+        setTimeout(() => {
+          setInitJsonCode(JSON.stringify(JSON.parse(jsonCode), null, '\t'));
+        });
+      } else {
+        setInitJsonCode(JSON.stringify(JSON.parse(jsonCode), null, '\t'));
+      }
+    } catch (e) {
+      message.info('JSON格式有误');
     }
   };
 
@@ -434,10 +452,16 @@ const RequestTab = (props, ref) => {
       <div className={styles.dataContent}>
         {dataType === 'json' && (
           <div className={styles.editor}>
+            <div className={styles.topBtn}>
+              <Button type="primary" onClick={formatJSON}>
+                格式化JSON
+              </Button>
+            </div>
             <Editor
               getEditorContent={getDataCode}
               content={initJsonCode}
               height={'300px'}
+              mode="json"
             />
           </div>
         )}

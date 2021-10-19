@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { history } from 'umi';
 import { connect } from 'dva';
-
+import { setPermissions } from '@/utils/common';
 import ImgUrl from '@/constant/imagesUrl';
 
 import styles from './index.less';
 
-class Login extends Component<any, any> {
+class Login extends Component {
   userLogin = (payload) => {
     const { dispatch } = this.props;
     dispatch({
@@ -16,6 +16,7 @@ class Login extends Component<any, any> {
       callback: (res) => {
         const { loginInfo } = this.props;
         if (loginInfo.message === '登录成功') {
+          setPermissions(loginInfo.user.role);
           history.push('/');
           message.success('登录成功');
         } else {

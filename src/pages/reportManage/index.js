@@ -17,6 +17,9 @@ import styles from './index.less';
 class ViewReport extends Component {
   constructor(props) {
     super(props);
+    this.hasPermission = JSON.parse(
+      localStorage.getItem('qc_permissions'),
+    ).report.length;
     this.state = {
       currentReport: {},
       tableLoading: true,
@@ -156,7 +159,7 @@ class ViewReport extends Component {
               danger
               size="small"
               shape="round"
-              disabled={record.result === 'running'}
+              style={{ display: this.hasPermission ? 'block' : 'none' }}
             >
               删除
             </Button>

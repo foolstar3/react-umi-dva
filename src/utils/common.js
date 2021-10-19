@@ -1,5 +1,5 @@
 import { message } from 'antd';
-
+import { rolePattern, permissionPattern } from '../constant/roleLevel';
 export const DateFormat = (date) => {
   if (date instanceof Date) {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -50,4 +50,25 @@ export const parseResponse = (response) => {
     return { success: true, data: response };
   }
   return { success: false };
+};
+
+export const setPermissions = (role) => {
+  const permissions = {
+    env: [],
+    globalVar: [],
+    project: [],
+    debugTalk: [],
+    module: [],
+    case: [],
+    task: [],
+    report: [],
+  };
+  Object.entries(permissionPattern).forEach((item) => {
+    Object.entries(item[1]).forEach((child) => {
+      if (role <= rolePattern[child[1]]) {
+        permissions[item[0]].push(child[0]);
+      }
+    });
+  });
+  localStorage.setItem('qc_permissions', JSON.stringify(permissions));
 };

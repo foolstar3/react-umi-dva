@@ -13,14 +13,16 @@
     margin-right: 10px;
     transition: box-shadow 0.2s ease;
     &:hover {
-      box-shadow: 5px 5px 5px 5px #f5eaea;
+      box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 16%),
+        0 3px 6px 0 rgba(0, 0, 0, 12%), 0 5px 12px 4px rgba(0, 0, 0, 9%);
     }
   }
   .stat {
     flex: 1;
     transition: box-shadow 0.2s ease;
     &:hover {
-      box-shadow: 5px 5px 5px 5px #f5eaea;
+      box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 16%),
+        0 3px 6px 0 rgba(0, 0, 0, 12%), 0 5px 12px 4px rgba(0, 0, 0, 9%);
     }
     :global {
       .ant-list-item {
@@ -85,16 +87,22 @@
       }
       .listItem {
         display: flex;
-        justify-content: space-between;
-      }
-      .value {
-        p {
-          max-width: 880px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          margin-bottom: 0;
-          &:hover {
-            cursor: pointer;
+        .title {
+          flex: 1;
+        }
+        .value {
+          flex: 10;
+          margin-left: 20px;
+          p {
+            max-width: 846px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0;
+            height: 22px;
+            line-height: 22px;
+            &:hover {
+              cursor: pointer;
+            }
           }
         }
       }
