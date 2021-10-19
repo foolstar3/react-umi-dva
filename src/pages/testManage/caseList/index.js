@@ -42,6 +42,8 @@ const formItemLayout = {
   wrapperCol: { span: 20 },
 };
 class CaseList extends Component {
+  hasPermission = JSON.parse(localStorage.getItem('qc_permissions')).case
+    .length;
   state = {
     selectedRowKeys: [],
     total: 0,
@@ -60,8 +62,7 @@ class CaseList extends Component {
   componentDidMount() {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
-    // this.getModuleList({ page: 'None' });
-    this.getEnvList({ page: 'None', is_valid: true });
+    // this.getEnvList({ page: 'None', is_valid: true });
     history.listen((location) => {
       if (location.pathname === '/testManage/caseList') {
         this.setState({ showDetailTabs: false });
@@ -236,7 +237,6 @@ class CaseList extends Component {
     payload.name ? this.copyCase(payload) : message.error('请填写用例名称');
   };
   onProjectChange = (payload, flag = true) => {
-    // console.log(payload);
     if (payload) {
       this.getModuleList({ page: 'None', project: payload });
     } else {
@@ -364,6 +364,7 @@ class CaseList extends Component {
             shape="round"
             className={styles.buttonRun}
             onClick={() => this.showRunModal(record)}
+            style={{ display: this.hasPermission ? '' : 'none' }}
           >
             <PlayCircleOutlined />
           </Button>
@@ -382,6 +383,7 @@ class CaseList extends Component {
             size="small"
             shape="round"
             onClick={() => this.showCopyModal(record)}
+            style={{ display: this.hasPermission ? '' : 'none' }}
           >
             <CopyOutlined />
           </Button>
@@ -398,6 +400,7 @@ class CaseList extends Component {
               danger
               size="small"
               shape="round"
+              style={{ display: this.hasPermission ? '' : 'none' }}
             >
               <DeleteOutlined />
             </Button>
@@ -440,7 +443,10 @@ class CaseList extends Component {
           onReset={this.onReset}
           onProjectChange={this.onProjectChange}
         />
-        <div className="ant-btn-add">
+        <div
+          className="ant-btn-add"
+          style={{ visibility: this.hasPermission ? '' : 'hidden' }}
+        >
           <Button
             type="primary"
             icon={<PlusCircleOutlined />}

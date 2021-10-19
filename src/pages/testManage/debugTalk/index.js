@@ -9,6 +9,9 @@ import Editor from '@/components/Editor';
 class DebugTalkList extends React.Component {
   constructor(props) {
     super(props);
+    this.hasPermission = JSON.parse(
+      localStorage.getItem('qc_permissions'),
+    ).debugTalk.length;
     this.state = {
       editVisible: false,
       debugTalkContent: '',
@@ -171,6 +174,7 @@ class DebugTalkList extends React.Component {
         },
       },
     ];
+    this.hasPermission ? '' : columns.pop();
     return (
       <div>
         <Card>

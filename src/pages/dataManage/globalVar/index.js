@@ -15,6 +15,9 @@ import SearchModal from './Search';
 class GlobalVarList extends React.Component {
   constructor(props) {
     super(props);
+    this.hasPermission = JSON.parse(
+      localStorage.getItem('qc_permissions'),
+    ).globalVar.length;
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -238,6 +241,7 @@ class GlobalVarList extends React.Component {
         },
       },
     ];
+    this.hasPermission ? '' : columns.pop();
     return (
       <div>
         <Card>
@@ -246,7 +250,10 @@ class GlobalVarList extends React.Component {
             handleSearchChildren={this.handleSearchChildren}
             onResetPage={this.onResetPage}
           />
-          <div className="ant-btn-add">
+          <div
+            className="ant-btn-add"
+            style={{ visibility: this.hasPermission ? '' : 'hidden' }}
+          >
             <Button
               type="primary"
               onClick={this.handleAddGlobalVar}

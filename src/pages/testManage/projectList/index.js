@@ -9,7 +9,6 @@ import {
   Table,
   Button,
   Popconfirm,
-  FormInstance,
 } from 'antd';
 import {
   EditOutlined,
@@ -27,6 +26,9 @@ import { DateFormat } from '@/utils/common';
 class ProjectList extends React.Component {
   constructor(props) {
     super(props);
+    this.permissions = JSON.parse(
+      localStorage.getItem('qc_permissions'),
+    ).project.length;
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -298,6 +300,7 @@ class ProjectList extends React.Component {
                 icon={<EditOutlined />}
                 shape="round"
                 size="small"
+                style={{ display: this.permissions ? 'block' : 'none' }}
               >
                 编辑
               </Button>
@@ -314,6 +317,7 @@ class ProjectList extends React.Component {
                   icon={<DeleteOutlined />}
                   shape="round"
                   size="small"
+                  style={{ display: this.permissions === 3 ? 'block' : 'none' }}
                 >
                   删除
                 </Button>
@@ -323,6 +327,7 @@ class ProjectList extends React.Component {
         },
       },
     ];
+    this.permissions ? '' : columns.pop();
     return (
       <div>
         <Card>
@@ -331,7 +336,10 @@ class ProjectList extends React.Component {
             handleSearchChildren={this.handleSearchChildren}
             onResetPage={this.onResetPage}
           />
-          <div className="ant-btn-add">
+          <div
+            className="ant-btn-add"
+            style={{ visibility: this.permissions === 3 ? '' : 'hidden' }}
+          >
             <Button
               type="primary"
               onClick={this.showAddModal}
