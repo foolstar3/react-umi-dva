@@ -13,13 +13,13 @@ import { QuestionCircleTwoTone } from '@ant-design/icons';
 import { connect } from 'umi';
 import TreeNode_Add from './treeNode_add';
 import './index.less';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
-import { Flex } from 'antd-mobile';
 const { Option } = Select;
 class AddModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      defaultEnv: '',
+      envList: [],
       tempAddValue: '',
       caseNumber: 0,
       moduleList: [],
@@ -37,19 +37,15 @@ class AddModal extends React.Component {
   }
 
   formRef = React.createRef();
-
-  UNSAFE_componentWillMount() {
-    this.getEnvList({
-      page: 'None',
-      is_valid: true,
-    });
-  }
   getEnvList = (payload) => {
     this.props.dispatch({
       type: 'envList/getEnvList',
       payload,
       callback: (res) => {
-        // 必须添加
+        this.setState({
+          envList: res,
+          defaultEnv: res[0],
+        });
       },
     });
   };
@@ -170,6 +166,7 @@ class AddModal extends React.Component {
   };
 
   handleProjectChange = (project) => {
+    this.formRef.current.resetFields(['env']);
     const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (project && projectList[i].project_name === project) {
@@ -178,6 +175,11 @@ class AddModal extends React.Component {
           checked_projectListId: projectList[i].id,
         });
         this.getModuleList(payload);
+        this.getEnvList({
+          page: 'None',
+          project: projectList[i].id,
+          is_valid: true,
+        });
       }
     }
   };
@@ -236,9 +238,8 @@ class AddModal extends React.Component {
   };
 
   render() {
-    const { caseNumber, checked } = this.state;
+    const { caseNumber, checked, envList, defaultEnv } = this.state;
     const addVisible = this.props.addVisible;
-    const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
     const treeData_moduleList = [...this.state.treeData_moduleList];
     const text = (
@@ -311,7 +312,11 @@ class AddModal extends React.Component {
             />
           </Form.Item>
           {checked && (
-            <Form.Item label="定时状态" id="basic_taskList_crontab">
+            <Form.Item
+              label="定时状态"
+              name="basic_taskList_crontab"
+              rules={[{ required: true, message: '请输入完整的定时计划' }]}
+            >
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Tooltip
                   title={text}
@@ -360,34 +365,6 @@ class AddModal extends React.Component {
             </Form.Item>
           )}
           <Form.Item
-            label="运行环境"
-            name="env"
-            rules={[{ required: true, message: '请选择运行环境' }]}
-          >
-            {
-              <Select
-                showSearch
-                allowClear
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-              >
-                {envList &&
-                  Array.isArray(envList) &&
-                  envList.length &&
-                  envList.map((item) => {
-                    return (
-                      <Option value={item.env_name} key={item.id}>
-                        {item.env_name}
-                      </Option>
-                    );
-                  })}
-              </Select>
-            }
-          </Form.Item>
-          <Form.Item
             label="项目名称"
             name="project"
             rules={[{ required: true, message: '请选择项目' }]}
@@ -410,6 +387,32 @@ class AddModal extends React.Component {
                     return (
                       <Option value={item.project_name} key={item.project_name}>
                         {item.project_name}
+                      </Option>
+                    );
+                  })}
+              </Select>
+            }
+          </Form.Item>
+          <Form.Item
+            label="运行环境"
+            name="env"
+            rules={[{ required: true, message: '请选择运行环境' }]}
+          >
+            {
+              <Select
+                showSearch
+                allowClear
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
+                {envList &&
+                  envList.map((item) => {
+                    return (
+                      <Option value={item.env_name} key={item.id}>
+                        {item.env_name}
                       </Option>
                     );
                   })}

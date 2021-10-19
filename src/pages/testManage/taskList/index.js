@@ -46,11 +46,22 @@ class TaskList extends React.Component {
   UNSAFE_componentWillMount() {
     this.getProjectList({ page: 'None' });
     this.getTaskList({ page: 1 });
+    this.getEnvList({ page: 'None' });
   }
   onRef = (ref) => {
     this.EditModal = ref;
   };
-
+  getEnvList = (payload) => {
+    this.props.dispatch({
+      type: 'envList/getEnvList',
+      payload,
+      callback: (res) => {
+        this.setState({
+          envList: res,
+        });
+      },
+    });
+  };
   getTaskList = (payload) => {
     this.setState({
       tableLoading: true,

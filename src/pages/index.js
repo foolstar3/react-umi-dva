@@ -20,7 +20,13 @@ class Index extends Component {
       new_testcase_num: 0,
       run_case_sum: 0,
       run_case_pass: 0,
-      series: {},
+      series: {
+        date: [],
+        successes: [],
+        failures: [],
+        errors: [],
+        skipped: [],
+      },
     };
   }
 
@@ -77,7 +83,7 @@ class Index extends Component {
         {
           type: 'category',
           boundaryGap: false,
-          data: this.state.series.date,
+          data: this.state.series?.date,
         },
       ],
       yAxis: [
@@ -94,7 +100,7 @@ class Index extends Component {
           emphasis: {
             focus: 'series',
           },
-          data: this.state.series.successes,
+          data: this.state.series?.successes,
         },
         {
           name: '失败',
@@ -104,7 +110,7 @@ class Index extends Component {
           emphasis: {
             focus: 'series',
           },
-          data: this.state.series.failures,
+          data: this.state.series?.failures,
         },
         {
           name: '错误',
@@ -114,7 +120,7 @@ class Index extends Component {
           emphasis: {
             focus: 'series',
           },
-          data: this.state.series.errors,
+          data: this.state.series?.errors,
         },
         {
           name: '跳过',
@@ -124,7 +130,7 @@ class Index extends Component {
           emphasis: {
             focus: 'series',
           },
-          data: this.state.series.skipped,
+          data: this.state.series?.skipped,
         },
       ],
     };
