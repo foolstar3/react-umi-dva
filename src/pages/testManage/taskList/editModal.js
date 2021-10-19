@@ -17,6 +17,8 @@ class EditModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      env: [],
+      envList: '',
       tempEditValue: 0,
       caseNumber: 0,
       moduleList: [],
@@ -46,6 +48,18 @@ class EditModal extends React.Component {
     }
   }
   formRef = React.createRef();
+
+  getEnvList = (payload) => {
+    this.props.dispatch({
+      type: 'envList/getEnvList',
+      payload,
+      callback: (res) => {
+        this.setState({
+          envList: res,
+        });
+      },
+    });
+  };
 
   getModuleList = (payload) => {
     this.props.dispatch({
@@ -93,6 +107,10 @@ class EditModal extends React.Component {
   };
 
   editSubmit = () => {
+    console.log(
+      'this.formRef.current.getFieldValue()',
+      this.formRef.current.getFieldValue('env'),
+    );
     const tempEditValue = this.state.tempEditValue;
     if (tempEditValue != 0) {
       const editTaskValue = JSON.stringify(tempEditValue);
@@ -108,7 +126,10 @@ class EditModal extends React.Component {
         }
       }
       for (let i = 0; i < envList.length; i++) {
-        if (editTask.env && envList[i].env_name === editTask.env) {
+        if (
+          this.formRef.current.getFieldValue('env') &&
+          envList[i].env_name === this.formRef.current.getFieldValue('env')
+        ) {
           editTask.env = envList[i].id;
         }
       }
@@ -141,7 +162,12 @@ class EditModal extends React.Component {
           month_of_year: this.state.Month == null ? 1 : this.state.Month,
         },
       };
-      if (editTask.name && editTask.env && editTask.project) {
+      if (
+        editTask.name &&
+        editTask.env &&
+        this.formRef.current.getFieldValue('env') !== [] &&
+        editTask.project
+      ) {
         if (this.state.caseNumber !== 0) {
           this.props.dispatch({
             type: 'taskList/editSubmit',
@@ -202,7 +228,13 @@ class EditModal extends React.Component {
           month_of_year: this.state.Month == null ? 1 : this.state.Month,
         },
       };
-      if (this.state.caseNumber !== 0) {
+      if (
+        this.state.caseNumber !== 0 &&
+        editTask.name &&
+        editTask.env &&
+        this.formRef.current.getFieldValue('env') !== [] &&
+        editTask.project
+      ) {
         this.props.dispatch({
           type: 'taskList/editSubmit',
           payload: {
@@ -232,6 +264,13 @@ class EditModal extends React.Component {
   };
 
   handleProjectChange = (project) => {
+    console.log('this.formRef.current', this.formRef.current);
+    if (this.formRef.current !== null) {
+      this.setState({});
+      this.formRef.current.setFieldsValue({
+        env: [],
+      });
+    }
     const projectList = this.props.projectList.projectList;
     for (let i = 0; i < projectList.length; i++) {
       if (projectList && projectList[i].project_name === project) {
@@ -240,6 +279,11 @@ class EditModal extends React.Component {
           checked_projectListId: projectList[i].id,
         });
         this.getModuleList(payload);
+        this.getEnvList({
+          page: 'None',
+          project: projectList[i].id,
+          is_valid: true,
+        });
       }
     }
     this.setState({
@@ -288,9 +332,9 @@ class EditModal extends React.Component {
 
   render() {
     const { editVisible, tempValue, envName } = this.props;
-    const envList = this.props?.envList?.envList || [];
+    // const envList = this.props?.envList?.envList || [];
     const projectList = this.props?.projectList?.projectList || [];
-    const { caseNumber, checked } = this.state;
+    const { caseNumber, checked, envList } = this.state;
     const treeData = [...this.state.treeData];
     const crontab_time = this.props.crontab_time;
     const crontab = crontab_time.split(' ');
@@ -425,37 +469,6 @@ class EditModal extends React.Component {
                 </Form.Item>
               )}
               <Form.Item
-                label="运行环境"
-                name="env"
-                rules={[{ required: true, message: '请选择运行环境' }]}
-                initialValue={envName}
-                key="env"
-              >
-                {
-                  <Select
-                    showSearch
-                    allowClear
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      option.children
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                  >
-                    {envList &&
-                      Array.isArray(envList) &&
-                      envList.length &&
-                      envList.map((item) => {
-                        return (
-                          <Option value={item.env_name} key={item.env_name}>
-                            {item.env_name}
-                          </Option>
-                        );
-                      })}
-                  </Select>
-                }
-              </Form.Item>
-              <Form.Item
                 label="项目名称"
                 name="project"
                 rules={[{ required: true, message: '请选择项目' }]}
@@ -484,6 +497,34 @@ class EditModal extends React.Component {
                             key={item.project_name}
                           >
                             {item.project_name}
+                          </Option>
+                        );
+                      })}
+                  </Select>
+                }
+              </Form.Item>
+              <Form.Item
+                label="运行环境"
+                name="env"
+                rules={[{ required: true, message: '请选择运行环境' }]}
+                initialValue={envName}
+              >
+                {
+                  <Select
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {envList &&
+                      envList.map((item) => {
+                        return (
+                          <Option value={item.env_name} key={item.env_name}>
+                            {item.env_name}
                           </Option>
                         );
                       })}
