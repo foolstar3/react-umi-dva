@@ -18,6 +18,9 @@ import '/src/styles/global.less';
 class TaskList extends React.Component {
   constructor(props) {
     super(props);
+    this.hasPermission = JSON.parse(
+      localStorage.getItem('qc_permissions'),
+    ).task.length;
     this.state = {
       addVisible: false,
       editVisible: false,
@@ -257,6 +260,7 @@ class TaskList extends React.Component {
                 onChange={(checked) => {
                   this.onSwitchChange(checked, text, record);
                 }}
+                disabled={!this.hasPermission}
               />
             </div>
           );
@@ -306,6 +310,7 @@ class TaskList extends React.Component {
                   icon={<PlayCircleOutlined />}
                   shape="round"
                   size="small"
+                  style={{ display: this.hasPermission ? 'block' : 'none' }}
                 >
                   运行
                 </Button>
@@ -333,6 +338,7 @@ class TaskList extends React.Component {
                   icon={<DeleteOutlined />}
                   shape="round"
                   size="small"
+                  style={{ display: this.hasPermission ? 'block' : 'none' }}
                 >
                   删除
                 </Button>
@@ -350,7 +356,10 @@ class TaskList extends React.Component {
             handleSearchChildren={this.handleSearchChildren}
             onResetPage={this.onResetPage}
           />
-          <div className="ant-btn-add">
+          <div
+            className="ant-btn-add"
+            style={{ visibility: this.hasPermission ? '' : 'hidden' }}
+          >
             <Button
               type="primary"
               onClick={this.handleAddTask}

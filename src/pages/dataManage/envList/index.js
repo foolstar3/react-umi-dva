@@ -40,158 +40,161 @@ class EnvList extends Component {
     this.hasPermission = JSON.parse(
       localStorage.getItem('qc_permissions'),
     ).env.length;
-    this.state = {
-      selectedRowKeys: [],
-      // 新增对话框显隐
-      addModalVisiable: false,
-      // 编辑对话框显隐
-      editModalVisiable: false,
-      // 环境信息对话框显隐
-      envInfoModalVisiable: false,
-      // 当前选中的环境
-      currentEnvInfo: {},
-      // 新增环境列表数据
-      addEnvListData: {},
-      // 编辑环境列表数据
-      editEnvListData: {},
-      // table列配置
-      columns: [
-        {
-          title: '编号',
-          dataIndex: 'id',
-          key: 'id',
-          width: 70,
-          align: 'center',
+    // table列配置
+    (this.columns = [
+      {
+        title: '编号',
+        dataIndex: 'id',
+        key: 'id',
+        width: 70,
+        align: 'center',
+      },
+      {
+        title: '环境名称',
+        dataIndex: 'env_name',
+        key: 'env_name',
+        width: 120,
+        align: 'center',
+      },
+      {
+        title: '环境地址',
+        dataIndex: 'base_url',
+        key: 'base_url',
+        // width: 200,
+        align: 'center',
+      },
+      {
+        title: '项目名称',
+        dataIndex: 'project_name',
+        key: 'project_name',
+        // width: 200,
+        align: 'center',
+      },
+      {
+        title: '简要描述',
+        dataIndex: 'description',
+        key: 'description',
+        textWrap: 'word-break',
+        ellipsis: true,
+        // width: 100,
+        align: 'center',
+      },
+      {
+        title: '环境状态',
+        dataIndex: 'is_valid',
+        key: 'is_valid',
+        width: 100,
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            <Switch
+              checkedChildren="启用"
+              unCheckedChildren="禁用"
+              defaultChecked={text}
+              checked={text}
+              onChange={(checked) => {
+                this.onSwitchChange(checked, text, record);
+              }}
+              disabled={!this.hasPermission}
+              key={index}
+            />
+          );
         },
-        {
-          title: '环境名称',
-          dataIndex: 'env_name',
-          key: 'env_name',
-          width: 120,
-          align: 'center',
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'create_time',
+        key: 'create_time',
+        width: 200,
+        align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
         },
-        {
-          title: '环境地址',
-          dataIndex: 'base_url',
-          key: 'base_url',
-          // width: 200,
-          align: 'center',
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'update_time',
+        key: 'update_time',
+        width: 200,
+        align: 'center',
+        render: (text) => {
+          const time = DateFormat(text);
+          return <span>{time}</span>;
         },
-        {
-          title: '项目名称',
-          dataIndex: 'project_name',
-          key: 'project_name',
-          // width: 200,
-          align: 'center',
-        },
-        {
-          title: '简要描述',
-          dataIndex: 'description',
-          key: 'description',
-          textWrap: 'word-break',
-          ellipsis: true,
-          // width: 100,
-          align: 'center',
-        },
-        {
-          title: '环境状态',
-          dataIndex: 'is_valid',
-          key: 'is_valid',
-          width: 100,
-          align: 'center',
-          render: (text, record, index) => {
-            return (
-              <Switch
-                checkedChildren="启用"
-                unCheckedChildren="禁用"
-                defaultChecked={text}
-                checked={text}
-                onChange={(checked) => {
-                  this.onSwitchChange(checked, text, record);
-                }}
-                key={index}
-              />
-            );
-          },
-        },
-        {
-          title: '创建时间',
-          dataIndex: 'create_time',
-          key: 'create_time',
-          width: 200,
-          align: 'center',
-          render: (text) => {
-            const time = DateFormat(text);
-            return <span>{time}</span>;
-          },
-        },
-        {
-          title: '更新时间',
-          dataIndex: 'update_time',
-          key: 'update_time',
-          width: 200,
-          align: 'center',
-          render: (text) => {
-            const time = DateFormat(text);
-            return <span>{time}</span>;
-          },
-        },
-        {
-          title: '操作',
-          key: 'action',
-          width: 300,
-          // className: this.hasPermission ? '' : 'hidden',
-          align: 'center',
-          render: (text, record) => (
-            <div className="actionColumn">
+      },
+      {
+        title: '操作',
+        key: 'action',
+        width: 300,
+        align: 'center',
+        render: (text, record) => (
+          <div className="actionColumn">
+            <Button
+              type="primary"
+              icon={<FileSearchOutlined />}
+              onClick={() => {
+                this.showEnvInfoModal(record);
+              }}
+              size="small"
+              shape="round"
+            >
+              环境信息
+            </Button>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={() => {
+                this.showEditModal(text, record);
+              }}
+              size="small"
+              shape="round"
+              style={{ display: this.hasPermission ? '' : 'none' }}
+            >
+              编辑
+            </Button>
+            <Popconfirm
+              okText="Yes"
+              cancelText="No"
+              title="确定删除？"
+              icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              onConfirm={() => this.handleDeleteOk(text)}
+            >
               <Button
                 type="primary"
-                icon={<FileSearchOutlined />}
-                onClick={() => {
-                  this.showEnvInfoModal(record);
-                }}
+                icon={<DeleteOutlined />}
+                danger
                 size="small"
                 shape="round"
+                style={{ display: this.hasPermission ? '' : 'none' }}
               >
-                环境信息
+                删除
               </Button>
-              <Button
-                type="primary"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  this.showEditModal(text, record);
-                }}
-                size="small"
-                shape="round"
-              >
-                编辑
-              </Button>
-              <Popconfirm
-                okText="Yes"
-                cancelText="No"
-                title="确定删除？"
-                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                onConfirm={() => this.handleDeleteOk(text)}
-              >
-                <Button
-                  type="primary"
-                  icon={<DeleteOutlined />}
-                  danger
-                  size="small"
-                  shape="round"
-                >
-                  删除
-                </Button>
-              </Popconfirm>
-            </div>
-          ),
-        },
-      ],
-      editorCode: '',
-      total: 0,
-      currentPage: 1,
-      searchWords: {},
-    };
+            </Popconfirm>
+          </div>
+        ),
+      },
+    ]),
+      // this.hasPermission ? '' : this.columns.pop()
+      (this.state = {
+        selectedRowKeys: [],
+        // 新增对话框显隐
+        addModalVisiable: false,
+        // 编辑对话框显隐
+        editModalVisiable: false,
+        // 环境信息对话框显隐
+        envInfoModalVisiable: false,
+        // 当前选中的环境
+        currentEnvInfo: {},
+        // 新增环境列表数据
+        addEnvListData: {},
+        // 编辑环境列表数据
+        editEnvListData: {},
+        editorCode: '',
+        total: 0,
+        currentPage: 1,
+        searchWords: {},
+      });
   }
   formRef = React.createRef();
 
@@ -225,7 +228,6 @@ class EnvList extends Component {
   componentDidMount() {
     this.getEnvList({ page: 1 });
     this.getProjectList({ page: 'None' });
-    console.log(JSON.parse(localStorage.getItem('qc_permissions')));
   }
 
   //获取项目名称列表
@@ -512,7 +514,6 @@ class EnvList extends Component {
 
   render() {
     const {
-      columns,
       addModalVisiable,
       currentEnvInfo,
       editModalVisiable,
@@ -548,13 +549,16 @@ class EnvList extends Component {
     return (
       <>
         {!envInfoModalVisiable && (
-          <Card bordered={false}>
+          <Card>
             <SearchBox
               projectOptions={projectList}
               onSearch={this.onSearch}
               onReset={this.onReset}
             />
-            <div className="ant-btn-add">
+            <div
+              className="ant-btn-add"
+              style={{ visibility: this.hasPermission ? '' : 'hidden' }}
+            >
               <Button
                 type="primary"
                 icon={<PlusCircleOutlined />}
@@ -566,7 +570,7 @@ class EnvList extends Component {
               </Button>
             </div>
             <Table
-              columns={columns}
+              columns={this.columns}
               // rowSelection={rowSelection}
               dataSource={envList}
               loading={tableLoading}

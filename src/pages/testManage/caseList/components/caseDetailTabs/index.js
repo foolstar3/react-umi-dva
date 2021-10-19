@@ -333,22 +333,28 @@ const CaseDetailTabs = ({
   const getPayload = () => {
     // 处理requestTab
     let dataType = '';
+    // 判断data的类型
     if (editorRef.current) {
       dataType = editorRef.current.sendCode().dataType;
     } else if (caseDetail.request) {
       dataType =
-        Object.keys(caseDetail.request).indexOf('json') !== -1
+        Object.keys(caseDetail.request.teststeps[0].request).indexOf('json') !==
+        -1
           ? 'json'
           : 'data';
     } else {
       dataType = 'data';
     }
+    // json格式
     if (dataType === 'json') {
-      try {
-        request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
-      } catch (err) {
-        message.info('请检查JSON数据格式');
-        return;
+      // 通过编辑器获取更新后的json
+      if (editorRef.current) {
+        try {
+          request.json = JSON.parse(editorRef.current.sendCode().jsonCode);
+        } catch (err) {
+          message.info('请检查JSON数据格式');
+          return;
+        }
       }
     }
     const newRequest = JSON.parse(JSON.stringify(request));
@@ -542,35 +548,6 @@ const CaseDetailTabs = ({
             </Tabs>
           </div>
         )}
-        {/* <div className={styles.responseTabs}>
-          <Tabs defaultActiveKey="1" type="card">
-            {debugResponse.case_metas && debugResponse.case_metas.length
-              ? debugResponse.case_metas.map((item, index) => {
-                  const tabIcon = item.flag ? (
-                    <span style={{ color: 'green' }}>
-                      <CheckCircleFilled style={{ fontSize: '12px' }} />
-                      {item.name}
-                    </span>
-                  ) : (
-                    <span style={{ color: 'red' }}>
-                      <CloseCircleFilled style={{ fontSize: '12px' }} />
-                      {item.name}
-                    </span>
-                  );
-                  return (
-                    <TabPane tab={tabIcon} key={`${item.name}${item.index}`}>
-                      <ResponseTab
-                        treeData={item.tree}
-                        checkable={true}
-                        validators={item.validators.validate_extractor || []}
-                        onCheckedChange={checkedChange}
-                      />
-                    </TabPane>
-                  );
-                })
-              : ''}
-          </Tabs>
-        </div> */}
       </div>
       <Modal
         title="选择运行环境"

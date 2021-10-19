@@ -83,15 +83,15 @@ class ReportDetail extends React.Component {
       align: 'center',
       filters: [
         {
-          text: 'success',
+          text: '成功',
           value: 'success',
         },
         {
-          text: 'failure',
+          text: '失败',
           value: 'failure',
         },
         {
-          text: 'error',
+          text: '错误',
           value: 'error',
         },
       ],
@@ -432,7 +432,7 @@ class ReportDetail extends React.Component {
                       <span>{item.name}:</span>
                     </div>
                     <div className={styles.value}>
-                      <p>{item.value}</p>
+                      <p title={item.value}>{item.value}</p>
                     </div>
                   </List.Item>
                 )}
