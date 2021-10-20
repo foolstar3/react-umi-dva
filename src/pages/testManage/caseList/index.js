@@ -59,6 +59,7 @@ class CaseList extends Component {
   runModal = 'single';
   runForm = React.createRef();
   copyForm = React.createRef();
+
   componentDidMount() {
     this.getCaseList({ page: 1 });
     this.getProjectList({ page: 'None' });
@@ -68,6 +69,11 @@ class CaseList extends Component {
         this.setState({ showDetailTabs: false });
       }
     });
+  }
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
+    };
   }
   /**
    *
@@ -125,15 +131,6 @@ class CaseList extends Component {
       callback: () => {
         this.getCaseList({ page: 1 });
       },
-    });
-  };
-
-  getFuncs = (payload) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'testCase/getFuncs',
-      payload,
-      callback: () => {},
     });
   };
 
@@ -254,8 +251,6 @@ class CaseList extends Component {
   };
 
   showCaseDetail = (record) => {
-    // 获取函数hooks
-    this.getFuncs({ project_id: record.project });
     if (Object.keys(record).length) {
       this.getCalls(record.id);
       this.getModuleList({ page: 'None', project: record.project });
@@ -566,7 +561,7 @@ class CaseList extends Component {
       isCopyModalVisible,
       isRunModalVisible,
     } = this.state;
-    const { projectData, moduleData, caseList, envList, funcs } = this.props;
+    const { projectData, moduleData, caseList, envList } = this.props;
 
     return (
       <>
@@ -581,7 +576,6 @@ class CaseList extends Component {
               onModuleChange={this.onModuleChange}
               caseList={caseList}
               envList={envList}
-              funcs={funcs}
             />
           ) : (
             this.renderCaseListTable()
@@ -600,7 +594,6 @@ export default connect(
     envList: envList.envList,
     projectData: projectList.projectList,
     moduleData: moduleList.moduleList,
-    funcs: testCase.funcsName,
     tableLoading: loading.effects['testCase/getCaseList'],
     reportDetail: report.reportDetail,
   }),

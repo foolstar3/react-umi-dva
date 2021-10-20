@@ -113,6 +113,7 @@ const MessageTab = (props) => {
 
   const onProjectNameChange = (val, opt) => {
     setCurProject(val);
+    setCurModuleId(undefined);
     onProjectChange(val);
     form.setFieldsValue({
       project_name: opt.title,
@@ -274,6 +275,7 @@ const MessageTab = (props) => {
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=
                   0
                 }
+                disabled={caseDetail.id}
               >
                 {projectData
                   ? projectData.map((item) => (

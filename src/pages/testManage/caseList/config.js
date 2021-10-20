@@ -32,8 +32,8 @@ const tableColumns = [
   },
   {
     title: '创建时间',
-    dataIndex: 'update_time',
-    key: 'update_time',
+    dataIndex: 'create_time',
+    key: 'create_time',
     align: 'center',
     render: (text) => {
       const time = DateFormat(text);
@@ -42,8 +42,8 @@ const tableColumns = [
   },
   {
     title: '更新时间',
-    dataIndex: 'create_time',
-    key: 'create_time',
+    dataIndex: 'update_time',
+    key: 'update_time',
     align: 'center',
     render: (text) => {
       const time = DateFormat(text);

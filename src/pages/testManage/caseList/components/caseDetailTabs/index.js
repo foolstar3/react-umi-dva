@@ -31,11 +31,20 @@ const CaseDetailTabs = ({
   funcs,
 }) => {
   const [form] = Form.useForm();
+  const [activeKey, setActiveKey] = useState('1');
   const editorRef = useRef(null);
   const messageRef = useRef(null);
   /**
    * 请求函数
    */
+  const getFuncs = (payload) => {
+    dispatch({
+      type: 'testCase/getFuncs',
+      payload,
+      callback: () => {},
+    });
+  };
+
   const debugCase = (payload) => {
     dispatch({
       type: 'testCase/debugCase',
@@ -132,8 +141,12 @@ const CaseDetailTabs = ({
    */
   const showDebugModal = () => {
     const { project } = messageRef.current.getMessageData();
-    getEnvList({ page: 'None', project, is_valid: true });
-    setModalVisible(true);
+    if (project) {
+      getEnvList({ page: 'None', project, is_valid: true });
+      setModalVisible(true);
+    } else {
+      message.info('请先选择项目');
+    }
   };
 
   const inputValidator = (payload) => {
@@ -433,11 +446,29 @@ const CaseDetailTabs = ({
       return next;
     });
   };
-
+  const tabChange = (key) => {
+    if (activeKey === '1') {
+      const messageData = messageRef.current.getMessageData();
+      if (!messageData.name || !messageData.project || !messageData.module) {
+        // 必填校验
+        return message.info('请先完成*必填项');
+      } else {
+        if (key === '4') {
+          // 进入hooksTab，发送请求
+          getFuncs({ project_id: messageData.project });
+        }
+      }
+    }
+    setActiveKey(key);
+  };
   return (
     <>
       <div className={styles.tabBody}>
-        <Tabs defaultActiveKey="1" type="card">
+        <Tabs
+          activeKey={activeKey}
+          type="card"
+          onChange={(key) => tabChange(key)}
+        >
           <TabPane tab="message" key="1">
             <MessageTab
               caseDetail={caseDetail}
@@ -577,4 +608,5 @@ const CaseDetailTabs = ({
 
 export default connect(({ testCase }) => ({
   debugResponse: testCase.debugResponse,
+  funcs: testCase.funcsName,
 }))(CaseDetailTabs);

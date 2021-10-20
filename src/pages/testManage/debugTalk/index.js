@@ -140,8 +140,8 @@ class DebugTalkList extends React.Component {
       },
       {
         title: '更新时间',
-        dataIndex: 'create_time',
-        key: 'create_time',
+        dataIndex: 'update_time',
+        key: 'update_time',
         align: 'center',
         width: '300px',
         render: (text) => {
