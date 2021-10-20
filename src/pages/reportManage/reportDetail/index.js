@@ -292,8 +292,8 @@ class ReportDetail extends React.Component {
     const { caseList, caseDetail } = this.state;
     if (!caseList.length) return;
     const { step_datas } = caseList[0];
-    const tableData = step_datas.map((item) => {
-      item.key = item.name;
+    const tableData = step_datas.map((item, index) => {
+      item.key = `${item.name}-${index}`;
       return item;
     });
     return (
