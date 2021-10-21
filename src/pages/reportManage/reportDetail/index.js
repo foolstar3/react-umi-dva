@@ -1,5 +1,7 @@
 import React from 'react';
-import { Card, Collapse, List, Table, Alert } from 'antd';
+import { Card, Collapse, List, Table, Alert, message } from 'antd';
+import { CopyOutlined } from '@ant-design/icons';
+import copy from 'copy-to-clipboard';
 import { connect, history } from 'umi';
 import ReactECharts from 'echarts-for-react';
 import styles from './index.less';
@@ -121,6 +123,8 @@ class ReportDetail extends React.Component {
       dataIndex: 'check_value',
       title: '实际值',
       align: 'center',
+      textWrap: 'word-break',
+      ellipsis: true,
       // render: (_, record) => `${JSON.stringify(record.check_value)}`,
     },
     {
@@ -132,6 +136,8 @@ class ReportDetail extends React.Component {
       dataIndex: 'expect',
       title: '期望值',
       align: 'center',
+      textWrap: 'word-break',
+      ellipsis: true,
       render: (_, record) => `${record.expect}`,
     },
     {
@@ -256,6 +262,12 @@ class ReportDetail extends React.Component {
     });
   };
 
+  copy = (item, e) => {
+    e.stopPropagation();
+    // console.log(JSON.stringify(item));
+    copy(JSON.stringify(item));
+    message.success('已复制至粘贴板');
+  };
   renderReportConclusion = () => {
     const { stat, chartOptions } = this.state;
     return (
@@ -377,7 +389,21 @@ class ReportDetail extends React.Component {
                   return item;
                 });
                 return (
-                  <Panel header={item.name} key={item.name}>
+                  <Panel
+                    header={
+                      <>
+                        <span className={styles.left}>{item.name}</span>
+                        <span
+                          className={styles.right}
+                          title="复制"
+                          onClick={(e) => this.copy(item, e)}
+                        >
+                          <CopyOutlined />
+                        </span>
+                      </>
+                    }
+                    key={item.name}
+                  >
                     <Table
                       dataSource={tableData}
                       columns={this.caseDetailColumn}
@@ -394,7 +420,21 @@ class ReportDetail extends React.Component {
           if (item.name === 'traceback') {
             if (item.content !== undefined) {
               return (
-                <Panel header={item.name} key={item.name}>
+                <Panel
+                  header={
+                    <>
+                      <span className={styles.left}>{item.name}</span>
+                      <span
+                        className={styles.right}
+                        title="复制"
+                        onClick={(e) => this.copy(item, e)}
+                      >
+                        <CopyOutlined />
+                      </span>
+                    </>
+                  }
+                  key={item.name}
+                >
                   <Alert
                     // message={
                     //   // <span className={styles.tracebackTitle}>{item.name}</span>
@@ -422,7 +462,21 @@ class ReportDetail extends React.Component {
             listData.push(listItem);
           });
           return (
-            <Panel header={item.name} key={item.name}>
+            <Panel
+              header={
+                <>
+                  <span className={styles.left}>{item.name}</span>
+                  <span
+                    className={styles.right}
+                    title="复制"
+                    onClick={(e) => this.copy(item, e)}
+                  >
+                    <CopyOutlined />
+                  </span>
+                </>
+              }
+              key={item.name}
+            >
               <List
                 dataSource={listData}
                 className={styles.detailList}
