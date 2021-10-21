@@ -196,7 +196,6 @@ class ModuleList extends React.Component {
         dataIndex: 'description',
         key: 'description',
         align: 'center',
-        textWrap: 'word-break',
         ellipsis: true,
       },
       {
@@ -225,7 +224,7 @@ class ModuleList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '150px',
+        width: 200,
         render: (_, record) => {
           return (
             <div className="action_button">

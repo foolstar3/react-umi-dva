@@ -178,7 +178,6 @@ class GlobalVarList extends React.Component {
         dataIndex: 'description',
         key: 'description',
         align: 'center',
-        textWrap: 'word-break',
         ellipsis: true,
       },
       {
@@ -206,7 +205,7 @@ class GlobalVarList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '100px',
+        width: 200,
         render: (_, record) => {
           return (
             <div>

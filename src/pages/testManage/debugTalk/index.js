@@ -126,7 +126,6 @@ class DebugTalkList extends React.Component {
         dataIndex: 'debugtalk',
         key: 'Debugtalk',
         align: 'center',
-        textWrap: 'word-break',
         ellipsis: true,
       },
       {
@@ -134,7 +133,6 @@ class DebugTalkList extends React.Component {
         dataIndex: 'create_time',
         key: 'create_time',
         align: 'center',
-        width: '300px',
         render: (text) => {
           const time = DateFormat(text);
           return <span>{time}</span>;
@@ -145,7 +143,6 @@ class DebugTalkList extends React.Component {
         dataIndex: 'update_time',
         key: 'update_time',
         align: 'center',
-        width: '300px',
         render: (text) => {
           const time = DateFormat(text);
           return <span>{time}</span>;
@@ -156,7 +153,7 @@ class DebugTalkList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '100px',
+        width: 100,
         render: (text, record) => {
           return (
             <div>

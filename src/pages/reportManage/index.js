@@ -131,7 +131,7 @@ class ViewReport extends Component {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
-      width: 180,
+      width: this.hasPermission ? 180 : 100,
       align: 'center',
       render: (text, record) => (
         <div key={record.id} className={styles.actionColumn}>

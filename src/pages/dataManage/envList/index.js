@@ -46,44 +46,37 @@ class EnvList extends Component {
         title: '编号',
         dataIndex: 'id',
         key: 'id',
-        width: 70,
         align: 'center',
       },
       {
         title: '环境名称',
         dataIndex: 'env_name',
         key: 'env_name',
-        width: 120,
         align: 'center',
       },
       {
         title: '环境地址',
         dataIndex: 'base_url',
         key: 'base_url',
-        // width: 200,
         align: 'center',
       },
       {
         title: '项目名称',
         dataIndex: 'project_name',
         key: 'project_name',
-        // width: 200,
         align: 'center',
       },
       {
         title: '简要描述',
         dataIndex: 'description',
         key: 'description',
-        textWrap: 'word-break',
-        ellipsis: true,
-        // width: 100,
         align: 'center',
+        ellipsis: true,
       },
       {
         title: '环境状态',
         dataIndex: 'is_valid',
         key: 'is_valid',
-        width: 100,
         align: 'center',
         render: (text, record, index) => {
           return (
@@ -105,7 +98,6 @@ class EnvList extends Component {
         title: '创建时间',
         dataIndex: 'create_time',
         key: 'create_time',
-        width: 200,
         align: 'center',
         render: (text) => {
           const time = DateFormat(text);
@@ -116,7 +108,6 @@ class EnvList extends Component {
         title: '更新时间',
         dataIndex: 'update_time',
         key: 'update_time',
-        width: 200,
         align: 'center',
         render: (text) => {
           const time = DateFormat(text);
@@ -126,7 +117,7 @@ class EnvList extends Component {
       {
         title: '操作',
         key: 'action',
-        width: 300,
+        width: this.hasPermission ? 300 : 150,
         align: 'center',
         render: (text, record) => (
           <div className="actionColumn">

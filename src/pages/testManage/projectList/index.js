@@ -274,7 +274,6 @@ class ProjectList extends React.Component {
         dataIndex: 'description',
         key: 'description',
         align: 'center',
-        textWrap: 'word-break',
         ellipsis: true,
       },
       {
@@ -292,7 +291,7 @@ class ProjectList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '100px',
+        width: this.permissions === 3 ? 200 : 100,
         render: (text, record) => {
           return (
             <div className="action_button">
