@@ -357,7 +357,7 @@ class CaseList extends Component {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
-      width: 240,
+      width: this.hasPermission ? 240 : 80,
       align: 'center',
       render: (text, record) => (
         <div key={record.id} className={styles.actionColumn}>

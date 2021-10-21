@@ -288,7 +288,6 @@ class TaskList extends React.Component {
         dataIndex: 'description',
         key: 'description',
         align: 'center',
-        textWrap: 'word-break',
         ellipsis: true,
       },
       {
@@ -306,7 +305,7 @@ class TaskList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '250px',
+        width: this.hasPermission ? 250 : 100,
         render: (_, record) => {
           return (
             <div className="action_button">
