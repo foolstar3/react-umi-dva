@@ -276,8 +276,9 @@ class TaskList extends React.Component {
         title: '简要描述',
         dataIndex: 'description',
         key: 'description',
-        width: 250,
         align: 'center',
+        textWrap: 'word-break',
+        ellipsis: true,
       },
       {
         title: '更新时间',
@@ -294,7 +295,7 @@ class TaskList extends React.Component {
         dataIndex: 'relateAction',
         key: 'relateAction',
         align: 'center',
-        width: '120px',
+        width: '250px',
         render: (_, record) => {
           return (
             <div className="action_button">

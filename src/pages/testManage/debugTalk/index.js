@@ -126,6 +126,8 @@ class DebugTalkList extends React.Component {
         dataIndex: 'debugtalk',
         key: 'Debugtalk',
         align: 'center',
+        textWrap: 'word-break',
+        ellipsis: true,
       },
       {
         title: '创建时间',

@@ -274,6 +274,8 @@ class ProjectList extends React.Component {
         dataIndex: 'description',
         key: 'description',
         align: 'center',
+        textWrap: 'word-break',
+        ellipsis: true,
       },
       {
         title: '创建时间',

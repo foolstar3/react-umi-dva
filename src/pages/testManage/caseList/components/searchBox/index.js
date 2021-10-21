@@ -64,7 +64,7 @@ const SearchBox = (props) => {
   };
   return (
     <Collapse>
-      <Panel header="搜索框" key="search">
+      <Panel header="搜索框" key="search" forceRender>
         <Form labelCol={{ span: 4 }} wrapperCol={{ span: 13 }} form={form}>
           <Row>
             <Col span={8}>
