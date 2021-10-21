@@ -59,7 +59,9 @@ const SearchBox = (props) => {
     });
     onProjectChange(val, false);
   };
-
+  const projectChosen = () => {
+    return form.getFieldValue('project_name');
+  };
   return (
     <Collapse>
       <Panel header="搜索框" key="search">
@@ -107,7 +109,8 @@ const SearchBox = (props) => {
                   }
                   placeholder="请先选择项目名称"
                 >
-                  {moduleOptions.length &&
+                  {projectChosen() &&
+                    moduleOptions.length &&
                     moduleOptions.map((item) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.module_name}

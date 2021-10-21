@@ -46,6 +46,7 @@ class CaseList extends Component {
     .length;
   state = {
     selectedRowKeys: [],
+    selectedRowsProjects: [],
     total: 0,
     showDetailTabs: false,
     currentCase: {},
@@ -196,8 +197,11 @@ class CaseList extends Component {
     });
   };
 
-  onSelectChange = (selectedRowKeys) => {
-    this.setState({ selectedRowKeys });
+  onSelectChange = (selectedRowKeys, selectedRows) => {
+    this.setState({
+      selectedRowKeys,
+      selectedRowsProjects: selectedRows[0] ? selectedRows[0].project : [],
+    });
   };
 
   onSearch = (payload) => {
@@ -297,11 +301,16 @@ class CaseList extends Component {
         is_valid: true,
       });
     } else {
-      const { selectedRowKeys } = this.state;
+      const { selectedRowKeys, selectedRowsProjects } = this.state;
       if (selectedRowKeys.length) {
         // todo 发起请求获取所选用例可用的环境列表
         this.setState({
           runCaseId: selectedRowKeys,
+        });
+        this.getEnvList({
+          page: 'None',
+          project: selectedRowsProjects,
+          is_valid: true,
         });
       } else {
         return message.info('请选择需要运行的用例');
@@ -406,7 +415,8 @@ class CaseList extends Component {
     const tableConfig = [...tableColumns, actionColumn];
     const rowSelection = {
       selectedRowKeys,
-      onChange: (selectedRowKeys) => this.onSelectChange(selectedRowKeys),
+      onChange: (selectedRowKeys, selectedRows) =>
+        this.onSelectChange(selectedRowKeys, selectedRows),
     };
     const paginationProps = {
       showSizeChanger: false,

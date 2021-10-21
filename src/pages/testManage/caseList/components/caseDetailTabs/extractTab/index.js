@@ -196,7 +196,8 @@ const ExtractTab = ({ extract, validate, save }) => {
       ),
     },
   ];
-  const [form] = Form.useForm();
+  const [extractForm] = Form.useForm();
+  const [validateForm] = Form.useForm();
 
   return (
     <>
@@ -207,7 +208,7 @@ const ExtractTab = ({ extract, validate, save }) => {
           </Button>
         </div>
         <EditableTable
-          form={form}
+          form={extractForm}
           dataSource={extractData}
           columns={extractTableColumns}
           lineDelete={(record) => lineDelete(record, 'extract')}
@@ -221,7 +222,7 @@ const ExtractTab = ({ extract, validate, save }) => {
           </Button>
         </div>
         <EditableTable
-          form={form}
+          form={validateForm}
           dataSource={validateData}
           columns={validateTableColumns}
           lineDelete={(record) => lineDelete(record, 'validate')}

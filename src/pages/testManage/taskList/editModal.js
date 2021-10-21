@@ -32,6 +32,7 @@ class EditModal extends React.Component {
       Month: 1,
       Day_of_week: 1,
       checked_projectListId: 0,
+      chosensCase: 0,
     };
   }
   UNSAFE_componentWillMount() {
@@ -93,17 +94,24 @@ class EditModal extends React.Component {
                     key: caseItem.id,
                   });
               });
+            treeData.push({
+              title: moduleItem.module_name,
+              key: moduleItem.module_name,
+              children: children,
+            });
+            this.setState(
+              {
+                treeData: treeData,
+              },
+              () => {
+                this.setState({
+                  chosensCase: this.chosenCaseNumber(),
+                });
+              },
+            );
           },
         });
-        treeData.push({
-          title: moduleItem.module_name,
-          key: moduleItem.module_name,
-          children: children,
-        });
       });
-    this.setState({
-      treeData: treeData,
-    });
   };
 
   editSubmit = () => {
@@ -295,6 +303,7 @@ class EditModal extends React.Component {
     this.setState({
       caseNumber: checkedNumber,
       caseArray: caseArray,
+      chosensCase: checkedNumber,
     });
   };
 
@@ -329,7 +338,20 @@ class EditModal extends React.Component {
       Day_of_week: number.target.value,
     });
   };
-
+  chosenCaseNumber = () => {
+    let chosens = 0;
+    const { caseArray, treeData } = this.state;
+    caseArray.forEach((key) => {
+      treeData.forEach((i) => {
+        i.children.find((childNode) => {
+          if (childNode.key === key) {
+            chosens++;
+          }
+        });
+      });
+    });
+    return chosens;
+  };
   render() {
     const { editVisible, tempValue, envName } = this.props;
     // const envList = this.props?.envList?.envList || [];
@@ -532,7 +554,7 @@ class EditModal extends React.Component {
                 }
               </Form.Item>
               <Form.Item
-                label={`已选${caseNumber}用例`}
+                label={`已选${this.state.chosensCase}用例`}
                 name="cassNumber"
                 rules={[{ required: false }]}
                 key="cassNumber"
