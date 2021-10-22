@@ -1,0 +1,68 @@
+.Container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 598px;
+  .header {
+    width: 100%;
+    height: 60px;
+  }
+  .content {
+    width: 100%;
+    height: 950px;
+    display: flex;
+    justify-content: center;
+    .mainContent {
+      margin-top: 200px;
+      display: flex;
+      width: 840px;
+      .LeftImage {
+        .Img_Error_Web {
+          width: 300px;
+          height: 300px;
+        }
+      }
+      .RightContent {
+        margin-top: 50px;
+        margin-left: 100px;
+        font-weight: bold;
+        .Error_info {
+          font-size: 40px;
+          color: var(--infoTextColor);
+          line-height: 40px;
+          margin-bottom: 20px;
+          display: block;
+        }
+        .Error {
+          font-size: 40px;
+          color: var(--themeColor);
+          line-height: 40px;
+          margin-right: 5px;
+        }
+        .Apo_Info {
+          font-size: 18px;
+          font-weight: normal;
+          color: var(--placeholderTextColor);
+          line-height: 30px;
+          span {
+            color: var(--infoTextColor);
+            font-weight: bolder;
+          }
+          &:nth-child(2) {
+            margin-bottom: 10px;
+          }
+          &:nth-child(3) {
+            margin-bottom: 6px;
+          }
+        }
+        .ReButton {
+          width: 150px;
+          height: 32px;
+          margin-top: 47px;
+        }
+      }
+    }
+  }
+}

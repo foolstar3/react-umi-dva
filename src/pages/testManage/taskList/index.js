@@ -46,7 +46,7 @@ class TaskList extends React.Component {
   UNSAFE_componentWillMount() {
     this.getProjectList({ page: 'None' });
     this.getTaskList({ page: 1 });
-    this.getEnvList({ page: 'None' });
+    // this.getEnvList({ page: 'None' });
   }
   onRef = (ref) => {
     this.EditModal = ref;
@@ -174,13 +174,26 @@ class TaskList extends React.Component {
       caseNumber: caseNumber,
       caseArray: record_args[0].case_list?.case,
     });
-    const envList = this.props?.envList?.envList;
-    envList.map((envItem) => {
-      if (envListId == envItem.id) {
-        this.setState({
-          envName: envItem.env_name,
+    this.props.dispatch({
+      type: 'envList/getEnvList',
+      payload: {
+        page: 'None',
+        project: record.task_extend.project,
+        is_valid: true,
+      },
+      callback: (res) => {
+        const envList = this.props?.envList?.envList;
+        envList.map((envItem) => {
+          if (envListId == envItem.id) {
+            this.setState({
+              envName: envItem.env_name,
+            });
+          }
         });
-      }
+        this.setState({
+          envList: res,
+        });
+      },
     });
     this.state.projectList.map((projectItem) => {
       if (projectItem.id == projectListId) {

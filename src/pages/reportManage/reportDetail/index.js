@@ -264,7 +264,6 @@ class ReportDetail extends React.Component {
 
   copy = (item, e) => {
     e.stopPropagation();
-    // console.log(JSON.stringify(item));
     copy(JSON.stringify(item));
     message.success('已复制至粘贴板');
   };

@@ -53,3 +53,19 @@
     }
   }
 }
+
+.responseTree {
+  :global {
+    .ant-tree-title {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      @media (max-width: 1600px) {
+        max-width: 800px;
+      }
+      @media (min-width: 1600px) {
+        max-width: 1300px;
+      }
+    }
+  }
+}

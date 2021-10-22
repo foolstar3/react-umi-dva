@@ -50,7 +50,12 @@
   }
   .detail {
     flex: 7;
-    min-width: 1050px;
+    @media (min-width: 1600px) {
+      min-width: 1050px;
+    }
+    @media (max-width: 1600px) {
+      min-width: 55vw;
+    }
     .tracebackTitle {
       font-weight: bold;
       font-size: 16px;
@@ -97,7 +102,12 @@
           flex: 10;
           margin-left: 20px;
           p {
-            max-width: 846px;
+            @media (min-width: 1600px) {
+              max-width: 846px;
+            }
+            @media (max-width: 1600px) {
+              max-width: 560px;
+            }
             overflow: hidden;
             text-overflow: ellipsis;
             margin-bottom: 0;

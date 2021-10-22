@@ -41,7 +41,14 @@ const errorHandler = (error) => {
     } else if (status === 204) {
       message.success(errorText);
     } else if (status === 403) {
-      message.error(errorText);
+      // message.error(errorText);
+      history.push('/error/403');
+    } else if (status === 404) {
+      // message.error(errorText);
+      history.push('/error/404');
+    } else if (status === 500) {
+      // message.error(errorText);
+      history.push('/error/500');
     }
   } else if (!response) {
     message.error('您的网络发生异常，无法连接服务器');

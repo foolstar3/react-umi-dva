@@ -32,7 +32,6 @@ const TreeNode_Add: React.FC<{}> = (props: any) => {
   });
 
   const onCheckCase = (checkedKeysValue: React.Key[]) => {
-    // console.log('onCheck', checkedKeysValue);
     const new_CheckedListString = [];
     const new_CheckedListNumber = [];
     checkedKeysValue &&

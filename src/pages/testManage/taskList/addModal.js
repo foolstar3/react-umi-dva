@@ -27,11 +27,11 @@ class AddModal extends React.Component {
       treeData_moduleList: [],
       caseArray: [],
       checked: false,
-      Minutes: 1,
-      Hours: 1,
-      Day_of_month: 1,
-      Month: 1,
-      Day_of_week: 1,
+      Minutes: 0,
+      Hours: 0,
+      Day_of_month: 0,
+      Month: 0,
+      Day_of_week: 0,
       checked_projectListId: 0,
     };
   }
@@ -112,6 +112,18 @@ class AddModal extends React.Component {
       },
     ];
     const json_args = JSON.stringify(args);
+    const { checked, Minutes, Hours, Day_of_week, Day_of_month, Month } =
+      this.state;
+    if (
+      checked &&
+      !Minutes &&
+      !Hours &&
+      !Day_of_week &&
+      !Day_of_month &&
+      !Month
+    ) {
+      return message.info('请输入定时状态');
+    }
     const requestData = {
       name: addTask.name,
       args: json_args,
@@ -120,13 +132,11 @@ class AddModal extends React.Component {
       email_list: addTask.emailList || [],
       project: addTask.project,
       crontab: {
-        minute: this.state.Minutes == null ? 1 : this.state.Minutes,
-        hour: this.state.Hours == null ? 1 : this.state.Hours,
-        day_of_week:
-          this.state.Day_of_week == null ? 1 : this.state.Day_of_week,
-        day_of_month:
-          this.state.Day_of_month == null ? 1 : this.state.Day_of_month,
-        month_of_year: this.state.Month == null ? 1 : this.state.Month,
+        minute: this.state.Minutes,
+        hour: this.state.Hours,
+        day_of_week: this.state.Day_of_week,
+        day_of_month: this.state.Day_of_month,
+        month_of_year: this.state.Month,
       },
     };
     if (addTask.name && addTask.env && addTask.project) {
@@ -144,6 +154,12 @@ class AddModal extends React.Component {
         this.props.showAddModal(false);
         this.setState({
           treeData_moduleList: [],
+          Minutes: 0,
+          Hours: 0,
+          Day_of_month: 0,
+          Month: 0,
+          Day_of_week: 0,
+          envList: [],
         });
         this.setState({
           caseNumber: 0,
@@ -191,6 +207,7 @@ class AddModal extends React.Component {
       caseNumber: 0,
       treeData_moduleList: [],
       checked: false,
+      envList: [],
     });
   };
 
@@ -213,27 +230,27 @@ class AddModal extends React.Component {
   };
   handlecrontab_M = (number) => {
     this.setState({
-      Minutes: number.target.value,
+      Minutes: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_H = (number) => {
     this.setState({
-      Hours: number.target.value,
+      Hours: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_DM = (number) => {
     this.setState({
-      Day_of_month: number.target.value,
+      Day_of_month: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_Mon = (number) => {
     this.setState({
-      Month: number.target.value,
+      Month: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_DW = (number) => {
     this.setState({
-      Day_of_week: number.target.value,
+      Day_of_week: number.target.value ? number.target.value : 0,
     });
   };
 
