@@ -323,6 +323,7 @@ const RequestTab = (props, ref) => {
       dataIndex: 'type',
       editable: true,
       align: 'center',
+      width: 200,
     },
     {
       title: 'data值',
