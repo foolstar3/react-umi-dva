@@ -26,11 +26,11 @@ class EditModal extends React.Component {
       caseArray: [],
       currentPage: 1,
       checked: true,
-      Minutes: 1,
-      Hours: 1,
-      Day_of_month: 1,
-      Month: 1,
-      Day_of_week: 1,
+      Minutes: '0',
+      Hours: '0',
+      Day_of_month: '0',
+      Month: '0',
+      Day_of_week: '0',
       checked_projectListId: 0,
       chosensCase: 0,
     };
@@ -115,10 +115,18 @@ class EditModal extends React.Component {
   };
 
   editSubmit = () => {
-    console.log(
-      'this.formRef.current.getFieldValue()',
-      this.formRef.current.getFieldValue('env'),
-    );
+    const { checked, Minutes, Hours, Day_of_week, Day_of_month, Month } =
+      this.state;
+    if (
+      checked &&
+      !Minutes &&
+      !Hours &&
+      !Day_of_week &&
+      !Day_of_month &&
+      !Month
+    ) {
+      return message.info('请输入定时状态');
+    }
     const tempEditValue = this.state.tempEditValue;
     if (tempEditValue != 0) {
       const editTaskValue = JSON.stringify(tempEditValue);
@@ -238,10 +246,10 @@ class EditModal extends React.Component {
       };
       if (
         this.state.caseNumber !== 0 &&
-        editTask.name &&
-        editTask.env &&
+        requestData.name &&
+        args[0].env &&
         this.formRef.current.getFieldValue('env') !== [] &&
-        editTask.project
+        requestData.project
       ) {
         this.props.dispatch({
           type: 'taskList/editSubmit',
@@ -272,7 +280,6 @@ class EditModal extends React.Component {
   };
 
   handleProjectChange = (project) => {
-    console.log('this.formRef.current', this.formRef.current);
     if (this.formRef.current !== null) {
       this.setState({});
       this.formRef.current.setFieldsValue({
@@ -315,27 +322,27 @@ class EditModal extends React.Component {
 
   handlecrontab_M = (number) => {
     this.setState({
-      Minutes: number.target.value,
+      Minutes: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_H = (number) => {
     this.setState({
-      Hours: number.target.value,
+      Hours: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_DM = (number) => {
     this.setState({
-      Day_of_month: number.target.value,
+      Day_of_month: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_Mon = (number) => {
     this.setState({
-      Month: number.target.value,
+      Month: number.target.value ? number.target.value : 0,
     });
   };
   handlecrontab_DW = (number) => {
     this.setState({
-      Day_of_week: number.target.value,
+      Day_of_week: number.target.value ? number.target.value : 0,
     });
   };
   chosenCaseNumber = () => {
@@ -389,7 +396,7 @@ class EditModal extends React.Component {
     );
     return (
       <div>
-        {editVisible && (
+        {editVisible && envName && (
           <Modal
             visible={editVisible}
             title="编辑"
@@ -507,7 +514,7 @@ class EditModal extends React.Component {
                         .toLowerCase()
                         .indexOf(input.toLowerCase()) >= 0
                     }
-                    onSelect={this.handleProjectChange}
+                    onChange={(val) => this.handleProjectChange(val)}
                   >
                     {projectList &&
                       Array.isArray(projectList) &&

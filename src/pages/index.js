@@ -8,7 +8,7 @@ import {
   CalendarOutlined,
   CaretRightOutlined,
 } from '@ant-design/icons';
-import './index.css';
+import './index.less';
 const { Meta } = Card;
 class Index extends Component {
   constructor(props) {
@@ -166,7 +166,7 @@ class Index extends Component {
                 <div
                   style={{ fontSize: 40, color: 'orange', fontWeight: 'bold' }}
                 >
-                  {this.state.module_num} 个
+                  {this.state.module_num}个
                 </div>
               </Card>
             </Col>
@@ -182,12 +182,10 @@ class Index extends Component {
                 <span
                   style={{ fontSize: 40, color: 'red', fontWeight: 'bold' }}
                 >
-                  {this.state.testcase_num} 条
+                  {this.state.testcase_num}条
                 </span>
-                <span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 30天新增用例数：
+                <span className="card-body-detail">
+                  30天新增用例数：
                   <span style={{ color: 'red', fontWeight: 'bolder' }}>
                     {this.state.new_testcase_num}
                   </span>
@@ -206,14 +204,11 @@ class Index extends Component {
                 <span
                   style={{ fontSize: 40, color: 'green', fontWeight: 'bold' }}
                 >
-                  {this.state.run_case_sum} 次
+                  {this.state.run_case_sum}次
                 </span>
 
-                <span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 成功率：
+                <span className="card-body-detail">
+                  成功率：
                   <span style={{ color: 'green', fontWeight: 'bolder' }}>
                     {Number(
                       (this.state.run_case_pass / this.state.run_case_sum) *

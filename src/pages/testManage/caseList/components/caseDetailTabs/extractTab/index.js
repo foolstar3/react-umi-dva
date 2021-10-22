@@ -184,7 +184,7 @@ const ExtractTab = ({ extract, validate, save }) => {
       dataIndex: 'type',
       editable: true,
       align: 'center',
-      width: 100,
+      width: 200,
     },
     {
       title: '期望值',

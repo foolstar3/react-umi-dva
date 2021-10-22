@@ -70,7 +70,6 @@ const CaseDetailTabs = ({
       callback: (res) => {
         if (res.code === 'U000000') {
           message.success(res.message);
-          hideCaseDetail();
         } else {
           message.error('编辑失败!');
         }

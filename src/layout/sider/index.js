@@ -28,7 +28,7 @@ const navMenu = {
           icon: 'ProjectOutlined',
         },
         {
-          key: 'debugtalk',
+          key: 'Debugtalk',
           route: '/testManage/debugtalk',
           value: 'Debugtalk',
           icon: 'BugOutlined',
@@ -111,6 +111,16 @@ class MySider extends Component {
       this.menuState = {
         selectedKeys: '',
       };
+    } else {
+      navMenu.children.forEach((item) => {
+        item.children.forEach((child) => {
+          if (`#${child.route}` === location.hash) {
+            this.menuState = {
+              selectedKeys: child.value,
+            };
+          }
+        });
+      });
     }
     localStorage.setItem('openKeys', this.menuState.openKeys);
   }
@@ -134,7 +144,6 @@ class MySider extends Component {
     return (
       <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
         <div
-          // style={{ width: 250, height: 870 }}
           className={classnames(
             styles.siteLayoutBackground,
             collapsed ? styles.folded : styles.unfolded,

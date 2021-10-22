@@ -37,6 +37,7 @@ const example_routes = [
 // 项目实际路由
 const routes = [
   { path: '/login', component: '@/pages/login' },
+
   {
     path: '/',
     component: '@/layout',
@@ -83,6 +84,18 @@ const routes = [
           {
             path: '/reportManage/reportDetail',
             component: '@/pages/reportManage/reportDetail',
+          },
+          {
+            path: '/error/403',
+            component: '@/pages/errorPages/Page_403',
+          },
+          {
+            path: '/error/404',
+            component: '@/pages/errorPages/Page_404',
+          },
+          {
+            path: '/error/500',
+            component: '@/pages/errorPages/Page_500',
           },
         ],
       },

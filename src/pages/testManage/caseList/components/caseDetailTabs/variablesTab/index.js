@@ -58,6 +58,7 @@ const VariablesTab = ({ variables, save }) => {
       key: 'type',
       align: 'center',
       editable: true,
+      width: 200,
     },
     {
       title: '变量值',

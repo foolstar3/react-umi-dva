@@ -38,6 +38,7 @@ class SortableTable extends React.Component {
           title: '操作',
           align: 'center',
           className: 'drag-visible',
+          width: 100,
           render: (text) => (
             <Button
               type="primary"
