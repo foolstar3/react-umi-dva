@@ -68,6 +68,7 @@ class CaseList extends Component {
     history.listen((location) => {
       if (location.pathname === '/testManage/caseList') {
         this.setState({ showDetailTabs: false });
+        this.getCaseList({ page: 1 });
       }
     });
   }
@@ -258,6 +259,11 @@ class CaseList extends Component {
     if (Object.keys(record).length) {
       this.getCalls(record.id);
       this.getModuleList({ page: 'None', project: record.project });
+      this.getCaseList({
+        page: 'None',
+        project: record.project,
+        module: record.module,
+      });
     } else {
       this.removeCalls();
     }

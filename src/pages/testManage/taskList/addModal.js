@@ -107,7 +107,9 @@ class AddModal extends React.Component {
         },
         env: addTask.env,
         report_name: addTask.name,
-        description: this.state.tempAddValue.description,
+        description: this.state.tempAddValue.description
+          ? this.state.tempAddValue.description
+          : '',
         receivers: [''],
       },
     ];
@@ -141,6 +143,9 @@ class AddModal extends React.Component {
     };
     if (addTask.name && addTask.env && addTask.project) {
       if (this.state.caseNumber !== 0) {
+        if (requestData.description === undefined) {
+          requestData.description = '';
+        }
         this.props.dispatch({
           type: 'taskList/addTaskList',
           payload: {

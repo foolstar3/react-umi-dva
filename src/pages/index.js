@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Card, Row, Col } from 'antd';
+import { Card, Row, Col, Select } from 'antd';
 import ReactECharts from 'echarts-for-react';
 import {
   ProjectOutlined,
@@ -9,6 +9,8 @@ import {
   CaretRightOutlined,
 } from '@ant-design/icons';
 import './index.less';
+
+const { Option } = Select;
 const { Meta } = Card;
 class Index extends Component {
   constructor(props) {
@@ -32,11 +34,16 @@ class Index extends Component {
 
   componentDidMount() {
     this.getDashboardInfo();
+    this.getProjectList({ page: 'None' });
   }
-  getDashboardInfo = () => {
+  getDashboardInfo = (payload) => {
     this.props.dispatch({
       type: 'dashboard/get_dashboard_info',
+      payload,
       callback: (res) => {
+        if (payload && payload.project_id) {
+          res.project_num = 1;
+        }
         this.setState({
           project_num: res.project_num,
           module_num: res.module_num,
@@ -49,7 +56,22 @@ class Index extends Component {
       },
     });
   };
+  getProjectList = (payload) => {
+    this.props.dispatch({
+      type: 'projectList/getProjectList',
+      payload,
+    });
+  };
 
+  projectChange = (project) => {
+    if (project === 'all') {
+      this.getDashboardInfo();
+    } else {
+      this.getDashboardInfo({
+        project_id: project,
+      });
+    }
+  };
   render() {
     const option = {
       title: {
@@ -134,9 +156,28 @@ class Index extends Component {
         },
       ],
     };
+    const { projectList } = this.props;
     return (
       <Card>
         <div className="site-card-wrapper">
+          <div className="content-header">
+            <span>当前项目：</span>
+            <Select
+              defaultValue="all"
+              style={{ width: 120 }}
+              bordered={false}
+              onSelect={(val) => this.projectChange(val)}
+            >
+              <Option value="all">全部</Option>
+              {projectList &&
+                projectList.length &&
+                projectList.map((item) => (
+                  <Option value={item.id} key={item.id}>
+                    {item.project_name}
+                  </Option>
+                ))}
+            </Select>
+          </div>
           <Row gutter={16} style={{ marginBottom: 40 }}>
             <Col span={6}>
               <Card
@@ -186,7 +227,13 @@ class Index extends Component {
                 </span>
                 <span className="card-body-detail">
                   30天新增用例数：
-                  <span style={{ color: 'red', fontWeight: 'bolder' }}>
+                  <span
+                    style={{
+                      color: 'red',
+                      fontWeight: 'bolder',
+                      fontSize: '17px',
+                    }}
+                  >
                     {this.state.new_testcase_num}
                   </span>
                 </span>
@@ -204,16 +251,27 @@ class Index extends Component {
                 <span
                   style={{ fontSize: 40, color: 'green', fontWeight: 'bold' }}
                 >
-                  {this.state.run_case_sum}次
+                  {this.state.run_case_sum === null
+                    ? 0
+                    : this.state.run_case_sum}
+                  次
                 </span>
 
                 <span className="card-body-detail">
                   成功率：
-                  <span style={{ color: 'green', fontWeight: 'bolder' }}>
-                    {Number(
-                      (this.state.run_case_pass / this.state.run_case_sum) *
-                        100,
-                    ).toFixed(2)}
+                  <span
+                    style={{
+                      color: 'green',
+                      fontWeight: 'bolder',
+                      fontSize: '17px',
+                    }}
+                  >
+                    {this.state.run_case_pass === null
+                      ? 0
+                      : Number(
+                          (this.state.run_case_pass / this.state.run_case_sum) *
+                            100,
+                        ).toFixed(2)}
                     %
                   </span>
                 </span>
@@ -227,6 +285,7 @@ class Index extends Component {
   }
 }
 
-export default connect(({ dashboard }) => ({
+export default connect(({ dashboard, projectList }) => ({
   dashboard,
+  projectList: projectList.projectList,
 }))(Index);

@@ -117,7 +117,13 @@ const CaseDetailTabs = ({
   const tabDatas = Object.keys(caseDetail).length
     ? caseDetail.request.teststeps[0]
     : {};
+
+  const config = Object.keys(caseDetail).length
+    ? caseDetail.request.config.variables
+    : {};
   const [variables, setVariables] = useState(tabDatas.variables ?? {});
+
+  const [configVariables, setConfigVariables] = useState(config ?? {});
 
   const [parameters, setParameters] = useState(tabDatas.parameters ?? []);
 
@@ -330,6 +336,15 @@ const CaseDetailTabs = ({
           return obj;
         });
         break;
+      case 'configVariables':
+        setConfigVariables(() => {
+          const obj = {};
+          data.forEach((item) => {
+            obj[item.name] = item.value;
+          });
+          return obj;
+        });
+        break;
     }
   };
 
@@ -376,7 +391,10 @@ const CaseDetailTabs = ({
       ...messageData,
       type: 1,
       request: {
-        export: messageData.export,
+        config: {
+          export: messageData.export,
+          variables: configVariables,
+        },
         teststeps: [
           {
             name: messageData.name,
@@ -480,7 +498,11 @@ const CaseDetailTabs = ({
             />
           </TabPane>
           <TabPane tab="variables" key="2">
-            <VariablesTab variables={variables} save={saveData} />
+            <VariablesTab
+              variables={variables}
+              save={saveData}
+              configVariables={configVariables}
+            />
           </TabPane>
           {/* <TabPane tab="paramters" key="3">
             <ParametersTab

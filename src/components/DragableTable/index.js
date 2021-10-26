@@ -5,7 +5,11 @@ import {
   SortableElement,
   SortableHandle,
 } from 'react-sortable-hoc';
-import { MenuOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  MenuOutlined,
+  DeleteOutlined,
+  ProfileOutlined,
+} from '@ant-design/icons';
 import { arrayMoveImmutable } from 'array-move';
 import styles from './index.less';
 
@@ -38,16 +42,25 @@ class SortableTable extends React.Component {
           title: '操作',
           align: 'center',
           className: 'drag-visible',
-          width: 100,
-          render: (text) => (
-            <Button
-              type="primary"
-              onClick={() => this.deleteLine(text)}
-              danger
-              icon={<DeleteOutlined />}
-            >
-              删除
-            </Button>
+          width: 210,
+          render: (text, record) => (
+            <>
+              <Button
+                type="primary"
+                onClick={() => this.showDetail(record)}
+                icon={<ProfileOutlined />}
+              >
+                详情
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => this.deleteLine(text)}
+                danger
+                icon={<DeleteOutlined />}
+              >
+                删除
+              </Button>
+            </>
           ),
         },
       ],
@@ -72,6 +85,11 @@ class SortableTable extends React.Component {
       ).filter((el) => !!el);
       onSortEnd(newData);
     }
+  };
+
+  showDetail = (record) => {
+    const { showDetail } = this.props;
+    showDetail(record);
   };
 
   deleteLine = (text) => {
