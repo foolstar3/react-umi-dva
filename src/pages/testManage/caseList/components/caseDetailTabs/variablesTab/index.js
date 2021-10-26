@@ -6,21 +6,44 @@ import { DataType } from '@/utils/common';
 
 import styles from './index.less';
 
-const configInfo = `config variable 是case中优先级较低的配置
+const configInfo = (
+  <>
+    <div>config variable 是case中优先级较低的配置</div>
 
-当有其他作用域的variable和他重名的时候，优先级低的variable 会被新的value覆盖
+    <div>
+      当有其他作用域的variable和他重名的时候，优先级低的variable
+      会被新的value覆盖
+    </div>
 
-如果你的用例需要被其他case调用，并且希望从外部获取新的value覆盖当前variable，建议用config variable来设置
+    <div>
+      如果你的用例需要被其他case调用，并且希望从外部获取新的value覆盖当前variable，建议用config
+      variable来设置
+    </div>
 
-比如：case login（username， password），这里的2个参数就适合配置在config variable，这样外部引用此case的时候就很容易将新的value传递到此case内部了`;
+    <div>
+      比如：case login（username， password），这里的2个参数就适合配置在config
+      variable，这样外部引用此case的时候就很容易将新的value传递到此case内部了
+    </div>
+  </>
+);
 
-const stepInfo = `step variable 是case中优先级较高的配置， 会覆盖其他作用域的同名变量
+const stepInfo = (
+  <>
+    <div>
+      step variable 是case中优先级较高的配置， 会覆盖其他作用域的同名变量
+    </div>
 
-由于step variable在当前case的优先级较高，被其他case引用时，value也不会被覆盖
+    <div>
+      由于step
+      variable在当前case的优先级较高，被其他case引用时，value也不会被覆盖
+    </div>
 
-如果你确定当前case中的某些variable是最高优先级的，不希望被外部case的变量覆盖，那你应该配置在这里`;
+    <div>
+      如果你确定当前case中的某些variable是最高优先级的，不希望被外部case的变量覆盖，那你应该配置在这里
+    </div>
+  </>
+);
 const VariablesTab = ({ variables, save, configVariables }) => {
-  console.log(configVariables);
   const [configForm] = Form.useForm();
   const [stepForm] = Form.useForm();
   useEffect(() => {
@@ -217,9 +240,6 @@ const VariablesTab = ({ variables, save, configVariables }) => {
     <>
       <div className={styles.configVars}>
         <div className={styles.topBtn}>
-          <Button type="primary" onClick={() => lineAdd('configVariables')}>
-            添加变量
-          </Button>
           <div className={styles.tableHeader}>
             <span className={styles.tableTitle}>config variable</span>
             <Tooltip
@@ -230,6 +250,9 @@ const VariablesTab = ({ variables, save, configVariables }) => {
               <QuestionCircleTwoTone />
             </Tooltip>
           </div>
+          <Button type="primary" onClick={() => lineAdd('configVariables')}>
+            添加变量
+          </Button>
         </div>
         <EditableTable
           form={configForm}
@@ -241,12 +264,6 @@ const VariablesTab = ({ variables, save, configVariables }) => {
       </div>
       <div className={styles.stepVars}>
         <div className={styles.topBtn}>
-          <Button
-            type="primary"
-            onClick={(record) => lineAdd(() => lineAdd('variables'))}
-          >
-            添加变量
-          </Button>
           <div className={styles.tableHeader}>
             <span className={styles.tableTitle}>step variable</span>
             <Tooltip
@@ -257,6 +274,12 @@ const VariablesTab = ({ variables, save, configVariables }) => {
               <QuestionCircleTwoTone />
             </Tooltip>
           </div>
+          <Button
+            type="primary"
+            onClick={(record) => lineAdd(() => lineAdd('variables'))}
+          >
+            添加变量
+          </Button>
         </div>
         <EditableTable
           form={stepForm}

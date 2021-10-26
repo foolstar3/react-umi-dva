@@ -416,7 +416,6 @@ const CaseDetailTabs = ({
       payload.request.teststeps[0].request = newRequest;
     }
     delete payload.export;
-    console.log(payload);
     return payload;
   };
 

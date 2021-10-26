@@ -232,6 +232,10 @@ const MessageTab = (props) => {
     });
   };
   const deleteCall = (record, table) => {
+    if (tableCase.key === record.key) {
+      // 删除当前步骤用例，隐藏下方用例变量table
+      setTableVisibility(false);
+    }
     if (table === 'before') {
       setBeforeTableData((prev) => {
         const next = prev.filter((item) => item.index !== record.index);
@@ -286,26 +290,30 @@ const MessageTab = (props) => {
     );
   };
   const showTable = (record, table) => {
-    setTableVisibility(true);
-    setCurTable(table);
-    setTableCase(record);
-    setCaseVariable(() => {
-      if (record.variables && Object.keys(record.variables).length !== 0) {
-        let index = 1;
-        const arr = [];
-        for (const [key, value] of Object.entries(record.variables)) {
-          arr.push({
-            name: key,
-            value: value,
-            type: DataType(value),
-            id: index,
-            key: index,
-          });
-          index++;
+    if (record.key === tableCase.key) {
+      setTableVisibility(!tableVisibility);
+    } else {
+      setTableVisibility(true);
+      setCurTable(table);
+      setTableCase(record);
+      setCaseVariable(() => {
+        if (record.variables && Object.keys(record.variables).length !== 0) {
+          let index = 1;
+          const arr = [];
+          for (const [key, value] of Object.entries(record.variables)) {
+            arr.push({
+              name: key,
+              value: value,
+              type: DataType(value),
+              id: index,
+              key: index,
+            });
+            index++;
+          }
+          return arr;
         }
-        return arr;
-      }
-    });
+      });
+    }
   };
   const formChange = (val, type) => {
     const obj = {};
@@ -341,21 +349,25 @@ const MessageTab = (props) => {
       nextCaseVariable[item.name] = item.value;
     });
     const nextTableCase = {};
+    Object.assign(nextTableCase, tableCase);
     nextTableCase.variables = nextCaseVariable;
-    setTableCase((prev) => {
-      return nextTableCase;
-    });
+    setTableCase(nextTableCase);
     if (curTable === 'before') {
       setBeforeTableData((prev) => {
-        const index = beforeTableData.findIndex(
-          (item) => item.key === tableCase.key,
-        );
+        const index = prev.findIndex((item) => item.key === tableCase.key);
         prev[index].variables = nextTableCase.variables;
         const nextBeforeTableData = [];
         Object.assign(nextBeforeTableData, prev);
         return nextBeforeTableData;
       });
     } else if (curTable === 'after') {
+      setAfterTableData((prev) => {
+        const index = prev.findIndex((item) => item.key === tableCase.key);
+        prev[index].variables = nextTableCase.variables;
+        const nextAfterTableData = [];
+        Object.assign(nextAfterTableData, prev);
+        return nextAfterTableData;
+      });
     }
   };
 
@@ -375,7 +387,6 @@ const MessageTab = (props) => {
         next[index].value = JSON.parse(line.value);
       }
     }
-
     const variables = {};
     next.forEach((item) => {
       variables[item.name] = item.value;
@@ -383,7 +394,9 @@ const MessageTab = (props) => {
     const nextTableCase = {};
     Object.assign(nextTableCase, tableCase);
     nextTableCase.variables = variables;
+    // 保存variables修改
     setCaseVariable(next);
+    // 保存tableCase修改
     setTableCase(nextTableCase);
     if (curTable === 'before') {
       setBeforeTableData((prev) => {
@@ -544,7 +557,7 @@ const MessageTab = (props) => {
       >
         <div className={styles.tableHeader}>
           <span className={styles.title}>
-            当前用例：{curTable === 'before' ? '前置步骤' : '后置步骤'}
+            {curTable === 'before' ? '前置步骤' : '后置步骤'}
             {tableCase.name}
           </span>
           <div className={styles.btn}>
@@ -560,11 +573,11 @@ const MessageTab = (props) => {
           lineDelete={(record) => lineDelete(record)}
           lineSave={(record) => lineSave(record)}
         />
-        <div className={styles.bottomBtn}>
+        {/* <div className={styles.bottomBtn}>
           <Button type="primary" onClick={() => setTableVisibility(false)}>
             收起
           </Button>
-        </div>
+        </div> */}
       </div>
     </>
   );

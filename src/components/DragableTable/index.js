@@ -42,7 +42,7 @@ class SortableTable extends React.Component {
           title: '操作',
           align: 'center',
           className: 'drag-visible',
-          width: 235,
+          width: 210,
           render: (text, record) => (
             <>
               <Button
@@ -50,7 +50,7 @@ class SortableTable extends React.Component {
                 onClick={() => this.showDetail(record)}
                 icon={<ProfileOutlined />}
               >
-                变量详情
+                详情
               </Button>
               <Button
                 type="primary"
@@ -89,7 +89,6 @@ class SortableTable extends React.Component {
 
   showDetail = (record) => {
     const { showDetail } = this.props;
-    // console.log(record);
     showDetail(record);
   };
 
