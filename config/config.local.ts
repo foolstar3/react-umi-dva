@@ -15,7 +15,7 @@ export default defineConfig({
     'process.env.var': 'local',
     //  'process.env.qcFrontUrl': 'http://10.6.209.209:40001/mock/24',
 
-    //'process.env.qcFrontUrl': 'http://10.5.65.24:9999', //张磊后台
+    // 'process.env.qcFrontUrl': 'http://10.5.65.24:9999', //张磊后台
     'process.env.qcFrontUrl': 'http://10.6.209.209:9999', //test环境后台
   },
   devServer: {

@@ -186,7 +186,13 @@ class Index extends Component {
                 </span>
                 <span className="card-body-detail">
                   30天新增用例数：
-                  <span style={{ color: 'red', fontWeight: 'bolder' }}>
+                  <span
+                    style={{
+                      color: 'red',
+                      fontWeight: 'bolder',
+                      fontSize: '17px',
+                    }}
+                  >
                     {this.state.new_testcase_num}
                   </span>
                 </span>
@@ -209,7 +215,13 @@ class Index extends Component {
 
                 <span className="card-body-detail">
                   成功率：
-                  <span style={{ color: 'green', fontWeight: 'bolder' }}>
+                  <span
+                    style={{
+                      color: 'green',
+                      fontWeight: 'bolder',
+                      fontSize: '17px',
+                    }}
+                  >
                     {Number(
                       (this.state.run_case_pass / this.state.run_case_sum) *
                         100,

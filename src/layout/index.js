@@ -5,7 +5,7 @@ import MyHeader from '@/layout/header';
 import MySider from '@/layout/sider';
 import './index.less';
 import NewBreadcrumb from './breadcrumb';
-import { Link, history, connect } from 'umi';
+import { Link, history } from 'umi';
 import 'moment/locale/zh-cn';
 import zhCN from 'antd/lib/locale/zh_CN';
 
@@ -44,7 +44,6 @@ export default function IndexPage(props) {
               </Content>
             </Layout>
           </Layout>
-          {process.env.var}
         </Layout>
       </ConfigProvider>
     );
