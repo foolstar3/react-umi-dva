@@ -234,11 +234,14 @@ const MessageTab = (props) => {
   const deleteCall = (record, table) => {
     if (tableCase.key === record.key) {
       // 删除当前步骤用例，隐藏下方用例变量table
+      // 清空tableCase的缓存
       setTableVisibility(false);
+      setTableCase({});
     }
     if (table === 'before') {
       setBeforeTableData((prev) => {
         const next = prev.filter((item) => item.index !== record.index);
+        console.log(next, tableCase);
         return next;
       });
     } else if (table === 'after') {
@@ -292,9 +295,11 @@ const MessageTab = (props) => {
   const showTable = (record, table) => {
     if (record.key === tableCase.key) {
       setTableVisibility(!tableVisibility);
+      console.log(record);
     } else {
       setTableVisibility(true);
       setCurTable(table);
+      console.log(record);
       setTableCase(record);
       setCaseVariable(() => {
         if (record.variables && Object.keys(record.variables).length !== 0) {
