@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Form,
   Table,
@@ -71,6 +71,16 @@ const EditableCell = ({
           ))}
         </Select>
       );
+    } else if (record.file && dataIndex === 'value') {
+      return (
+        <Select>
+          {restProps.upload.map((item) => (
+            <Option key={item.id} value={item.file}>
+              {item.file}
+            </Option>
+          ))}
+        </Select>
+      );
     } else {
       return <Input />;
     }
@@ -85,10 +95,12 @@ const EditableCell = ({
             margin: 0,
           }}
           rules={[
-            {
-              required: true,
-              message: `请输入${title}!`,
-            },
+            dataIndex === 'value' || dataIndex === 'expected'
+              ? {}
+              : {
+                  required: true,
+                  message: `请输入${title}!`,
+                },
           ]}
         >
           {inputNode()}
@@ -105,6 +117,7 @@ const EditableTable = ({
   dataSource,
   columns,
   funcs = [],
+  upload = [],
   lineDelete = (_line) => {},
   lineSave = (_line) => {},
 }) => {
@@ -171,7 +184,7 @@ const EditableTable = ({
     };
     let checkType = '';
     try {
-      checkType = item.expected
+      checkType === item.expected
         ? DataType(JSON.parse(item.expected))
         : DataType(JSON.parse(item.value));
     } catch (err) {
@@ -219,6 +232,7 @@ const EditableTable = ({
         }
         return {
           funcs,
+          upload,
           record,
           cellType: type,
           dataIndex: col.dataIndex,

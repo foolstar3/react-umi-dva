@@ -241,7 +241,6 @@ const MessageTab = (props) => {
     if (table === 'before') {
       setBeforeTableData((prev) => {
         const next = prev.filter((item) => item.index !== record.index);
-        console.log(next, tableCase);
         return next;
       });
     } else if (table === 'after') {
@@ -295,11 +294,9 @@ const MessageTab = (props) => {
   const showTable = (record, table) => {
     if (record.key === tableCase.key) {
       setTableVisibility(!tableVisibility);
-      console.log(record);
     } else {
       setTableVisibility(true);
       setCurTable(table);
-      console.log(record);
       setTableCase(record);
       setCaseVariable(() => {
         if (record.variables && Object.keys(record.variables).length !== 0) {

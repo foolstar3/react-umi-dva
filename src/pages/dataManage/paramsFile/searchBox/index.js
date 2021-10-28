@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DateFormat } from '@/utils/format';
+
 import {
   Collapse,
   Form,
@@ -17,7 +17,7 @@ const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 
 const SearchBox = (props) => {
-  const { projectOptions, moduleOptions } = props;
+  const { projectOptions, userOptions } = props;
   const [form] = Form.useForm();
   const onReset = () => {
     form.resetFields();
@@ -27,6 +27,8 @@ const SearchBox = (props) => {
     const payload = form.getFieldsValue(true);
     form.setFieldsValue({
       update_time: payload.update_time,
+      project_name: payload.project_name,
+      author: payload.author,
     });
     // 修改时间格式
     payload.update_time?.map((item, index) => {
@@ -37,41 +39,44 @@ const SearchBox = (props) => {
       }
     });
     delete payload.update_time;
-    const { project_name, module_name, case_name } = payload;
+    const { project_name } = payload;
     payload.project = project_name;
-    payload.module = module_name;
-    payload.name = case_name;
-    form.setFieldsValue({
-      project_name: payload.project_name,
-      module_name: payload.module_name,
-    });
     delete payload.project_name;
-    delete payload.module_name;
     onSearch(payload);
-  };
-
-  const onProjectChange = (val) => {
-    const { onProjectChange } = props;
-    onProjectChange(val, false);
   };
 
   return (
     <Collapse>
       <Panel header="搜索框" key="search">
-        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 13 }} form={form}>
+        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 16 }} form={form}>
           <Row>
-            <Col span={8}>
-              <Form.Item label="文件名称" name="file_name">
-                <Input />
+            <Col span={6}>
+              <Form.Item label="上传人员" name="author">
+                <Select
+                  allowClear
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {userOptions.length &&
+                    userOptions.map((item) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.username}
+                      </Select.Option>
+                    ))}
+                </Select>
               </Form.Item>
             </Col>
 
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item label="项目名称" name="project_name">
                 <Select
                   allowClear
                   showSearch
-                  onChange={onProjectChange}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     option.children
@@ -79,60 +84,15 @@ const SearchBox = (props) => {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  {/* {projectOptions.length &&
+                  {projectOptions.length &&
                     projectOptions.map((item) => (
                       <Select.Option key={item.id} value={item.id}>
                         {item.project_name}
                       </Select.Option>
-                    ))} */}
+                    ))}
                 </Select>
               </Form.Item>
             </Col>
-
-            <Col span={8}>
-              <Form.Item label="模块名称" name="module_name">
-                <Select
-                  allowClear
-                  showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {/* {moduleOptions.length &&
-                    moduleOptions.map((item) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.module_name}
-                      </Select.Option>
-                    ))} */}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row>
-            {/* <Col span={8}>
-              <Form.Item label="测试人员" name="author">
-                <Select
-                  allowClear
-                  showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {props.moduleOptions.map((item) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.module_name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col> */}
 
             <Col span={8}>
               <Form.Item label="更新时间" name="update_time">
@@ -140,7 +100,7 @@ const SearchBox = (props) => {
               </Form.Item>
             </Col>
 
-            <Col span={8}>
+            <Col span={4}>
               <div className={styles.buttonGroup}>
                 <Button
                   // type="primary"

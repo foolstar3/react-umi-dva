@@ -29,6 +29,7 @@ const CaseDetailTabs = ({
   dispatch,
   debugResponse,
   funcs,
+  upload,
 }) => {
   const [form] = Form.useForm();
   const [activeKey, setActiveKey] = useState('1');
@@ -210,6 +211,7 @@ const CaseDetailTabs = ({
     if (payload === undefined) return setModalVisible(false);
     if (!inputValidator(payload)) return setModalVisible(false);
     // 修改参数的数据格式
+    payload.config = payload.request.config;
     payload.export = payload.request.export;
     payload.teststeps = payload.request.teststeps;
     payload.teststeps[0].setup_hooks.length
@@ -299,6 +301,21 @@ const CaseDetailTabs = ({
           return obj;
         });
         break;
+      case 'upload':
+        setRequest((prev) => {
+          const obj = {
+            ...prev,
+            upload: {},
+          };
+          const child = {};
+          data.forEach((item) => {
+            child[item.name] = item.value;
+          });
+          obj.upload = child;
+          console.log(obj.upload);
+          return obj;
+        });
+        break;
       case 'request':
         setRequest((prev) => {
           const obj = {
@@ -363,12 +380,16 @@ const CaseDetailTabs = ({
     // 判断data的类型
     if (editorRef.current) {
       dataType = editorRef.current.sendCode().dataType;
+      console.log(dataType);
     } else if (caseDetail.request) {
-      dataType =
-        Object.keys(caseDetail.request.teststeps[0].request).indexOf('json') !==
-        -1
-          ? 'json'
-          : 'data';
+      const request = Object.keys(caseDetail.request.teststeps[0].request);
+      if (request.indexOf('json') !== -1) {
+        dataType = 'json';
+      } else if (request.indexOf('data') !== -1) {
+        dataType = 'data';
+      } else if (request.indexOf('upload') !== -1) {
+        dataType = 'upload';
+      }
     } else {
       dataType = 'data';
     }
@@ -410,9 +431,15 @@ const CaseDetailTabs = ({
     };
     if (dataType === 'data') {
       delete newRequest.json;
+      delete newRequest.upload;
+      payload.request.teststeps[0].request = newRequest;
+    } else if (dataType === 'upload') {
+      delete newRequest.data;
+      delete newRequest.json;
       payload.request.teststeps[0].request = newRequest;
     } else {
       delete newRequest.data;
+      delete newRequest.upload;
       payload.request.teststeps[0].request = newRequest;
     }
     delete payload.export;
@@ -520,7 +547,12 @@ const CaseDetailTabs = ({
             />
           </TabPane>
           <TabPane tab="request" key="5">
-            <RequestTab request={request} save={saveData} ref={editorRef} />
+            <RequestTab
+              request={request}
+              save={saveData}
+              ref={editorRef}
+              upload={upload}
+            />
           </TabPane>
           <TabPane tab="extract/validate" key="6">
             <ExtractTab extract={extract} validate={validate} save={saveData} />

@@ -64,12 +64,12 @@ const navMenu = {
           value: '环境列表',
           icon: 'EnvironmentOutlined',
         },
-        // {
-        //   key: '参数文件',
-        //   route: '/dataManage/paramsFile',
-        //   value: '参数文件',
-        //   icon: 'FileTextOutlined',
-        // },
+        {
+          key: '参数文件',
+          route: '/dataManage/paramsFile',
+          value: '参数文件',
+          icon: 'FileTextOutlined',
+        },
         {
           key: '全局变量',
           route: '/dataManage/globalVar',
