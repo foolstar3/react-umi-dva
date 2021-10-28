@@ -6,13 +6,14 @@ import React, {
 } from 'react';
 import EditableTable from '@/components/Editabletable';
 import { DataType } from '@/utils/common';
-import { Form, Select, Button, message, Input, Row, Col } from 'antd';
+import { Form, Select, Button, message, Input, Row, Col, Switch } from 'antd';
 import Editor from '@/components/Editor';
 
 import styles from './index.less';
 
+const uploadPath = 'static/upload/1/';
 const RequestTab = (props, ref) => {
-  const { request, save } = props;
+  const { request, save, upload } = props;
   useEffect(() => {
     setHeaderData(() => {
       const header = [];
@@ -73,6 +74,27 @@ const RequestTab = (props, ref) => {
     });
   }, [request.data]);
 
+  useEffect(() => {
+    setUploadData(() => {
+      const data = [];
+      let index = 1;
+      if (request.upload) {
+        for (const [key, value] of Object.entries(request.upload)) {
+          data.push({
+            name: key,
+            value: value,
+            id: index,
+            key: index,
+            type: DataType(value),
+            file: value.indexOf(uploadPath) !== -1,
+          });
+          index++;
+        }
+      }
+      return data;
+    });
+  }, [request.upload]);
+
   useImperativeHandle(ref, () => {
     return {
       sendCode() {
@@ -94,13 +116,16 @@ const RequestTab = (props, ref) => {
   const data = [
     { name: 'data', value: 'data', key: 'data' },
     { name: 'json', value: 'json', key: 'json' },
+    { name: 'upload', value: 'upload', key: 'upload' },
   ];
 
   const [requestType, setRequestType] = useState({
     url: request.url,
     method: request.method,
   });
-  const [dataType, setDataType] = useState(request.json ? 'json' : 'data');
+  const [dataType, setDataType] = useState(
+    request.json ? 'json' : request.upload ? 'upload' : 'data',
+  );
   const [headerData, setHeaderData] = useState(() => {
     const header = [];
     let index = 1;
@@ -146,6 +171,24 @@ const RequestTab = (props, ref) => {
           id: index,
           key: index,
           type: DataType(value),
+        });
+        index++;
+      }
+    }
+    return data;
+  });
+  const [uploadData, setUploadData] = useState(() => {
+    const data = [];
+    let index = 1;
+    if (request.upload) {
+      for (const [key, value] of Object.entries(request.upload)) {
+        data.push({
+          name: key,
+          value: value,
+          id: index,
+          key: index,
+          type: DataType(value),
+          file: value.indexOf(uploadPath) !== -1,
         });
         index++;
       }
@@ -198,6 +241,20 @@ const RequestTab = (props, ref) => {
         const next = JSON.parse(JSON.stringify(prev));
         return next;
       });
+    } else if (table === 'upload') {
+      setUploadData((prev = []) => {
+        const id = prev.length ? prev[prev.length - 1].id + 1 : 1;
+        prev.push({
+          id,
+          key: id,
+          name: '',
+          value: '',
+          type: '',
+          file: false,
+        });
+        const next = JSON.parse(JSON.stringify(prev));
+        return next;
+      });
     }
   };
 
@@ -216,6 +273,12 @@ const RequestTab = (props, ref) => {
       });
     } else if (table === 'data') {
       setData((prev) => {
+        const next = prev.filter((item) => item.key !== line.key);
+        save(next, table);
+        return next;
+      });
+    } else if (table === 'upload') {
+      setUploadData((prev) => {
         const next = prev.filter((item) => item.key !== line.key);
         save(next, table);
         return next;
@@ -250,6 +313,28 @@ const RequestTab = (props, ref) => {
         next[index].name = line.name;
         next[index].value = line.value;
         next[index].type = line.type;
+        if (line.type === 'String') {
+          next[index].value =
+            typeof line.value === 'string'
+              ? line.value
+              : JSON.stringify(line.value);
+        } else {
+          next[index].value = JSON.parse(line.value);
+        }
+      }
+      save(next, table);
+    } else if (table === 'upload') {
+      const index = uploadData.findIndex((item) => item.key === line.key);
+      uploadData.findIndex((item) => {
+        return item.key === line.key;
+      });
+      let next = JSON.parse(JSON.stringify(uploadData));
+      // key有重复后的保存
+      if (index > -1) {
+        next[index].name = line.name;
+        next[index].value = line.value;
+        next[index].type = line.type;
+        next[index].file = line.file;
         if (line.type === 'String') {
           next[index].value =
             typeof line.value === 'string'
@@ -336,6 +421,56 @@ const RequestTab = (props, ref) => {
     },
   ];
 
+  const loadTableColumns = [
+    {
+      title: 'data名',
+      dataIndex: 'name',
+      editable: true,
+      align: 'center',
+    },
+    {
+      title: '变量类型',
+      dataIndex: 'type',
+      editable: true,
+      align: 'center',
+      width: 200,
+    },
+    {
+      title: 'data值',
+      dataIndex: 'value',
+      editable: true,
+      align: 'center',
+      render: (text) => (
+        <span>{typeof text === 'boolean' ? JSON.stringify(text) : text}</span>
+      ),
+    },
+    {
+      title: '切换类型',
+      key: 'switch',
+      // editable: true,
+      align: 'center',
+      render: (_, record) => (
+        <Switch
+          checkedChildren="文件"
+          unCheckedChildren="变量"
+          onChange={(val) => typeOnChange(val, record)}
+          defaultChecked={record.value.indexOf(uploadPath) !== -1}
+        />
+      ),
+    },
+  ];
+
+  const typeOnChange = (value, record) => {
+    record.file = value;
+    const next = uploadData.map((item) => {
+      if (item.key === record.key) {
+        item.file = value;
+      }
+      return item;
+    });
+    setUploadData(next);
+  };
+
   const getDataCode = (val) => {
     setJsonCode(val);
   };
@@ -343,6 +478,7 @@ const RequestTab = (props, ref) => {
   const [headerForm] = Form.useForm();
   const [paramsForm] = Form.useForm();
   const [dataForm] = Form.useForm();
+  const [uploadForm] = Form.useForm();
 
   const requestTypeChange = (val, type) => {
     if (type === 'url') {
@@ -479,6 +615,23 @@ const RequestTab = (props, ref) => {
               columns={dataTableColumns}
               lineDelete={(record) => lineDelete(record, 'data')}
               lineSave={(record) => lineSave(record, 'data')}
+            />
+          </>
+        )}
+        {dataType === 'upload' && (
+          <>
+            <div className={styles.topBtn}>
+              <Button type="primary" onClick={() => lineAdd('upload')}>
+                添加upload
+              </Button>
+            </div>
+            <EditableTable
+              form={uploadForm}
+              upload={upload}
+              dataSource={uploadData}
+              columns={loadTableColumns}
+              lineDelete={(record) => lineDelete(record, 'upload')}
+              lineSave={(record) => lineSave(record, 'upload')}
             />
           </>
         )}

@@ -22,10 +22,9 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import Editor from '@/components/Editor';
-// import SearchBox from './searchBox'
+import SearchBox from './searchBox';
 import { DateFormat } from '@/utils/common';
 import { connect } from 'umi';
-import { FormInstance } from 'antd/lib/form';
 import './index.less';
 const { Option } = Select;
 
@@ -35,7 +34,7 @@ const layout = {
   wrapperCol: { span: 20 },
 };
 
-class ParamsFile extends Component<any, any> {
+class ParamsFile extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -142,12 +141,14 @@ class ParamsFile extends Component<any, any> {
       currentEditParamsFile: {},
       editorCode: '',
       total: 0,
+      searchWords: {},
     };
   }
 
   componentDidMount() {
     this.getParamsFileList({ page: 1 });
     this.getProjectList({ page: 'None' });
+    this.getUserList();
   }
 
   //获取项目名称列表
@@ -175,6 +176,14 @@ class ParamsFile extends Component<any, any> {
           total: paramsFileData.count,
         });
       },
+    });
+  };
+
+  getUserList = () => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'userList/getUserList',
+      callback: () => {},
     });
   };
 
@@ -307,11 +316,11 @@ class ParamsFile extends Component<any, any> {
     });
   };
 
-  onFinish = (values: any) => {};
+  onFinish = (values) => {};
 
-  onFinishFailed = (errorInfo: any) => {};
+  onFinishFailed = (errorInfo) => {};
   // 文件上传
-  normFile = (e: any) => {
+  normFile = (e) => {
     if (Array.isArray(e)) {
       return e;
     }
@@ -326,17 +335,17 @@ class ParamsFile extends Component<any, any> {
   };
 
   onReset = () => {
-    this.formRef.current!.resetFields();
+    this.formRef.current.resetFields();
   };
 
   onFill = () => {
-    this.formRef.current!.setFieldsValue({
+    this.formRef.current.setFieldsValue({
       note: 'Hello world!',
       gender: 'male',
     });
   };
 
-  formRef = React.createRef<FormInstance>();
+  formRef = React.createRef();
   // 渲染新增项目表单
   renderAddForm = () => {
     const { projectData } = this.props;
@@ -430,6 +439,20 @@ class ParamsFile extends Component<any, any> {
     });
   };
 
+  onSearch = (value) => {
+    this.getParamsFileList({ page: 1, ...value });
+    this.setState({
+      currentPage: 1,
+      searchWords: value,
+    });
+  };
+
+  onReset = () => {
+    this.setState({
+      searchWords: {},
+    });
+  };
+
   render() {
     const {
       columns,
@@ -439,7 +462,8 @@ class ParamsFile extends Component<any, any> {
       total,
       currentPage,
     } = this.state;
-    const { paramsFileData, paramsFileCode } = this.props;
+    const { paramsFileData, paramsFileCode, projectData, userList } =
+      this.props;
     paramsFileData.results?.map((item) => {
       item.key = item.id;
     });
@@ -456,7 +480,12 @@ class ParamsFile extends Component<any, any> {
         <Card bordered={false}>
           {!editModalVisiable && (
             <div>
-              {/* <SearchBox /> */}
+              <SearchBox
+                projectOptions={projectData}
+                userOptions={userList}
+                onSearch={this.onSearch}
+                onReset={this.onReset}
+              />
               <div className="ant-btn-add">
                 <Button
                   type="primary"
@@ -511,8 +540,9 @@ class ParamsFile extends Component<any, any> {
   }
 }
 
-export default connect(({ paramsFile, projectList }) => ({
+export default connect(({ paramsFile, projectList, userList }) => ({
   paramsFileData: paramsFile.paramsFileList,
   paramsFileCode: paramsFile.paramsFileCode,
   projectData: projectList.projectList,
+  userList: userList.userList,
 }))(ParamsFile);

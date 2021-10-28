@@ -82,6 +82,16 @@ class CaseList extends Component {
    * 发送请求函数
    *
    */
+
+  getUpload = (payload) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'paramsFile/getParamsFileListData',
+      payload,
+      callback: () => {},
+    });
+  };
+
   getCaseList = (payload) => {
     const { dispatch } = this.props;
     dispatch({
@@ -259,6 +269,7 @@ class CaseList extends Component {
     if (Object.keys(record).length) {
       this.getCalls(record.id);
       this.getModuleList({ page: 'None', project: record.project });
+      this.getUpload({ page: 'None', project: record.project });
       this.getCaseList({
         page: 'None',
         project: record.project,
@@ -577,7 +588,8 @@ class CaseList extends Component {
       isCopyModalVisible,
       isRunModalVisible,
     } = this.state;
-    const { projectData, moduleData, caseList, envList } = this.props;
+    const { projectData, moduleData, caseList, envList, paramsFileList } =
+      this.props;
 
     return (
       <>
@@ -592,6 +604,7 @@ class CaseList extends Component {
               onModuleChange={this.onModuleChange}
               caseList={caseList}
               envList={envList}
+              upload={paramsFileList}
             />
           ) : (
             this.renderCaseListTable()
@@ -605,12 +618,21 @@ class CaseList extends Component {
 }
 
 export default connect(
-  ({ testCase, projectList, moduleList, envList, report, loading }) => ({
+  ({
+    testCase,
+    projectList,
+    moduleList,
+    envList,
+    report,
+    loading,
+    paramsFile,
+  }) => ({
     caseList: testCase.caseList,
     envList: envList.envList,
     projectData: projectList.projectList,
     moduleData: moduleList.moduleList,
     tableLoading: loading.effects['testCase/getCaseList'],
     reportDetail: report.reportDetail,
+    paramsFileList: paramsFile.paramsFileList,
   }),
 )(CaseList);
