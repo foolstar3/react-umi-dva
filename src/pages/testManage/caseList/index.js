@@ -67,8 +67,11 @@ class CaseList extends Component {
     // this.getEnvList({ page: 'None', is_valid: true });
     history.listen((location) => {
       if (location.pathname === '/testManage/caseList') {
+        const { showDetailTabs } = this.state;
+        if (showDetailTabs) {
+          this.getCaseList({ page: 1 });
+        }
         this.setState({ showDetailTabs: false });
-        this.getCaseList({ page: 1 });
       }
     });
   }

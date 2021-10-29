@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   Table,
@@ -25,7 +25,9 @@ const EditableCell = ({
 }) => {
   const inputNode = () => {
     if (cellType === 'typeSelect') {
-      return (
+      return record.file ? (
+        <Input disabled />
+      ) : (
         <Select>
           <Option value="String">String</Option>
           <Option value="Int">Int</Option>
@@ -184,7 +186,7 @@ const EditableTable = ({
     };
     let checkType = '';
     try {
-      checkType === item.expected
+      checkType = item.expected
         ? DataType(JSON.parse(item.expected))
         : DataType(JSON.parse(item.value));
     } catch (err) {

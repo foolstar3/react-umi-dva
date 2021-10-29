@@ -82,11 +82,11 @@ const RequestTab = (props, ref) => {
         for (const [key, value] of Object.entries(request.upload)) {
           data.push({
             name: key,
-            value: value,
+            value: value[0],
             id: index,
             key: index,
-            type: DataType(value),
-            file: value.indexOf(uploadPath) !== -1,
+            type: DataType(value[0]),
+            file: value[1],
           });
           index++;
         }
@@ -334,7 +334,7 @@ const RequestTab = (props, ref) => {
         next[index].name = line.name;
         next[index].value = line.value;
         next[index].type = line.type;
-        next[index].file = line.file;
+        next[index].file = uploadData[index].file;
         if (line.type === 'String') {
           next[index].value =
             typeof line.value === 'string'
@@ -427,19 +427,21 @@ const RequestTab = (props, ref) => {
       dataIndex: 'name',
       editable: true,
       align: 'center',
+      width: '25%',
     },
     {
       title: '变量类型',
       dataIndex: 'type',
       editable: true,
       align: 'center',
-      width: 200,
+      width: '15%',
     },
     {
       title: 'data值',
       dataIndex: 'value',
       editable: true,
       align: 'center',
+      width: '30%',
       render: (text) => (
         <span>{typeof text === 'boolean' ? JSON.stringify(text) : text}</span>
       ),
@@ -447,16 +449,19 @@ const RequestTab = (props, ref) => {
     {
       title: '切换类型',
       key: 'switch',
-      // editable: true,
       align: 'center',
-      render: (_, record) => (
-        <Switch
-          checkedChildren="文件"
-          unCheckedChildren="变量"
-          onChange={(val) => typeOnChange(val, record)}
-          defaultChecked={record.value.indexOf(uploadPath) !== -1}
-        />
-      ),
+      render: (_, record) => {
+        return (
+          <Switch
+            checkedChildren="文件"
+            unCheckedChildren="变量"
+            onChange={(val) => typeOnChange(val, record)}
+            defaultChecked={
+              JSON.stringify(record.value).indexOf(uploadPath) !== -1
+            }
+          />
+        );
+      },
     },
   ];
 
@@ -465,6 +470,7 @@ const RequestTab = (props, ref) => {
     const next = uploadData.map((item) => {
       if (item.key === record.key) {
         item.file = value;
+        // item.type = value ? 'String' : record.type
       }
       return item;
     });

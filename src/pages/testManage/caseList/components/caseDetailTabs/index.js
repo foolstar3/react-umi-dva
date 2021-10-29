@@ -309,10 +309,9 @@ const CaseDetailTabs = ({
           };
           const child = {};
           data.forEach((item) => {
-            child[item.name] = item.value;
+            child[item.name] = [item.value, item.file];
           });
           obj.upload = child;
-          console.log(obj.upload);
           return obj;
         });
         break;
@@ -380,7 +379,6 @@ const CaseDetailTabs = ({
     // 判断data的类型
     if (editorRef.current) {
       dataType = editorRef.current.sendCode().dataType;
-      console.log(dataType);
     } else if (caseDetail.request) {
       const request = Object.keys(caseDetail.request.teststeps[0].request);
       if (request.indexOf('json') !== -1) {
@@ -404,6 +402,10 @@ const CaseDetailTabs = ({
           return;
         }
       }
+    } else if (dataType === 'upload') {
+      Object.keys(request.upload).forEach((key) => {
+        request.upload[key] = request.upload[key][0];
+      });
     }
     const newRequest = JSON.parse(JSON.stringify(request));
     // 处理messageTab
