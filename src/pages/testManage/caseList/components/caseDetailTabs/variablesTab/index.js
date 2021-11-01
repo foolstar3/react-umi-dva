@@ -145,7 +145,9 @@ const VariablesTab = ({ variables, save, configVariables }) => {
       ellipsis: true,
       editable: true,
       render: (text) => (
-        <span>{typeof text === 'boolean' ? JSON.stringify(text) : text}</span>
+        <span title={typeof text === 'boolean' ? JSON.stringify(text) : text}>
+          {typeof text === 'boolean' ? JSON.stringify(text) : text}
+        </span>
       ),
     },
   ];

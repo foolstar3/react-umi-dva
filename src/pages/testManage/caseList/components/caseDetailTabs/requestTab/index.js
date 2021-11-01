@@ -3,14 +3,26 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useEffect,
+  useRef,
 } from 'react';
 import EditableTable from '@/components/Editabletable';
 import { DataType } from '@/utils/common';
-import { Form, Select, Button, message, Input, Row, Col, Switch } from 'antd';
+import {
+  Form,
+  Select,
+  Button,
+  message,
+  Input,
+  Row,
+  Col,
+  Switch,
+  Radio,
+} from 'antd';
 import Editor from '@/components/Editor';
 
 import styles from './index.less';
 
+const { TextArea } = Input;
 const uploadPath = 'static/upload/1/';
 const RequestTab = (props, ref) => {
   const { request, save, upload } = props;
@@ -58,7 +70,7 @@ const RequestTab = (props, ref) => {
     setData(() => {
       const data = [];
       let index = 1;
-      if (request.data) {
+      if (request.data && typeof request.data === 'object') {
         for (const [key, value] of Object.entries(request.data)) {
           data.push({
             name: key,
@@ -82,11 +94,16 @@ const RequestTab = (props, ref) => {
         for (const [key, value] of Object.entries(request.upload)) {
           data.push({
             name: key,
-            value: value[0],
+            value: typeof value === 'string' ? value : value[0],
             id: index,
             key: index,
-            type: DataType(value[0]),
-            file: value[1],
+            type: DataType(typeof value === 'string' ? value : value[0]),
+            file:
+              typeof value === 'string'
+                ? value.indexOf(uploadPath) !== -1
+                  ? true
+                  : false
+                : value[1],
           });
           index++;
         }
@@ -101,10 +118,15 @@ const RequestTab = (props, ref) => {
         return {
           jsonCode,
           dataType,
+          isText,
+          text: isText ? textArea.current.resizableTextArea.props.value : '',
         };
       },
     };
   });
+
+  const textArea = useRef(null);
+  const uploadTable = useRef(null);
 
   const method = [
     { name: 'GET', value: 'GET', key: 'GET' },
@@ -126,6 +148,16 @@ const RequestTab = (props, ref) => {
   const [dataType, setDataType] = useState(
     request.json ? 'json' : request.upload ? 'upload' : 'data',
   );
+
+  const [isText, setIsText] = useState(
+    request.data && typeof request.data === 'string',
+  );
+  const [text, setText] = useState(() => {
+    if (request.data && typeof request.data === 'string') {
+      return request.data;
+    }
+    return;
+  });
   const [headerData, setHeaderData] = useState(() => {
     const header = [];
     let index = 1;
@@ -372,6 +404,7 @@ const RequestTab = (props, ref) => {
       dataIndex: 'name',
       editable: true,
       align: 'center',
+      width: '25%',
     },
     {
       title: 'header值',
@@ -387,6 +420,7 @@ const RequestTab = (props, ref) => {
       dataIndex: 'name',
       editable: true,
       align: 'center',
+      width: '25%',
     },
     {
       title: 'params值',
@@ -402,6 +436,7 @@ const RequestTab = (props, ref) => {
       dataIndex: 'name',
       editable: true,
       align: 'center',
+      width: '25%',
     },
     {
       title: '变量类型',
@@ -421,7 +456,7 @@ const RequestTab = (props, ref) => {
     },
   ];
 
-  const loadTableColumns = [
+  const uploadTableColumns = [
     {
       title: 'data名',
       dataIndex: 'name',
@@ -466,11 +501,14 @@ const RequestTab = (props, ref) => {
   ];
 
   const typeOnChange = (value, record) => {
+    uploadTable.current.tableEdit(record);
     record.file = value;
     const next = uploadData.map((item) => {
       if (item.key === record.key) {
         item.file = value;
-        // item.type = value ? 'String' : record.type
+        item.value = '';
+        item.type = value ? 'String' : record.type;
+        // item.type = 'String'
       }
       return item;
     });
@@ -506,6 +544,16 @@ const RequestTab = (props, ref) => {
         return next;
       });
     }
+  };
+
+  const textChange = (e) => {
+    setIsText(() => {
+      if (e.target.value === 'text') {
+        return true;
+      }
+      save([], 'data');
+      return false;
+    });
   };
   return (
     <>
@@ -610,18 +658,36 @@ const RequestTab = (props, ref) => {
         )}
         {dataType === 'data' && (
           <>
-            <div className={styles.topBtn}>
-              <Button type="primary" onClick={() => lineAdd('data')}>
-                添加data
-              </Button>
-            </div>
-            <EditableTable
-              form={dataForm}
-              dataSource={requestData}
-              columns={dataTableColumns}
-              lineDelete={(record) => lineDelete(record, 'data')}
-              lineSave={(record) => lineSave(record, 'data')}
-            />
+            <Radio.Group
+              defaultValue={isText ? 'text' : 'dict'}
+              onChange={textChange}
+            >
+              <Radio value="dict">dict</Radio>
+              <Radio value="text">text</Radio>
+            </Radio.Group>
+            {isText ? (
+              <TextArea
+                className={styles.textArea}
+                ref={textArea}
+                rows={4}
+                defaultValue={text}
+              ></TextArea>
+            ) : (
+              <>
+                <div className={styles.topBtn}>
+                  <Button type="primary" onClick={() => lineAdd('data')}>
+                    添加data
+                  </Button>
+                </div>
+                <EditableTable
+                  form={dataForm}
+                  dataSource={requestData}
+                  columns={dataTableColumns}
+                  lineDelete={(record) => lineDelete(record, 'data')}
+                  lineSave={(record) => lineSave(record, 'data')}
+                />
+              </>
+            )}
           </>
         )}
         {dataType === 'upload' && (
@@ -635,9 +701,10 @@ const RequestTab = (props, ref) => {
               form={uploadForm}
               upload={upload}
               dataSource={uploadData}
-              columns={loadTableColumns}
+              columns={uploadTableColumns}
               lineDelete={(record) => lineDelete(record, 'upload')}
               lineSave={(record) => lineSave(record, 'upload')}
+              ref={uploadTable}
             />
           </>
         )}

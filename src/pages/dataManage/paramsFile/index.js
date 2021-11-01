@@ -34,6 +34,7 @@ const layout = {
   wrapperCol: { span: 20 },
 };
 
+const maxFileSize = 50;
 class ParamsFile extends Component {
   constructor(props) {
     super(props);
@@ -366,14 +367,14 @@ class ParamsFile extends Component {
       },
       beforeUpload: (file) => {
         const fileSize = file.size / 1024 / 1024;
-        if (fileSize > 20) {
-          message.error('文件大小不得超过20M！');
+        if (fileSize > maxFileSize) {
+          message.error(`文件大小不得超过${maxFileSize}M！`);
           return Upload.LIST_IGNORE;
         }
-        if (file.name.split('.')[file.name.split('.').length - 1] != 'csv') {
-          message.error('文件类型只能是CSV类型');
-          return Upload.LIST_IGNORE;
-        }
+        // if (file.name.split('.')[file.name.split('.').length - 1] != 'csv') {
+        //   message.error('文件类型只能是CSV类型');
+        //   return Upload.LIST_IGNORE;
+        // }
         this.setState((state) => ({
           fileList: [...state.fileList, file],
         }));

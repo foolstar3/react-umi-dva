@@ -380,6 +380,7 @@ const CaseDetailTabs = ({
     if (editorRef.current) {
       dataType = editorRef.current.sendCode().dataType;
     } else if (caseDetail.request) {
+      // 编辑用例没有进入其他tab直接保存
       const request = Object.keys(caseDetail.request.teststeps[0].request);
       if (request.indexOf('json') !== -1) {
         dataType = 'json';
@@ -389,6 +390,7 @@ const CaseDetailTabs = ({
         dataType = 'upload';
       }
     } else {
+      // 新增用例
       dataType = 'data';
     }
     // json格式
@@ -406,6 +408,10 @@ const CaseDetailTabs = ({
       Object.keys(request.upload).forEach((key) => {
         request.upload[key] = request.upload[key][0];
       });
+    } else {
+      if (editorRef.current.sendCode().isText) {
+        request.data = editorRef.current.sendCode().text;
+      }
     }
     const newRequest = JSON.parse(JSON.stringify(request));
     // 处理messageTab

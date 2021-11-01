@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import {
   Form,
   Table,
@@ -9,7 +9,7 @@ import {
   message,
 } from 'antd';
 import styles from './index.less';
-import { comparators } from '@/constant/caseList';
+import { comparators, headers } from '@/constant/caseList';
 import { DataType } from '@/utils/common';
 const { Option } = Select;
 
@@ -83,6 +83,16 @@ const EditableCell = ({
           ))}
         </Select>
       );
+    } else if (title === 'header名') {
+      return (
+        <Select>
+          {headers.map((item) => (
+            <Option key={item} value={item}>
+              {item}
+            </Option>
+          ))}
+        </Select>
+      );
     } else {
       return <Input />;
     }
@@ -122,7 +132,11 @@ const EditableTable = ({
   upload = [],
   lineDelete = (_line) => {},
   lineSave = (_line) => {},
+  refInstance = null,
 }) => {
+  useImperativeHandle(refInstance, () => ({
+    tableEdit: (record) => edit(record),
+  }));
   const [editingKey, setEditingKey] = useState(-1);
   const actionCol = {
     title: '操作',
@@ -265,4 +279,6 @@ const EditableTable = ({
   );
 };
 
-export default EditableTable;
+export default forwardRef((props, ref) => (
+  <EditableTable {...props} refInstance={ref} />
+));
